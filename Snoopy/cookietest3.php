@@ -3,20 +3,20 @@ header('Content-Type:text/html; charset=UTF-8');
 include("Snoopy.class.php");
 include("phpQuery/phpQuery.php");
 
-// 需要六个参数
+// 需要7个参数
 // $cookie="_s_tentry=login.sina.com.cn;ALF=1503541705;Apache=9204201686661.691.1472005709430;Hm_lvt_cdc2220e7553b2a2cd949e1765e21edc=1466418850,1466472305;SCF=AjbVfK4Xdw2XgTYyQGOIRtCsFHf_smxmyXZval-aDwjo-v16MTP5ZdFT4JwozS4V3g_ZTmWzrQDv1CjWNuvuUcA.;SINAGLOBAL=8062468627467.752.1458205942141;SSOLoginState=1472005706;SUB=_2A256uXYaDeTxGedJ6FIZ8S3NzDiIHXVZz-DSrDV8PUNbmtBeLVCkkW8mJ37ioXkii6_2E9zViijrUhFctg..;SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WhOaEMKSk.Lxxebbn5-7OSC5JpX5KzhUgL.Fo2Ne05ReKepS0B2dJLoIpqLxKBLB.BLBoeLxKBLB.BLBoSNI0W9;SUHB=0bttthHR6LX4IJ;ULV=1472005709437:141:22:6:9204201686661.691.1472005709430:1471948664045;un=jiachunhui1988@sina.cn;UOR=news.ifeng.com,widget.weibo.com,login.sina.com.cn;wvr=6;YF-Page-G0=59104684d5296c124160a1b451efa4ac;YF-Ugrow-G0=5b31332af1361e117ff29bb32e4d8439;YF-V5-G0=ab4df45851fc4ded40c6ece473536bdd;";
 $cookie="_s_tentry=login.sina.com.cn;ALF=1503541705;Apache=9204201686661.691.1472005709430;Hm_lvt_cdc2220e7553b2a2cd949e1765e21edc=1466418850,1466472305;SCF=AjbVfK4Xdw2XgTYyQGOIRtCsFHf_smxmyXZval-aDwjo-v16MTP5ZdFT4JwozS4V3g_ZTmWzrQDv1CjWNuvuUcA.;SINAGLOBAL=8062468627467.752.1458205942141;SSOLoginState=1472005706;SUB=_2A256uXYaDeTxGedJ6FIZ8S3NzDiIHXVZz-DSrDV8PUNbmtBeLVCkkW8mJ37ioXkii6_2E9zViijrUhFctg..;SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WhOaEMKSk.Lxxebbn5-7OSC5JpX5KzhUgL.Fo2Ne05ReKepS0B2dJLoIpqLxKBLB.BLBoeLxKBLB.BLBoSNI0W9;SUHB=0bttthHR6LX4IJ;ULV=1472005709437:141:22:6:9204201686661.691.1472005709430:1471948664045;un=jiachunhui1988@sina.cn;UOR=news.ifeng.com,widget.weibo.com,tool.lanrentuku.com;wvr=6;YF-Page-G0=59104684d5296c124160a1b451efa4ac;YF-Ugrow-G0=5b31332af1361e117ff29bb32e4d8439;YF-V5-G0=ab4df45851fc4ded40c6ece473536bdd;";
 $page=1;
 $href="http://weibo.com/1730813174/profile?profile_ftype=1&is_all=1";
-//http://weibo.com/1730813174/profile?profile_ftype=1&is_all=1#_0
 $domain="100505";  // 100606
 $id="1005051730813174";  //1006062674868673  
 $script="script_uri=/1730813174/profile";
+
 $href2="http://weibo.com/p/aj/v6/mblog/mbloglist?ajwvr=6&".$script."&domain=".$domain."&is_all=1&profile_ftype=1&pagebar=0&id=".$id;
 
-$total=[];
 
 for($i=1;$i<=$page;$i++){
+   $liarr=[];
    if($i==1){
    	$url=$href."#_0";
    }else{
@@ -25,14 +25,16 @@ for($i=1;$i<=$page;$i++){
    $liarr=dealmain($url,$cookie);
    // var_dump($liarr); 
    //处理数据  存入数据库
-          dealSQL($liarr);
+   // dealSQL($liarr);
    for($j=0;$j<2;$j++){
-	   	$url=$href2."&page=".$i."&pre_page=".$i."&pagebar=".$j;	
-	   	$arr=dealjs($url,$cookie);
-	   	// var_dump($arr);
-	   	dealSQL($arr);
-	   	// $total=array_merge($total,$arr);
+   	$url=$href2."&page=".$i."&pre_page=".$i."&pagebar=".$j;	
+   	$arr=dealjs($url,$cookie);
+   	$liarr=array_merge($liarr,$arr);
+   	// var_dump($arr);
+   	// dealSQL($arr);
    }
+   dealSQL($liarr);
+   echo $i."***<br/>";
 }
 
 function dealSQL($arr){

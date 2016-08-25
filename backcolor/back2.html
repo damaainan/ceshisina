@@ -1,0 +1,88 @@
+
+<html>
+<head>
+	<meta http-equiv="pragma" content="no-cache"> 
+    <meta http-equiv="Cache-Control " content="no-cache,must-revalidate"> 
+    <meta name="description" content="">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+	<title>WARFRAME</title>
+	<script src="jquery-3.1.0.min.js"></script>
+
+	<style type="text/css">
+html, body, div, h1, h2, h3, h4, h5, h6, p, span, img, input {
+	margin: 0;
+	padding: 0;
+}
+
+html, body {
+	font-size: 19px;
+	font-family: 'Verdana','Arial';
+	color: rgba(0,0,0,0.8);
+}
+.content {
+	width: 800px;
+	height: 400px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -200px;
+	margin-left: -400px;
+	border-radius: 8px;
+	box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+	overflow: hidden;
+	z-index: 1;
+	padding: 50px;
+	box-sizing: border-box;
+	display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.content::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: url(1.png);
+	filter: blur(5px);
+	/*filter: opacity(0.2);*/
+	z-index: -1;
+	margin: -30px;
+	background-position: center top;
+	background-size: cover;
+	background-attachment: fixed;
+}
+
+	</style>
+	<style type="text/css" class="ber">
+	</style>
+</head>
+<body>
+		<div class="content">
+			<img src="2.png" alt="" style="width:200px;height:200px;">			
+		</div>
+<script type="text/javascript">
+		$("img").click(function(){
+			$("head .ber").remove();
+
+			var srcarr=['1.png',"2.png","3.png","4.png"];
+			var flag=Math.round(((Math.random())*10)/3);
+			
+			//两种方法 1  使用图片做背景 模糊化处理
+			//2  提取图片主色调
+			
+			//方法1
+			$("img").attr("src",srcarr[flag]);
+			
+			var style=document.createElement('style');
+			$(style).addClass("ber");
+			style.innerHTML=".content::before{background-image:url("+srcarr[flag]+");}";
+			document.head.appendChild(style);
+
+		});
+
+	</script>
+</body>
+</html>
