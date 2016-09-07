@@ -1,0 +1,20 @@
+(1) The Shawshank Redemption（ 《 肖申克的救赎》）
+(2) The Godfather（ 《 教父》）
+(3) The Godfather: Part II（ 《 教父 2》）
+(4) Pulp Fiction（ 《 低俗小说》）
+(5) The Good, the Bad and the Ugly（ 《 黄金三镖客》）
+(6) 12 Angry Men（ 《 十二怒汉》 ）
+(7) Schindler’s List（ 《 辛德勒名单》）
+(8) The Dark Knight（ 《 黑暗骑士》）
+(9) The Lord of the Rings: The Return of the King（ 《 指环王： 王者归来》）
+(10) Fight Club（ 《 搏击俱乐部》）
+(11) Star Wars: Episode V - The Empire Strikes Back（ 《 星球大战 5： 帝国反击战》）
+(12) One Flew Over the Cuckoo’s Nest（ 《 飞越疯人院》）
+(13) The Lord of the Rings: The Fellowship of the Ring（ 《 指环王： 护戒使者》）
+(14) Inception（ 《 盗梦空间》）
+(15) Goodfellas（ 《 好家伙》）
+(16) Star Wars（ 《 星球大战》）
+(17) Seven Samurai（ 《 七武士》）
+(18) The Matrix（ 《 黑客帝国》）
+(19) Forrest Gump（ 《 阿甘正传》）
+(20) City of God（ 《 上帝之城》）
