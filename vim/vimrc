@@ -10,6 +10,9 @@ set encoding=utf-8
 
 set background=dark
 colorscheme blue
+"colorscheme solarized
+"colorscheme molokai
+"colorscheme phd
 
 set cursorcolumn
 set cursorline
@@ -19,6 +22,11 @@ highlight CursorColumn cterm=NONE ctermbg=yellow ctermfg=green guibg=NONE guifg=
 set t_Co=256
 
 set scrolloff=7
+
+
+" 让配置变更立即生效
+autocmd BufWritePost $MYVIMRC source $MYVIMRC
+
 
 
 " Startup {{{
@@ -75,7 +83,7 @@ set guifont=Inconsolata:h12:cANSI
 " }}}
 
 
-
+"需要先设置好 bundle 目录  下载好 vundle.vim 文件
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
@@ -89,7 +97,6 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'L9'
 
-
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -97,7 +104,8 @@ filetype plugin indent on    " required
 
 
 
-
+map <F3> :NERDTreeMirror<CR>
+map <F3> :NERDTreeToggle<CR>
 
 
 
