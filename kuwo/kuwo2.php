@@ -11,6 +11,7 @@ class Kuwo{
             return;
         }else{
             $arr=$this->getAllPage($link);
+            // var_dump($arr);exit;
             $this->urlList($arr);
             rename("urls.txt",$singer."/url.txt");
         }
@@ -36,28 +37,32 @@ class Kuwo{
         // $artistid=pq("#artisContent .artistTop")->attr("data-artistid");
 		// $pageNum=pq("#song .listMusic")->attr("data-page");
 		// $rn=pq("#song .listMusic")->attr("data-rn");
-        $urls=[];
-        $album=pq("#album ul")->find("li");
-
-        foreach ($album as $ak => $av) {
-            $href=pq($av)->find(".cover a")->attr("href");
-            // var_dump($href);
-            $cover=pq($av)->find(".cover a img")->attr("src");
-            $albumName=pq($av)->find(".name a")->text();
-            // var_dump($albumName);
-            $resu=$this->openUrl($href);
-    		phpQuery::newDocument($resu);
-            $rst=pq(".list ul")->find("li");
-            foreach ($rst as $rk => $rv) {
-                $songLink=pq($rv)->find(".m_name a")->attr("href");
-                // var_dump($songLink);
-                $urls[$albumName][]=$songLink;
-            }
-        }
-        // var_dump($urls);exit;
-		return $urls;
+       $artistid=pq("#artistContent")->find(".artistTop")->attr("data-artistid");
+       $pagenum=pq("#song")->find(".page")->attr("data-page");
+       $total=[];
+       for($i=0;$i<$pagenum;$i++){
+        $url="http://www.kuwo.cn/artist/contentMusicsAjax?artistId=3247&pn=".$i."&rn=15";
+        $arr=$this->getAllLink($url);
+        $total=array_merge($total,$arr);
+       }
+		return $total;
 
 	}
+    private function getAllLink($url){
+        $result=$this->openUrl($url);
+        // var_dump($url);
+        phpQuery::newDocument($result); 
+        $linka=pq(".listMusic .onLine")->find(".name a");
+        $arr=[];
+        foreach ($linka as $k => $va) {
+            $link=pq($va)->attr("href");
+            $arr[]="http://www.kuwo.cn".$link;
+        }
+        // var_dump($arr);exit;
+
+        phpQuery::$documents = array();
+        return $arr;
+    }
     private function openUrl($url)
 	{
 		$ch = curl_init();
@@ -78,9 +83,7 @@ class Kuwo{
         touch($file);
         $str='';
         foreach ($arr as $ak => $av) {
-            foreach ($av as $k => $v) {
-                $str.=$v."\r\n";
-            }
+            $str.=$av."\r\n";
         }
         file_put_contents($file, $str);
 
