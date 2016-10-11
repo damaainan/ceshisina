@@ -9,7 +9,7 @@ link=sys.argv[1]
 name=link.split("=")[-1]
 os.mkdir(name)
 
-r=requests.get("http://www.kuwo.cn/artist/content?name=%E5%A7%9C%E6%98%95")
+# r=requests.get("http://www.kuwo.cn/artist/content?name=%E5%A7%9C%E6%98%95")
 r=requests.get(link)
 html=r.text
 soup = BeautifulSoup(html,"html5lib")
