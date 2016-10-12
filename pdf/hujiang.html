@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>沪江社刊采集</title>
+    <script src="jquery-1.8.3.min.js"></script>
+</head>
+
+<body>
+    <form action='hujiang.php' method='post'>
+        采集地址：
+        <input type="text" name="url" id="url">
+        <button id="btn" type="button" value="提交">提交</button> <a href="./all.php">采集结果</a>
+    </form>
+    <input type="hidden" class="hideurl">
+    <div id="show" style="display:none"></div>
+    本页链接
+    <p id="all"></p>
+    页码链接
+    <p id="page"></p>
+    <button type="button" id="caiji">采集页码</button>
+    <script type="text/javascript">
+    /*
+     *
+     *第一页的页面拿不到  是个问题 但是不影响列表的采集
+     *
+     */
+    $("#btn").click(function() {
+        var d = new Date();
+        // console.log(d.getTime());
+        var action = $('form').attr('action');
+        var url = $("#url").val(); //设置一个隐藏的  url 存储
+        // $('.hideurl').eq(0).val(url);//这里是第一个页面
+        $("#page").text(url + '*@*');
+        postcurl(action, url);
+    });
+
+    function postcurl(action, url) {
+        var allurl = $('.hideurl');
+        var urllen = allurl.length;
+        $.post(action, {
+            url: url
+        }, function(jdata) { //返回的是整个页面信息
+            jdata = JSON.parse(jdata);
+            data = jdata.data;
+            book = jdata.title;
+            console.log(book);
+            var action = $('form').attr('action');
+            $("#show").html(data); //通过js dom操作拿到所有链接
+
+            var str = $("ul").eq(0).children('li'); //针对性太强  不具有通用性
+            // .eq(0).children('div').children('a');
+            var slen = str.length;
+            var mm = [];
+            for (var i = 0; i < slen; i++) { //所有分页上的页面 
+                ss = str.eq(i).children('div').children('a').attr('href');
+                title = str.eq(i).children('div').children('a').html();
+                var ass = $("#all").text().match(ss);
+                if (ass) continue;
+                // console.log(title);//得到了title等信息  需要进一步处理
+                var qihao = str.eq(i).children('div').children('a').find('span').text();
+                var name = (title.split('</span>'))[1].replace(/(^\s*)|(\s*$)/g, "");
+                // <a style="max-width:95%" class="ellipsis_text" href="/topic/164464282224/">
+                //                                     <span class="mag_no">第254期</span>
+                //                                      【♪日本音乐随心听♪ 】『X-encounter​』
+                //                                </a>
+                ssa = 'st.hujiang.com' + ss + '*' + name + '*' + qihao + '*' + book + '*@*';
+                // ssa='st.hujiang.com'+ss;
+                // postcurl(action,ssa);
+                $("#all").text($("#all").text() + ssa); //写入页面
+            }
+
+            var str1 = $("ul").eq(1).children('li');
+            //console.log(ss);
+            var slen1 = str1.length;
+            for (var j = 0; j < slen1; j++) { //所有分页  去重
+                tt = str1.eq(j).children('a').attr('href');
+                var att = $("#page").text().match(tt);
+                if (att) continue;
+                if (tt !== null) {
+                    mm[j] = 'st.hujiang.com' + tt;
+                    tta = 'st.hujiang.com' + tt + '*@*'; //拼接完整地址
+                    $("#page").text($("#page").text() + tta); //写入页面
+                }
+            }
+            //需要检验不重复  url 存储
+            // outermost:
+            for (var l = 0; l < urllen; l++) {
+                var nowurl = allurl.eq(l).val();
+                // console.log(nowurl);
+                for (var k = 0; k < mm.length; k++) { //需要再过滤一次  拿到需要的url
+                    if (mm[k] !== nowurl && mm[k] !== ('http://' + nowurl) && mm[k] !== '') { //如果已经存在
+                        $(".hideurl").last().after($(".hideurl").eq(0).clone(true));
+                        $(".hideurl").last().val(mm[k]);
+                        postcurl(action, mm[k]);
+                        continue; //一个一个走
+                    }
+                }
+            }
+            // var d = new Date()
+            // console.log(d.getTime());
+        });
+    }
+
+    $("#caiji").click(function() { //页面和分页都写入数据库
+        var all = $("#all").text();
+        var page = $("#page").text();
+        $.post('docaiji.php', {
+            all: all,
+            page: page
+        }, function(data) {
+
+        });
+    });
+    </script>
+</body>
+
+</html>
