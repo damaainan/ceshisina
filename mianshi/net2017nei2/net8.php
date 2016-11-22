@@ -24,3 +24,35 @@ AAA
 输出例子:
 Dislikes
  */
+function deal($str){
+
+}
+
+function checkOrd($str){
+	//65-90
+	$len=strlen($str);
+	for($i=0;$i<$len;$i++){
+		if(ord($str[$i])>90 || ord($str[$i])<65){
+			return 0;
+			break;
+		}
+	}
+}
+function checkCon($str){
+	//检查连续
+	$len=strlen($str);
+	for($i=0;$i<$len-1;$i++){
+		if($str[$i]==$str[$i+1]){
+			return 0;
+			break;
+		}
+	}
+}
+function checkSub($str){
+	$len=strlen($str);
+	for($k=1;$k<ceil($len/2);$k++){//子串数目减一
+		for($i=0;$i<$len-$k;$i++){//子串开头字符
+
+		}
+	}
+}

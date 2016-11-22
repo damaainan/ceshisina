@@ -17,3 +17,17 @@
 输出例子:
 4
  */
+
+function deal($arr){
+	sort($arr);
+	if($arr[0]>1){
+		echo 'number===1';
+	}
+	for($i=1,$len=count($arr);$i<$len;$i++){
+
+	}
+}
+
+
+$arr=[2,3,5];
+deal($arr);

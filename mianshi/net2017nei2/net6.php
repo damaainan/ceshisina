@@ -15,3 +15,31 @@
 输出例子:
 1
  */
+
+function deal($x){
+	$arr=[$x];
+	for($i=0;$i<100001;$i++){
+		$len=count($arr);
+		for($j=0;$j<$len;$j++){
+			$flag=check($arr[$j]);
+			if($flag==1){
+				var_dump($arr[$j]);
+				echo 'num===',$i;
+				break 2;
+			}
+			$temp[$j]=$arr[$j]*4+3;
+			$temp[$j+$len]=$arr[$j]*8+7;
+		}
+		$arr=$temp;
+		
+		
+	}
+}
+function check($x){
+	// echo 'x==',$x,'<br/>';
+	if($x%1000000007===0){
+		return 1;
+	}
+	return 0;
+}
+deal(125000000);

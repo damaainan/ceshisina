@@ -27,3 +27,49 @@ bbb
 输出例子:
 both
  */
+
+function deal($arr){
+	$f1=checkDic($arr);
+	$f2=checkLen($arr);
+	if($f1==1 && $f2==1){
+		echo "both";
+	}elseif($f1==1 && $f2==0){
+		echo 'lexicographically';
+	}elseif($f1==0 && $f2==1){
+		echo 'lengths';
+	}else{
+		echo 'none';
+	}
+}
+function checkDic($arr){
+	$len=count($arr);
+	for($i=0;$i<$len-1;$i++){
+		$n1=strlen($arr[$i]);
+		$n2=strlen($arr[$i+1]);
+		$n=$n1<$n2?$n1:$n2;
+		echo 'n==',$n;
+		for($j=0;$j<$n;$j++){
+			if(ord($arr[$i][$j])<ord($arr[$i+1][$j])){
+				break;
+			}
+			if(ord($arr[$i][$j])==ord($arr[$i+1][$j])){
+				continue;
+			}
+			if(ord($arr[$i][$j])>ord($arr[$i+1][$j])){
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+function checkLen($arr){
+	$len=count($arr);
+	for($i=0;$i<$len-1;$i++){
+		if(strlen($arr[$i])>strlen($arr[$i+1])){
+			return 0;
+		}
+	}
+	return 1;
+}
+$arr=["car" , "carriage" , "cats" , "doggies" , "koala"];
+deal($arr);

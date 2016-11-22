@@ -19,3 +19,27 @@ for each i ≥ 2: F[i] = F[i-1] + F[i-2]
 输出例子:
 2
  */
+
+function deal($n){
+	$arr=arr();
+	for($i=1,$len=count($arr);$i<$len;$i++){
+		if($n>=$arr[$i-1] && $n<= $arr[$i]){
+			$a=$n-$arr[$i-1];
+			$b=$arr[$i]-$n;
+			$c=$a<$b?$a:$b;
+			echo $c;
+		}
+	}
+}
+function arr(){
+	$arr[0]=0;
+	$arr[1]=1;
+	for($i=2;;$i++){
+		$arr[$i]=$arr[$i-1]+$arr[$i-2];
+		if($arr[$i]>1000000){
+			break;
+		}
+	}
+	return $arr;
+}
+deal(15);

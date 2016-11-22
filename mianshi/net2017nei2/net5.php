@@ -26,3 +26,27 @@ b
 输出例子:
 2
  */
+function deal($a,$b){
+	$n=strlen($a);
+	$sum=0;
+	for($i=0;$i<=$n;$i++){
+		$c=substr_replace($a,$b,$i,0);
+		echo $c,'<br/>';
+		$flag=check($c);
+		if($flag==1){
+			$sum++;
+		}
+	}
+	echo "sum==",$sum;
+}
+function check($str){
+	$n=strlen($str);
+	for($i=0;$i<$n;$i++){
+		if($str[$i]!==$str[$n-$i-1]){
+			return 0;
+		}
+	}
+	return 1;
+}
+
+deal('aba','b');
