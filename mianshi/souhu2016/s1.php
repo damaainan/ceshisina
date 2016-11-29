@@ -23,3 +23,53 @@
 输出例子:
 4
  */
+/**
+ * 分析过程   即有几个人可以使用
+ * 满足 身高和体重的排序 的 所有组合  的高度和最高的
+ *
+ * 二维数组的排序   转化数组结构
+ */
+
+function deal($arr){
+	$narr=[];
+	foreach ($arr as $k => $v) {
+		foreach ($v as $ke => $va) {
+			$narr[$ke][$k]=$va;
+		}
+	}
+	$arr1=$narr;
+	$arr2=$narr;
+	array_multisort($arr1[1],SORT_NUMERIC,SORT_ASC);
+	array_multisort($arr2[2],SORT_NUMERIC,SORT_ASC);
+	var_dump($arr1);
+	var_dump($arr2);
+	$sarr1=[];
+	$sarr2=[];
+	foreach ($arr1[1] as $k => $v) {
+		$ks=array_keys($narr[1],$v);
+		$sarr1=array_merge($sarr1,$ks);
+	}
+	foreach ($arr2[2] as $k => $v) {
+		$ks=array_keys($narr[2],$v);
+		$sarr2=array_merge($sarr2,$ks);
+	}
+	// $sarr1=array_unique($sarr1);
+	// $sarr2=array_unique($sarr2);
+	var_dump($sarr1);
+	var_dump($sarr2);
+}
+
+function check($arr){
+	$sarr=array_unique($arr);
+	$resu=array_diff($arr,$sarr);
+}
+
+$arr=[
+	[1,65,100],
+	[2,75,80],
+	[3,80,100],
+	[4,60,95],
+	[5,82,101],
+	[6,81,70]
+];
+deal($arr);
