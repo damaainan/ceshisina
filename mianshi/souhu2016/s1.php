@@ -30,69 +30,82 @@
  * 二维数组的排序   转化数组结构
  */
 
-function deal($arr){
-	$narr=[];
+function deal($arr) {
+	$narr = [];
 	foreach ($arr as $k => $v) {
 		foreach ($v as $ke => $va) {
-			$narr[$ke][$k]=$va;
+			$narr[$ke][$k] = $va;
 		}
 	}
-	$arr1=$narr;
-	$arr2=$narr;
-	array_multisort($arr1[1],SORT_NUMERIC,SORT_ASC);
-	array_multisort($arr2[2],SORT_NUMERIC,SORT_ASC);
-	$sarr1=[];
-	$sarr2=[];
-	foreach ($arr1[1] as $k => $v) {
-		$ks=array_keys($narr[1],$v);
-		$sarr1=array_merge($sarr1,$ks);
-	}
-	foreach ($arr2[2] as $k => $v) {
-		$ks=array_keys($narr[2],$v);
-		$sarr2=array_merge($sarr2,$ks);
-	}
-	$sarr1=array_unique($sarr1);
-	$sarr2=array_unique($sarr2);
-	$sarr1=array_reverse($sarr1);//为了消除不连续的索引
-	$sarr2=array_reverse($sarr2);
-	
-	$resu=check($sarr1,$sarr2);
+	$arr1 = $narr;
+	$arr2 = $narr;
+	array_multisort($arr1[1], SORT_NUMERIC, SORT_ASC);
+	array_multisort($arr2[2], SORT_NUMERIC, SORT_ASC);
+	$sarr1 = makeCharacter($arr1[1], $narr[1]);
+	$sarr2 = makeCharacter($arr2[2], $narr[2]);
+	/*$sarr1 = [];
+		$sarr2 = [];
+		foreach ($arr1[1] as $k => $v) {
+			$ks = array_keys($narr[1], $v);
+			$sarr1 = array_merge($sarr1, $ks);
+		}
+		foreach ($arr2[2] as $k => $v) {
+			$ks = array_keys($narr[2], $v);
+			$sarr2 = array_merge($sarr2, $ks);
+		}
+		$sarr1 = array_unique($sarr1);
+		$sarr2 = array_unique($sarr2);
+		$sarr1 = array_reverse($sarr1); //为了消除不连续的索引
+	*/
+
+	$resu = check($sarr1, $sarr2);
 	// var_dump($resu);
-	$na=count(array_keys($resu,-1));
-	$ze=count(array_keys($resu,0));
-	$po=count(array_keys($resu,1));
-	if($na>$po){
-		$sum=$na+$ze;
-		echo "高度：",$sum;
-	}else{
-		$sum=$po+$ze;
-		echo "高度：",$sum;
+	$na = count(array_keys($resu, -1));
+	$ze = count(array_keys($resu, 0));
+	$po = count(array_keys($resu, 1));
+	if ($na > $po) {
+		$sum = $na + $ze;
+		echo "高度：", $sum;
+	} else {
+		$sum = $po + $ze;
+		echo "高度：", $sum;
 	}
+}
+function makeCharacter($arr, $narr) {
+	$sarr = [];
+	foreach ($arr as $k => $v) {
+		$ks = array_keys($narr, $v);
+		$sarr = array_merge($sarr, $ks);
+	}
+	$sarr = array_unique($sarr);
+	$sarr = array_reverse($sarr); //为了消除不连续的索引
+	return $sarr;
 }
 //问题转变成取两个数组中 顺序相同的子数组的最大长度
 //第二个数组相应元素索引前移 标记 为 -1 后移 1 未变 0
-function check($arr1,$arr2){
-	$l=count($arr1);
-	$resu=[];
+function check($arr1, $arr2) {
+	$l = count($arr1);
+	$resu = [];
 	foreach ($arr1 as $ke => $va) {
-		$k=array_search($va,$arr2);
-		if($k<$ke)
-			$resu[]=-1;
-		elseif($k===$ke)
-			$resu[]=0;
-		else
-			$resu[]=1;
+		$k = array_search($va, $arr2);
+		if ($k < $ke) {
+			$resu[] = -1;
+		} elseif ($k === $ke) {
+			$resu[] = 0;
+		} else {
+			$resu[] = 1;
+		}
+
 	}
 	return $resu;
 }
 
-
-$arr=[
-	[1,65,100],
-	[2,75,80],
-	[3,80,100],
-	[4,60,95],
-	[5,82,101],
-	[6,81,70]
+$arr = [
+	[1, 65, 100],
+	[2, 75, 80],
+	[3, 80, 100],
+	[4, 60, 95],
+	[5, 82, 101],
+	[6, 81, 70],
 ];
 deal($arr);
