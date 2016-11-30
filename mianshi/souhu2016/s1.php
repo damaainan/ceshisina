@@ -41,8 +41,6 @@ function deal($arr){
 	$arr2=$narr;
 	array_multisort($arr1[1],SORT_NUMERIC,SORT_ASC);
 	array_multisort($arr2[2],SORT_NUMERIC,SORT_ASC);
-	var_dump($arr1);
-	var_dump($arr2);
 	$sarr1=[];
 	$sarr2=[];
 	foreach ($arr1[1] as $k => $v) {
@@ -53,16 +51,41 @@ function deal($arr){
 		$ks=array_keys($narr[2],$v);
 		$sarr2=array_merge($sarr2,$ks);
 	}
-	// $sarr1=array_unique($sarr1);
-	// $sarr2=array_unique($sarr2);
-	var_dump($sarr1);
-	var_dump($sarr2);
+	$sarr1=array_unique($sarr1);
+	$sarr2=array_unique($sarr2);
+	$sarr1=array_reverse($sarr1);//为了消除不连续的索引
+	$sarr2=array_reverse($sarr2);
+	
+	$resu=check($sarr1,$sarr2);
+	// var_dump($resu);
+	$na=count(array_keys($resu,-1));
+	$ze=count(array_keys($resu,0));
+	$po=count(array_keys($resu,1));
+	if($na>$po){
+		$sum=$na+$ze;
+		echo "高度：",$sum;
+	}else{
+		$sum=$po+$ze;
+		echo "高度：",$sum;
+	}
+}
+//问题转变成取两个数组中 顺序相同的子数组的最大长度
+//第二个数组相应元素索引前移 标记 为 -1 后移 1 未变 0
+function check($arr1,$arr2){
+	$l=count($arr1);
+	$resu=[];
+	foreach ($arr1 as $ke => $va) {
+		$k=array_search($va,$arr2);
+		if($k<$ke)
+			$resu[]=-1;
+		elseif($k===$ke)
+			$resu[]=0;
+		else
+			$resu[]=1;
+	}
+	return $resu;
 }
 
-function check($arr){
-	$sarr=array_unique($arr);
-	$resu=array_diff($arr,$sarr);
-}
 
 $arr=[
 	[1,65,100],

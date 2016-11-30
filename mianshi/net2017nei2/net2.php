@@ -45,8 +45,8 @@ function check($sum,$arr){
 								return $v;
 							},1);
 	if($sum>$rsum){
-		echo 'sum==',$sum,'==rsum==',$rsum,'<br/>';
-		var_dump($arr);
+		// echo 'sum==',$sum,'==rsum==',$rsum,'<br/>';
+		// var_dump($arr);
 		return $sum+1;
 	}else{
 		return $sum;

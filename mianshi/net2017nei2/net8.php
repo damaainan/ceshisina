@@ -24,6 +24,7 @@ AAA
 输出例子:
 Dislikes
  */
+//单词没有太长的
 function deal($str){
 
 }
@@ -49,10 +50,41 @@ function checkCon($str){
 	}
 }
 function checkSub($str){
-	$len=strlen($str);
-	for($k=1;$k<ceil($len/2);$k++){//子串数目减一
-		for($i=0;$i<$len-$k;$i++){//子串开头字符
-
-		}
+	//转化为数组检查 子数组是否有重复的
+	$arr=str_split($str);
+	$narr=[];
+	for($i=0,$l=count($arr);$i<$l;$i++){
+		$karr=array_keys($arr,$arr[$i]);
+		$s=implode(',',$karr);
+		$narr[]=$s;
+	}
+	var_dump($narr);
+	$narr=array_unique($narr);
+	var_dump($narr);
+	$sarr=[];
+	foreach ($narr as $ke => $va) {
+		$varr=explode(',',$va);
+		$sarr[count($varr)][]=$varr;
+	}
+	var_dump($sarr);
+	$allkeys=array_keys($sarr);
+	foreach ($allkeys as $kk=>$vk) {//3个字母重复  2个字母重复
+		//两个重复 三个重复的情况
 	}
 }
+/**
+ * array (size=2)
+      0 => 
+        array (size=2)
+          0 => string '0' (length=1)
+          1 => string '3' (length=1)
+      1 => 
+        array (size=2)
+          0 => string '1' (length=1)
+          1 => string '5' (length=1)
+ */
+function dealRepeat($n,$arr){
+	//处理重复数组
+	//两个重复 三个重复的情况   取 n 个
+}
+checkSub("THETXH");

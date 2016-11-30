@@ -32,16 +32,16 @@ function deal($m,$n,$flag=0){
 		return -1;
 	}
 	if(is_integer($k) && $k > 1){
-		echo "nnn==",$n,'<br/>';
+		// echo "nnn==",$n,'<br/>';
 		$flag+=1;
 	}else{
 		$s=get($n,$m-$n);
-		var_dump($s);
+		// var_dump($s);
 		if(empty($s)){
 			return -1;
 		}
+		echo 'dddddd=',$n+$s[count($s)-1],'<br/>';
 		for($i=0,$len=count($s);$i<$len;$i++){
-			// echo 'dddddd=',$n+$s[$i],'<br/>';
 			$h=deal($m,$n+$s[$i],$flag+1);
 		}
 		return $h;
@@ -54,10 +54,10 @@ function get($n,$num){
 	for($i=$n-1;$i>1;$i--){
 		$k=($n/$i);
 		if(is_integer($k) && $k < $num ){
-			$arr[]=$i;
+			$arr[]=$k;
 		}
 	}
 	return $arr;
 }
 $g=deal(24,4,0);
-echo 'ggg', $g;
+echo '步数：', $g;

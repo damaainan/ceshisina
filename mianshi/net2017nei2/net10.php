@@ -18,14 +18,22 @@
 4
  */
 
+//转化成 求出所有和的问题
+
 function deal($arr){
 	sort($arr);
 	if($arr[0]>1){
 		echo 'number===1';
+		return;
 	}
-	for($i=1,$len=count($arr);$i<$len;$i++){
+	$turn[]=1;
+	$len=count($arr);
+	for($i=1;$i<$len;$i++){
 
 	}
+}
+function sum($n,$arr){
+	//求出 arr 中 所有组合为 n 个元素的和
 }
 
 
