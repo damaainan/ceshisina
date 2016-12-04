@@ -3,23 +3,25 @@ header('Content-Type:text/html; charset=UTF-8');
 include "Snoopy.class.php";
 include "phpQuery/phpQuery.php";
 set_time_limit(0);
-
-$link = "http://www.17500.cn/ssq/all.php";
-function getAllPage($link) {
+$link = "http://www.17500.cn/ssq/details.php?issue=2016141";
+function getPage($link) {
 //获取完整列表页
 	$result = openUrl($link);
 	phpQuery::newDocument($result); //实例化
-	$ps = pq("#SF")->find("p");
+	$ps = pq("center>table>tbody>tr>td")->find("table:eq(0)")->text();
+	// $str1 = pq($ps)->find("table:eq(0)")->text();
+	var_dump($ps);
+	// var_dump($str1);
 	$hrefs = [];
-	foreach ($ps as $vp) {
-		$a = pq($vp)->find("a");
-		foreach ($a as $va) {
-			$href = pq($va)->attr("href");
-			echo $href, "<br/>";
-			$hrefs[] = $href;
-		}
-	}
-	return $hrefs;
+	// foreach ($ps as $vp) {
+	//     $a = pq($vp)->find("a");
+	//     foreach ($a as $va) {
+	//         $href = pq($va)->attr("href");
+	//         echo $href, "<br/>";
+	//         $hrefs[] = $href;
+	//     }
+	// }
+	// return $hrefs;
 }
 
 function openUrl($url) {
@@ -36,14 +38,4 @@ function openUrl($url) {
 	curl_close($ch);
 	return $handles;
 } //CURLOPT_REFERER
-function dealSQL($arr) {
-	$pdo = new PDO('mysql:host=localhost;dbname=caiji;charset=utf8', 'root', '');
-	$pdo->exec('set names utf8');
-	$stmt2 = $pdo->prepare("INSERT INTO lottery_link (href,status) VALUES(?,?) ;");
-	for ($i = 0, $len = count($arr); $i < $len; $i++) {
-		$stmt2->bindParam(1, $arr[$i]);
-		$stmt2->bindParam(2, '0');
-		$stmt2->execute();
-		$nid = $pdo->lastInsertId();
-	}
-}
+getPage($link);
