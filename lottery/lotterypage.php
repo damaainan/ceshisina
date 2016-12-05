@@ -8,20 +8,39 @@ function getPage($link) {
 //获取完整列表页
 	$result = openUrl($link);
 	phpQuery::newDocument($result); //实例化
-	$ps = pq("center>table>tbody>tr>td")->find("table:eq(0)")->text();
-	// $str1 = pq($ps)->find("table:eq(0)")->text();
-	var_dump($ps);
-	// var_dump($str1);
-	$hrefs = [];
-	// foreach ($ps as $vp) {
-	//     $a = pq($vp)->find("a");
-	//     foreach ($a as $va) {
-	//         $href = pq($va)->attr("href");
-	//         echo $href, "<br/>";
-	//         $hrefs[] = $href;
-	//     }
-	// }
-	// return $hrefs;
+	$ps = pq("center");
+	$t1=pq($ps)->find("table:eq(1) tr:eq(1)");
+	$str11=pq($t1)->find("td:eq(0)")->text();
+	$str12=pq($t1)->find("td:eq(1)")->text();
+	var_dump($str11);
+	var_dump($str12);
+
+    $t2=pq($ps)->find("table:eq(2) tr:eq(1) td");
+    $balls=[];
+    foreach ($t2 as $v2) {
+    	$str2=pq($v2)->text();
+    	$balls[]=intval($str2);
+    	// echo $str2,"<br/>";
+    }
+    var_dump($balls);
+
+	$t3=pq($ps)->find("table:eq(3) tr");
+	$pride=[];
+	foreach ($t3 as $k3=> $v3) {
+		if($k3==0)
+			continue;
+		$str31=pq($v3)->find("td:eq(1)")->text();
+		$str32=pq($v3)->find("td:eq(2)")->text();
+		$pride[]['rank']=intval(str_replace(',','',$str31));
+		$pride[]['bound']=intval(str_replace(',','',$str32));
+	}
+	var_dump($pride);
+
+	$t4=pq($ps)->find("table:eq(4) tr td");
+	$str4=pq($t4)->text();
+	var_dump($str4);
+
+	
 }
 
 function openUrl($url) {
