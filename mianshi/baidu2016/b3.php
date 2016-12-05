@@ -20,3 +20,35 @@ ss请cc来家里钓鱼，鱼塘可划分为n＊m的格子，每个格子有不�
 equal
 0.20
  */
+/**
+ * 每分钟随机钓一个格子  概率平均
+ */
+function deal($n,$m,$x,$y,$t,$arr){
+	$cp=$arr[$x-1][$y-1];
+	$count=0;
+	foreach ($arr as $ke => $va) {
+		$count+=array_sum($va);
+	}
+	$sp=$count/($n*$m);
+	$cpp=1-pow($cp,$t);
+	$spp=1-pow($sp,$t);//一条都钓不到的概率
+	// var_dump($spp);
+	// var_dump($cpp);
+	$p=$cpp==$spp?"equal":($cpp>$spp?"ss":"cc");
+
+	echo "name=",$p,"<br/>";
+	if($p=="cc")
+		echo 1-$cpp;
+	else
+		echo 1-$spp;
+}
+
+$n=2;
+$m=2;
+$x=$y=1;
+$t=1;
+$arr=[
+[0.2,0.2],
+[0.1,0.4]
+];
+deal($n,$m,$x,$y,$t,$arr);

@@ -17,3 +17,21 @@ C市现在要转移一批罪犯到D市，C市有n名罪犯，按照入狱时间�
 输出例子:
 2
  */
+/**
+ * 入狱时间连续  不能排序
+ */
+function deal($t,$c,$arr){
+	// sort($arr);
+	$t=[];
+	$n=count($arr);
+	for($i=0;$i<$n-$c+1;$i++){
+		$narr=array_slice($arr,$i,$c);
+		$sum=array_sum($narr);
+		if($sum<=$t)
+			$t[]=$narr;
+	}
+
+	$count=count($t);
+	echo "number==",$count;
+}
+deal(100,2,[1,2,3]);

@@ -17,3 +17,30 @@
 输出例子:
 9
  */
+/**
+ * 
+ */
+
+function deal($arr){
+	$n=count($arr);
+	$narr=[];
+	foreach ($arr as $k => $v) {
+		foreach ($v as $ke => $va) {
+			$narr[$ke][]=$v[$ke];
+		}
+	}
+	$narr1=$narr;
+	$narr2=$narr;
+	array_multisort($narr1[0],SORT_NUMERIC, SORT_ASC);
+	array_multisort($narr2[1],SORT_NUMERIC, SORT_ASC);
+	$x=$narr1[0][$n-1];
+	$y=$narr2[1][$n-1];
+	$line=$x>$y?$x:$y;
+	$mianji=pow($line,2);
+	echo "面积==",$mianji;
+	// var_dump($narr);
+	// var_dump($narr1);
+	// var_dump($narr2);
+}
+
+deal([[0,0],[0,3]]);
