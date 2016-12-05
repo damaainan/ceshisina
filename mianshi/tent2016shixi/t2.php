@@ -34,6 +34,7 @@ function deal($str) {
 			$str .= $str[$i];
 			$str[$i] = '';
 			$i--;
+			$l--;
 		}
 	}
 	echo $str;

@@ -7,3 +7,18 @@
 ["i am a coder","Coder Coder","Code"],3
 返回：["Coder Coder","i am a coder"]
  */
+/**
+ * 用子元素 包含 coder 的个数进行排序
+ * 构造二维数组
+ */
+
+function deal($arr){
+	$l=count($arr);
+	$narr=[];
+	for($i=0;$i<$l;$i++){
+		$s=preg_match_all('/coder/i', $arr[$i], $matches);
+		$narr[$i]=$s;
+	}
+	rsort($narr);
+}
+deal(["i am a coder","Coder Coder","Code"]);
