@@ -4,7 +4,7 @@ include "Snoopy.class.php";
 include "phpQuery/phpQuery.php";
 set_time_limit(0);
 
-$link = "http://www.17500.cn/ssq/all.php";
+$link = "http://www.17500.cn/ssq/all2005.php";
 function getAllPage($link) {
 //获取完整列表页
 	$result = openUrl($link);
@@ -15,8 +15,8 @@ function getAllPage($link) {
 		$a = pq($vp)->find("a");
 		foreach ($a as $va) {
 			$href = pq($va)->attr("href");
-			echo $href, "<br/>";
-			$hrefs[] = $href;
+			// echo $href, "<br/>";
+			$hrefs[] = "http://www.17500.cn/ssq/".$href;
 		}
 	}
 	return $hrefs;
@@ -40,10 +40,13 @@ function dealSQL($arr) {
 	$pdo = new PDO('mysql:host=localhost;dbname=caiji;charset=utf8', 'root', '');
 	$pdo->exec('set names utf8');
 	$stmt2 = $pdo->prepare("INSERT INTO lottery_link (href,status) VALUES(?,?) ;");
+	$flag=0;
 	for ($i = 0, $len = count($arr); $i < $len; $i++) {
 		$stmt2->bindParam(1, $arr[$i]);
-		$stmt2->bindParam(2, '0');
+		$stmt2->bindParam(2, $flag);
 		$stmt2->execute();
 		$nid = $pdo->lastInsertId();
 	}
 }
+$hrefs=getAllPage($link);
+dealSQL($hrefs);
