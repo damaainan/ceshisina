@@ -7,3 +7,20 @@
 [1,3,5,7,9],5,3
 返回：1
  */
+function deal($arr,$n,$val){
+	$left=0;
+	$right=$n-1;
+	while($left<$right){
+		$mid=round(($left+$right)/2);
+		if($arr[$mid]==$val){
+			echo $mid;
+			return;
+		}elseif($arr[$mid]<$val){
+			$left=$mid+1;
+		}else{
+			$right=$mid-1;
+		}
+	}
+	echo -10;
+}
+deal([1,3,5,7,9],5,3);
