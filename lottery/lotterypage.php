@@ -52,31 +52,31 @@ function getPage($link) {
 	$t4 = pq($ps)->find("table:eq(4) tr td");
 	$str4 = pq($t4)->text();
 	$arr4 = explode("元", $str4);
-	$alls=$arr4[0];
-	$pools=$arr4[1];
+	$alls = $arr4[0];
+	$pools = $arr4[1];
 	$all = str_replace(',', '', explode("：", $alls)[1]);
 	$pool = str_replace(',', '', explode("：", $pools)[1]);
 	// echo $all, '**', $pool;
 	$total['all'] = intval($all);
 	$total['pool'] = intval($pool);
-	preg_match('/[\d\s]{12,}/', $t4,$match);
+	preg_match('/[\d\s]{12,}/', $t4, $match);
 	// var_dump($match);
-	if(empty($match)){
-		$turn=[0,0,0,0,0,0];
-	} else{
-		$turn=explode(' ',trim($match[0]));
+	if (empty($match)) {
+		$turn = [0, 0, 0, 0, 0, 0];
+	} else {
+		$turn = explode(' ', trim($match[0]));
 	}
-	$c=[];
-	$turn=array_map('intto',$turn);
-	list($c['rc1'],$c['rc2'],$c['rc3'],$c['rc4'],$c['rc5'],$c['rc6'])=$turn;
-	$total=array_merge($total,$c);
-	$total['address']=trim($str4);
-	$total['href']=$link;
+	$c = [];
+	$turn = array_map('intto', $turn);
+	list($c['rc1'], $c['rc2'], $c['rc3'], $c['rc4'], $c['rc5'], $c['rc6']) = $turn;
+	$total = array_merge($total, $c);
+	$total['address'] = trim($str4);
+	$total['href'] = $link;
 	// var_dump($total);
 	return $total;
 
 }
-function intto($v){
+function intto($v) {
 	return intval($v);
 }
 
@@ -94,16 +94,16 @@ function openUrl($url) {
 	curl_close($ch);
 	return $handles;
 } //CURLOPT_REFERER
-function getLink(){
+function getLink() {
 	$pdo = new PDO('mysql:host=localhost;dbname=caiji;charset=utf8', 'root', '');
 	$pdo->exec('set names utf8');
-	$stmt2 = $pdo->prepare("SELECT href FROM lottery_link WHERE status=? LIMIT "."0,300".";");
-	$flag=0;
-	$count=10;
-	$stmt2->bindParam(1,$flag);
+	$stmt2 = $pdo->prepare("SELECT href FROM lottery_link WHERE status=? LIMIT " . "0,500" . ";");
+	$flag = 0;
+	$count = 10;
+	$stmt2->bindParam(1, $flag);
 	// $stmt2->bindParam(2,$count);
 	$stmt2->execute();
-	$resu=$stmt2->fetchAll(PDO::FETCH_ASSOC);
+	$resu = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 	return $resu;
 }
 function dealSQL($arr) {
@@ -111,8 +111,8 @@ function dealSQL($arr) {
 	$pdo->exec('set names utf8');
 	$stmt2 = $pdo->prepare("INSERT INTO lottery_data (qihao,time,r1,r2,r3,r4,r5,r6,blue,rc1,rc2,rc3,rc4,rc5,rc6,p1,p1n,p2,p2n,p3,p3n,p4,p4n,p5,p5n,p6,p6n,`all`,pool,address) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ;");
 	$stmt3 = $pdo->prepare("UPDATE lottery_link SET status=? WHERE href=?;");
-	$flag=0;
-	$status=1;
+	$flag = 0;
+	$status = 1;
 	for ($i = 0, $len = count($arr); $i < $len; $i++) {
 		$stmt2->bindParam(1, $arr[$i]['qihao']);
 		$stmt2->bindParam(2, $arr[$i]['time']);
@@ -147,21 +147,21 @@ function dealSQL($arr) {
 		$stmt2->execute();
 		$nid = $pdo->lastInsertId();
 		// var_dump($stmt2->errorInfo());
-		if($nid>0){
-			$stmt3->bindParam(1,$status);
-			$stmt3->bindParam(2,$arr[$i]['href']);
+		if ($nid > 0) {
+			$stmt3->bindParam(1, $status);
+			$stmt3->bindParam(2, $arr[$i]['href']);
 			$stmt3->execute();
 		}
-		echo $nid,"++";
+		echo $nid, "++";
 	}
 }
 
-$links=getLink();
+$links = getLink();
 // var_dump($links);
-$narr=[];
-foreach ($links as $kk=>$va) {
-	echo $kk,"**";
-	$narr[]=getPage($va['href']);
+$narr = [];
+foreach ($links as $kk => $va) {
+	echo $kk, "**";
+	$narr[] = getPage($va['href']);
 }
 // var_dump($narr);
 dealSQL($narr);
