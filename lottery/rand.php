@@ -2,9 +2,10 @@
 //随机数模拟抽奖，看何时能抽中一次
 header("Content-type:text/html; Charset=utf-8");
 require_once "random_compat/lib/random.php";
-function getPride($arr) {
-	$pdo = new PDO('mysql:host=localhost;dbname=caiji;charset=utf8', 'root', '');
-	$pdo->exec('set names utf8');
+$pdo = new PDO('mysql:host=localhost;dbname=caiji;charset=utf8', 'root', '');
+$pdo->exec('set names utf8');
+function getPride($pdo, $arr) {
+
 	$stmt2 = $pdo->prepare("SELECT * FROM lottery_data WHERE r1=? AND r2=? AND r3=? AND r4=? AND r5=? AND r6=? AND blue=?;");
 
 	$stmt2->bindParam(1, $arr['r1']);
@@ -92,23 +93,25 @@ function diff($big, $small) {
 }
 // randNum();
 
-function init($flag) {
+function init($pdo, $flag) {
 //需要解决递归的层数问题
 	$arr = randNum();
-	$resu = getPride($arr);
+	$resu = getPride($pdo, $arr);
 	$flag++;
 	// echo "flag==",$flag,"\r\n";
 	if ($resu == null) {
 		// return init($flag);
-		return function () use ($flag) {
+		return function () use ($pdo, $flag) {
 //use 闭包函数（匿名函数） 从父级作用域继承变量
-			return init($flag);
+			return init($pdo, $flag);
 		};
 	} else {
 		// echo "flag==",$flag,"\r\n";
 		// var_dump($resu);
-		$rst['result'] = json_encode($resu);
+		$sttr = $resu['id'] . '**' . $resu['qihao'] . '**' . $resu['time'] . '**' . $resu['r1'] . ' ' . $resu['r2'] . ' ' . $resu['r3'] . ' ' . $resu['r4'] . ' ' . $resu['r5'] . ' ' . $resu['r6'] . ' ' . $resu['blue'];
+		$rst['result'] = $sttr;
 		$rst['flag'] = $flag;
+		return $rst;
 	}
 }
 function trampoline($callback, $params) {
@@ -121,16 +124,23 @@ function trampoline($callback, $params) {
 }
 
 // trampoline('init',array(0));
-$result = [];
-for ($i = 0; $i < 1; $i++) {
-	$result[] = trampoline('init', array(0));
+function make($pdo) {
+	$result = [];
+	for ($i = 0; $i < 50; $i++) {
+		$result[] = trampoline('init', array($pdo, 0));
+		echo $i, "**";
+	}
+	echo "\r\n";
+	sqliteData($result);
 }
-sqliteData($result);
 
 //写一个sqlite的存储函数
 function sqliteData($rst) {
-	$db = new SQLite3('result.db');
+	$db = new SQLite3('my.sqlite');
 	foreach ($rst as $va) {
-		$db->exec("insert into result (flag,jsonstr)values ('" . $va['flag'] . "','" . $va['result'] . "')");
+		$db->exec("insert into result (flag,result)values (" . $va['flag'] . ",'" . $va['result'] . "')");
 	}
+}
+for ($k = 0; $k < 10; $k++) {
+	make($pdo);
 }
