@@ -21,38 +21,6 @@ function getPride($pdo, $arr) {
 	return $resu;
 }
 
-function randPic() {
-//关于更好的随机数的图片形式的表现
-	header("Content-type: image/png");
-	$im = imagecreatetruecolor(512, 512) or die("Cannot Initialize new GD image stream");
-	$white = imagecolorallocate($im, 255, 255, 255);
-	for ($y = 0; $y < 512; $y++) {
-		for ($x = 0; $x < 512; $x++) {
-			if (random_int(0, 1) === 1) {
-				imagesetpixel($im, $x, $y, $white);
-			}
-		}
-	}
-	imagepng($im);
-	imagedestroy($im);
-}
-function randPic2() {
-	header("Content-type: image/png");
-	$im = imagecreatetruecolor(512, 512) or die("Cannot Initialize new GD image stream");
-	$white = imagecolorallocate($im, 255, 255, 255);
-	for ($y = 0; $y < 512; $y++) {
-		for ($x = 0; $x < 512; $x++) {
-			$color = mt_rand(0, 1);
-			if (mt_rand(0, 1) === 1) {
-				imagesetpixel($im, $x, $y, $white);
-			}
-		}
-	}
-	imagepng($im);
-	imagedestroy($im);
-}
-// randPic2();
-// randPic2();
 function randNum() {
 	$balls = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33];
 	$luck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
@@ -93,41 +61,65 @@ function diff($big, $small) {
 }
 // randNum();
 
-function init($pdo, $flag) {
+function init($pdo) {
 //需要解决递归的层数问题
 	$arr = randNum();
 	$resu = getPride($pdo, $arr);
-	$flag++;
+	return $resu;
+	// $flag++;
 	// echo "flag==",$flag,"\r\n";
-	if ($resu == null) {
-		// return init($flag);
-		return function () use ($pdo, $flag) {
-//use 闭包函数（匿名函数） 从父级作用域继承变量
-			return init($pdo, $flag);
-		};
-	} else {
-		// echo "flag==",$flag,"\r\n";
-		// var_dump($resu);
-		$sttr = $resu['id'] . '**' . $resu['qihao'] . '**' . $resu['time'] . '**' . $resu['r1'] . ' ' . $resu['r2'] . ' ' . $resu['r3'] . ' ' . $resu['r4'] . ' ' . $resu['r5'] . ' ' . $resu['r6'] . ' ' . $resu['blue'];
-		$rst['result'] = $sttr;
-		$rst['flag'] = $flag;
-		return $rst;
-	}
+// 	if ($resu == null) {
+// 		// return init($flag);
+// 		return function () use ($pdo, $flag) {
+// //use 闭包函数（匿名函数） 从父级作用域继承变量
+// 			return init($pdo, $flag);
+// 		};
+// 	} else {
+// 		// echo "flag==",$flag,"\r\n";
+// 		// var_dump($resu);
+// 		$sttr = $resu['id'] . '**' . $resu['qihao'] . '**' . $resu['time'] . '**' . $resu['r1'] . ' ' . $resu['r2'] . ' ' . $resu['r3'] . ' ' . $resu['r4'] . ' ' . $resu['r5'] . ' ' . $resu['r6'] . ' ' . $resu['blue'];
+// 		$rst['result'] = $sttr;
+// 		$rst['flag'] = $flag;
+// 		return $rst;
+	// }
 }
-function trampoline($callback, $params) {
-	$result = call_user_func_array($callback, $params);
+// function trampoline($callback, $params) {
+// 	$result = call_user_func_array($callback, $params);
 
-	while (is_callable($result)) {
-		$result = $result();
-	}
-	return $result;
-}
+// 	while (is_callable($result)) {
+// 		$result = $result();
+// 	}
+// 	return $result;
+// }
 
 // trampoline('init',array(0));
+// function make($pdo) {
+// 	$result = [];
+// 	for ($i = 0; $i < 50; $i++) {
+// 		$result[] = trampoline('init', array($pdo, 0));
+// 		echo $i, "**";
+// 	}
+// 	echo "\r\n";
+// 	sqliteData($result);
+// }
+
 function make($pdo) {
 	$result = [];
-	for ($i = 0; $i < 50; $i++) {
-		$result[] = trampoline('init', array($pdo, 0));
+	$flag=0;
+	for ($i = 0; $i < 10; $i++) {//用循环代替递归  速度没有加快 动态规划可能更好
+
+		$resu= init($pdo);
+		if($resu==null){
+			$i--;
+			$flag++;
+			continue;
+		}else{
+			$sttr = $resu['id'] . '**' . $resu['qihao'] . '**' . $resu['time'] . '**' . $resu['r1'] . ' ' . $resu['r2'] . ' ' . $resu['r3'] . ' ' . $resu['r4'] . ' ' . $resu['r5'] . ' ' . $resu['r6'] . ' ' . $resu['blue'];
+			$rst['result'] = $sttr;
+			$rst['flag'] = $flag;
+			$flag=0;
+			$result[]=$rst;
+		}
 		echo $i, "**";
 	}
 	echo "\r\n";
