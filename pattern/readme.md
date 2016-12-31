@@ -36,3 +36,5 @@
 访问者模式visitor
 中介者模式mediator
 解释器模式interpreter
+
+来自其他人的总结，有待详细注解

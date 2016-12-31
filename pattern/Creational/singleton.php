@@ -1,4 +1,8 @@
 <?php
+/**
+ * 单例模式
+ */
+
 class Mysql {
 	//该属性用来保存实例
 	private static $conn;
