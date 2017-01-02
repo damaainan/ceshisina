@@ -1,6 +1,12 @@
 <?php
 /**
  * 状态模式
+ * 理解：行为随着状态变化
+ * 区别：
+ * - 策略的改变由client完成，client持有context的引用；而状态的改变是由context或状态自己,
+ * 就是自身持有context
+ * - 简单说就是策略是client持有context，而状态是本身持有context
+ * 使用场景：大量和对象状态相关的条件语句
  */
 
 interface State { // 抽象状态角色

@@ -1,6 +1,8 @@
 <?php
 /**
  * 责任链模式
+ * 理解：把一个对象传递到一个对象链上，直到有对象处理这个对象
+ * 可以干什么：我们可以做一个filter,或者gateway
  */
 
 abstract class Responsibility {

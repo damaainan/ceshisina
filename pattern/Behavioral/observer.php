@@ -1,6 +1,7 @@
 <?php
 /**
  * 观察者模式
+ * 观察者观察被观察者，被观察者通知观察者
  */
 
 interface IObserver {
