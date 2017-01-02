@@ -23,6 +23,8 @@
 代理模式proxy
 享元模式flyweight
 
+加一种，过滤器模式filter
+
 十一种行为型模式如下：
 
 策略模式strategy
@@ -36,5 +38,7 @@
 访问者模式visitor
 中介者模式mediator
 解释器模式interpreter
+
+加一种，空对象模式nullObject
 
 来自其他人的总结，有待详细注解

@@ -1,6 +1,7 @@
 <?php
 /**
  * 迭代器模式
+ * 理解：遍历对象内部的属性，无需对外暴露内部的构成
  */
 
 class sample implements Iterator {
