@@ -4,6 +4,18 @@
 
  * 理解：就是一个上下文的连接器
  * 使用场景：构建一个编译器，SQL解析器
+
+
+解释器模式：Given a language, define arepresentation for its grammar along with an interpreter that uses therepresentation to interpret sentences in the language。给定一个语言,
+定义它的文法的一种表示，并定义一个解释器，该解释器使用该表示来解释语言中的句子。
+
+角色：
+
+环境角色(PlayContent)：定义解释规则的全局信息。
+
+抽象解释器(Empress)：定义了部分解释具体实现，封装了一些由具体解释器实现的接口。
+
+具体解释器(MusicNote)：实现抽象解释器的接口，进行具体的解释执行。
  */
 
 class Expression {
