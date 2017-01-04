@@ -5,14 +5,14 @@ include("phpQuery/phpQuery.php");
 
 // 需要7个参数
 // $cookie="_s_tentry=login.sina.com.cn;ALF=1503541705;Apache=9204201686661.691.1472005709430;Hm_lvt_cdc2220e7553b2a2cd949e1765e21edc=1466418850,1466472305;SCF=AjbVfK4Xdw2XgTYyQGOIRtCsFHf_smxmyXZval-aDwjo-v16MTP5ZdFT4JwozS4V3g_ZTmWzrQDv1CjWNuvuUcA.;SINAGLOBAL=8062468627467.752.1458205942141;SSOLoginState=1472005706;SUB=_2A256uXYaDeTxGedJ6FIZ8S3NzDiIHXVZz-DSrDV8PUNbmtBeLVCkkW8mJ37ioXkii6_2E9zViijrUhFctg..;SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WhOaEMKSk.Lxxebbn5-7OSC5JpX5KzhUgL.Fo2Ne05ReKepS0B2dJLoIpqLxKBLB.BLBoeLxKBLB.BLBoSNI0W9;SUHB=0bttthHR6LX4IJ;ULV=1472005709437:141:22:6:9204201686661.691.1472005709430:1471948664045;un=jiachunhui1988@sina.cn;UOR=news.ifeng.com,widget.weibo.com,login.sina.com.cn;wvr=6;YF-Page-G0=59104684d5296c124160a1b451efa4ac;YF-Ugrow-G0=5b31332af1361e117ff29bb32e4d8439;YF-V5-G0=ab4df45851fc4ded40c6ece473536bdd;";
-$cookie = "_s_tentry=login.sina.com.cn;ALF=1503624485;Apache=7725523682311.178.1472092919096;Hm_lvt_cdc2220e7553b2a2cd949e1765e21edc=1466418850,1466472305;SCF=AjbVfK4Xdw2XgTYyQGOIRtCsFHf_smxmyXZval-aDwjoptsPGVQh8E7hPkvIvAH8YgjMz5BSfHzMj2Ii46OEkVU.;SINAGLOBAL=8062468627467.752.1458205942141;SSOLoginState=1472088486;SUB=_2A256ujn1DeTxGedJ6FIZ8S3NzDiIHXVZziw9rDV8PUNbmtBeLXTRkW9imrJfuV8eXc6bK72e1EjBWRO9hA..;SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WhOaEMKSk.Lxxebbn5-7OSC5JpX5KMhUgL.Fo2Ne05ReKepS0B2dJLoIpqLxKBLB.BLBoeLxKBLB.BLBoSNI0W9;SUHB=0laUeB0nkMLyN7;ULV=1472092919124:143:24:8:7725523682311.178.1472092919096:1472032743537;un=jiachunhui1988@sina.cn;UOR=news.ifeng.com,widget.weibo.com,spr_web_360_hao360_weibo_t001;wvr=6;YF-Page-G0=46f5b98560a83dd9bfdd28c040a3673e;YF-Ugrow-G0=1eba44dbebf62c27ae66e16d40e02964;YF-V5-G0=32427df11f152291036145f8d346cc49;";
+$cookie = "_s_tentry=-;Apache=5699472099380.76.1472349426952;SINAGLOBAL=5699472099380.76.1472349426952;SUB=_2AkMg0xcuf8NhqwJRmP0Rymria4R_ygzEieLBAH7sJRMxHRl-yT9jqhQGtRAuve1uV3oKaAAZjptK-6e7YekXkA..;SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9WWbWAjyZFdUJLvu1ZwREgy1;ULV=1472349427019:1:1:1:5699472099380.76.1472349426952:;UOR=news.ifeng.com,widget.weibo.com,blog.ifeng.com;TC-Page-G0=b1761408ab251c6e55d3a11f8415fc72;";
 $page = 1;
 $href = "http://weibo.com/1730813174/profile?profile_ftype=1&is_all=1";
 $domain = "100505";  // 100606
 $id = "1005051730813174";  //1006062674868673
 $script = "script_uri=/1730813174/profile";
 
-$href2 = "http://weibo.com/p/aj/v6/mblog/mbloglist?ajwvr=6&" . $script . "&domain=" . $domain . "&is_all=1&profile_ftype=1&pagebar=0&id=" . $id;
+$href2 = "http://weibo.com/p/aj/v6/mblog/mbloglist?ajwvr=6&" . $script . "&domain=" . $domain . "&is_all=1&profile_ftype=1&id=" . $id;
 
 getWeibo($cookie,$page,$href,$href2);
 
@@ -24,6 +24,7 @@ function getWeibo($cookie,$page,$href,$href2){
         } else {
             $url = $href . "&is_search=0&visible=0&is_tag=0&page=" . $i . "#feedtop";
         }
+        // echo $url;
         $liarr = dealmain($url, $cookie);
         // var_dump($liarr);
         //处理数据  存入数据库
@@ -32,7 +33,7 @@ function getWeibo($cookie,$page,$href,$href2){
             $url = $href2 . "&page=" . $i . "&pre_page=" . $i . "&pagebar=" . $j;
             $arr = dealjs($url, $cookie);
             $liarr = array_merge($liarr, $arr);
-            // var_dump($arr);
+            // var_dump($arr);exit;
             // dealSQL($arr);
         }
         dealSQL($liarr);
@@ -71,7 +72,10 @@ function dealSQL($arr)
 function init($cookie)
 {
     $snoopy = new Snoopy();
-    $snoopy->agent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.0.5) Gecko/2008120122 Firefox/3.0.5 FirePHP/0.2.1";//这项是浏览器信息，前面你用什么浏览器查看cookie，就用那个浏览器的信息(ps:$_SERVER可以查看到浏览器的信息)
+    
+
+    $snoopy->agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2802.0 Safari/537.36";//这项是浏览器信息，前面你用什么浏览器查看cookie，就用那个浏览器的信息(ps:$_SERVER可以查看到浏览器的信息)
+    // $snoopy->agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36 QIHU 360SE";//这项是浏览器信息，前面你用什么浏览器查看cookie，就用那个浏览器的信息(ps:$_SERVER可以查看到浏览器的信息)
     $snoopy->referer = "http://weibo.com/1730813174/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1kkk";
     $snoopy->expandlinks = true;
     $snoopy->rawheaders["COOKIE"] = $cookie;
@@ -84,12 +88,13 @@ function dealmain($url, $cookie)
     $snoopy->fetch($url);
     $str = $snoopy->results;
     $html = unicode_decode($str);
-    // echo $html;
+    // echo $html;exit;
     // 处理直接拿到的数据
     $pat = '/<script>(.*?)<\/script>/i';
     preg_match_all($pat, $html, $match);
     $listarr = array();
-    // var_dump($match[1]);
+    
+   
     foreach ($match[1] as $ke => $va) {
         // echo $va;
         $str = str_replace('FM.view', '', $va);
