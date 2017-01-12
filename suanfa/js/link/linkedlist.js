@@ -11,7 +11,7 @@ function Node(element) {
     this.element = element;
     this.next = null;
 }
-
+document.write()
 function findPrevious(item) {
     var currNode = this.head;
     while (currNode.next !== null && (currNode.next.element != item)) {
