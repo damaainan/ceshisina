@@ -4,6 +4,22 @@
 // function init(){
 
 // }
+plot.init();  
+setPreference();  
+  
+var a = [4, 9, 2, 3, 5, 7, 8, 1, 6];  
+  
+var col = 3;  
+var row = 3;  
+var r = 100;  
+var digit = new Digit();  
+  
+for (var i =0; i < col; i++) {  
+    for (var j=0; j < row; j++) {  
+        setSector(col, row, i+1, j+1);  
+        digit.number(a[i*col+j], 0, 0, r);  
+    }  
+}  
 function drawPath2(arr, x, y, r, str) {   
     plot.fillText(str, 30, 20, 200);  
       

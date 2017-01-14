@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>画布模板</title>
+    <script src="008.js"></script>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById('canvas');
+        var plot = canvas.getContext('2d');
+        picData2();
+
+
+        plot.fillText('[机器小伟]的一天', 20, 30, 100);  
+      
+    /* 
+    setSector(2,2,1,1);  
+    plot.fillText('起床', -20, -30, 100); 
+    clock(6, 30); 
+     
+    setSector(2,2,1,2);  
+    plot.fillText('早餐', -20, -30, 100); 
+    clock(7, 0); 
+     
+    setSector(2,2,2,1);  
+    plot.fillText('早班', -20, -30, 100); 
+    clock(8, 30); 
+     
+    setSector(2,2,2,2);  
+    plot.fillText('午餐', -20, -30, 100); 
+    clock(12, 30); 
+    */  
+      
+    setSector(2,2,1,1);   
+    plot.fillText('午班', -20, -30, 100);  
+    clock(13, 30);  
+      
+    setSector(2,2,1,2);   
+    plot.fillText('晚餐', -20, -30, 100);  
+    clock(18, 0);  
+      
+    setSector(2,2,2,1);   
+    plot.fillText('娱乐', -20, -30, 100);  
+    clock(19, 0);  
+      
+    setSector(2,2,2,2);   
+    plot.fillText('休息', -20, -30, 100);  
+    clock(20, 30);
+    </script>
+</body>
+</html>
