@@ -161,3 +161,220 @@ function readPic() {
 }  
   
 //left:top:right:bottom[5, 13, 260, 15]
+
+
+/** 
+* @usage   画一条与给定长度等长的线段 
+* @author  mw 
+* @date    2016年01月01日  星期五  09:14:35  
+* @param 
+* @return 
+* 
+*/  
+//原图与处理结果对比  
+function drawLine() {  
+        //图片  
+        var image = new Image();  
+        image.src = "./1.jpg";  
+  
+        image.onload = function() {  
+            plot.drawImage(image);  
+              
+            plot.save();  
+            plot.setLineWidth(3);  
+              
+            //样式字符串  
+            var s;  
+            //颜色值  
+            var R = 0, G = 0 , B = 0;  
+              
+            //起点和终点的坐标  
+            //left:top:right:bottom[5, 13, 260, 15]  
+            var x1 = 5, x2 = 260, y;  
+  
+            for (var i = 0; i < 10; i++) {  
+                s = "";  
+                y = 22+i*10;  
+                  
+                R = (R + 10 * i) % 255;  
+                G = (G + 15 * i) % 255;  
+                B = (B + 20 * i) % 255;  
+                  
+                s = s + 'rgba(' + R.toFixed(0)+','+G.toFixed(0)+','+B.toFixed(0)+',1.0)';  
+          
+                plot.setStrokeStyle(s);   
+                  
+                //fillCircle(x1, y, 3);  
+                //fillCircle(x2, y, 3);  
+                  
+                plot.beginPath()  
+                    .moveTo(x1, y)  
+                    .lineTo(x2, y)  
+                    .closePath()  
+                    .stroke();            
+              
+            }  
+              
+            plot.restore();   
+  
+        }         
+  
+}  
+  
+//left:top:right:bottom[27, 9, 583, 82]</span>  
+
+/** 
+* @usage   定出刻度线 
+* @author  mw 
+* @date    2016年01月01日  星期五  09:14:35  
+* @param 
+* @return 
+* 
+*/  
+//原图与处理结果对比  
+function drawLine() {  
+        //图片  
+        var image = new Image();  
+        image.src = "./1.jpg";  
+  
+        image.onload = function() {  
+            plot.drawImage(image);  
+              
+            plot.save();  
+            plot.setLineWidth(3);  
+              
+            //样式字符串  
+            var s;  
+            //颜色值  
+            var R = 255, G = 0 , B = 0;  
+              
+            //起点和终点的坐标  
+            //3cm = 113px 5cm = 189px 10cm=378px  
+            var x1 = 27, x2 = x1+113, x3=x1+189, x4=x1+378, y=82, y2=y-10;  
+            plot.fillText('起点', x1-10, y2+30, 100);  
+  
+                plot.beginPath()  
+                    .moveTo(x2, y)  
+                    .lineTo(x2, y2)  
+                    .closePath()  
+                    .stroke();    
+                plot.fillText('3cm', x2-10, y2+30, 100);  
+                  
+                plot.beginPath()  
+                    .moveTo(x3, y)  
+                    .lineTo(x3, y2)  
+                    .closePath()  
+                    .stroke();    
+                plot.fillText('5cm', x3-10, y2+30, 100);  
+                  
+                plot.beginPath()  
+                    .moveTo(x4, y)  
+                    .lineTo(x4, y2)  
+                    .closePath()  
+                    .stroke();    
+                plot.fillText('10cm', x4-10, y2+30, 100);  
+              
+            plot.restore();   
+  
+        }         
+  
+}  
+/** 
+* @usage   用图片对应像素信息填充 
+* @author  mw 
+* @date    2016年01月01日  星期五  11:12:15  
+* @param 
+* @return 
+* 
+*/  
+function drawWithColor(array, xOffset, yOffset, scale) {  
+    var len = array.length;  
+      
+    var s = '';  
+    var x, y, R, G, B;  
+    var dotR = 2;  
+  
+      
+    for (var i =0; i < len; i++) {  
+        s = '';  
+        x = Math.floor(xOffset + array[i][0]*scale);  
+        y = Math.floor(yOffset + array[i][1]*scale);  
+          
+      
+        R = array[i][2];  
+        G = array[i][3];  
+        B = array[i][4];  
+        s = s + 'rgba(' + R.toFixed(0)+','+G.toFixed(0)+','+B.toFixed(0)+',1.0)';  
+          
+        plot.setFillStyle(s);         
+  
+        fillCircle(x+0.5*dotR, y+0.5*dotR, 2);  
+      
+    }  
+}
+
+/** 
+* @usage   定出刻度线，加画小图样 
+* @author  mw 
+* @date    2016年01月01日  星期五  09:14:35  
+* @param 
+* @return 
+* 
+*/  
+//原图与处理结果对比  
+function drawLineAndPic() {  
+  
+        //图片  
+        var image = new Image();  
+        image.src = "./1.jpg";  
+  
+        var width = 600;  
+        var height = 400;         
+  
+        plot.translate(0, 100);  
+        image.onload = function() {  
+            plot.drawImage(image);  
+            var imagedata = plot.getImageData(0, 0, width, height);           
+  
+            plot.setLineWidth(3);  
+              
+            //样式字符串  
+            var s;  
+            //颜色值  
+            var R = 255, G = 0 , B = 0;  
+              
+            //起点和终点的坐标  
+            //3cm = 113px 5cm = 189px 10cm=378px  
+            var x1 = 43, x2 = x1+113, x3=x1+189, x4=x1+378, y=82, y2=y-10;  
+            var yoff = 60;  
+            drawWithColor($picDataArray_1, x2, y-yoff, 0.15);  
+            drawWithColor($picDataArray_2, x3, y-yoff, 0.15);  
+            drawWithColor($picDataArray_3, x4, y-yoff, 0.15);  
+              
+            plot.setFillStyle('black');  
+            plot.fillText('起点', x1-10, y2+30, 100);  
+              
+                plot.beginPath()  
+                    .moveTo(x2, y)  
+                    .lineTo(x2, y2)  
+                    .closePath()  
+                    .stroke();    
+                plot.fillText('3cm', x2-10, y2+30, 100);  
+                  
+                plot.beginPath()  
+                    .moveTo(x3, y)  
+                    .lineTo(x3, y2)  
+                    .closePath()  
+                    .stroke();    
+                plot.fillText('5cm', x3-10, y2+30, 100);  
+                  
+                plot.beginPath()  
+                    .moveTo(x4, y)  
+                    .lineTo(x4, y2)  
+                    .closePath()  
+                    .stroke();    
+                plot.fillText('10cm', x4-10, y2+30, 100);  
+  
+        }     
+  
+}<
