@@ -65,8 +65,7 @@ function step2() {
     neves.item(6, x5*scale, y5*scale, Math.PI/4);  
     neves.item(7, x6*scale, y6*scale, Math.PI/2);  
 } 
-/
-** 
+/** 
 * @usage   七巧板--鱼 
 * @author  mw 
 * @date    2016年01月04日  星期一  14:06:05  
