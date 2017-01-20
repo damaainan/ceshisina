@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>画布模板</title>
-    <script src="005.js"></script>
+    <!-- <script src="005.js"></script> -->
+
 </head>
 <body>
     <canvas id="canvas" width="400" height="400"></canvas>
     <script type="text/javascript">
         var canvas = document.getElementById('canvas');
-        var plot = canvas.getContext('2d');
-        picData2();
+    var ctx = canvas.getContext('2d');
+    // console.log(ctx);
+        // picData2();
+    </script>
+
+
+    <script src="init.js"></script>
+ <script type="text/javascript">
+
+    setPreference();
     </script>
 </body>
 </html>

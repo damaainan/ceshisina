@@ -1,11 +1,13 @@
 // http://blog.csdn.net/mwsister/article/details/50350420
 // [从头学数学] 第05节 认识图形（一）
+// 
+// init 函数   setPreference 函数  digit 对象  没有定义
 
 // function init(){
 
 // }
-plot.init();  
-setPreference();  
+// plot.init();  
+// setPreference();  
   
 var a = [4, 9, 2, 3, 5, 7, 8, 1, 6];  
   
