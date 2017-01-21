@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用面向对象的思想 封装 在canvas绘制直线的函数</title>
+</head>
+<body>
+    <canvas id="cv"  width="600" height="300"></canvas>
+</body>
+</html>
+<script>
+    var cv = document.getElementById("cv");
+    // cv.width = 600;
+    // cv.height = 300;
+    // cv.style.border = "1px solid red";
+    var ctx = cv.getContext("2d");
+
+    //面向对象编程
+    //1 创建构造函数
+    //2 构造函数的原型设置
+    //3 调用的时候，通过 new+构造函数 来创建一个对象（实例）
+
+    //构造绘制直线的函数
+    function Plot() {
+        // this.init();
+    }
+    //替换原型对象实现继承
+    Plot.prototype = {
+        // constructor: Plot,
+        init: function (ctx) {
+            this.ctx = ctx;
+            return this;
+        },
+        make: function(parameters){
+            this.startX = parameters.points[0];
+            this.startY = parameters.points[1];
+            this.endX = parameters.points[2];
+            this.endY = parameters.points[3];
+            //以下3个属性，可以不设置，用短路运算实现添加默认属性值
+            this.lineWidth = parameters.lineWidth || 1;
+            this.lineDash = parameters.lineDash || [];
+            this.strokeStyle = parameters.strokeStyle || "#000";
+            return this;
+        },
+        //原型中，一般用来储存对象的方法或者共有的属性
+        stroke: function () {
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.startX, this.startY);
+            this.ctx.lineTo(this.endX, this.endY);
+            this.ctx.lineWidth = this.lineWidth;
+            this.ctx.setLineDash(this.lineDash);
+            this.ctx.strokeStyle = this.strokeStyle;
+            this.ctx.stroke();
+            return this;
+        }
+    };
+
+    //调用构造函数，传入参数
+    /*var line = new Plot({
+        ctx: ctx,
+        points: [100, 100, 300, 100],
+        lineDash: [4, 2],
+        strokeStyle: "red"
+    });*/
+    var parameters={
+        points: [100, 100, 300, 100],
+        lineDash: [4, 2],
+        strokeStyle: "red"
+    };
+    var line = new Plot();
+    line.init(ctx)
+    .make(parameters);
+    line.stroke();
+    // var line2 = new Plot({
+    //     ctx: ctx,
+    //     points: [100, 200, 300, 200],
+    //     lineWidth: 6
+    // });
+    // line2.stroke();
+</script>
