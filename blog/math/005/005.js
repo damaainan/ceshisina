@@ -7,25 +7,25 @@
 
 // }
 // plot.init();  
-// setPreference();  
+setPreference();  
   
 var a = [4, 9, 2, 3, 5, 7, 8, 1, 6];  
   
 var col = 3;  
 var row = 3;  
 var r = 100;  
-var digit = new Digit();  
+// var digit = new Digit();  
   
-for (var i =0; i < col; i++) {  
-    for (var j=0; j < row; j++) {  
-        setSector(col, row, i+1, j+1);  
-        digit.number(a[i*col+j], 0, 0, r);  
-    }  
-}  
-function drawPath2(arr, x, y, r, str) {   
+// for (var i =0; i < col; i++) {  
+//     for (var j=0; j < row; j++) {  
+//         setSector(col, row, i+1, j+1);  
+//         digit.number(a[i*col+j], 0, 0, r);  
+//     }  
+// }  
+function drawPath2(arr, x, y, r, str="") {   
     plot.fillText(str, 30, 20, 200);  
       
-    plot.lineWidth=2;  
+    plot.lineWidth=1;  
       
     var pathArr = new Array();  
     pathArr = arr;  
@@ -33,7 +33,7 @@ function drawPath2(arr, x, y, r, str) {
     y = y ? y: 0;  
     r = r ? r : 100;  
     //缩放比例，因为路径map是规整在直径100的外接圆里的  
-    var scale = Math.round(r / 100);  
+    var scale = (r / 100).toFixed(2);  
       
     for (var i=0; i < pathArr.length-1; i++) {  
         plot.moveTo(-(pathArr[i][0] * scale+x), (pathArr[i][1]*scale+y)) ;             
@@ -41,7 +41,7 @@ function drawPath2(arr, x, y, r, str) {
     }  
     plot.stroke();  
       
-    plot.restore();  
+    // plot.restore();  
   
 }
 
@@ -57,10 +57,13 @@ this.sphere = [[-50,-8,-43,-15], [-50,-8,-43,-8], [-50,-8,-50,8], [-48,-14,-39,-
 }
 
 function picData() {  
+    //translate 是在前面图像的基础上继续位置变化
+    //
+    //位置变换有问题  restore()会改变变换结果
   
     // plot.init();  
-    // setPreference();  
-    // setSector(1,1,1,1);  
+    setPreference();  
+    setSector(1,1,1,1);  
     plot.scale(0.8, 0.8);  
       
     var _3d = new Shape3D();  
@@ -91,8 +94,8 @@ function picData() {
 
 function picData2() {  
     // plot.init();  
-    // setPreference();  
-    // setSector(1,1,1,1);  
+    setPreference();  
+    setSector(1,1,1,1);  
     plot.translate(150,100);  
         plot.scale(1.5,1.5);  
       
@@ -106,52 +109,54 @@ function picData2() {
     drawPath2(_3d.sphere, 0,0, 30);  
     plot.translate(150,-20);  
     drawPath2(_3d.cubic, 100, 0, 60);  
-    plot.restore();  
+    // plot.restore();  
       
     plot.save()  
-        plot.translate(-150, -120)  
-        plot.scale(1, 0.4);       
+        .translate(0, 120)  
+        .scale(1, 0.4);       
     drawPath2(_3d.brick, 0, 0, 180);      
-    plot.restore();  
+    // plot.restore();  
   
     //两个圆柱  
     plot.save()  
-        plot.translate(-150, -80)  
-        plot.scale(1.5, 1);  
+        .translate(-150, -80)  
+        .scale(1.5, 1);  
     drawPath2(_3d.pollar, 0,0, 60);  
-    plot.restore();  
+    // plot.restore();  
       
     plot.save()  
-        plot.translate(0, -80)  
-        plot.scale(1.5, 1);  
+        .translate(0, -80)  
+        .scale(1.5, 1);  
     drawPath2(_3d.pollar, 0,0, 60);  
-    plot.restore();  
+    // plot.restore();  
       
     //三块板  
     plot.save()  
-        plot.translate(-100, -50)  
-        plot.scale(1, 0.2);       
+        .translate(-100, -50)  
+        .scale(1, 0.2);       
     drawPath2(_3d.brick, 0, 0, 300);      
-    plot.restore();  
+    // plot.restore();  
       
     plot.save()  
-        plot.translate(-140, -20)  
-        plot.scale(1, 0.6);       
+        .translate(-140, -20)  
+        .scale(1, 0.6);       
     drawPath2(_3d.brick, 0, 0, 100);      
-    plot.restore();  
+    // plot.restore();  
       
     plot.save()  
-        plot.translate(-180, 0)  
-        plot.scale(1, 0.6);       
+        .translate(-180, 0)  
+        .scale(1, 0.6);       
     drawPath2(_3d.brick, 0, 0, 100);      
-    plot.restore();  
+    // plot.restore();  
       
     //右下角两个圆柱  
     plot.save()  
-        plot.translate(-20, -15);  
+        .translate(-20, -15);  
     drawPath2(_3d.pollar, 0,0, 60);  
     plot.translate(20, 5);  
     drawPath2(_3d.pollar, 0,0, 60);  
-    plot.restore();  
+    // plot.restore();  
   
 }
+// picData();
+picData2();

@@ -94,6 +94,22 @@ Plot.prototype ={
     strokeRect()    绘制矩形（无填充）
     clearRect() 在给定的矩形内清除指定的像素
     */
+   rect:function(a,b,c,d){
+    this.ctx.rect(a,b,c,d);
+        return this;
+   },
+   fillRect:function(a,b,c,d){
+    this.ctx.fillRect(a,b,c,d);
+        return this;
+   },
+   strokeRect:function(a,b,c,d){
+    this.ctx.strokeRect(a,b,c,d);
+        return this;
+   },
+   clearRect:function(a,b,c,d){
+    this.ctx.clearRect(a,b,c,d);
+        return this;
+   },
 
     /*
     路径
@@ -111,8 +127,21 @@ Plot.prototype ={
     arcTo() 创建两切线之间的弧/曲线
     isPointInPath() 如果指定的点位于当前路径中，则返回 true，否则返回 false
     */
+   
+   fill:function(){
+    this.ctx.fill();
+    return this;
+   },
+   stroke:function(){
+    this.ctx.stroke();
+    return this;
+   },
    beginPath:function(){
     this.ctx.beginPath();
+    return this;
+   },
+   moveTo:function(x,y){
+    this.ctx.moveTo(x,y);
     return this;
    },
    closePath:function(){
@@ -123,8 +152,17 @@ Plot.prototype ={
     this.ctx.lineTo(x,y);
     return this;
    },
-   moveTo:function(x,y){
-    this.ctx.moveTo(x,y);
+   //一旦剪切了某个区域，则所有之后的绘图都会被限制在被剪切的区域内（不能访问画布上的其他区域）。您也可以在使用 clip() 方法前通过使用 save() 方法对当前画布区域进行保存，并在以后的任意时间对其进行恢复（通过 restore() 方法）。
+   clip:function(){
+    this.ctx.clip();
+    return this;
+   },
+   quadraticCurveTo:function(cpx,cpy,x,y){
+    this.ctx.quadraticCurveTo(cpx,cpy,x,y);
+    return this;
+   },
+   bezierCurveTo:function(cp1x,cp1y,cp2x,cp2y,x,y){
+    this.ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,x,y);
     return this;
    },
    arcTo:function(x1,y1,x2,y2,r){
@@ -136,13 +174,9 @@ Plot.prototype ={
     this.ctx.arc(x,y,r,sAngle,eAngle,counterclockwise);
     return this;
    },
-   fill:function(){
-    this.ctx.fill();
-    return this;
-   },
-   stroke:function(){
-    this.ctx.stroke();
-    return this;
+
+   isPointInPath:function(x,y){
+    return this.ctx.isPointInPath(x,y);
    },
 
 
@@ -155,11 +189,27 @@ Plot.prototype ={
     transform() 替换绘图的当前转换矩阵  会变化后的结果继续编
     setTransform()  将当前转换重置为单位矩阵。然后运行 transform()  从最初的开始变化
     */
-
+    scale:function(a,b){
+        this.ctx.scale(a,b);
+        return this;
+    },
+    rotate:function(angle){
+        this.ctx.rotate(angle);
+        return this;
+    },
+    translate:function(a,b){
+        this.ctx.translate(a,b);
+        return this;
+    },
+    transform:function(a,b,c,d,e,f){
+        this.ctx.transform(a,b,c,d,e,f);
+        return this;
+    },
     setTransform:function(a,b,c,d,e,f){
         this.ctx.setTransform(a,b,c,d,e,f);
         return this;
     },
+
 
 
 
@@ -189,6 +239,10 @@ Plot.prototype ={
         //     .setTextBaseline("alphabetic") 
     setTextBaseline:function(style){
         this.ctx.textBaseline=style;
+        return this;
+    }, 
+    fillText:function(a,b,c){
+        this.ctx.fillText(a,b,c);
         return this;
     }, 
     /*
@@ -224,6 +278,22 @@ Plot.prototype ={
     getImageData()  返回 ImageData 对象，该对象为画布上指定的矩形复制像素数据
     putImageData()  把图像数据（从指定的 ImageData 对象）放回画布上
     */
+   drawImage:function(img,x=0,y=0){
+        this.ctx.drawImage(img,x,y);
+        return this;
+    },
+    createImageData:function(x,y){
+        this.ctx.createImageData(x,y);
+        return this;
+    },
+    getImageData:function(x,y,w,h){
+        return this.ctx.getImageData(x,y,w,h);
+         
+    },
+    putImageData:function(img,x,y){
+        this.ctx.putImageData(img,x,y);
+        return this;
+    },
 
 
     /*其他
@@ -238,6 +308,11 @@ Plot.prototype ={
         // console.log(this);
         this.ctx.save();
         return this;
+    },
+    restore:function(){
+        // console.log(this);
+        this.ctx.restore();
+        return this;
     }
 };
 
@@ -245,11 +320,6 @@ Plot.prototype ={
 
 /** 
 * @usage   初始化环境 
-* @author  mw 
-* @date    2015年11月27日  星期五  08:41:41  
-* @param 
-* @return 
-* 
 */  
 
     function setPreference() {  
@@ -258,10 +328,10 @@ Plot.prototype ={
             .setStrokeStyle("black")  
             .setFillStyle('#666666')  
             //阴影  
-            .setShadowColor('#CCCCCC')  
-            .setShadowBlur(20)  
-            .setShadowOffsetX(10)  
-            .setShadowOffsetY(10)  
+            // .setShadowColor('#CCCCCC')  
+            // .setShadowBlur(20)  
+            // .setShadowOffsetX(10)  
+            // .setShadowOffsetY(10)  
             //直线  
             .setLineCap("round")  
             .setLineJoin("round")  
@@ -283,10 +353,284 @@ Plot.prototype ={
 function setSector(row, col, m, n) {  
     var width = 600;  
     var height = 400;  
+    var hw=width/(col*2);
+    var hh=height/(row*2);
       
     if (m<=row && n<=col)   
-        plot.setTransform(1,0,0,1,width*(n-1)/col,height*(m-1)/row);  
+        plot.setTransform(1,0,0,1,width*(n-1)/col+hw,height*(m-1)/row+hh);  
+    // console.log(width*(n-1)/col+"****"+height*(m-1)/row);
   
 }
+
+
+/** 
+* @usage   绘制圆形 
+* @author  mw 
+* @date    2015年11月27日  星期五  12:11:38  
+* @param 
+* @return 
+* 
+*/  
+function strokeCircle(x, y, r) {  
+        plot.beginPath()  
+        .arc(x, y, r, 0, 2*Math.PI, true)  
+        .closePath()  
+        .stroke();  
+}  
+  
+function fillCircle(x, y, r) {  
+    plot.beginPath()  
+        .arc(x, y, r, 0, 2*Math.PI, true)  
+        .closePath()  
+        .fill();  
+}  
+  
+/** 
+* @usage   绘制三角形 
+* @author  mw 
+* @date    2015年11月27日  星期五  12:11:38  
+* @param 
+* @return 
+* 
+*/  
+function strokeTri(x, y, r) {  
+    plot.beginPath()  
+        .moveTo(x+r*Math.sin(Math.PI/3), y+r*Math.cos(Math.PI/3))  
+        .lineTo(x, y-r*Math.sin(Math.PI/3))  
+        .lineTo(x-r*Math.sin(Math.PI/3), y+r*Math.cos(Math.PI/3))  
+        .closePath()  
+        .stroke()  
+          
+}  
+  
+function fillTri(x, y, r) {  
+    plot.beginPath()  
+        .moveTo(x+r*Math.sin(Math.PI/3), y+r*Math.cos(Math.PI/3))  
+        .lineTo(x, y-r*Math.sin(Math.PI/3))  
+        .lineTo(x-r*Math.sin(Math.PI/3), y+r*Math.cos(Math.PI/3))  
+        .closePath()  
+        .fill()  
+          
+}  
+
+
+  
+/** 
+* @usage   绘制正方形 
+* @author  mw 
+* @date    2015年11月27日  星期五  12:11:38  
+* @param 
+* @return 
+* 
+*/  
+function strokeSquare(x, y, r) {  
+    var a = r/2;  
+      
+    plot.beginPath()  
+        .moveTo(x-a,y-a)  
+        .lineTo(x+a, y-a)  
+        .lineTo(x+a, y+a)  
+        .lineTo(x-a,y+a)  
+        .closePath()  
+        .stroke()  
+}  
+  
+function fillSquare(x,y,r) {  
+    var a = r/2;  
+      
+    plot.beginPath()  
+        .moveTo(x-a,y-a)  
+        .lineTo(x+a, y-a)  
+        .lineTo(x+a, y+a)  
+        .lineTo(x-a,y+a)  
+        .closePath()  
+        .fill()  
+}  
+  
+/** 
+* @usage   绘制梯形 
+* @author  mw 
+* @date    2015年11月27日  星期五  09:44:10  
+* @param 
+* @return 
+* 
+*/  
+  
+    function strokeTrapezoid(x, y, r) {  
+        var sqrt5 =  2.236;  
+        var a = r * 2 / sqrt5;  
+          
+        plot.beginPath()  
+        .moveTo(x-a/2,y-a/2)  
+        .lineTo(x+a/2, y-a/2)  
+        .lineTo(x+a, y+a/2)  
+        .lineTo(x-a,y+a/2)  
+        .closePath()  
+        .stroke()  
+    }  
+      
+    function fillTrapezoid(x, y, r) {  
+        var sqrt5 =  2.236;  
+        var a = r * 2 / sqrt5;  
+          
+        plot.beginPath()  
+        .moveTo(x-a/2,y-a/2)  
+        .lineTo(x+a/2, y-a/2)  
+        .lineTo(x+a, y+a/2)  
+        .lineTo(x-a,y+a/2)  
+        .closePath()  
+        .fill()  
+    }  
+      
+      
+/** 
+* @usage  绘制菱形 
+* @author  mw 
+* @date    2015年11月27日  星期五  09:44:10  
+* @param 
+* @return 
+* 
+*/  
+    function strokeDiamond(x, y, r) {  
+        var cos30 = Math.cos(Math.PI/6);  
+        var sin30 = Math.sin(Math.PI/6);  
+          
+        var a = r * cos30;  
+        var h = r * sin30;  
+        var b = r/cos30-a;  
+          
+        plot.beginPath()  
+            .moveTo(x-b,y-h)  
+            .lineTo(x+a, y-h)  
+            .lineTo(x+b, y+h)  
+            .lineTo(x-a,y+h)  
+            .closePath()  
+            .stroke()  
+          
+    }  
+      
+    function fillDiamond(x, y, r) {  
+        var cos30 = Math.cos(Math.PI/6);  
+        var sin30 = Math.sin(Math.PI/6);  
+          
+        var a = r * cos30;  
+        var h = r * sin30;  
+        var b = r/cos30-a;  
+          
+        plot.beginPath()  
+            .moveTo(x-b,y-h)  
+            .lineTo(x+a, y-h)  
+            .lineTo(x+b, y+h)  
+            .lineTo(x-a,y+h)  
+            .closePath()  
+            .fill()  
+      
+    }  
+  
+/** 
+* @usage  绘制五边形 
+* @author  mw 
+* @date    2015年11月27日  星期五  10:13:24  
+* @param 
+* @return 
+* 
+*/    
+    function strokePentagon(x, y, r) {  
+        var cos72 = Math.cos(2 * Math.PI/5);  
+        var sin72 = Math.sin(2 * Math.PI/5);  
+        var cos36 = Math.cos(Math.PI/5);  
+        var sin36 = Math.sin(Math.PI/5);  
+          
+          
+        var a = 2 * r * sin36;  
+        var h = a*sin72-r*cos36;  
+        var b = a/2+a*cos72;  
+          
+        plot.beginPath()  
+            .moveTo(x-r*sin36,y-r*cos36)  
+            .lineTo(x+r*sin36, y-r*cos36)  
+            .lineTo(x+b, y+h)  
+            .lineTo(x,y+r)  
+            .lineTo(x-b,y+h)  
+            .closePath()  
+            .stroke()         
+      
+    }  
+      
+    function fillPentagon(x, y, r) {  
+        var cos72 = Math.cos(2 * Math.PI/5);  
+        var sin72 = Math.sin(2 * Math.PI/5);  
+        var cos36 = Math.cos(Math.PI/5);  
+        var sin36 = Math.sin(Math.PI/5);  
+          
+          
+        var a = 2 * r * sin36;  
+        var h = a*sin72-r*cos36;  
+        var b = a/2+a*cos72;  
+          
+        plot.beginPath()  
+            .moveTo(x-r*sin36,y-r*cos36)  
+            .lineTo(x+r*sin36, y-r*cos36)  
+            .lineTo(x+b, y+h)  
+            .lineTo(x,y+r)  
+            .lineTo(x-b,y+h)  
+            .closePath()  
+            .fill()       
+      
+    }  
+      
+/** 
+* @usage   绘制五角星 
+* @author  mw 
+* @date    2015年11月27日  星期五  11:19:42  
+* @param 
+* @return 
+* 
+*/    
+  
+    function strokeStar5p(x, y, r) {  
+        var cos72 = Math.cos(2 * Math.PI/5);  
+        var sin72 = Math.sin(2 * Math.PI/5);  
+        var cos36 = Math.cos(Math.PI/5);  
+        var sin36 = Math.sin(Math.PI/5);  
+          
+          
+        var a = 2 * r * sin36;  
+        var h = a*sin72-r*cos36;  
+        var b = a/2+a*cos72;  
+          
+        plot.beginPath()  
+            .moveTo(x-r*sin36,y-r*cos36) //1              
+            .lineTo(x+b, y+h) //3             
+            .lineTo(x-b,y+h) //5  
+            .lineTo(x+r*sin36, y-r*cos36) //2  
+            .lineTo(x,y+r) //4  
+            .closePath()  
+            .stroke()     
+      
+    }  
+  
+    function fillStar5p(x, y, r) {  
+        var cos72 = Math.cos(2 * Math.PI/5);  
+        var sin72 = Math.sin(2 * Math.PI/5);  
+        var cos36 = Math.cos(Math.PI/5);  
+        var sin36 = Math.sin(Math.PI/5);  
+          
+          
+        var a = 2 * r * sin36;  
+        var h = a*sin72-r*cos36;  
+        var b = a/2+a*cos72;  
+          
+        plot.beginPath()  
+            .moveTo(x-r*sin36,y-r*cos36) //1              
+            .lineTo(x+b, y+h) //3             
+            .lineTo(x-b,y+h) //5  
+            .lineTo(x+r*sin36, y-r*cos36) //2  
+            .lineTo(x,y+r) //4  
+            .closePath()  
+            .fill()   
+      
+    }  
+
 
 var plot = new Plot();
