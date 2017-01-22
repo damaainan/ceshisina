@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+    <title>智能粒子</title>
+    <meta charset='utf-8' />
+    <style type="text/css">
+        body{background-color:black;}
+        #Canvas{margin:50px auto;display:block;border:1px red solid;}
+    </style>
+</head>
+
+<body>
+    <canvas width='300' height='300' id='Canvas'>您的浏览器不支持canvas</canvas>
+</body>
+<script type="text/javascript">
+    /*
+     *用面向对象编程方法实现的粒子
+     *by @谢帅shawn
+     */
+    //初始化画布
+    var canvas=document.getElementById('Canvas');
+    var ctx=canvas.getContext('2d');
+    
+    /*
+     *创建一个圆环类Circle,智能圆环的模型
+     */
+    var Circle=function(x,y,speeds){
+        this.x=x;
+        this.y=y;
+        this.speed=speeds;
+    }
+    Circle.prototype={
+        //draw方法，画出像素
+        draw:function(){    
+            
+            var n=this.y*imgdata.width+this.x;
+            var i=n*4;
+            data[i]+=207;
+            data[i+1]+=14;
+            data[i+2]+=139;
+            data[i+3]+=150;
+        },
+        //move方法，圆环坐标自加速度，并执行draw方法
+        move:function(){
+            this.x+=this.speed.speedX;
+            this.y+=this.speed.speedY;
+            this.draw();
+        }
+    }
+    /*
+     *创建一个Frame帧类,管理所有circles实例，实现画布的渲染
+     */
+    var Frame=function(){
+        this.circles=[];
+        this.sint=null;
+    }
+    Frame.prototype={
+        //star开始定时器，循环调用渲染方法
+        star:function () {
+            this.lastFrame=(new Date()).getTime();
+            this.sint=setInterval((function(progra){
+                return function(){progra.render();}
+            })(this),30);    
+        },
+        //render渲染方法
+        render:function () {
+            //清除上一帧
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            imgdata=ctx.getImageData(0,0,canvas.width,canvas.height);
+            data=imgdata.data;
+            //实时输出帧率
+            this.nowFrame=(new Date()).getTime();
+            this.ftp=1000/(this.nowFrame-this.lastFrame);
+            this.lastFrame=this.nowFrame;
+            console.log(this.ftp);
+            //调用每个实例circle的运动方法，监听circle坐标实现碰壁反弹效果
+            for (i in this.circles) {
+                this.circles[i].move();
+                if(this.circles[i].x>canvas.width || this.circles[i].x<0){
+                    this.circles[i].speed.speedX=-this.circles[i].speed.speedX;
+                    //delete this.circles[i];可以实现碰壁消失的效果，delete可删除实例
+                }
+                if(this.circles[i].y>canvas.height|| this.circles[i].y<0)
+                    this.circles[i].speed.speedY=-this.circles[i].speed.speedY;
+
+            }
+            ctx.putImageData(imgdata,0,0);
+        }    
+    }
+    /*
+     *Main
+     */
+    //创建一个帧实例fra
+    var fra=new Frame();
+    //创建100个圆环实例circles【i】
+    for (var i=0; i<20000; i++) {
+        //输入speed属性
+        var speed={
+            speedX:Math.floor(Math.random()*3),
+            speedY:Math.floor(Math.random()*10+4)
+        }
+        //创建实例
+        var circle=new Circle(Math.floor(Math.random()*canvas.width/2),Math.floor(Math.random()*canvas.height/2),speed);
+        fra.circles[i]=circle;
+    }
+    //开始渲染
+    fra.star();
+</script>
+</html>

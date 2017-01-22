@@ -1,3 +1,19 @@
+function Shape() {  
+    this.rect = function(x, y, w, h) {  
+        w = Math.abs(w);  
+        h = Math.abs(h);  
+        return plot.strokeRect(x-w/2, y-h/2, w, h);  
+    };  
+    this.fillRect = function(x, y, w, h) {  
+        w = Math.abs(w);  
+        h = Math.abs(h);
+        // x=x+w;  
+    	console.log(x+"***"+w);
+        return plot.fillRect(x-w/2+15, y-h/2, w, h);  
+    };  
+      
+}  
+
 /** 
 * @usage   数字形状 
 * @author  mw 
@@ -7,7 +23,7 @@
 * 
 */  
     function Digit() {  
-        var shape = plot;
+        var shape = new Shape();
           
         //8  
         this.eight = function(x, y, r) {  
@@ -299,12 +315,12 @@
             */  
             //填充  
             //shape.fillRect(x, y, h, w0); //中横  
-            shape.fillRect(x, y, w0, h); //上左竖  
-            shape.fillRect(x+2*w, y, w0, h); //上右竖  
-            shape.fillRect(x, y+2*w, w0, h); //下左竖  
-            shape.fillRect(x+2*w, y+2*w, w0, h); //下右竖  
-            shape.fillRect(x, y, h, w0); //上横  
-            shape.fillRect(x, y+2*h, h, w0); //下横  
+             shape.fillRect(x-w, y-w, w0, h); //上左竖  
+            shape.fillRect(x+w, y-w, w0, h); //上右竖  
+            shape.fillRect(x-w, y+w, w0, h); //下左竖  
+            shape.fillRect(x+w, y+w, w0, h); //下右竖  
+            shape.fillRect(x, y-h, h, w0); //上横  
+            shape.fillRect(x, y+h, h, w0); //下横
               
             plot.restore();  
           
@@ -338,19 +354,19 @@
 setPreference();
 
 
-    var digit = new Digit();  
-// digit.eight(50,20,90);  
-// digit.one(100, 20, 90);  
-// digit.two(150, 20, 90);  
-// digit.three(220, 20, 90);  
-// digit.four(270, 20, 90);  
-// digit.five(320, 20, 90);  
-// digit.six(370, 20, 90);  
-// digit.seven(420, 20, 90);  
-// digit.nine(470, 20, 90);  
-// digit.zero(520, 20, 90);
+var digit = new Digit();  
+digit.eight(50,50,50);  
+digit.one(100, 50, 50);  
+digit.two(150, 50, 50);  
+digit.three(220, 50, 50);  
+digit.four(270, 50, 50);  
+digit.five(320, 50, 50);  
+digit.six(370, 50, 50);  
+digit.seven(420, 50, 50);  
+digit.nine(470, 50, 50);  
+digit.zero(520, 50, 50);
 
 
-// for (var i = 0; i < 10; i++) {  
-    digit.number(0, 0 * 50, 50, 30);  
-// }  
+for (var i = 0; i < 10; i++) {  
+    digit.number(i, i * 50, 150, 50);  
+}  

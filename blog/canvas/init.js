@@ -127,8 +127,21 @@ Plot.prototype ={
     arcTo() 创建两切线之间的弧/曲线
     isPointInPath() 如果指定的点位于当前路径中，则返回 true，否则返回 false
     */
+   
+   fill:function(){
+    this.ctx.fill();
+    return this;
+   },
+   stroke:function(){
+    this.ctx.stroke();
+    return this;
+   },
    beginPath:function(){
     this.ctx.beginPath();
+    return this;
+   },
+   moveTo:function(x,y){
+    this.ctx.moveTo(x,y);
     return this;
    },
    closePath:function(){
@@ -139,8 +152,17 @@ Plot.prototype ={
     this.ctx.lineTo(x,y);
     return this;
    },
-   moveTo:function(x,y){
-    this.ctx.moveTo(x,y);
+   //一旦剪切了某个区域，则所有之后的绘图都会被限制在被剪切的区域内（不能访问画布上的其他区域）。您也可以在使用 clip() 方法前通过使用 save() 方法对当前画布区域进行保存，并在以后的任意时间对其进行恢复（通过 restore() 方法）。
+   clip:function(){
+    this.ctx.clip();
+    return this;
+   },
+   quadraticCurveTo:function(cpx,cpy,x,y){
+    this.ctx.quadraticCurveTo(cpx,cpy,x,y);
+    return this;
+   },
+   bezierCurveTo:function(cp1x,cp1y,cp2x,cp2y,x,y){
+    this.ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,x,y);
     return this;
    },
    arcTo:function(x1,y1,x2,y2,r){
@@ -152,13 +174,9 @@ Plot.prototype ={
     this.ctx.arc(x,y,r,sAngle,eAngle,counterclockwise);
     return this;
    },
-   fill:function(){
-    this.ctx.fill();
-    return this;
-   },
-   stroke:function(){
-    this.ctx.stroke();
-    return this;
+
+   isPointInPath:function(x,y){
+    return this.ctx.isPointInPath(x,y);
    },
 
 
@@ -260,6 +278,22 @@ Plot.prototype ={
     getImageData()  返回 ImageData 对象，该对象为画布上指定的矩形复制像素数据
     putImageData()  把图像数据（从指定的 ImageData 对象）放回画布上
     */
+   drawImage:function(img,x=0,y=0){
+        this.ctx.drawImage(img,x,y);
+        return this;
+    },
+    createImageData:function(x,y){
+        this.ctx.createImageData(x,y);
+        return this;
+    },
+    getImageData:function(x,y,w,h){
+        return this.ctx.getImageData(x,y,w,h);
+         
+    },
+    putImageData:function(img,x,y){
+        this.ctx.putImageData(img,x,y);
+        return this;
+    },
 
 
     /*其他
@@ -294,10 +328,10 @@ Plot.prototype ={
             .setStrokeStyle("black")  
             .setFillStyle('#666666')  
             //阴影  
-            .setShadowColor('#CCCCCC')  
-            .setShadowBlur(20)  
-            .setShadowOffsetX(10)  
-            .setShadowOffsetY(10)  
+            // .setShadowColor('#CCCCCC')  
+            // .setShadowBlur(20)  
+            // .setShadowOffsetX(10)  
+            // .setShadowOffsetY(10)  
             //直线  
             .setLineCap("round")  
             .setLineJoin("round")  
