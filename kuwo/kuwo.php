@@ -1,6 +1,7 @@
 <?php
 header("Content-type:text/html; Charset=utf-8");
 require_once('phpQuery/phpQuery.php');
+include("../../xhgui/external/header.php");
 set_time_limit(0);
 class Kuwo{
 
