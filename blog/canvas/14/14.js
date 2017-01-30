@@ -7,7 +7,7 @@
 * 
 */  
 function getSketch() {  
-    plot.init();  
+    // plot.init();  
     setPreference();  
       
     setSector(4,1,1,1);  

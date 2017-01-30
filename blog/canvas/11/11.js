@@ -9,17 +9,17 @@ function myplot() {
           
         //图片  
         var image = new Image();  
-        var oimg= document.getElementsByTagName("img")[0]; 
-        image.src = oimg.src; 
-        image.width=oimg.width;
-        image.height=oimg.height;
-        // image.src = '1.jpg'; 
+        // var oimg= document.getElementsByTagName("img")[0]; 
+        // image.src = oimg.src; 
+        // image.width=oimg.width;
+        // image.height=oimg.height;
+        image.src = '1.jpg'; 
         // console.log(image.width);
         var width = 600;  
         var height = 400;  
         //结果  
         var retArray = new Array();  
-        // var pointInfo = "[";  
+        var pointInfo = "[";  
           
         image.onload = function() {  
             plot.drawImage(image);
@@ -56,9 +56,9 @@ function myplot() {
                     if (Math.abs(R1-R0) > gap ||   Math.abs(G1-G0)>gap ||   Math.abs(B1-B0)>gap) {  
                         retArray.push(col);  
                         retArray.push(row);  
-                          
+                          // console.log(col);
                         //记录坐标，打印信息  
-                        // pointInfo += "["+col.toString()+", "+row.toString()+"], ";  
+                        pointInfo += "["+col+", "+row+"], ";  
                     }  
                 }  
             }  
@@ -82,7 +82,7 @@ function myplot() {
                         retArray.push(row);  
                           
                         //记录坐标，打印信息  
-                        // pointInfo += "["+col.toString()+", "+row.toString()+"], ";  
+                        pointInfo += "["+col+", "+row+"], ";  
                     }  
                 }  
             }         
@@ -95,7 +95,9 @@ function myplot() {
                   
             }  
                           
-            // pointInfo += "]";  
+            pointInfo += "]";  
+            console.log(pointInfo);
+            // console.log('test');
             // var pointInfoNode = document.createTextNode(pointInfo);  
             // document.body.appendChild(pointInfoNode);  
               
