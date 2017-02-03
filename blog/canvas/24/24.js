@@ -1,3 +1,31 @@
+/** 
+* @usage   轮廓路径绘制 
+* @author  mw 
+* @date    2015年12月07日  星期一  08:30:45  
+* @param   路径数组arr, (x, y)中心点，r外接圆半径限定区域大小 
+* @return 
+* 
+*/  
+  
+function drawPath(arr, x, y, r) {     
+    plot.save()  
+        .setLineWidth(1);  
+    var pathArr = new Array();  
+    pathArr = arr;  
+    x = x ? x : 0;  
+    y = y ? y: 0;  
+    r = r ? r : 100;  
+    //缩放比例，因为路径map是规整在直径100的外接圆里的  
+    var scale = Math.round(r / 100);  
+      
+    for (var i=0; i < pathArr.length-1; i++) {  
+        plot.moveTo(pathArr[i][0] * scale+x, pathArr[i][1]*scale+y)           
+            .lineTo(pathArr[i][2] * scale+x, pathArr[i][3]*scale+y);  
+    }  
+    plot.stroke();  
+    plot.restore();  
+  
+}
 /**
 * @usage   图形路径数组
 * @author  mw

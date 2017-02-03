@@ -80,9 +80,9 @@ for (var i = 0; i < point; i++) {
     plot.moveTo(arr[2*i], arr[2*i+1])  
         .lineTo(arr2[2*i], arr2[2*i+1]);  
 }  
-plot.stroke();  */
+plot.stroke();  
 
-
+*/
 
 
 
@@ -162,12 +162,13 @@ arr[i] = (-arr[i] * scale * 0.5)*Math.cos(Math.PI/(i+1))-100;
 
 
 
-
+/*
     //绘制圆柱体  
-    var x1=0, y1=-100, x2=x1, y2=y1+200;  
+    var x1=150, y1=100, x2=x1, y2=y1+100;  
     var a1=100, b1=50, a2=100, b2=50;  
-      
+    // plot.beginPath()
     plot.ellipse(x1, y1, a1, b1);  
+    // plot.stroke();
     plot.fillellipse(x2, y2, a2, b2);  
       
     plot.moveTo(x1-a1, y1)  
@@ -178,16 +179,23 @@ arr[i] = (-arr[i] * scale * 0.5)*Math.cos(Math.PI/(i+1))-100;
         .lineTo(x2+a2, y2)  
         .stroke();
 
+*/
 
 
-
-
+//路径的开闭存在问题
         //绘制球体  
-    var x1=0, y1=0, x2=x1, y2=y1+200;  
+    var x1=120, y1=100, x2=x1, y2=y1+150;  
     var a1=100, b1=50, a2=100, b2=50;  
-      
+      plot.beginPath()
     plot.fillellipse(x1, y1, a1, b1);  
+    plot.closePath()
+    plot.beginPath()
     plot.ellipse(x1, y1, a1, b1, Math.PI/4);  
+    // plot.save();
+    // plot.closePath()
+    // plot.beginPath()
     plot.ellipse(x1, y1, a1, b1, -Math.PI/4);  
-      
+    // plot.restore();
+    // plot.closePath()
+      plot.stroke();
     strokeCircle(x1, y1, a1);

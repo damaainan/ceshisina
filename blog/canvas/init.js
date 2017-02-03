@@ -313,7 +313,64 @@ Plot.prototype ={
         // console.log(this);
         this.ctx.restore();
         return this;
-    }
+    },
+    ellipse:function(x, y, radiusX, radiusY, rotation=0, startAngle=0, endAngle=2 * Math.PI, anticlockwise=true){
+        // this.save();
+        this.ctx.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
+        // this.restore();
+        return this;
+    },
+    // fillellipse:function(x, y, radiusX, radiusY, rotation=0, startAngle=0, endAngle=2 * Math.PI, anticlockwise=true){
+    //     this.ctx.fillellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
+    //     return this;
+    // }
+    // ellipse:function(x, y, a, b, rotate=0) {  
+    //     //关键是bezierCurveTo中两个控制点的设置   
+    //     //0.5和0.6是两个关键系数（在本函数中为试验而得）   
+    //     var ox = 0.5 * a,   
+    //     oy = 0.6 * b;   
+    //     var rot = rotate ? -rotate : 0;  
+    //     this.save()  
+    //         .rotate(rot)  
+    //         .translate(x, y)  
+    //         .beginPath()  
+    //         //从椭圆纵轴下端开始逆时针方向绘制   
+    //         .moveTo(0, b)  
+    //         .bezierCurveTo(ox, b, a, oy, a, 0)  
+    //         .bezierCurveTo(a, -oy, ox, -b, 0, -b)  
+    //         .bezierCurveTo(-ox, -b, -a, -oy, -a, 0)  
+    //         .bezierCurveTo(-a, oy, -ox, b, 0, b)  
+    //         .closePath()  
+    //         .stroke()  
+    //         .restore();   
+    //     return this;
+  
+    // }  ,
+    //绘制椭圆   来自 [从头学数学] 第152节 旋转
+    fillellipse:function(x, y, a, b, rotate=0) {  
+        //关键是bezierCurveTo中两个控制点的设置   
+        //0.5和0.6是两个关键系数（在本函数中为试验而得）   
+        var ox = 0.5 * a,   
+        oy = 0.6 * b;   
+        var rot = rotate ? -rotate : 0;  
+        this.save()  
+            .rotate(rot)  
+            .translate(x, y)  
+            .beginPath()  
+            //从椭圆纵轴下端开始逆时针方向绘制   
+            .moveTo(0, b)  
+            .bezierCurveTo(ox, b, a, oy, a, 0)  
+            .bezierCurveTo(a, -oy, ox, -b, 0, -b)  
+            .bezierCurveTo(-ox, -b, -a, -oy, -a, 0)  
+            .bezierCurveTo(-a, oy, -ox, b, 0, b)  
+            .closePath()  
+            .fill()  
+            .restore();   
+        return this;
+  
+    }  
+
+  
 };
 
 
@@ -446,7 +503,8 @@ function fillSquare(x,y,r) {
         .closePath()  
         .fill()  
 }  
-  
+
+
 /** 
 * @usage   绘制梯形 
 * @author  mw 
