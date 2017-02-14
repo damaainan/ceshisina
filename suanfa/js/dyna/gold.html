@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+  <TITLE>金矿模型-动态规划 </TITLE>
+  <META NAME="Generator" CONTENT="EditPlus">
+  <META NAME="Author" CONTENT="">
+  <META NAME="Keywords" CONTENT="">
+  <META NAME="Description" CONTENT="">
+ </HEAD>
+ <script>
+   document.write("================金矿模型-动态规划===================<br/>");
+   //每座金矿所需人数
+   var peopleNeed=[77,22,29,50,99];
+   //每座金矿可获得的金子数
+   var gold=[92,22,87,46,90];
+   var people=100;
+   //初始化备忘录     
+   var totalGold=[];//totalGold[i][j]保存了i个人挖前j个金矿能够得到的最大金子数，等于-1时表示未知
+   for(var i=1;i<=100;i++){
+      totalGold[i]=[];
+      for(var j=0;j<gold.length;j++){
+         totalGold[i][j]=-1;
+      }
+   }
+   document.write("the max Glod:"+maxGlod(people,gold.length-1));
+
+   function maxGlod(peopleleft,minNum){
+      //alert("peopleleft:"+peopleleft+";minNum"+minNum);
+      var maxGlodNum;
+      //如果这个问题已经计算过[对应动态规划中做“备忘录”]
+      if(totalGold[people][minNum]!=-1){         
+         maxGlodNum=totalGold[people][minNum];       
+      }
+      else if(minNum==0){
+        if(peopleleft>=peopleNeed[0])
+           maxGlodNum=gold[0];
+        else 
+           maxGlodNum=0;
+      }
+      //剩余人数足够开采当前金矿，可选择开采与不开采
+      else if(peopleleft>=peopleNeed[minNum]){      
+         maxGlodNum=Math.max(maxGlod(peopleleft-peopleNeed[minNum],minNum-1)+gold[minNum],maxGlod(peopleleft,minNum-1)+0);
+      }
+      //剩余人数不够开采当前金矿
+      else{
+          maxGlodNum=maxGlod(peopleleft,minNum-1)+0;
+      }
+      totalGold[peopleleft][minNum]=maxGlodNum;
+      document.write("totalGold["+peopleleft+"]["+minNum+"]="+totalGold[peopleleft][minNum]+"<br/>");
+      return maxGlodNum;         
+   }
+
+     document.write("<br/>================买书问题-动态规划===================<br/>");
+     var minMoney=[];//购买第1卷x本，第2卷y本，第三卷z本，动态规划中的备忘录
+     var x=3;
+     var y=4;
+     var z=5;
+     var price=60;
+     var discount_1=0.95;
+     var discount_2=0.9;
+     var discount_3=0.85;
+     //初始化数组,一些已知的边界值
+     for(var i=0;i<=x;i++){
+       minMoney[i]=[];
+       for(var j=0;j<=y;j++){
+          minMoney[i][j]=[];
+          for(var k=0;k<=z;k++){
+             //alert(i+";"+j+";"+k);
+             if(i==0&&j==0&&k==0)
+                minMoney[i][j][k]=0;
+             else if((i==0&&j==0&&k>0)||(i==0&&j>0&&k==0)||(i>0&&j==0&&k==0))
+                minMoney[i][j][k]=price*discount_1*(i+j+k);
+             else if((i==1&&j==1&&k==0)||(i==1&&j==0&&k==1)||(i==0&&j==1&&k==1))
+                minMoney[i][j][k]=price*2*discount_2;   
+             else if((i>0&&j>0&&k==0)||(i>0&&j==0&&k>0)||(i==0&&j>0&&k>0)){
+                if(i==0)
+                  minMoney[i][j][k]=Math.abs(j-k)*price*discount_1+2*price*discount_2*Math.max(j,k);
+                if(j==0)
+                  minMoney[i][j][k]=Math.abs(i-k)*price*discount_1+2*price*discount_2*Math.max(i,k);
+                if(k==0)
+                  minMoney[i][j][k]=Math.abs(i-j)*price*discount_1+2*price*discount_2*Math.max(i,j);
+
+             }
+             else if(i==1&&j==1&&k==1)
+                minMoney[i][j][k]=price*3*discount_3;           
+             else 
+                minMoney[i][j][k]=-1;//-1表示未知   
+          }
+       }
+     }
+
+     //开始计算,获取最少的money
+     document.write("The min total money:"+getTotalMoney(x,y,z)+"<br/>");
+      
+     function getTotalMoney(i,j,k){ 
+        //alert("getTotalMoney;i="+i+";j="+j+";k="+k);
+        document.write("getTotalMoney:i="+i+";j="+j+";k="+k+"<br/>");
+        var s=[];
+        if(minMoney[i][j][k]!=-1)
+           return minMoney[i][j][k];         
+        s[0]=price*discount_1+(minMoney[i-1][j][k]!=-1?minMoney[i-1][j][k]:getTotalMoney(i-1,j,k));
+        s[1]=price*discount_1+(minMoney[i][j-1][k]!=-1?minMoney[i][j-1][k]:getTotalMoney(i,j-1,k));
+        s[2]=price*discount_1+(minMoney[i][j][k-1]!=-1?minMoney[i][j][k-1]:getTotalMoney(i,j,k-1));
+        s[3]=price*2*discount_2+(minMoney[i-1][j-1][k]!=-1?minMoney[i-1][j-1][k]:getTotalMoney(i-1,j-1,k));
+        s[4]=price*2*discount_2+(minMoney[i-1][j][k-1]!=-1?minMoney[i-1][j][k-1]:getTotalMoney(i-1,j,k-1));
+        s[5]=price*2*discount_2+(minMoney[i][j-1][k-1]!=-1?minMoney[i][j-1][k-1]:getTotalMoney(i,j-1,k-1));
+        s[6]=price*3*discount_3+(minMoney[i-1][j-1][k-1]!=-1?minMoney[i-1][j-1][k-1]:getTotalMoney(i-1,j-1,k-1));
+        minMoney[i][j][k]=Math.min.apply(null,s);
+        document.write("minMoney["+i+"]["+j+"]["+k+"]="+minMoney[i][j][k]+"-->s="+s+"<br/>");
+        return minMoney[i][j][k];       
+     }  
+     
+
+  //买书问题-贪心算法   
+   document.write("<br/>================买书问题-贪心算法===================<br/>");
+   GetMinMoney(3,4,5);
+   function GetMinMoney(i,j,k){
+      var retMoney;
+      document.write("i="+i+";j="+j+";k="+k+"<br/>");
+      if(i==0&&j==0&&k==0)
+         retMoney=0;
+      if(i>0&&j>0&&k>0)
+         retMoney=(60+60+60)*0.85+GetMinMoney(i-1,j-1,k-1);
+      else if(i>0&&j>0)
+         retMoney=(60+60)*0.9+GetMinMoney(i-1,j-1,k);
+      else if(i>0&&k>0)
+         retMoney=(60+60)*0.9+GetMinMoney(i-1,j,k-1);
+      else if(j>0&&k>0)
+         retMoney=(60+60)*0.9+GetMinMoney(i,j-1,k-1);
+      else if(i>0)
+         retMoney=60*0.95+GetMinMoney(i-1,j,k);   
+      else if(j>0)
+         retMoney=60*0.95+GetMinMoney(i,j-1,k);
+      else if(k>0)
+         retMoney=60*0.95+GetMinMoney(i,j,k-1);
+      document.write("MinMoney:"+retMoney+"<br/>");
+      return retMoney;
+       
+   }
+            
+              
+
+ </script>
+ <BODY>
+  
+ </BODY>
+</HTML>

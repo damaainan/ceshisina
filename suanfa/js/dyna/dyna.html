@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+  <TITLE> 多边形游戏-动态规划 </TITLE>
+  <META NAME="Generator" CONTENT="EditPlus">
+  <META NAME="Author" CONTENT="">
+  <META NAME="Keywords" CONTENT="">
+  <META NAME="Description" CONTENT="">
+  <script>
+  //js算法：动态规划-多边形游戏
+   var v=[1,2,3];//点；
+   var op=['+','+','x'];//对应边的操作符
+   var value=[];//备忘录 value[i][j][0] 起点为i，链长为j 最小值 value[i][j][1]为最大值
+   //初始化值
+   var len=v.length;
+   for(var i=0;i<len;i++){//起点，
+        value[i]=[];    
+     for(var j=0;j<len;j++){//链长
+       value[i][j]=[];
+       if(j==0){
+          //链长为0，最大值，最小值均为顶点值  
+          value[i][0][0]=v[i];
+          value[i][0][1]=v[i];
+       }else{
+          value[i][j][0]=99999;
+          value[i][j][1]=-99999;
+       }
+     }
+   }
+
+   //开始计算
+   for(var length=1;length<len;length++){//控制链长
+       for(var start=0;start<len;start++){
+          for(var k=0;k<length;k++){
+            getMax(start,length,k);
+          }
+       }   
+   }
+   //输出结果(逐步去除某条边)
+   var maxValue=value[0][len-1][1];
+   for(var start=1;start<len;start++){
+      maxValue=Math.max(maxValue,value[start][len-1][1]);
+   }
+   document.write("最大值为:"+maxValue);
+
+   //拆分计算
+   function getMax(start,length,k){
+       var index=(start+k+1)%len;
+       var a=value[start][k][0];
+       var b=value[start][k][1];
+       var c=value[index][length-k-1][0];
+       var d=value[index][length-k-1][1];
+       // a<=m1<=b  c<=m2<=d
+       document.write("value["+start+"]["+k+"];value["+index+"]["+(length-k-1)+"]<br/>");
+       document.write("a="+a+";b="+b+";c="+c+";d="+d+"<br/>");
+       var min=value[start][length][0];
+       var max=value[start][length][1];
+       //document.write("max="+max+";min="+min+"<br/>");
+       if(op[index]=="+"){
+          max=Math.max(max,b+d);
+          min=Math.min(min,a+c);
+       }
+       else if(op[index]=="x"){
+          max=Math.max(a*c,a*d,b*c,b*d);
+          min=Math.min(a*c,a*d,b*c,b*d);        
+       }
+       value[start][length][0]=min;
+       value[start][length][1]=max;
+       document.write("value["+start+"]["+length+"];"+value[start][length]+"<br/>");
+   }
+   
+   
+  </script>
+ </HEAD>
+
+ <BODY>
+  
+ </BODY>
+</HTML>
