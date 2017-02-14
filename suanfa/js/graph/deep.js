@@ -4,12 +4,13 @@ function Graph(v) {
     this.adj = [];
     for (var i = 0; i < this.vertices; ++i) {
         this.adj[i] = [];
-        this.adj[i].push("");
+        // this.adj[i].push("");
     }
     this.addEdge = addEdge;
     this.showGraph = showGraph;
+    this.toString = toString;
     this.dfs = dfs;
-    this.bfs = bfs;
+    // this.bfs = bfs;
     this.marked = [];
     for (var i = 0; i < this.vertices; ++i) {
         this.marked[i] = false;
@@ -33,10 +34,10 @@ function addEdge(v, w) {
 //     }
 // }
 function showGraph() {
-    for (var i = 0; i < this.vertices; ++i) {
+    for (var i = 0; i < this.adj.length; ++i) {
         var str="";
-        for (var j = 0; j < this.vertices; ++j) {
-            if (this.adj[i][j] != undefined)
+        for (var j = 0; j < this.adj.length; ++j) {
+            if (this.adj[i][j] && this.adj[i][j] != undefined)
                 str+=this.adj[i][j] + ' ';
         }
         console.log(i + "->"+str);
@@ -48,8 +49,7 @@ function dfs(v) {
     if (this.adj[v] != undefined) {
         console.log("Visited vertex: " + v);
     }
-    for(var w in this.adj[v]) {
-    	// console.log(w);
+    for(var w of this.adj[v]) {
         if (!this.marked[w]) {
             this.dfs(w);
         }
@@ -57,24 +57,7 @@ function dfs(v) {
 }
 
 
-function bfs(s) {
-    var queue = [];
-    this.marked[s] = true;
-    queue.push(s); // 添加到队尾
-    while (queue.length > 0) {
-        var v = queue.shift(); // 从队首移除
-        if (v != undefined) {
-            console.log("Visisted vertex: " + v);
-        }
-        for (var w in this.adj[v]) {
-            if (!this.marked[w]) {
-                this.edgeTo[w] = v;
-                this.marked[w] = true;
-                queue.push(w);
-            }
-        }
-    }
-}
+
 
 g = new Graph(5);
 g.addEdge(0, 1);
@@ -83,5 +66,5 @@ g.addEdge(1,3);
 g.addEdge(2,4);
 g.showGraph();
 g.dfs(0);
-console.log('bfs');
-g.bfs(0);
+// console.log('bfs');
+// g.bfs(0);

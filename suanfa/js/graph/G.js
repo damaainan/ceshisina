@@ -8,6 +8,7 @@ function Graph(v) {
    }
    this.addEdge = addEdge;
    this.showGraph = showGraph;
+   this.dfs = dfs;
    this.bfs = bfs;
    this.marked = [];
    for (var i = 0; i < this.vertices; ++i) {
@@ -72,16 +73,6 @@ function addEdge(v,w) {
    this.edges++;
 }
 
-// function showGraph() {
-//    for (var i = 0; i < this.vertices; ++i) {
-//       putstr(i + " -> ");
-//       for (var j = 0; j< this.vertices; ++j) {
-//          if (this.adj[i][j] != undefined)
-//             putstr(this.adj[i][j] + ' ');
-//       }
-//       print();
-//    }
-// }
 
 function showGraph() {
     for (var i = 0; i < this.vertices; ++i) {
@@ -113,13 +104,31 @@ function bfs(s) {
     }
 }
 
-
-// program to test dfs() function
+function dfs(v) {
+    this.marked[v] = true;
+    if (this.adj[v] != undefined) {
+        console.log("Visited vertex: " + v);
+    }
+    for(var w of this.adj[v]) {
+      // console.log(w);
+        if (!this.marked[w]) {
+            this.dfs(w);
+        }
+    }
+}
 
 g = new Graph(5);
-g.addEdge(0,1);
+g.addEdge(0, 1);
 g.addEdge(0,2);
 g.addEdge(1,3);
 g.addEdge(2,4);
 g.showGraph();
-g.bfs(0);
+g.dfs(0);
+console.log('bfs');
+g1 = new Graph(5);
+g1.addEdge(0, 1);
+g1.addEdge(0,2);
+g1.addEdge(1,3);
+g1.addEdge(2,4);
+g1.showGraph();
+g1.bfs(0);

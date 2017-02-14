@@ -1,0 +1,203 @@
+<html>  
+<head>  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+  
+</head>  
+<body oncontextmenu="return false" onselectstart="return false">  
+格子长：<input type="text" id="txtLength" value="10" /> 格子宽：<input type="text" id="txtWidth" value="10"/>   
+<input type="button" value="绘制格子" id="btnPrint" onclick="initGrid();" />  
+<input type="button" value="搜索路径" id="btnPrint" onclick="searchPath();" />  
+<br/>  
+提示：点击格子设置/取消障碍  
+<div id="container">  
+</div>  
+<div id="msg">  
+</div>  
+<div>  
+<script>  
+var tdTitle = "点击格子设置/取消障碍";  
+var grid = [];  
+var X = Y = 0;  
+var gridUI = [];  
+var pathLength = 0;  
+var startPos = new Position(0,0), endPos = new Position(0,0);  
+  
+initGrid();  
+function $(id) {  
+    return document.getElementById(id);  
+}  
+function initGrid(){  
+    pathLength = 0;  
+    X = parseInt($("txtLength").value) || 0;  
+    Y = parseInt($("txtWidth").value) || 0;  
+    var html = "<table id='mainTable' border='0' cellpadding='1' cellspacing='1' style='background:#999999;' ><tbody>";  
+    for(var i=0;i<X;i++){  
+        html += "<tr>";  
+        grid[i] = [];  
+        for(var j=0;j<Y;j++){  
+            grid[i][j] = 1;  
+            html += "<td title='"+ tdTitle +"' width='20' height='20' style='background:#ffffff;' onclick='setBlock(this,"+ i +","+ j +")'> </td>";  
+        }  
+        html += "</tr>";  
+    }  
+    html += "</tbody></table>";  
+    $("container").innerHTML = html;  
+      
+    var table = $('mainTable');  
+    for (var i = 0; i < X; i++) {  
+        gridUI[i] = new Array(Y);  
+        for (var j = 0; j < Y; j++) {  
+            gridUI[i][j] = table.rows[i].cells[j];  
+        }  
+    }  
+      
+    //print start and end position.  
+    endPos = new Position(X-1,Y-1);  
+    gridUI[startPos.X][startPos.Y].style.background='#339933';  
+    gridUI[endPos.X][endPos.Y].style.background='#339933';  
+    gridUI[startPos.X][startPos.Y].onclick="return false;";  
+    gridUI[endPos.X][endPos.Y].onclick="return false;";  
+    gridUI[startPos.X][startPos.Y].title="start";  
+    gridUI[endPos.X][endPos.Y].title="end";  
+}  
+  
+function setBlock(td,i,j){  
+    if(grid[i][j] == 1){  
+        gridUI[i][j].style.background='#666666';  
+        grid[i][j] = 0;//block  
+    }else{  
+        gridUI[i][j].style.background='#ffffff';  
+        grid[i][j] = 1;  
+    }  
+}  
+  
+function Position(x,y,prePOS){  
+    this.X=x;  
+    this.Y=y;  
+    this.PrePOS = prePOS;  
+}  
+Position.prototype.validate = function(currPos,queue,closedQ){  
+    //1 在方格范围之内的，2 非障碍物，3 不在open列表中，4 不在closed列表中  
+    if(currPos.X >=0 && currPos.X < X && currPos.Y >=0 && currPos.Y < Y && grid[currPos.X][currPos.Y]==1 && !queue.has(currPos) && !closedQ.has(currPos)){  
+        return true;  
+    }  
+    return false;  
+}  
+Position.prototype.Down = function(queue,closedQ){  
+    var curr = new Position(this.X + 1, this.Y);  
+    if(this.validate(curr,queue,closedQ)){  
+        curr.PrePOS = this;  
+        return curr;  
+    }  
+    return undefined;  
+};  
+Position.prototype.Right = function(queue,closedQ){  
+    var curr = new Position(this.X, this.Y + 1);  
+    if(this.validate(curr,queue,closedQ)){  
+        curr.PrePOS = this;  
+        return curr;  
+    }  
+    return undefined;  
+};  
+Position.prototype.Up = function(queue,closedQ){  
+    var curr = new Position(this.X - 1, this.Y);  
+    if(this.validate(curr,queue,closedQ)){  
+        curr.PrePOS = this;  
+        return curr;  
+    }  
+    return undefined;  
+};  
+Position.prototype.Left = function(queue,closedQ){  
+    var curr =  new Position(this.X, this.Y - 1);  
+    if(this.validate(curr,queue,closedQ)){  
+        curr.PrePOS = this;  
+        return curr;  
+    }  
+    return undefined;  
+};  
+  
+function Queue(){  
+    var me = this;  
+    var _list = [];  
+    this.length = function(){  
+        return _list.length;  
+    };  
+    this.push=function(position){  
+        if(startPos.constructor.name != "Position")  
+            throw "Should be Position object.";  
+        _list.push(position);  
+        return me;  
+    }  
+    this.fetch=function(){  
+        return _list.shift();  
+    }  
+    this.pop=function(){  
+        return _list.pop();  
+    }  
+    this.has=function(position){  
+        for(var i=0,len=_list.length;i<len;i++){  
+            if(_list[i].X == position.X && _list[i].Y == position.Y){  
+                return true;  
+            }  
+        }  
+        return false;  
+    }  
+    this.Item = _list;  
+}  
+  
+function searchPath(){  
+    var openQ = new Queue(),found = false;  
+    var closedQ = new Queue();  
+    var searchCount = 0;//If search more than 10000 times, end.   
+    openQ.push(startPos);  
+    while(!found && openQ.length() && searchCount < 10000){  
+        searchCount++;  
+        var POS = openQ.fetch();  
+        closedQ.push(POS);  
+        if(POS.X == endPos.X && POS.Y == endPos.Y){  
+            found = true;  
+        }else{  
+            var down = POS.Down(openQ,closedQ);  
+            var right = POS.Right(openQ,closedQ);  
+            var up = POS.Up(openQ,closedQ);  
+            var left = POS.Left(openQ,closedQ);  
+              
+            if(down) openQ.push(down);  
+            if(right) openQ.push(right);  
+            if(up) openQ.push(up);  
+            if(left) openQ.push(left);  
+        }  
+    }  
+      
+    if(found){  
+        paintSearchResult(closedQ);  
+        $("msg").innerHTML = "At least "+ pathLength +" steps. Searched position count: " + searchCount;  
+    }else{  
+        $("msg").innerHTML = "Not connected.";  
+    }  
+}  
+  
+  
+function paintSearchResult(closedQ){  
+    var path = [];  
+    var lastPOS = closedQ.pop();  
+    while( lastPOS.X!=startPos.X || lastPOS.Y!=startPos.Y){  
+        path.push(gridUI[lastPOS.X][lastPOS.Y]);  
+        lastPOS = lastPOS.PrePOS;  
+        pathLength++;  
+    }  
+    var timer = window.setInterval(function(){  
+        var point = path.pop();  
+        if(point) point.style.background="#339933";  
+        else clearInterval(timer);  
+    },200);  
+}  
+  
+  
+  
+</script>  
+</div>  
+<div>  
+</div>  
+</body>  
+</html>  
