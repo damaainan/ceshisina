@@ -1,3 +1,10 @@
+function recurFib(n) {
+    if (n < 2) {
+        return n;
+    } else {
+        return recurFib(n - 1) + recurFib(n - 2);
+    }
+}
 function dynFib(n) {
     var val = [];
     for (var i = 0; i <= n; ++i) {
@@ -15,11 +22,11 @@ function dynFib(n) {
     }
 }
 var start = new Date().getTime();
-// print(recurFib(10));
-// var stop = new Date().getTime();
-// print(" 递归计算耗时 - " + (stop - start) + " 毫秒 ");
-// print();
-// start = new Date().getTime();
+console.log(recurFib(10));
+var stop = new Date().getTime();
+console.log(" 递归计算耗时 - " + (stop - start) + " 毫秒 ");
+console.log();
+start = new Date().getTime();
 console.log(dynFib(10));
 stop = new Date().getTime();
 console.log(" 动态规划耗时 - " + (stop - start) + " 毫秒 ");
