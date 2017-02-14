@@ -34,7 +34,7 @@ function topSort() {
       }
    }
    for (var i = 0; i < stack.length; i++) {
-      if (stack[i] != undefined && stack[i] != false) {
+      if (stack[i] != undefined && stack[i] !== false) {// 不全等 ！== 和 不等 ！=  结果有差异
          console.log(this.vertexList[stack[i]]);
       } 
    }
@@ -49,6 +49,11 @@ function topSortHelper(v, visited, stack) {
    }
    stack.push(v);
 }
+
+
+
+
+
 function hasPathTo(v) {
    return this.marked[v];
 }
@@ -62,7 +67,7 @@ function pathTo(v) {
    for (var i = v; i != source; i = this.edgeTo[i]) {
       path.push(i);
    }
-   path.push(s);
+   path.push(source);
    return path;
 }
 
@@ -92,7 +97,7 @@ function bfs(s) {
     while (queue.length > 0) {
         var v = queue.shift(); // 从队首移除
         if (v != undefined) {
-            console.log("Visisted vertex: " + v);
+            // console.log("Visisted vertex: " + v);
         }
         for (var w of this.adj[v]) {
             if (!this.marked[w]) {
@@ -107,7 +112,7 @@ function bfs(s) {
 function dfs(v) {
     this.marked[v] = true;
     if (this.adj[v] != undefined) {
-        console.log("Visited vertex: " + v);
+        // console.log("Visited vertex: " + v);
     }
     for(var w of this.adj[v]) {
       // console.log(w);
@@ -117,18 +122,23 @@ function dfs(v) {
     }
 }
 
-g = new Graph(5);
-g.addEdge(0, 1);
-g.addEdge(0,2);
-g.addEdge(1,3);
-g.addEdge(2,4);
-g.showGraph();
-g.dfs(0);
-console.log('bfs');
-g1 = new Graph(5);
-g1.addEdge(0, 1);
-g1.addEdge(0,2);
-g1.addEdge(1,3);
-g1.addEdge(2,4);
-g1.showGraph();
-g1.bfs(0);
+
+
+
+module.exports = Graph;
+
+// g = new Graph(5);
+// g.addEdge(0, 1);
+// g.addEdge(0,2);
+// g.addEdge(1,3);
+// g.addEdge(2,4);
+// g.showGraph();
+// g.dfs(0);
+// console.log('bfs');
+// g1 = new Graph(5);
+// g1.addEdge(0, 1);
+// g1.addEdge(0,2);
+// g1.addEdge(1,3);
+// g1.addEdge(2,4);
+// g1.showGraph();
+// g1.bfs(0);
