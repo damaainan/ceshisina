@@ -1,0 +1,6 @@
+1/2+1/2 = Fraction('1/2')+Fraction('1/2') = 1, 
+4/5-2/5 = Fraction('4/5')-Fraction('2/5') = 2/5, 
+1-7/9 = Fraction('1')-Fraction('7/9') = 2/9, 
+1/7+2/7 = Fraction('1/7')+Fraction('2/7') = 3/7, 
+1-1/2 = Fraction('1')-Fraction('1/2') = 1/2, 
+3/5+1/5 = Fraction('3/5')+Fraction('1/5') = 4/5, 
