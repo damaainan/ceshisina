@@ -1,0 +1,6 @@
+#提取图片地址以及下载图片的脚本
+
+awk '/jpg/{print}' 1.txt >> 2.txt
+awk '/gif/{print}' 1.txt >> 2.txt
+
+D:\tool\download\aria2\aria2c.exe -i 2.txt

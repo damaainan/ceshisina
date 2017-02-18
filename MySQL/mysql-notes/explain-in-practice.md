@@ -1,0 +1,124 @@
+## 5. EXPLAIN 实践
+
+如果 EXPLAIN 执行计划的 Extra 列包含 “Using temporary”，则说明这个查询使用了隐式临时表。
+
+如果 EXPLAIN 执行计划的 Extra 列包含 “Using union(XX,YY,ZZ…​)”，则说明这个查询使用了索引合并策略，应该检查一下查询和表的结构。 P158
+
+当发起一个被索引覆盖的查询（也叫作索引覆盖查询）时，在 EXPLAIN 的 Extra 列可以看到 “Using index” 的信息。 P172
+
+很容易把 Extra 列的 “Using index” 和 type 列的 “index” 搞混淆。其实这两者完全不同， type 列和覆盖索引毫无关系；它只是表示这个查询访问数据的方式，或者说是 MySQL 查找行的方式。 MySQL 手册中称之为连接方式（join type）。P172脚注
+
+如果 EXPLAIN 出来的 type 列的值为 “index”，则说明 MySQL 使用了索引扫描来做排序（不要和 Extra 列的 “Using index” 搞混淆）。P175
+
+EXPLAIN 的 Extra 列出现了 “Using where” 表示 MySQL 服务器将存储引擎返回行以后再应用 WHERE 过滤条件。P
+
+从 EXPLAIN 的输出很难区分 MySQL 是要查询范围值，还是查询列表值。 EXPLAIN 使用同样的词“range”来描述这两种情况。对于范围条件查询， MySQL 无法再使用范围列后面的其他索引列了，但是对于“多个等值条件查询”则没有这个限制。
+
+在 EXPLAIN 语句中的 type 列反应了访问类型。访问类型有很多种，从全表扫描到索引扫描、范围扫描、唯一索引查询、常数引用等。
+
+在 EXPLAIN 语句中的 type 列反应了访问类型。访问类型有很多种，从全表扫描到索引扫描、范围扫描、唯一索引查询、常数引用等。P199
+
+第五章 多列索引 如果在 EXPLAIN 中看到有索引合并。如何查看？哪些指标表明这个问题？
+
+取最大值或者最小值时，如果有索引，则可以直接从 B-Tree 索引的两端取数据，在 EXPLAIN 中就可以看到 Select tables optimized away。从字面意思可以看出，它表示优化器已经从执行计划中移除了该表，并以一个常数取而代之。P211
+
+    EXPLAIN
+    SELECT
+      f.film_id,
+      fa.actor_id
+    FROM film f
+      INNER JOIN film_actor fa USING (film_id)
+    WHERE f.film_id = 1 \G
+    
+    *************************** 1. row ***************************
+               id: 1
+      select_type: SIMPLE
+            table: f
+       partitions: NULL
+             type: const
+    possible_keys: PRIMARY
+              key: PRIMARY
+          key_len: 2
+              ref: const
+             rows: 1
+         filtered: 100.00
+            Extra: Using index
+    *************************** 2. row ***************************
+               id: 1
+      select_type: SIMPLE
+            table: fa
+       partitions: NULL
+             type: ref
+    possible_keys: idx_fk_film_id
+              key: idx_fk_film_id
+          key_len: 2
+              ref: const
+             rows: 10
+         filtered: 100.00
+            Extra: Using index
+
+MySQL 分两步来执行查询。第一步从 film 表找到需要的行。因为在 film_id 字段上有主键索引，所以 MySQL 优化器知道这只会返回一行数据，优化器在生成执行计划的时候，就已经通过索引信息知道将返回多少行数据。因为优化器已经明确知道有多少个值（ WHERE 条件中的值）需要做索引查询，所以这里的表访问类型是 const。  
+第二步，MySQL 将第一步中返回的 film_id 列当做一个已知取值的列来处理。因为优化器清楚再第一步执行完成后，该值就会是明确的了。注意到正如第一步中一样，使用 film_actor 字段对表的访问类型也是 const。P212
+
+如果 ORDER BY 子句中的所有列都来自关联的第一个表，那么 MySQL 在关联处理第一个表的时候就进行文件排序。如果是这样，那么在 MySQL 的 EXPLAIN 结果中可以看到 Extra 字段会有 Using filesort。除此之外的所有情况，MySQL 都会先将管理的结果存放到一个临时表中，然后在所有的关联都结束后，再进行文件排序。这时，在 MySQL 的 EXPLAIN 结果的 Extra 字段可以看到 Using temporary; Using filesort。LIMIT 会在排序后应用。P222
+
+MySQL 5.6 当还需要返回部分查询结果时，不再对所有结果进行排序。
+
+从这句话中也可以看出，如果可以，尽量使用一张表中的字段。 
+
+MySQL 5.0 之后的版本，在某些特殊的场景下是可以使用松散索引扫描的，例如，在一个分组查询中需要找到分组的最大值和最小值：
+
+    EXPLAIN
+    SELECT
+      actor_id,
+      max(film_id)
+    FROM film_actor
+    GROUP BY actor_id \G
+    
+    *************************** 1. row ***************************
+               id: 1
+      select_type: SIMPLE
+            table: film_actor
+       partitions: NULL
+             type: range
+    possible_keys: PRIMARY,idx_fk_film_id
+              key: PRIMARY
+          key_len: 2
+              ref: NULL
+             rows: 201
+         filtered: 100.00
+            Extra: Using index for group-by
+
+在 EXPLAIN 的 Extra 字段显示 “Using index for group-by”，表示这里将使用松散索引扫描。如果 MySQL 能写上 “loose index probe”，相信会更好理解。P231
+
+## 附录 A: 参考资料
+
+* [高性能MySQL][0] — 很明显，这个文档就是这本书的读书笔记。😆
+* [MySQL技术内幕][1] — 和上面的那本参考看更爽。
+* [数据库索引设计与优化][2] — 第一本书引用了这本书，去年刚刚翻译过来，评分比第一本都高，9.4，惊为神作，不可不读。
+* [如果有人问你数据库的原理，叫他看这篇文章][3]
+* [MySQL索引背后的数据结构及算法原理][4]
+* [Treaps: CS 305 & 503 Lecture notes][5]
+* [演算法筆記 - Order][6]
+* [硬盘内部硬件结构和工作原理详解][7]
+* [磁盘性能指标—​IOPS 理论][8]
+* [硬件性能解析(1)-存储金字塔][9]
+* [深入理解计算机系统（1.3）---金字塔形的存储设备、操作系统的抽象概念][10]
+* [深入理解计算机系统 第 10 课 Memory Hierarchy][11]
+* [Magnetic Bubble Memories][12]
+* [Operating Systems: Mass-Storage Structure][13]
+
+[0]: https://book.douban.com/subject/23008813/
+[1]: https://book.douban.com/subject/24708143/
+[2]: https://book.douban.com/subject/26419771/
+[3]: http://blog.jobbole.com/100349/
+[4]: http://blog.codinglabs.org/articles/theory-of-mysql-index.html
+[5]: http://bluehawk.monmouth.edu/rclayton/web-pages/s10-305-503/treaps.html
+[6]: http://www.csie.ntnu.edu.tw/~u91029/Order.html
+[7]: http://blog.csdn.net/tianxueer/article/details/2689117
+[8]: http://elf8848.iteye.com/blog/1731274
+[9]: http://harrywu304.blog.163.com/blog/static/845660320101024111941414/
+[10]: http://www.cnblogs.com/zuoxiaolong/p/computer3.html
+[11]: http://wdxtub.com/vault/csapp-10.html
+[12]: http://www.daenotes.com/electronics/digital-electronics/magnetic-bubble-memories
+[13]: https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/10_MassStorage.html
