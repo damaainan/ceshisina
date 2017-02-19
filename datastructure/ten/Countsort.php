@@ -1,4 +1,52 @@
 <?php 
+header("Content-type:text/html; Charset=utf-8");
+
+
+$arr = [];
+
+for ($i = 0; $i < 5000; $i++) {
+    $arr[] = rand(1, 50000);
+}
+
+
+// 9  计数排序
+
+/**
+ * 计数排序
+ * @param $arr
+ * @return mixed
+ */
+/*function Countsort($arr){
+
+    $max = $arr[0];
+    $min = $arr[0];
+
+    foreach($arr as $key => $value) {
+        if ($value > $max) {
+            $max = $value;
+        }
+        if ($value < $min) {
+            $min = $value;
+        }
+    }
+        //这里k的大小是要排序的数组中，元素大小的极值差+1
+        $c=[];
+        $k = $max - $min + 1;
+        for($i = 0; $i < count($arr) ; $i ++){
+            $c[$arr[$i] - $min ] +=1;
+        }
+
+        for($i=1;$i < count($c); ++$i){
+            $c[$i] = $c[$i] + $c[$i - 1];
+        }
+
+        for($i = count($arr);$i > 0 ; --$i){
+            $b[ -- $c[$arr[$i] - $min] ] = $arr[$i];
+        }
+
+    return $b;
+}*/
+
 function countingSort($arr) {
 
         $length = count($arr);
@@ -41,7 +89,9 @@ function countingSort($arr) {
 
         return $result;
     }
-$arr = [2, 2, 3, 8, 7, 1, 2, 2, 2, 7, 3, 9, 8, 2, 1, 4, 2, 4, 6, 9, 2];
+
+
+
 $countsort_start_time = microtime(true);
 
 $countsort_sort = countingSort($arr);
@@ -51,29 +101,3 @@ $countsort_end_time = microtime(true);
 $countsort_need_time = $countsort_end_time - $countsort_start_time;
 
 print_r("计数排序耗时:" . $countsort_need_time . "<br />");
-/*function countingSort($array) {
-    $len = count($array);
-        $B = [];
-        $C = [];
-        $min = $max = $array[0];
-    // print_f('计数排序耗时');
-    for ($i = 0; $i < $len; $i++) {
-        $min = $min <= $array[$i] ? $min : $array[$i];
-        $max = $max >= $array[$i] ? $max : $array[$i];
-        $C[$array[$i]] = $C[$array[$i]] ? $C[$array[$i]] + 1 : 1;
-    }
-    for ($j = $min; $j < $max; $j++) {
-        $C[$j + 1] = ($C[$j + 1] || 0) + ($C[$j] || 0);
-    }
-    for ($k = $len - 1; $k >= 0; $k--) {
-        $B[$C[$array[$k]] - 1] = $array[$k];
-        $C[$array[$k]]--;
-    }
-    // print_f('计数排序耗时');
-    return $B;
-}
-$arr = [2, 2, 3, 8, 7, 1, 2, 2, 2, 7, 3, 9, 8, 2, 1, 4, 2, 4, 6, 9, 2];
-$aa=countingSort($arr);
-var_dump($aa); */
-
-
