@@ -1,4 +1,5 @@
 <?php
+require "ci.php";
 /**
  * 列出七条规则，确定所用爻 卦，然后才能计算得中 得位
  *
@@ -20,3 +21,13 @@
 六爻皆不变 本卦断   用本卦的卦辞判断吉凶
 
  */
+
+$len=count($array);
+
+foreach ($array as $key => $value) {
+    echo $value[0],"\r\n";//windows换行符  unix  \r
+    // foreach ($value[1] as $val) {
+    //         echo $val,"\r\n";
+    // }
+    // echo "*********\r\n";
+}
