@@ -13,9 +13,7 @@ newthis
 
 newscope
 想要绑定给闭包的类作用域，或者 'static' 表示不改变。如果传入一个对象，则使用这个对象的类型名。 类作用域用来决定在闭包中 $this 对象的 
-私有、保护方法 的可见性。 The class scope to which associate the closure is to be associated, or 'static' to keep the 
-current one. If an object is given, the type of the object will be used instead. This determines the visibility of 
-protected and private methods of the bound object.
+私有、保护方法 的可见性。 The class scope to which associate the closure is to be associated, or 'static' to keep the current one. If an object is given, the type of the object will be used instead. This determines the visibility of protected and private methods of the bound object.
  */
 
 
