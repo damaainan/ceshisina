@@ -1,0 +1,1 @@
+awk -F]: '/jpg/{print}' file > 1.txt

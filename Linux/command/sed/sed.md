@@ -64,9 +64,7 @@ sed [选项] '地址 命令' file
 | addr1,~N    | 从addr1行开始，到N行结束 |
 
 
-博客地址：http://lizhenliang.blog.51cto.com
 
-QQ群：323779636（Shell/Python运维开发群）
 
 借助以下文本内容作为示例讲解：
 

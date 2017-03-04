@@ -1,10 +1,10 @@
 # Shell文本处理三剑客之grep
 
- 时间 2017-01-05 09:57:52  [李振良的技术博客][0]
+ 时间 2017-01-05 09:57:52  李振良的技术博客
 
 _原文_[http://lizhenliang.blog.51cto.com/7876557/1889166][1]
 
- 主题 [Linux命令][2][Shell][3]
+
 
 7.1 grep
 
@@ -189,7 +189,5 @@ QQ群：323779636（Shell/Python运维开发群）
 
 grep支持上一章的基础和扩展正则表达式字符。
 
-[0]: /sites/RfYBJfy
+
 [1]: http://lizhenliang.blog.51cto.com/7876557/1889166?utm_source=tuicool&utm_medium=referral
-[2]: /topics/11200019
-[3]: /topics/11200008
