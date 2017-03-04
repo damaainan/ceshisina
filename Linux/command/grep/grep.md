@@ -50,9 +50,6 @@ Usage: grep [OPTION]... PATTERN [FILE]...
 |  -C，--context=NUM | 打印匹配的前后几行 |
 | --color[=WHEN], | 匹配的字体颜色|
 
-博客地址：http://lizhenliang.blog.51cto.com
-
-QQ群：323779636（Shell/Python运维开发群）
 
 示例：
 
