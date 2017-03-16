@@ -1,0 +1,169 @@
+" gvim 配置文件，直接放在vim 文件夹下，代替_vimrc 起作用
+
+set nu
+set ts=4
+set expandtab
+set laststatus=2
+set showmode
+"set autoindent"
+"set smartindent"
+set showmatch
+set encoding=utf-8
+
+set background=dark
+colorscheme blue
+"colorscheme solarized
+"colorscheme molokai
+"colorscheme phd
+
+set cursorcolumn
+set cursorline
+highlight CursorLine   cterm=NONE ctermbg=yellow ctermfg=green guibg=NONE guifg=NONE
+highlight CursorColumn cterm=NONE ctermbg=yellow ctermfg=green guibg=NONE guifg=NONE
+
+set t_Co=256
+
+set scrolloff=7
+
+
+" 让配置变更立即生效
+autocmd BufWritePost $MYVIMRC source $MYVIMRC
+
+
+
+" Startup {{{
+filetype indent plugin on
+
+
+" vim 文件折叠方式为 marker
+augroup ft_vim
+    au!
+
+    au FileType vim setlocal foldmethod=marker
+augroup END
+" }}}
+
+" Lang & Encoding {{{
+set fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1
+set encoding=utf-8
+set langmenu=zh_CN
+let $LANG = 'en_US.UTF-8'
+"language messages zh_CN.UTF-8
+" }}}
+
+" Vim 的默认寄存器和系统剪贴板共享
+set clipboard+=unnamed
+" 设置 alt 键不映射到菜单栏
+set winaltkeys=no
+
+
+
+" GUI {{{
+colorscheme murphy
+
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+set cursorline
+set hlsearch
+set number
+" 窗口大小
+set lines=35 columns=140
+" 分割出来的窗口位于当前窗口下边/右边
+set splitbelow
+set splitright
+"不显示工具/菜单栏
+set guioptions-=T
+set guioptions-=m
+set guioptions-=L
+set guioptions-=r
+set guioptions-=b
+" 使用内置 tab 样式而不是 gui
+set guioptions-=e
+set nolist
+" set listchars=tab:▶\ ,eol:¬,trail:·,extends:>,precedes:<
+set guifont=Inconsolata:h12:cANSI
+" }}}
+
+
+"需要先设置好 bundle 目录  下载好 vundle.vim 文件
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=$VIM/vimfiles/bundle/Vundle.vim
+"call vundle#begin()
+call vundle#begin('$VIM/vimfiles/bundle/')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'L9'
+"Plugin 'davidhalter/jedi-vim'
+
+
+Plugin 'MarcWeber/vim-addon-mw-utils'
+  Plugin 'tomtom/tlib_vim'
+  Plugin 'garbas/vim-snipmate'
+
+  " Optional:
+  Plugin 'honza/vim-snippets'
+  
+Plugin 'Lokaltog/vim-powerline'
+Plugin 'Yggdroot/indentLine'
+"Plugin 'jiangmiao/auto-pairs'
+Plugin 'tell-k/vim-autopep8'
+"Plugin 'scrooloose/nerdcommenter'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+"缩进指示线"
+let g:indentLine_char='┆'
+let g:indentLine_enabled = 1
+
+"autopep8设置"
+let g:autopep8_disable_show_diff=1
+
+
+map <F3> :NERDTreeMirror<CR>
+map <F3> :NERDTreeToggle<CR>
+
+
+
+
+
+source $VIMRUNTIME/vimrc_example.vim
+source $VIMRUNTIME/mswin.vim
+behave mswin
+
+set diffexpr=MyDiff()
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
+
