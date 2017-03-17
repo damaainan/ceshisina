@@ -94,6 +94,11 @@ set rtp+=$VIM/vimfiles/bundle/Vundle.vim
 "call vundle#begin()
 call vundle#begin('$VIM/vimfiles/bundle/')
 
+" gvim 配置文件 在 $HOME 新建插件目录
+" set rtp+=$HOME/gvimfiles/bundle/Vundle.vim
+" let path='$HOME/gvimfiles/bundle'
+" call vundle#begin(path)
+
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
