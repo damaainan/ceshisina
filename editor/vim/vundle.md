@@ -5,16 +5,21 @@
 vundle 环境设置
 
     " vundle 环境设置
+    set nocompatible 
     filetype off
+    " ##################
     " linux 配置
-    set rtp+=~/.vim/bundle/Vundle.vim
     " vundle 管理的插件列表必须位于 vundle#begin() 和 vundle#end() 之间
+    set rtp+=~/.vim/bundle/Vundle.vim
     call vundle#begin()
+    " ##################
     " windows 配置
+    " 设置缓存文件夹  C:\windows\Temp  属性可读，完全控制
+    " 管理员身份打开 gvim ，安装插件
     " set rtp+=$HOME/gvimfiles/bundle/Vundle.vim
     " let path='$HOME/gvimfiles/bundle/'
     " call vundle#begin(path)
-
+    " ##################
     Plugin 'VundleVim/Vundle.vim'
     " 插件列表结束
     call vundle#end()

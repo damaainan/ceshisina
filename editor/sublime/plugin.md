@@ -5,6 +5,7 @@
 包含大量配色主题的插件包 首先介绍一个包含大量配色包的网站, [Colorsublime](http://colorsublime.com/), 里面各种各样的配色让人眼花缭乱 [Colorsublime Plugin](https://github.com/Colorsublime/Colorsublime-Plugin).  
 
 iTg 主题  
+ayu  
 [Soda](http://buymeasoda.github.io/soda-theme/)  
 [Spacegray](http://kkga.github.io/spacegray/)  
 [Flatland](https://github.com/thinkpixellab/flatland)  
@@ -33,6 +34,8 @@ Bracket Highlighter 这是用来做括号匹配高亮的，可以在包管理器
 
 #### 代码校验、提示、优化
 
+**SublimeCodeIntel**是sublime text下的一款代码提示插件(特别好用)  
+**SublimeLinter**用于高亮提示用户编写的代码中存在的不规范和错误的写法    
 **Alignment**  美化对其”=”、”:”这些符号。
 **BracketHighlight**代码块括号高亮工具，可以自定义括号颜色。
 [![brack.png](http://yalishizhude.github.io/2015/10/20/sublime/brack.png)](http://yalishizhude.github.io/2015/10/20/sublime/brack.png)
