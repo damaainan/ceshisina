@@ -95,6 +95,8 @@ set rtp+=$VIM/vimfiles/bundle/Vundle.vim
 call vundle#begin('$VIM/vimfiles/bundle/')
 
 " gvim 配置文件 在 $HOME 新建插件目录
+" 设置缓存文件夹  C:\windows\Temp  属性可读，完全控制
+" 管理员身份打开 gvim ，安装插件
 " set rtp+=$HOME/gvimfiles/bundle/Vundle.vim
 " let path='$HOME/gvimfiles/bundle'
 " call vundle#begin(path)

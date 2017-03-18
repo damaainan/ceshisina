@@ -19,7 +19,9 @@ iTg 主题
 
 ### 工具
 all Autocomplete sublime只对当前文件进行本文件中的查找不全, all Autocomplete是对全部打开的文件进行查找不全, 选择更多更全面；  
-**converttoUTF8** 编辑的所有文件都使用UTF-8编码；  
+
+> **converttoUTF8** 编辑的所有文件都使用UTF-8编码；  
+
 **docblockr** 强大的文档注释功能, 只要在文档中输入/*然后按一下tab, 就会根据代码自动生成注释；  
 **emmet** 前段神器, 减少大量的工作量, 使用方法可以参考Emmet：HTML/CSS代码快速编写神器或者官方文档；  
 markdownediting或者markdownPerview 这个是写Markdown必备的。可以在包管理器中安装。装完之后，写作Markdown时（右下角显示语法为Markdown），可以按ctrl+b，直接就会生成HTML，并在浏览器中显示；  

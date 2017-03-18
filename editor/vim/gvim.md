@@ -13,6 +13,11 @@
 
 
 ### PaperColor Theme[主题](https://github.com/NLKNguyen/papercolor-theme.git)
+### 素雅 solarized（[https://github.com/altercation/vim-colors-solarized](https://github.com/altercation/vim-colors-solarized) ）
+### 多彩 molokai（[https://github.com/tomasr/molokai](https://github.com/tomasr/molokai) ）
+### 复古 phd（[http://www.vim.org/scripts/script.php?script_id=3139](http://www.vim.org/scripts/script.php?script_id=3139) ）
+
+
 
 
 
