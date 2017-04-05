@@ -460,10 +460,10 @@ ALTER TABLE old_table_name RENAME [TO] new_table_name
 * old_table_name 原表名
 * new_table_name 新表名   
 将t_dept修改为tab_dept 
-
-    mysql> alter table t_dept rename tab_dept;
+```
+    mysql > alter table t_dept rename tab_dept;
     Query OK, 0 rows affected (0.09 sec)
-    
+
     mysql> show tables;
     +-------------------+
     | Tables_in_company |
@@ -481,7 +481,7 @@ ALTER TABLE old_table_name RENAME [TO] new_table_name
     | loc    | varchar(40) | YES  |     | NULL    |       |
     +--------+-------------+------+-----+---------+-------+
     3 rows in set (0.00 sec)
-
+```
 ### 为表增加一个字段默认在最后 
 
 ALTER TABLE table_name ADD 属性名 属性类型
