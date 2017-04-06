@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>用canvas绘制一场蓝色大雨</title>
+<style>
+    *{
+        margin:0;
+        padding:0;
+    }
+    html,body{
+        height:100%;
+        background:rgb(0,5,5);
+    }
+    #canvas{
+        position:fixed;
+        z-index:1;
+    }
+</style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript">
+    (function(){
+        var Height=document.body.clientHeight,
+            Width=document.body.clientWidth,
+            canvas=document.getElementById("canvas"),
+            context=canvas.getContext("2d"),
+            rainArr=[];
+
+            canvas.height=Height;
+            canvas.width=Width;
+
+
+
+        //初始化函数，程序入口
+        (function init(){
+            addRain();
+            render();
+        })()
+
+        //添加雨滴函数
+        function addRain(){
+            for(var i=0;i<50;i++){
+                var rain={
+                    x:Math.ceil(Math.random()*Width),
+                    y:-Math.ceil(Math.random()*1000),
+                    r:Math.random()*2+2,
+                    v:Math.random()*2+5,
+                    ground:Height-(Math.random()*100+50),
+                    groundR:Math.random()+1,
+                    groundMaxR:Math.random()*20+30
+                }
+                rainArr.push(rain);
+            }
+        }
+
+        //渲染页面
+        function render(){
+            context.clearRect(0,0,Width,Height);
+            for(var i = 0;i<rainArr.length;i++){
+                var _y = rainArr[i].y;
+                var r = 2;
+                var arpha = 1
+                for(var j = 0;j<50;j++){
+                    if(_y<rainArr[i].ground){
+                    context.beginPath();
+                    context.arc(rainArr[i].x , _y , r , 0 , Math.PI*2 , true);
+                    context.fillStyle = 'rgba(0,223,223,'+arpha+')';
+                    context.fill();
+                    context.closePath();
+                    _y -= r*1.5;
+                    r -= 0.04;
+                    arpha -= 0.02;
+                }
+                }
+                rainArr[i].y+=rainArr[i].v;
+                console.log(rainArr[i].y>rainArr[i].ground);
+                if(rainArr[i].y>rainArr[i].ground){
+                    if(rainArr[i].groundR<rainArr[i].groundMaxR){
+                    ground(i);
+                    rainArr[i].groundR+=2;
+                }else{
+                    rainArr[i]={
+                        x:Math.ceil(Math.random()*Width),
+                        y:-Math.ceil(Math.random()*1000),
+                        r:Math.random()*2+2,
+                        v:Math.random()*2+5,
+                        ground:Height-(Math.random()*100+50),
+                        groundR:Math.random()+1,
+                        groundMaxR:Math.random()*20+30
+                    }
+                }
+                }
+            }
+            setTimeout(render, 3);
+        }
+
+        //绘制波纹
+        function ground(num){
+            context.save();
+            context.scale(1,0.5);
+            context.beginPath();
+            var gradient=context.createRadialGradient(rainArr[num].x,rainArr[num].ground*2,0,rainArr[num].x,rainArr[num].ground*2,rainArr[num].groundR);
+            gradient.addColorStop(0,"rgba(0,223,223,0)");
+            gradient.addColorStop(0.5,"rgba(0,223,223,0)");
+            gradient.addColorStop(1,"rgba(0,223,223,1)");
+            context.fillStyle=gradient;
+            context.arc(rainArr[num].x,rainArr[num].ground*2,rainArr[num].groundR,0,Math.PI*2,true);
+            context.fill();
+            context.closePath();
+            context.restore();
+        }
+    })(window)
+    </script>
+</body>
+</html>
