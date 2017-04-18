@@ -1,12 +1,8 @@
-![报文结构.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/3A60080FBC8767DB575C2D2919097613.png)
-![报文首部结构.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/CFC6314E4B2FD039C450821D946E93E2.png)
-![三次握手和四次挥手.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/08EAF7F3E7FFCEF3E781385BF62BA2BC.png)
-![TCP 状态流转图.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/DB900F916ECD267746706FEA8DF682CD.png)
-![tcps-send-wwindows.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/FCA43D210DF50C93E428DFD04FBBBF32.png)
-![tcps-send-wslide.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/4C22A2B58DB2F0B885A0DC50057D2768.png)
-![tcps-receive-wwindows.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/F4B7AEDE41EE179676E79DEF2601D4A4.png)
-![tcps-receive-wslide.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/95A36446FAD21CC3DD086FA683942FFA.png)
-![tcps-receive-disorder.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/686E3FC14C2DEF657C61ECBC16C9C954.png)
-![UDP  数据报结构.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/6FCC9F4EDE80F784BD11ED9FA76FA375.png)
-![UDP 数据报结构-伪首部.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/3D9C291187835C3571A111952201B4FF.png)
-![UDP 校验和.png](http://om6ayrafu.bkt.clouddn.com/post/understand-tcp-udp/5DADDF7480F81837145468E2ADA6839F.png)
+http://www.2cto.com/uploadfile/2013/1022/20131022025345890.png
+http://www.2cto.com/uploadfile/2013/1022/20131022025346218.png
+http://www.2cto.com/uploadfile/2013/1022/20131022025350956.gif
+http://www.2cto.com/uploadfile/2013/1022/20131022025350523.png
+http://www.2cto.com/uploadfile/2013/1022/20131022025351387.png
+
+
+awk '/upload/{print}' 三次握手与四次握手流程解析.md | awk -F': ' '{print $2}' > 1.txt
