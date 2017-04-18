@@ -3,7 +3,7 @@
   * 树
   */
  
- include "treeNode.php";
+include "treeNode.php";
 class BST{
     public $root;
     public function __construct()

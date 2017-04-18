@@ -1,10 +1,5 @@
 # nginx的日志
 
- 时间 2017-02-14 01:20:41  [Jackie的家][0]
-
-_原文_[http://www.jackieathome.net/archives/431.html][1]
-
- 主题 [Nginx][2][Linux命令][3]
 
 ## nginx的日志
 
@@ -28,11 +23,12 @@ error_log的第一个参数，定义了输出的文件名。
 
 另外还可以使用一些特殊的文件，可选值有：
 
-* stderr，向nginx进程的标准错误输出流输出日志。
-* syslog，向 [syslog][4] 输出日志。配置样例如下： 
+> stderr，向nginx进程的标准错误输出流输出日志。
+> syslog，向 [syslog][4] 输出日志。配置样例如下：
 
     error_log syslog: server=192.168.1.1 debug;
-* memory，向环形内存缓冲区写出日志，一般情况下仅在调试时才会用到。配置样例如下：
+
+>memory，向环形内存缓冲区写出日志，一般情况下仅在调试时才会用到。配置样例如下：
 
     error_log memory:32m debug;
 
@@ -258,31 +254,33 @@ When master process receives -USR1 it repopens all logs, does chown() and chmod(
 
 利用 [awk][13] 命令，可以快速得到如下的数据。 
 
-* 查找访问频率最高的URL，以及相应的访问次数： 
+> 查找访问频率最高的URL，以及相应的访问次数： 
 
     cat access.log | awk -F '^A' '{print $10}' | sort | uniq -c
-* 查找当前日志文件中500错误的访问： 
 
-    cat access.log | awk -F '^A' '{if($5 == 500) print $0}'
-* 查找当前日志文件 500 错误的数量： 
+> 查找当前日志文件中500错误的访问： 
 
-    cat access.log | awk -F '^A' '{if($5 == 500) print $0}' | wc -l
-* 查找某一分钟内 500 错误访问的数量: 
+    cat access.log | awk -F '^A' '{if($5 == 500) print $0}'  
 
-    cat access.log | awk -F '^A' '{if($5 == 500) print $0}' | grep '09:00' | wc-l
-* 查找耗时超过 1s 的慢请求： 
+> 查找当前日志文件 500 错误的数量： 
 
-    tail -f access.log | awk -F '^A' '{if($6>1) print $0}'
-* 假如只想查看某些字段的值： 
+    cat access.log | awk -F '^A' '{if($5 == 500) print $0}' | wc -l  
+> 查找某一分钟内 500 错误访问的数量: 
 
-    tail -f access.log | awk -F '^A' '{if($6>1) print $3"|"$4}'
-* 查找 502 错误最多的 URL： 
+    cat access.log | awk -F '^A' '{if($5 == 500) print $0}' | grep '09:00' | wc-l  
+> 查找耗时超过 1s 的慢请求： 
 
-    cat access.log | awk -F '^A' '{if($5==502) print $11}' | sort | uniq -c
-* 查找 200 空白页 
+    tail -f access.log | awk -F '^A' '{if($6>1) print $0}'  
+> 假如只想查看某些字段的值： 
 
-    cat access.log | awk -F '^A' '{if($5==200 && $8 < 100) print $3"|"$4"|"$11"|"$6}'
-* 查看实时日志数据流
+    tail -f access.log | awk -F '^A' '{if($6>1) print $3"|"$4}'   
+> 查找 502 错误最多的 URL： 
+
+    cat access.log | awk -F '^A' '{if($5==502) print $11}' | sort | uniq -c  
+> 查找 200 空白页 
+
+    cat access.log | awk -F '^A' '{if($5==200 && $8 < 100) print $3"|"$4"|"$11"|"$6}'   
+> 查看实时日志数据流
 
     tail -f access.log | cat -e
 
@@ -321,10 +319,6 @@ AWK的深入使用方法，请参考 [The GNU Awk User’s Guide][14] 。
 * [被遗忘的Logrotate][34]
 * [使用logrotate管理nginx日志文件][35]
 
-[0]: /sites/7ji2uem
-[1]: http://www.jackieathome.net/archives/431.html?utm_source=tuicool&utm_medium=referral
-[2]: /topics/11090014
-[3]: /topics/11200019
 [4]: https://zh.wikipedia.org/wiki/Syslog
 [5]: https://www.keycdn.com/support/nginx-error-log/
 [6]: http://nginx.org/en/docs/debugging_log.html
