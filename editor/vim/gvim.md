@@ -5,10 +5,13 @@
 
 ### Vundle  插件管理工具
 
+### 彩虹括号增强版 Rainbow
 
-
+### 状态栏 vim-airline
 ### nerdtree 目录树
+### 语法检查的插件  ale
 
+### tag标签 tagbar
 ### fzf 代码搜索工具  
 
 
