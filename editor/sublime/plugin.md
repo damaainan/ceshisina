@@ -16,6 +16,39 @@ ayu
 [itg.flat](https://sublime.wbond.net/packages/Theme%20-%20itg.flat)  
 适用于所有其他偏好 [Color Schemes](https://github.com/daylerees/colour-schemes) 和[Сolorsublime](http://colorsublime.com/).
 
+#### Sublime 3 如何设置Seti_UI主题
+
+用 Package Control 安装：Seti_UI
+安装之后启用 Seti UI 主题，在 Preferences -> Settings – User 添加一行：
+
+    {
+        "theme": "Seti.sublime-theme"
+    }
+
+###### 设置Seti_UI主题
+通过Browse Packages可以进到 Sublime3 包安装目录下能看到一系列配置文件，主要看下面两个：
+
+    Seti_orig.sublime-theme
+    README.md
+README.md 文件里面给出了一些 Seti_UI 支持的配置项，使用 CMD+, 组合键打开 Sublime 3的配置文件，在里面添加上README.md里面你喜欢的配置项，比如我添加了：
+
+    "Seti_SB_blue": true,
+    "Seti_sb_tree_miny": true,
+然后到Seti_orig.sublime-theme 文件中搜索相关配置的定义，比如我搜索选项Seti_sb_tree_miny的定义如下：
+
+    {
+        "class": "sidebar_tree",
+        "settings": ["Seti_sb_tree_miny"],
+        "indent": 10,
+        "row_padding": 3,
+        "indent_offset": 15,
+    },
+你就可以通过修改这部分配置来重新定制你喜欢的Sublime 3.
+
+
+
+
+---
 
 
 ### 工具
@@ -60,3 +93,31 @@ JQueryAPI的智能提示
 #### Linux 管理：
 [Generic Config](https://github.com/skozlovf/Sublime-GenericConfig)： Linux Config 文档的语法高亮。
 
+---
+### PHP 必备插件
+
+2. 使用Package Control 搜索SublimeLinter并安装
+3. 使用Package Control 搜索SublimeLinter-php并安装
+4. 打开Preferences->Package Settings->SublimeLinter->Settings - User，寻找到"paths"并更改代码，确认PHP的Linting引擎，这里的目录是PHP的根目录， 同时在配置文件中路径中的\都要替换为\\ 
+```
+    "paths": {
+        "linux": [],
+        "osx": [],
+        "windows": [
+            "F:\\php\\php-7.0.5-Win32-VC14-x64\\php.exe"
+        ]
+    },
+```
+5. 使用Package Control 搜索`phpfmt`并安装，phpfmt的默认键位是`Ctrl+F11`，不喜欢的可以更改键位，通过打开Preferences->Package Settings->phpfmt->Key Budildings - User，再文件中输入以下代码就可以将快捷键轻松设为`Ctrl+Alt+F`，妈妈再也不用担心我的手小了
+```
+    [    
+        { 
+            "keys": ["ctrl+alt+f"], "command": "fmt_now" 
+        }   
+    ] 
+```
+小结：SublimeLinter是一个代码纠错的插件，它可以自定义纠错的风格，只需要添加php引擎就可以帮助纠错php代码，再也不用担心少个“；”毁灭世界的情况了
+phpfmt是一个php的重新排版插件，它可以帮助你在写的乱七八糟以后将代码恢复整齐，强迫症专用。
+Sublime 再加上这两个插件，可以让你的php编程变得更加流畅方便
+
+----
