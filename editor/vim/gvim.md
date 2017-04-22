@@ -13,6 +13,7 @@
 
 ### tag标签 tagbar
 ### fzf 代码搜索工具  
+### ctrlp 代码搜索工具 ，另一个
 
 
 ### PaperColor Theme[主题](https://github.com/NLKNguyen/papercolor-theme.git)
