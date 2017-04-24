@@ -1,8 +1,0 @@
-http://www.2cto.com/uploadfile/2013/1022/20131022025345890.png
-http://www.2cto.com/uploadfile/2013/1022/20131022025346218.png
-http://www.2cto.com/uploadfile/2013/1022/20131022025350956.gif
-http://www.2cto.com/uploadfile/2013/1022/20131022025350523.png
-http://www.2cto.com/uploadfile/2013/1022/20131022025351387.png
-
-
-awk '/upload/{print}' 三次握手与四次握手流程解析.md | awk -F': ' '{print $2}' > 1.txt

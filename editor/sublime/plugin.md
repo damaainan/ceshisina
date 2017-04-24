@@ -120,4 +120,18 @@ JQueryAPI的智能提示
 phpfmt是一个php的重新排版插件，它可以帮助你在写的乱七八糟以后将代码恢复整齐，强迫症专用。
 Sublime 再加上这两个插件，可以让你的php编程变得更加流畅方便
 
+
+
+
+##### Submine Text 中使用 php-cs-fixer 软件
+
+这个插件是一个综合的插件，安装并配置后，可以很方便的格式化代码。
+
+    {
+        "php_cs_fixer_on_save": false,
+        "php_cs_fixer_show_quick_panel": true,
+        "php_cs_fixer_executable_path": "C:\\vendor\\bin\\php-cs-fixer.bat",
+    }
+
+
 ----
