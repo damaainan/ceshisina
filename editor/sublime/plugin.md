@@ -120,6 +120,21 @@ JQueryAPI的智能提示
 phpfmt是一个php的重新排版插件，它可以帮助你在写的乱七八糟以后将代码恢复整齐，强迫症专用。
 Sublime 再加上这两个插件，可以让你的php编程变得更加流畅方便
 
+phpfmt配置：
+Preferences > Package Settings > phpfmt > Settings - User
+我将我的配置贴出来，供大家参考：
+
+    {
+        "enable_auto_align":true,//自动调整对齐
+        "indent_with_space": true,//自动空格
+        "psr1": true,
+        "psr2": true,
+        "version": 4,
+        "php_bin":"D:/wamp/bin/php/php5.6.16/php.exe",//php路径
+        "format_on_save":true,//保存的时候自动格式化
+        "option": "value"
+    }
+
 
 
 
