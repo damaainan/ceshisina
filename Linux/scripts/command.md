@@ -17,3 +17,10 @@ tree --help
 删除行尾的^M：
 
     %s/\r//g
+
+
+---
+
+统计符合要求的字符串的长度
+
+    awk -F': ' '/images/{print $2}' *.md | awk '{print length($0)}'
