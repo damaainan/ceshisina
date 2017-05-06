@@ -140,7 +140,7 @@ map <F3> :NERDTreeToggle<CR>
 
 
 
-source $VIMRUNTIME/vimrc_example.vim
+source $VIMRUNTIME/vimrc_example.vim  " 有关于备份文件的配置
 source $VIMRUNTIME/mswin.vim
 behave mswin
 
@@ -174,3 +174,9 @@ function MyDiff()
   endif
 endfunction
 
+
+
+" 缓存文件保存设置  放在最后，避免被覆盖
+set noswapfile " 交换文件
+set nobackup  " 备份文件
+set noundofile  " undo 备份文件

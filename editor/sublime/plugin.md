@@ -58,12 +58,18 @@ all Autocomplete sublime只对当前文件进行本文件中的查找不全, all
 
 **docblockr** 强大的文档注释功能, 只要在文档中输入/*然后按一下tab, 就会根据代码自动生成注释；  
 **emmet** 前段神器, 减少大量的工作量, 使用方法可以参考Emmet：HTML/CSS代码快速编写神器或者官方文档；  
-markdownediting或者markdownPerview 这个是写Markdown必备的。可以在包管理器中安装。装完之后，写作Markdown时（右下角显示语法为Markdown），可以按ctrl+b，直接就会生成HTML，并在浏览器中显示；  
+**markdownediting或者markdownPerview** 这个是写Markdown必备的。可以在包管理器中安装。装完之后，写作Markdown时（右下角显示语法为Markdown），可以按ctrl+b，直接就会生成HTML，并在浏览器中显示；  
 **OmniMarkupPreviewer** Ctrl+Alt+O 浏览器预览  
 **jsformat** JavaScript代码格式化；  
 **sidebarenhancement** 这是用来增强左边的侧边栏。左侧边栏可以在View -> Side Bar -> Show Side Bar中打开，可以用Project -> Add Folder to Project...往侧边栏加入常用的文件夹。装完这个插件，侧边栏的右键菜单会多一些功能，挺实用的；
-Bracket Highlighter 这是用来做括号匹配高亮的，可以在包管理器中安装。Sublime Text 2自带的括号匹配只有小小的一横线，太不显眼了，这个可以让高亮变成大大的一坨，不过我觉得它大得会盖住光标了；  
+**Bracket Highlighter** 这是用来做括号匹配高亮的，可以在包管理器中安装。Sublime Text 2自带的括号匹配只有小小的一横线，太不显眼了，这个可以让高亮变成大大的一坨，不过我觉得它大得会盖住光标了；  
 
+
+> **markdownediting 配置**
+
+> markdown editing setting的GFM user里面修改一句话："color_scheme": "Packages/Monokai Extended/Monokai Extended Bright.tmTheme"，改成你想要的配色方案就可以了。
+
+> 修改GFM user里面的"wrap_width": 120,改这个数字就可以调节左侧那个空白大小了。
 
 #### 代码校验、提示、优化
 
