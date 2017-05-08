@@ -1,0 +1,1 @@
+MySQL5.7之后多了一个备份工具：mysqlpump。它是mysqldump的一个衍生，mysqldump就不多说明了，现在看看mysqlpump到底有了哪些提升，可以查看 官方文档，这里针对如何使用做下说明。
