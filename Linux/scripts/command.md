@@ -64,3 +64,4 @@ tree --help
 ---
 
 
+awk /./ filename 删除文件的空行   
