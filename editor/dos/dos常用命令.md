@@ -103,4 +103,13 @@ WMIC           Displays WMI information inside interactive command shell.
 
 ```
 
+---
+
+####  查找某个程序进程 
+
+     tasklist /fi "imagename eq nginx.exe"
+
+杀死进程 
+
+     taskkill /f /pid  <PID>  # 顺序很重要
 
