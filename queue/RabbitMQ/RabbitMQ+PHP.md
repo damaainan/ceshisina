@@ -66,12 +66,11 @@ PS：需要注意的是生产者、消费者、代理需不要待在同一个设
 
 2. 将php_amqp.dll 放入**php/ext/**下 然后 php.ini中添加： **extension=php_amqp.dll**
 
-3. 复制 **rabbitmq.1.dll**到 php目录 如我的放到 **G:/php/php5.6.25** 目录下
+3. 复制 **rabbitmq.4.dll**到 php目录 如我的放到 **G:/php/php7.0.4** 目录下
 
 4. 修改 apache配置文件 httpd.conf添加入：
 
-**Include "${INSTALL_DIR}/alias/*"**  
-**LoadModule php5_module "${INSTALL_DIR}/bin/php/php5.6.25/rabbitmq.1.dll"**
+**LoadModule php7_module "${INSTALL_DIR}/bin/php/php7.0.4/rabbitmq.4.dll"**
 
 5. 重启 apache 和 php 服务即可
 
@@ -82,112 +81,94 @@ PS：需要注意的是生产者、消费者、代理需不要待在同一个设
 
 # [RabbitMQ + PHP （三）案例演示][10]
 
+**采用官方示例**  
+新建示例目录 rabbitmq  
+新建 composer.json 文件
 
-今天用一个简单的案例来实现 RabbitMQ + PHP 这个消息队列的运行机制。
+    {
+        "require": {
+            "php-amqplib/php-amqplib": ">=2.6.1"
+        },
+        "repositories": {
+            "packagist": {
+                "type": "composer",
+                "url": "https://packagist.phpcomposer.com"
+            }
+        }
+    }
 
-主要分为两个部分：
+目录内执行  `composer install `
+
+
+
+新建文件：
 
 第一：发送者（publisher）
 
 第二：消费者（consumer）
 
-（一）生产者 (创建一个rabbit_publisher.php的文件)
+（一）生产者 (创建一个publisher.php的文件)
 
 **创建连接-->创建channel-->创建交换机对象-->发送消息**
 
- 
+```php
+require_once __DIR__ . '/vendor/autoload.php';
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
+header("Content-type:text/html; Charset=utf-8");
 
-    $conn_args = array(
-        'host' => '127.0.0.1',
-        'port' => '5672',
-        'login' => 'guest',
-        'password' => 'guest',
-        'vhost'=>'/'
-    );
-    
-    //创建连接和channel
-    $conn = new AMQPConnection($conn_args);
-    if (!$conn->connect()) {
-        die("Cannot connect to the broker!\n");
-    }
-    $channel = new AMQPChannel($conn);
-    
-    //创建交换机
-    $e_name = 'e_linvo'; //交换机名
-    $ex = new AMQPExchange($channel);
-    $ex->setName($e_name);
-    $ex->setType(AMQP_EX_TYPE_DIRECT); //direct类型
-    $ex->setFlags(AMQP_DURABLE); //持久化
-    echo "Exchange Status:".$ex->declare()."\n";
-    
-    
-    echo "Send Message:".$ex->publish("TEST MESSAGE，key_1 by xust" . date('H:i:s', time()), 'key_1')."\n";
-    echo "Send Message:".$ex->publish("TEST MESSAGE，key_2 by xust" . date('H:i:s', time()), 'key_2')."\n";
 
-（二）消费者(创建一个rabbit_consumer.php的文件)
+$connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+$channel = $connection->channel();
+
+$channel->queue_declare('hello', false, false, false, false);
+
+$msg = new AMQPMessage('Hello World!');
+$channel->basic_publish($msg, '', 'hello');
+
+echo " [x] Sent 'Hello World!'\n";
+
+
+$channel->close();
+$connection->close();
+```
+（二）消费者(创建一个consumer.php的文件)
 
 **创建连接-->创建channel-->创建交换机-->创建队列-->绑定交换机/队列/路由键-->接收消息**
 
  
+```php
+<?php 
+require_once __DIR__ . '/vendor/autoload.php';
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 
-    $conn_args = array(
-        'host' => '127.0.0.1',
-        'port' => '5672',
-        'login' => 'guest',
-        'password' => 'guest',
-        'vhost'=>'/'
-    );
-    
-    $e_name = 'e_linvo'; //交换机名
-    $q_name = 'q_linvo'; //队列名
-    $k_route = 'key_2'; //路由key
-    
-    //创建连接和channel
-    $conn = new AMQPConnection($conn_args);
-    if (!$conn->connect()) {
-        die("Cannot connect to the broker!\n");
-    }
-    $channel = new AMQPChannel($conn);
-    
-    //创建交换机
-    $ex = new AMQPExchange($channel);
-    $ex->setName($e_name);
-    $ex->setType(AMQP_EX_TYPE_DIRECT); //direct类型
-    $ex->setFlags(AMQP_DURABLE); //持久化
-    echo "Exchange Status:".$ex->declare()."\n";
-    
-    //创建队列
-    $q = new AMQPQueue($channel);
-    $q->setName($q_name);
-    $q->setFlags(AMQP_DURABLE); //持久化
-    
-    //绑定交换机与队列，并指定路由键
-    echo 'Queue Bind: '.$q->bind($e_name, 'key_2')."\n";　
-    
-    //阻塞模式接收消息
-    echo "Message:\n";
-    $q->consume('processMessage', AMQP_AUTOACK); //自动ACK应答
-    
-    $conn->disconnect();
-    
-    /**
-     * 消费回调函数
-     * 处理消息
-     */
-    function processMessage($envelope, $queue) {
-        var_dump($envelope->getRoutingKey);
-        $msg = $envelope->getBody();
-        echo $msg."\n"; //处理消息
-    }
+header("Content-type:text/html; Charset=utf-8");
 
-执行两个文件，再打开RabbitMQ的管理中心 [http://127.0.0.1:15672/][11]
+$connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+$channel = $connection->channel();
+
+$channel->queue_declare('hello', false, false, false, false);
+
+echo ' [*] Waiting for messages. To exit press CTRL+C', "\n";
+
+$callback = function($msg) {
+  echo " [x] Received ", $msg->body, "\n";
+};
+
+$channel->basic_consume('hello', '', false, true, false, false, $callback);
+
+while(count($channel->callbacks)) {
+    $channel->wait();
+}
+```
+
+执行两个文件，先执行`consumer.php`，等待接收消息  
+再执行 `publisher.php ` ，发送消息  
+再打开RabbitMQ的管理中心 [http://127.0.0.1:15672/][11]
 
 ![][12]
 
 说明你的程序运行是正常的。
-
-如果有什么地方说错了，望，批评指正！谢谢。
-
 
 
 [0]: http://www.cnblogs.com/bluebirds/p/6068927.html
