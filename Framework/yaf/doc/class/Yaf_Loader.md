@@ -64,8 +64,7 @@ $global_library_directory
 > 返回值   
 Yaf_Loader
 
-例子
-**例 11.11. Yaf_Loader::getInstance 的例子**
+> **Yaf_Loader::getInstance 的例子**
 
 ```php
 <?php
@@ -93,9 +92,7 @@ Yaf_Loader::import
 
 成功返回TRUE, 失败返回FALSE.
 
-例子 
-
-**例 11.12. Yaf_Loader::import 的例子**
+> **Yaf_Loader::import 的例子**
 
 ```php
 <?php
@@ -144,8 +141,7 @@ $class_name
 
 在php.ini中的yaf.use_spl_autoload关闭的情况下, 即使类没有找到, Yaf_Loader::autoload也会返回TRUE, 剥夺其后面的自动加载函数的执行权利.
 
-例子  
-**例 11.13. Yaf_Loader::autoload 的例子**
+> **Yaf_Loader::autoload 的例子**
 
 ```php
 <?php
@@ -172,8 +168,7 @@ $local_name_prefix
 
 Yaf_Loader
 
-例子
-***例 11.14. Yaf_Loader::registerLocalNamespace 的例子**
+> **Yaf_Loader::registerLocalNamespace 的例子**
 
 ```php
 <?php
@@ -201,8 +196,7 @@ $class_name
 
 boolean
 
-例子
-**例 11.15. Yaf_Loader::isLocalName 的例子**
+> **Yaf_Loader::isLocalName 的例子**
 
 ```php
 <?php
@@ -234,8 +228,7 @@ void
 
 成功返回字符串
 
-例子
-**例 11.16. Yaf_Loader::getLocalNamespace 的例子**
+> **Yaf_Loader::getLocalNamespace 的例子**
 
 ```php
 <?php
@@ -267,8 +260,7 @@ void
 
 成功返回TRUE, 失败返回FALSE
 
-例子
-**例 11.17. Yaf_Loader::clearLocalNamespace 的例子**
+> **Yaf_Loader::clearLocalNamespace 的例子**
 
 ```php
 <?php

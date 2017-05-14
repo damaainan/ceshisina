@@ -75,7 +75,7 @@ void
 
 例子 
 
-**例 11.1. Yaf_Application::__construct的例子**
+> **Yaf_Application::__construct的例子**
 
 ```php     
 <?php
@@ -121,7 +121,7 @@ Yaf_Application
 
 例子 
 
-**例 11.2. Yaf_Application::bootstrap 的例子**
+> **Yaf_Application::bootstrap 的例子**
 
 ```php 
 <?php
@@ -157,7 +157,7 @@ Yaf_Application
 
 例子 
 
-**例 11.3. Yaf_Application::app 的例子**
+> **Yaf_Application::app 的例子**
 
 ```php
 <?php
@@ -193,7 +193,7 @@ Yaf_Application::environ
 
 例子 
 
-**例 11.4. Yaf_Application::environ 的例子**
+> **Yaf_Application::environ 的例子**
 
 ```php
 <?php
@@ -230,7 +230,7 @@ boolean
 
 例子 
 
-**例 11.5. Yaf_Application::run 的例子**
+> **Yaf_Application::run 的例子**
 
 ```php
 <?php
@@ -277,7 +277,7 @@ _$parameter_
 
 例子 
 
-**例 11.6. Yaf_Application::execute 的例子**
+> **Yaf_Application::execute 的例子**
 
 ```php
 <?php
@@ -315,7 +315,7 @@ Yaf_Dispatcher实例
 
 例子
 
-**例 11.7. Yaf_Application::getDispatcher 的例子**
+> **Yaf_Application::getDispatcher 的例子**
 
 ```php 
 <?php
@@ -352,7 +352,7 @@ _void_
 Yaf_Config_Abstract
 
 例子
-**例 11.8. Yaf_Application::getConfig 的例子**
+> **Yaf_Application::getConfig 的例子**
 
 ```php
      <?php
@@ -403,7 +403,7 @@ _void_
 string
 
 例子
-**例 11.9. Yaf_Application::getModules 的例子**
+> **Yaf_Application::getModules 的例子**
 
 ```php
      <?php

@@ -38,8 +38,7 @@ $value
 
 Yaf_Registry
 
-例子
-**例 11.38. Yaf_Registry::set 的例子**
+> **Yaf_Registry::set 的例子**
 
 ```php
      <?php
@@ -72,8 +71,7 @@ $name
 
 成功返回要获取的注册项的值, 失败返回FALSE
 
-例子
-**例 11.39. Yaf_Registry::get 的例子**
+> **Yaf_Registry::get 的例子**
 
 ```php
      <?php
@@ -104,8 +102,7 @@ $name
 
 存在返回TRUE, 不存在返回FALSE
 
-例子
-**例 11.40. Yaf_Registry::has 的例子**
+> **Yaf_Registry::has 的例子**
 
 ```php
      
@@ -136,8 +133,7 @@ $name
 
 成功返回TRUE, 失败返回FALSE
 
-例子
-**例 11.41. Yaf_Registry::del 的例子**
+> **Yaf_Registry::del 的例子**
 
 ```php
      
