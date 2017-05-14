@@ -43,7 +43,7 @@ Yaf_Application通过特殊的方式实现了单利模式, 此属性保存当前
 Yaf_Dispatcher实例
 
 - _modules  
-存在的模块名, 从配置文件中ap.modules读取
+存在的模块名, 从配置文件中app.modules读取
 
 - _environ  
 当前的环境名, 也就是Yaf_Application在读取配置的时候, 获取的配置节名字
