@@ -1,0 +1,119 @@
+
+│   login.php
+│   
+├───config
+│       config.inc.php
+├───dvwa
+│   │       
+│   ├───includes
+│   │   │   dvwaPage.inc.php
+│   │   │   dvwaPhpIds.inc.php
+│   │   │   
+│   │   └───DBMS
+│   │           MySQL.php
+│            
+└───vulnerabilities
+    │   
+    ├───brute
+    │   │   index.php
+    │   │   
+    │   │       
+    │   └───source
+    │           high.php
+    │           impossible.php
+    │           low.php
+    │           medium.php
+    │           
+    ├───captcha
+    │   │   index.php
+    │   └───source
+    │           high.php
+    │           impossible.php
+    │           low.php
+    │           medium.php
+    │           
+    ├───csrf
+    │   │   index.php
+    │   │   
+    │   │       
+    │   └───source
+    │           high.php
+    │           impossible.php
+    │           low.php
+    │           medium.php
+    │           
+    ├───exec
+    │   │   index.php
+    │   │       
+    │   └───source
+    │           high.php
+    │           impossible.php
+    │           low.php
+    │           medium.php
+    │           
+    ├───fi
+    │   │   file1.php
+    │   │   file2.php
+    │   │   file3.php
+    │   │   file4.php
+    │   │   include.php
+    │   │   index.php
+    │   │   
+    │   │       
+    │   └───source
+    │           high.php
+    │           impossible.php
+    │           low.php
+    │           medium.php
+    │           
+    ├───sqli
+    │   │   index.php
+    │   │   session-input.php
+    │   │   
+    │   │       
+    │   └───source
+    │           high.php
+    │           impossible.php
+    │           low.php
+    │           medium.php
+    │           
+    ├───sqli_blind
+    │   │   cookie-input.php
+    │   │   index.php
+    │   │   
+    │   │       
+    │   └───source
+    │           high.php
+    │           impossible.php
+    │           low.php
+    │           medium.php
+    │           
+    ├───upload
+    │   │   index.php
+    │   │   
+    │   │       
+    │   └───source
+    │           high.php
+    │           impossible.php
+    │           low.php
+    │           medium.php
+    │           
+    ├───xss_r
+    │   │   index.php
+    │   │       
+    │   └───source
+    │           high.php
+    │           impossible.php
+    │           low.php
+    │           medium.php
+    │           
+    └───xss_s
+        │   index.php
+        │   
+        │       
+        └───source
+                high.php
+                impossible.php
+                low.php
+                medium.php
+                

@@ -12,3 +12,8 @@ DVWA共有十个模块，分别是
 **XSS（Stored）（存储型跨站脚本）**  
 
 需要注意的是，DVWA 1.9的代码分为四种安全级别：Low，Medium，High，Impossible。初学者可以通过比较四种级别的代码，接触到一些PHP代码审计的内容。
+
+## DVWA　PHP7 环境下搭建
+
+需要修改文件中 php_mysql 扩展的方法为 php_mysqli 扩展的方法，需要修改的文件列表见 `file.txt`
+
