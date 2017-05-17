@@ -1,0 +1,21 @@
+{   
+    "manifest_version": 2,
+    "name": "QRcode tool",
+    "version": "1.0",
+    "description": "一个简洁的二维码生成工具，简单实用，小巧玲珑。",
+    "icons": {
+        "16": "images/icon16.png",
+        "48": "images/icon128.png",
+        "128": "images/icon128.png"
+    },
+    "options_page": "options.html",//配置项页面
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_titlec": "QRcode tool",
+        "default_icon": {
+            "16": "images/icon16.png"
+        }
+    },
+    //权限声明
+    "permissions":["tabs"]
+}

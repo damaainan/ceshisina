@@ -1,0 +1,167 @@
+body{
+	font-family: "Microsoft YaHei", Helvetica, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", "Monaco", monospace, Tahoma, STXihei, "华文细黑", STHeiti, "Helvetica Neue", "Droid Sans", "wenquanyi micro hei", FreeSans, Arimo, Arial, SimSun, "宋体", Heiti, "黑体", sans-serif;
+    font-size: 13px;
+    padding: 0;
+    margin:0;
+}
+.mlay{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top:0;
+    display: table;
+}
+.mlay-body{
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+}
+.box{
+	display: inline-block;
+	width: 400px;
+	background: #f1f1f1;;
+	padding: 10px;
+	border-radius: 3px;
+
+}
+.box .qrcode-bg{
+	display: inline-block;
+	padding: 10px;
+}
+.box .text{
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+	font-family: inherit;
+}
+.box .icon,
+.box .btn{
+	vertical-align: middle;
+}
+.box .icon{
+	margin:5px 5px 4px 5px;
+}
+.box .btn{
+	margin-top: 10px;
+}
+.control{
+    display: block;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    
+}
+.control:focus{
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+}
+.control[disabled]{
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+/*按钮样式*/
+.btn{
+    outline: none;
+    border:solid 1px #BFBFBF;
+    border-radius: 3px;
+    background: #F7F7F7;
+    opacity: 0.8;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 400;
+    font-family: inherit;
+    line-height: 1.42857143;
+    text-decoration: none;
+}
+.btn-sm{
+    padding: 1px 4px;
+    font-size: 12px;
+}
+.btn-lg{
+    padding: 4px 14px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.btn.warning{
+    background: #EC971F;
+    border-color: #E0901F;
+}
+.btn.success{
+    background: #2CCE7E;
+    border-color: #27BF74;
+}
+.btn.error{ 
+    background: #D92626;
+    border-color: #CE2121;
+}
+.btn.info{
+    background: #2BBBF1;
+    border-color: #27ADE0;
+}
+.btn.primary{
+    background: #1B90DA;
+    border-color: #1295D6;
+}
+.btn.link{
+    background: none;
+    border:none;
+    color: #48a6e1;
+}
+.btn.warning,
+.btn.success,
+.btn.error,
+.btn.info,
+.btn.primary{
+    color: #fff;
+}
+.btn:hover{
+    opacity: 1;
+}
+.btn:active,
+.btn.active{
+    -webkit-box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    -moz-box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    -o-box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+}
+.btn.link:active{
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -o-box-shadow: none;
+    box-shadow: none;
+}
+/*禁用的按钮*/
+.btn[disabled]{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+.footer{
+	background: #F2F2F2;
+	height: 100px;
+	margin-top: 20px;
+}
+.copyright{
+	display: inline-block;
+	margin-top:30px;
+}
+.copyright a{
+	color: #3495F7;
+	text-decoration: none;
+}
