@@ -28,8 +28,8 @@ _原文_[http://www.forwhat.cn/post-444.html](http://www.forwhat.cn/post-444.htm
 .import FILE TABLE  | 导入来自 FILE 文件的数据到 TABLE 表中。
 .indexes ?TABLE?  | 显示所有索引的名称。如果指定了 TABLE 表，则只显示匹配 LIKE 模式的 TABLE 表的索引。
 .load FILE ?ENTRY?  | 加载一个扩展库。
-.log FILE|off  | 开启或关闭日志。FILE 文件可以是 stderr（标准错误）/stdout（标准输出）。
-.mode MODE  | 设置输出模式，MODE 可以是下列之一：* csv 逗号分隔的值* column 左对齐的列* html HTML 的 <table> 代码* insert TABLE 表的 SQL 插入（insert）语句* line 每行一个值* list 由 .separator 字符串分隔的值* tabs 由 Tab 分隔的值* tcl TCL 列表元素
+.log FILE off  | 开启或关闭日志。FILE 文件可以是 stderr（标准错误）/stdout（标准输出）。
+.mode MODE  | 设置输出模式，MODE 可以是下列之一：* csv 逗号分隔的值* column 左对齐的列* html HTML 的 代码* insert TABLE 表的 SQL 插入（insert）语句* line 每行一个值* list 由 .separator 字符串分隔的值* tabs 由 Tab 分隔的值* tcl TCL 列表元素
 .nullvalue STRING  | 在 NULL 值的地方输出 STRING 字符串。
 .output FILENAME  | 发送输出到 FILENAME 文件。
 .output stdout  | 发送输出到屏幕。
@@ -131,6 +131,8 @@ NUMERIC |当文本数据被插入到亲缘性为NUMERIC的字段中时，如果�
 INTEGER |对于亲缘类型为INTEGER的字段，其规则等同于NUMERIC，唯一差别是在执行CAST表达式时。
 REAL |其规则基本等同于NUMERIC，唯一的差别是不会将"30000.0"这样的文本数据转换为INTEGER存储方式。
 NONE |不做任何的转换，直接以该数据所属的数据类型进行存储。
+
+
 SQLite 亲和类型(Affinity)及类型名称
 
 下表列出了当创建 SQLite3 表时可使用的各种数据类型名称，同时也显示了相应的亲和类型：
@@ -156,6 +158,7 @@ SQLite 没有一个单独的用于存储日期和/或时间的存储类，但 SQ
 TEXT | 格式为 "YYYY-MM-DD HH:MM:SS.SSS" 的日期。
 REAL | 从公元前 4714 年 11 月 24 日格林尼治时间的正午开始算起的天数。
 INTEGER | 从 1970-01-01 00:00:00 UTC 算起的秒数。
+
 您可以以任何上述格式来存储日期和时间，并且可以使用内置的日期和时间函数来自由转换不同格式。
 
 ---
