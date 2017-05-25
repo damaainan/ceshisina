@@ -10,3 +10,5 @@ phpspider
 phpquery
 
 xpath
+
+QueryList
