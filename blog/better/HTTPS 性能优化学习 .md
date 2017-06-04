@@ -312,7 +312,7 @@ Client Side False Start需要的条件：
 
 ![][38]
 
-[0]: http://yangxikun.github.io/assets/img/201705130101.png
+[0]: ./img/201705130101.png
 [1]: https://www.ietf.org/rfc/rfc5246.txt
 [2]: https://en.wikipedia.org/wiki/Digital_signature
 [3]: https://en.wikipedia.org/wiki/Stream_cipher
@@ -326,28 +326,28 @@ Client Side False Start需要的条件：
 [11]: https://www.keylength.com/
 [12]: https://www.ssllabs.com/ssltest/clients.html
 [13]: https://www.ssllabs.com/ssltest/
-[14]: http://yangxikun.github.io/assets/img/201705130102.png
+[14]: ./img/201705130102.png
 [15]: https://blog.cloudflare.com/keyless-ssl-the-nitty-gritty-technical-details/
 [16]: https://en.wikipedia.org/wiki/Forward_secrecy
-[17]: http://yangxikun.github.io/assets/img/201705130105.png
-[18]: http://yangxikun.github.io/assets/img/201705130106.png
-[19]: http://yangxikun.github.io/assets/img/201705130103.png
+[17]: ./img/201705130105.png
+[18]: ./img/201705130106.png
+[19]: ./img/201705130103.png
 [20]: https://jwt.io/
-[21]: http://yangxikun.github.io/assets/img/201705130104.png
-[22]: http://yangxikun.github.io/assets/img/201705130107.png
-[23]: http://yangxikun.github.io/assets/img/201705130108.png
-[24]: http://yangxikun.github.io/assets/img/201705130109.png
-[25]: http://yangxikun.github.io/assets/img/201705130110.png
-[26]: http://yangxikun.github.io/assets/img/201705130111.png
-[27]: http://yangxikun.github.io/assets/img/201705130112.png
-[28]: http://yangxikun.github.io/assets/img/201705130113.png
+[21]: ./img/201705130104.png
+[22]: ./img/201705130107.png
+[23]: ./img/201705130108.png
+[24]: ./img/201705130109.png
+[25]: ./img/201705130110.png
+[26]: ./img/201705130111.png
+[27]: ./img/201705130112.png
+[28]: ./img/201705130113.png
 [29]: https://www.igvita.com/2013/12/16/optimizing-nginx-tls-time-to-first-byte/
 [30]: https://blog.cloudflare.com/optimizing-tls-over-tcp-to-reduce-latency/
-[31]: http://yangxikun.github.io/assets/img/201705130116.png
-[32]: http://yangxikun.github.io/assets/img/201705130119.png
+[31]: ./img/201705130116.png
+[32]: ./img/201705130119.png
 [33]: https://cnodejs.org/topic/564af9751ba2ef107f854d3e
 [34]: https://tools.ietf.org/html/rfc7918
 [35]: http://www.ituring.com.cn/book/1734
 [36]: http://chimera.labs.oreilly.com/books/1230000000545/index.html
 [37]: https://github.com/yangxikun/sslciphersuitescheck
-[38]: http://yangxikun.github.io/assets/img/201705130120.png
+[38]: ./img/201705130120.png

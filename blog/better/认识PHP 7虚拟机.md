@@ -690,7 +690,7 @@ NOP表示不做任何操作，只是将当前opline指向下一条OPCode，编�
 [2]: http://www.differencebetween.info/difference-between-opcode-and-bytecode
 [3]: http://stackoverflow.com/questions/17638888/difference-between-opcode-byte-code-mnemonics-machine-code-and-assembly
 [4]: http://stackoverflow.com/questions/5662261/why-is-it-good-to-avoid-instruction-branching-where-possible
-[5]: http://yangxikun.github.io/assets/img/201611040201.png
-[6]: http://yangxikun.github.io/assets/img/201611040202.png
+[5]: ./img/201611040201.png
+[6]: ./img/201611040202.png
 [7]: https://gcc.gnu.org/onlinedocs/gcc/Labels-as-Values.html
 [8]: http://yangxikun.github.io/php/2016/11/04/php-7-func-call.html

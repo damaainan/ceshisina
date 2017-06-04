@@ -443,7 +443,7 @@ echo输出后，进入return：
 希望通过本文，读者能够大概地了解到PHP OPCode执行时，当发生函数调用时的上下文切换情况，对于其他的许多细节问题，比如符号表/临时变量等，尚未研究过。
 
 [0]: http://km.oa.com/articles/show/272362?kmref=kb_categories
-[1]: http://yangxikun.github.io/assets/img/201611030101.png
-[2]: http://yangxikun.github.io/assets/img/201611030102.png
-[3]: http://yangxikun.github.io/assets/img/201611030103.png
-[4]: http://yangxikun.github.io/assets/img/201611030104.png
+[1]: ./img/201611030101.png
+[2]: ./img/201611030102.png
+[3]: ./img/201611030103.png
+[4]: ./img/201611030104.png

@@ -289,9 +289,9 @@ _> 这个比方很贴切~_
 
 
 [0]: http://stblog.baidu-tech.com/?p=763
-[1]: http://yangxikun.github.io/assets/img/201308210101.jpg
+[1]: ./img/201308210101.jpg
 [2]: http://wenku.it168.com/d_000436406.shtml
-[3]: http://yangxikun.github.io/assets/img/201308210102.jpg
-[4]: http://yangxikun.github.io/assets/img/201308210103.jpg
-[5]: http://yangxikun.github.io/assets/img/201308210104.jpg
-[6]: http://yangxikun.github.io/assets/img/201308210105.jpg
+[3]: ./img/201308210102.jpg
+[4]: ./img/201308210103.jpg
+[5]: ./img/201308210104.jpg
+[6]: ./img/201308210105.jpg

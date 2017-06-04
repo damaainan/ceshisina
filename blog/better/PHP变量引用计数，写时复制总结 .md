@@ -180,18 +180,18 @@ $a、$b、$c先指向同一个ZVAL，在修改$c的值时，就需要为$c复制
 ![demo][15]
 
 [0]: http://derickrethans.nl/talks/phparch-php-variables-article.pdf
-[1]: http://yangxikun.github.io/assets/img/201401280101.png
-[2]: http://yangxikun.github.io/assets/img/201401280102.png
-[3]: http://yangxikun.github.io/assets/img/201401280103.png
-[4]: http://yangxikun.github.io/assets/img/201401280104.png
-[5]: http://yangxikun.github.io/assets/img/201401280105.png
-[6]: http://yangxikun.github.io/assets/img/201401280106.png
+[1]: ./img/201401280101.png
+[2]: ./img/201401280102.png
+[3]: ./img/201401280103.png
+[4]: ./img/201401280104.png
+[5]: ./img/201401280105.png
+[6]: ./img/201401280106.png
 [7]: http://cn2.php.net/manual/en/language.references.pass.php
-[8]: http://yangxikun.github.io/assets/img/201401280107.png
-[9]: http://yangxikun.github.io/assets/img/201401280108.png
-[10]: http://yangxikun.github.io/assets/img/201401280111.png
-[11]: http://yangxikun.github.io/assets/img/201401280112.png
-[12]: http://yangxikun.github.io/assets/img/201401280109.png
-[13]: http://yangxikun.github.io/assets/img/201401280113.png
-[14]: http://yangxikun.github.io/assets/img/201401280114.png
-[15]: http://yangxikun.github.io/assets/img/201401280110.png
+[8]: ./img/201401280107.png
+[9]: ./img/201401280108.png
+[10]: ./img/201401280111.png
+[11]: ./img/201401280112.png
+[12]: ./img/201401280109.png
+[13]: ./img/201401280113.png
+[14]: ./img/201401280114.png
+[15]: ./img/201401280110.png
