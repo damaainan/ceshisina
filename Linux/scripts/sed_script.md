@@ -43,3 +43,8 @@ do
         echo ${num}
 done
 ```
+
+
+## awk 字符串切割分组
+
+    ls | grep png | awk '{split($0,a,"amp");print a[2]}'

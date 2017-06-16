@@ -1,26 +1,6 @@
-# [遗传算法解背包问题（javascript实现）][0]
+var __ = require('lodash');
 
 
-[**zhoutk**][5] 2016年04月22日发布 
-
-
-
-此为《算法的乐趣》读书笔记，我用javascript（ES6）重新实现算法。
-
-## 遗传算法
-
-“物竞天择，适者生存”，遗传算法就是借鉴生物体自然选择和自然遗传机制的随机搜索算法。算法的关键点有：基因的选择与编码、适应度评估函数与三个遗传算子（选择、交叉和变异）的设计。
-
-## 0-1背包问题
-
-有一个背包，最多承重为C=150的物品，现在有7个物品，编号为1~7，重量分别是w=[35,30,60,50,40,10,25]，价值分别是p=[10,40,30,50,35,40,30]，现在从这7个物品中选择一个或多个装入背包，要求在物品总重量不超过C的前提下，所装入的物品总价值最高。
-
-## 代码及思路
-
-该算法采用属性序列方式对基因编码，遗传算子则使用了比例选择模式、多点交叉和均匀变异三种方式，麻雀虽小，五脏具全。
-
-### 变量定义
-```js
     var C = 150                            //背包最大承重
     var WEIGHT = [35,30,60,50,40,10,25]    //物品重量
     var POWER = [10,40,30,50,35,40,30]     //物品价值
@@ -33,11 +13,9 @@
         P_MUTATION = 0.15,                 //变异概率
         MAXGENERATIONS = 20                //总的进化代数
     var pop = []                           //种群所有对象
-```
-### 基因编码
 
-基因由7件物品状态组成，1表示装入，0表示不装入；每个个体除了基因外，还有适应度、选择概率和积累选择概率。类定义如下：
-```js
+
+
     class Gene{
         constructor(gene){
             this.gene = gene;            //基因，数组
@@ -46,11 +24,9 @@
             this.cf = 0;
         }
     }
-```
-### 种群初始化
 
-每个个体选择随机的基因，使用0，1随机数直接填充gene数组。因为这个具体问题规模较小，在选择时我丢弃了适应度较高的方案，以此来更好的测试算法的效果。
-```js
+
+
     function initGenes(){
         let count = 0, maxFit = 100;    //随机生成的基因适应度的最大值
         while(count < POPMAX){
@@ -68,11 +44,7 @@
             }
         }
     }
-```
-### 适应度函数
 
-计算种群中所有对象的适应度及总和，并对超出C的基因进行“惩罚”。
-```js
     function envaluateFitness(max){            //max参数只是用来记录进化代数
         let totalFitness = 0;
         for(let i=0; i<POPMAX; i++ ){
@@ -97,11 +69,8 @@
         }
         return totalFitness;
     }
-```
-### 选择算子函数
 
-采用简单的轮盘赌方式进行选择，首先计算种群中所有个体的选择概率和累积概率，然后利用随机数进行“轮盘赌”，挑出幸运者作为新种群。这里有个坑，lodash的cloneDeep直接克隆pop会有问题，出现怪异问题，难道是我的对象层次太深，求解！
-```js
+
     function selectBetter(totalFitness){
         let lastCf = 0;
         let newPop = []
@@ -128,11 +97,8 @@
             pop.push(__.cloneDeep(newPop[i]))
         }
     }
-```
-### 交叉算子函数
 
-交叉算子采用多点交叉策略，对两个随机选中的个体基因进行交换，基因交换的位置和个数都是随机的，使得新个体的基因更具有随机性。
-```js
+
     function crossover(){
         let first = -1;
         for(let i=0; i<POPMAX; i++){
@@ -156,11 +122,7 @@
             pop[second].gene[idx] = tg
         }
     }
-```
-### 变异算子函数
 
-变异算子采用均匀变异的策略，选中个体基因变异的个数与位置都是随机选择的。
-```js
     function mutation(){
         for(let i=0; i<POPMAX; i++){
             let p = Math.random();
@@ -176,11 +138,8 @@
             pop[index].gene[gi] = 1 - pop[index].gene[gi]
         }
     }
-```
-### 算法主流程
 
-主流程很简单，几乎是线性的。
-```js
+
     initGenes();
     var f = envaluateFitness(0)
     for(let i=0; i<MAXGENERATIONS; i++){
@@ -190,14 +149,3 @@
         f= envaluateFitness(i)
     }
     console.log(maxi + '--' + maxPower + ' <=> ' + maxGene.join(','));
-```
-## 总结
-
-以前一直觉得遗传算法很神秘，因此仔细研究了一下，觉得算法的效果很大程度上取决于各种参数的设定。另外，也许进化过程中出现过最优值，但最后的种群中也不一定会有最优值存在。真是能用其它方法可以解决时最好不用它，呵呵！
-
-[0]: https://segmentfault.com/a/1190000004989612
-[1]: https://segmentfault.com/t/node.js/blogs
-[2]: https://segmentfault.com/t/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/blogs
-[3]: https://segmentfault.com/t/javascript/blogs
-[4]: https://segmentfault.com/t/%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95/blogs
-[5]: https://segmentfault.com/u/zhoutk
