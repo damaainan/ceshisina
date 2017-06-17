@@ -48,3 +48,9 @@ done
 ## awk 字符串切割分组
 
     ls | grep png | awk '{split($0,a,"amp");print a[2]}'
+
+
+     ls | grep md | awk -F'# ' '{print $2}' | xargs -I[ mv "# "[ [
+
+
+     
