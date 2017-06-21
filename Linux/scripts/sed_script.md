@@ -53,4 +53,18 @@ done
      ls | grep md | awk -F'# ' '{print $2}' | xargs -I[ mv "# "[ [
 
 
-     
+
+## awk system 命令的执行
+
+    awk -F': ' '/bVIu/{print $2}' 1.md | awk -F'/' '{system("aria2c -o "$NF".png "$0)}'
+
+> 此条命令实现了下载图片并重命名
+
+**  空格与双引号  ** 是值得注意的地方
+
+#### 将原有图片地址进行替换
+
+    ls *.png | awk -F'.' '{print $1}' | xargs -I[  sed -i "s/https:\/\/segmentfault.com\/img\/[/..\/img\/[.png/" 1.md
+
+> 双引号中变量可以解析  
+> 有些自负需要进行转义
