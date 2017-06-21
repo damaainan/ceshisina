@@ -19,6 +19,7 @@ Nginx软件包使用源码编译安装。需要提前将其依赖包进行安装
 1. 安装依赖包
 
     [root@cc]# yum -y insstall gcc gcc-c++ make pcre pcre-devel openssl zlib
+
 1. 源码包编译安装Nginx，在官网下载[http://nginx.org][4]
 
     [root@cc]# tar -xf  nginx-1.8.0.tar.gz -C /usr/local/    //解包
@@ -26,6 +27,7 @@ Nginx软件包使用源码编译安装。需要提前将其依赖包进行安装
     [root@cc]# ./configure --with-http_ssl_module            //配置
     [root@cc]# make                                          //编译
     [root@cc]# make install                                  //安装
+
 1. 将nginx程序做个软连接，方便执行
 
     [root@cc]# ln -s /usr/local/nginx/sbin/nginx /usr/sbin   //连接
@@ -36,11 +38,15 @@ Nginx服务器安装好之后，程序的主目录在/usr/local/nginx下，该�
 
 1. 启动主程序
 
+
     [root@cc]# nginx
+
 1. 关闭主程序
 
     [root@cc]# nginx -s stop
+
 1. 重载nginx配置
+
 
     [root@cc]# nginx -s reload
 
@@ -383,19 +389,27 @@ _方案_：反向代理负载均衡拓扑结构如图4：
   
 _操作_：操作如下：
 
-1. 准备两个后端的Apache服务器，提供http服务。web1的ip地址为192.168.2.100，web2的ip地址为192.168.2.200。配置web1的http服务操作如下：
+1. 准备两个后端的Apache服务器，提供http服务。web1的ip地址为192.168.2.100，web2的ip地址为192.168.2.200。配置web1的http服务
+
+操作如下：
 
     [root@cc]# yum -y install httpd                            //装包
     [root@cc]# echo "web1" > /var/www/html/index.html          //配置主页  
     [root@cc]# systemctl restart httpd                         //启服务
     [root@cc]# netstat -antup | grep 80                        //检查监听端口
-1. web2的配置如下：
+1. web2的配置
+
+如下：
+
 
     [root@cc]# yum -y install httpd                            //装包
     [root@cc]# echo "web2" > /var/www/html/index.html          //配置主页  
     [root@cc]# systemctl restart httpd                         //启服务
     [root@cc]# netstat -antup | grep 80                        //检查监听端口
-1. 在代理服务器上配置Nginx反向代理服务器，操作如下：
+1. 在代理服务器上配置Nginx反向代理服务器，
+
+操作如下：
+
 
     [root@cc]# vim /usr/local/nginx/conf/nginx.conf
     ...
@@ -421,7 +435,9 @@ _操作_：操作如下：
 _2.Nginx地址重写规则案例_
 
 1. a.html---->b.html  
-操作如下：
+
+ 操作如下：
+
 
     [root@cc]# vim /usr/local/nginx/conf/nginx.conf
     rewrite a.html /b.html;                              //加在server里
@@ -431,6 +447,7 @@ _2.Nginx地址重写规则案例_
 
 客户端访问:
 
+
     [root@cc]# firefox http://192.168.4.5/a.html
     
 
@@ -439,10 +456,11 @@ _2.Nginx地址重写规则案例_
 ![][11]
 
   
-2.访问192.168.4.5.跳转到www.qq.com  
+2.访问192.168.4.5.跳转到www.qq.com   
+
 操作如下：
 
-    [root@cc]# vim /usr/local/nginx/conf/nginx.conf
+	[root@cc]# vim /usr/local/nginx/conf/nginx.conf
     rewrite ^/ http://www.qq.com ;                    //加在server里
     [root@cc]# nginx -s reload
     
@@ -527,15 +545,15 @@ Nginx是一个轻量级的web服务器，同样起web 服务，比apache 占用�
 [2]: /community/tag/110
 [3]: /community/tag/196
 [4]: http://nginx.org
-[5]: https://blog-10039692.file.myqcloud.com/1492852613414_4518_1492852638206.png
-[6]: https://blog-10039692.file.myqcloud.com/1492853200999_8374_1492853225758.png
-[7]: https://blog-10039692.file.myqcloud.com/1492854001182_9077_1492854025911.png
-[8]: https://blog-10039692.file.myqcloud.com/1492864128963_9954_1492864154350.png
-[9]: https://blog-10039692.file.myqcloud.com/1492864585966_4826_1492864611380.png
-[10]:https://blog-10039692.file.myqcloud.com/1492866351509_8824_1492866376814.png
-[11]:https://blog-10039692.file.myqcloud.com/1492922721721_5920_1492922747004.png
-[12]: https://blog-10039692.file.myqcloud.com/1492923049687_2563_1492923075227.png
+[5]: ./img/1492852613414_4518_1492852638206.png
+[6]: ./img/1492853200999_8374_1492853225758.png
+[7]: ./img/1492854001182_9077_1492854025911.png
+[8]: ./img/1492864128963_9954_1492864154350.png
+[9]: ./img/1492864585966_4826_1492864611380.png
+[10]:./img/1492866351509_8824_1492866376814.png
+[11]:./img/1492922721721_5920_1492922747004.png
+[12]: ./img/1492923049687_2563_1492923075227.png
 [13]: http://192.168.4.5
-[14]: https://blog-10039692.file.myqcloud.com/1492923901958_6217_1492923927261.png
+[14]: ./img/1492923901958_6217_1492923927261.png
 [15]: https://www.qcloud.com/community/article/291137?fromSource=gwzcw.97913.97913.97913
 [16]: https://www.qcloud.com/community/article/281027001490538345?fromSource=gwzcw.97915.97915.97915
