@@ -17,3 +17,6 @@ MySQL压力测试 sysbench
 MySQL性能测试 tpcc
 
 mysql备份 Xtrabackup
+
+
+定位问题和诊断数据库性能 sys schema 
