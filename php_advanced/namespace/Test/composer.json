@@ -1,0 +1,8 @@
+{  
+    "type": "project",  
+    "autoload": {  
+        "psr-4": {  
+            "Admin\\": "Admin/"  
+        }  
+    }  
+}  
