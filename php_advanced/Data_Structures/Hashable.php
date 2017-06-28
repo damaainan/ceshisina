@@ -30,3 +30,6 @@ class HashableObject implements \Ds\Hashable
             && $this->email === $obj->email;
     }
 }
+
+
+//怎么用？
