@@ -29,7 +29,7 @@ class HashSet extends AbstractSet implements Set {
     function has($item) {
         $hash = call_user_func($this->hashFunction, $item);
 
-        assert(is_scalar($hash));
+        // assert(is_scalar($hash));
 
         return array_key_exists($hash, $this->objects);
 
