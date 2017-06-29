@@ -1,3 +1,27 @@
+
+### 简介
+
+A Set is a sequence of unique values. This implementation uses the same hash table as Ds\Map, where values are used as keys and the mapped value is ignored. 
+
+
+#### Strengths
+
+
+• Values can be any type, including objects.  
+• Supports array syntax (square brackets).  
+• Insertion order is preserved.  
+• Automatically frees allocated memory when its size drops low enough.  
+• add(), remove() and contains() are all O(1).   
+
+
+
+#### Weaknesses
+
+
+• Doesn't support push(), pop(), insert(), shift(), or unshift().   
+• get() is O(n) if there are deleted values in the buffer before the accessed index, O(1) otherwise.   
+
+
 ### Set — The Set class
 
 * Ds\Set::add — Adds values to the set.

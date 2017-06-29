@@ -1,3 +1,10 @@
+### 简介
+
+A Stack is a "last in, first out" or "LIFO" collection that only allows access to the value at the top of the structure and iterates in that order, destructively. 
+
+Uses a Ds\Vector internally.  
+
+
 ### Stack — The Stack class
 
 * Ds\Stack::allocate — Allocates enough memory for a required capacity.

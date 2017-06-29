@@ -1,4 +1,25 @@
 
+### 简介
+
+A Map is a sequential collection of key-value pairs, almost identical to an array used in a similar context. Keys can be any type, but must be unique. Values are replaced if added to the map using the same key. 
+
+
+Strengths
+
+
+•Keys and values can be any type, including objects.   
+•Supports array syntax (square brackets).   
+•Insertion order is preserved.   
+•Performance and memory efficiency is very similar to an array.   
+•Automatically frees allocated memory when its size drops low enough.   
+
+
+
+Weaknesses
+
+
+•Can't be converted to an array when objects are used as keys.  
+
 
 
 

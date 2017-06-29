@@ -1,3 +1,8 @@
+### 简介
+
+A Queue is a "first in, first out" or "FIFO" collection that only allows access to the value at the front of the queue and iterates in that order, destructively. 
+
+
 ### Queue — The Queue class
 
 * Ds\Queue::allocate — Allocates enough memory for a required capacity.

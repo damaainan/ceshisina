@@ -1,3 +1,8 @@
+### 简介
+
+A pair is used by Ds\Map to pair keys with values. 
+
+
 ### Pair — The Pair class
 
 * Ds\Pair::clear — Removes all values.

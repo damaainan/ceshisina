@@ -1,3 +1,19 @@
+### 简介
+
+A PriorityQueue is very similar to a Queue. Values are pushed into the queue with an assigned priority, and the value with the highest priority will always be at the front of the queue. 
+
+Implemented using a max heap. 
+
+
+Note: 
+
+"First in, first out" ordering is preserved for values with the same priority. 
+
+
+
+Note: 
+
+Iterating over a PriorityQueue is destructive, equivalent to successive pop operations until the queue is empty. 
 
 ### PriorityQueue — The PriorityQueue class
 
