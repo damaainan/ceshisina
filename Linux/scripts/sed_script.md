@@ -66,5 +66,25 @@ done
 
     ls *.png | awk -F'.' '{print $1}' | xargs -I[  sed -i "s/https:\/\/segmentfault.com\/img\/[/..\/img\/[.png/" 1.md
 
+> 替换多个文件
+
+    ls *.png | awk -F'.' '{print $1}' | xargs -I[  sed -i "s/http:\/\/img.blog.csdn.net\/[/.\/img\/[.png/"   *.md
+
 > 双引号中变量可以解析  
-> 有些自负需要进行转义
+> 有些字符需要进行转义
+
+#### 将某个文件内容写入某个文件夹下所有文件
+
+    ls Set\ | awk '{system("cat LinkedList.php > Set/"$0)}'
+
+#### 将`/` 替换为 `\/`  (因为在 `sed`  中 用 s 选项做替换时  `/` 属于分隔符，会报错 )
+
+    # [0]: /xiaoting451292510/article/details/12019771 ## 信息样式
+     awk '/\[0\]\: \//{print $2}' *.md | awk '{gsub("/","\\\/");print}'
+
+
+##### 删除文件名长度固定的文件  
+
+**范围比较不好实现 ，> < 总是出问题，暂时未解决**
+
+    ls *.png | awk '{if(length() ==23)  print $0}' | xargs -I[ rm -rf [
