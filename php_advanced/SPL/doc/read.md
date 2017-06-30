@@ -148,8 +148,6 @@ SPL Iterators Class Tree
 - OuterIterator
 - RecursiveIterator
 - SeekableIterator
-- SplObserver
-- SplSubject
 
 
 ## 异常  
@@ -213,7 +211,7 @@ SPL Iterators Class Tree
 - spl_classes — 返回所有可用的SPL类
 - spl_object_hash — 返回指定对象的hash id
 
-
+class_implements.md class_parents.md class_uses.md iterator_apply.md iterator_count.md iterator_to_array.md spl_autoload_call.md spl_autoload_extensions.md spl_autoload_functions.md spl_autoload_register.md spl_autoload_unregister.md spl_autoload.md spl_classes.md spl_object_hash.md 
 ## 文件处理  
 
 ### Table of Contents
