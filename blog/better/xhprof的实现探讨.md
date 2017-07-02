@@ -18,8 +18,6 @@ xhprof主要只使用了如下两个数据结构：
 
 1、XHPROF_MODE_HIERARCHICAL模式，该模式是详细分析整个PHP代码的执行情况，其输出的分析数据如下：
 
-    
-
     <?php
     array(7) {
       ["main()==>load::./inc.php"]=>
@@ -113,8 +111,6 @@ hp_globals.ignored_function_filter是uint8类型数组，所以INDEX_2_BIT(hash)
 
 3、过滤的判断是通过hp_ignore_entry()->hp_ignore_entry_work()进行的，具体代码：
 
-    
-
     int hp_ignored_functions_filter_collision(uint8 hash) {
       uint8 mask = INDEX_2_BIT(hash);
       return hp_globals.ignored_function_filter[INDEX_2_BYTE(hash)] & mask;
@@ -160,8 +156,6 @@ hp_globals.ignored_function_filter是uint8类型数组，所以INDEX_2_BIT(hash)
 
 在每一层proxy中，都会调用BEGIN_PROFILING和END_PROFILING，以hp_execute_ex为例：
 
-    
-
     ZEND_DLEXPORT void hp_execute_ex (zend_execute_data *execute_data TSRMLS_DC) {
       ……
     
@@ -181,13 +175,11 @@ hp_globals.ignored_function_filter是uint8类型数组，所以INDEX_2_BIT(hash)
 
 **ct**是当前代码块被执行的次数，在END_PROFILING->hp_globals.mode_cb.end_fn_cb->hp_mode_hier_endfn_cb->hp_mode_shared_endfn_cb中：
 
-
     hp_inc_count(counts, "ct", 1  TSRMLS_CC)
 
 在每次代码块执行结束后就会对其对应的ct增1。
 
 **wt**是当前代码块总的执行时间（wall clock time），在END_PROFILING->hp_globals.mode_cb.end_fn_cb->hp_mode_hier_endfn_cb->hp_mode_shared_endfn_cb中：
-
 
     tsc_end = cycle_timer();
      
@@ -195,7 +187,6 @@ hp_globals.ignored_function_filter是uint8类型数组，所以INDEX_2_BIT(hash)
             hp_globals.cpu_frequencies[hp_globals.cur_cpu_id]) TSRMLS_CC);
 
 top->tsc_start是在BEGIN_PROFILING->hp_globals.mode_cb.begin_fn_cb->hp_mode_hier_beginfn_cb()中通过cycle_timer()获得的，具体代码：
-
 
     //通过rdtsc汇编指令获取CPU时钟周期
     static inline uint64 cycle_timer() {
@@ -207,7 +198,6 @@ top->tsc_start是在BEGIN_PROFILING->hp_globals.mode_cb.begin_fn_cb->hp_mode_hie
     }
 
 hp_globals.cpu_frequencies[hp_globals.cur_cpu_id]存储了各个CPU对应的时钟频率，时钟频率的获取是通过如下方式：
-
 
     static double get_cpu_frequency() {
       struct timeval start;

@@ -8,7 +8,7 @@
 
 (2) KeepAlive 该参数控制Apache是否允许在一个连接中有多个请求，默认打开。但对于大多数论坛类型站点来说，通常设置为off以关闭该支持。
 
-(3) MPM – prefork.c 在默认情况下Apache使用Prefork（进程）工作模式，可以说这部分的参数设置是对Apache性能影响的核心和关键。用户可以在配置文档中找到以下配置段：
+(3) MPM – prefork.c 在**默认情况下Apache使用Prefork（进程）工作模式**，可以说这部分的参数设置是对Apache性能影响的核心和关键。用户可以在配置文档中找到以下配置段：
 
     <IfModule prefork.c>   
     StartServers 5   

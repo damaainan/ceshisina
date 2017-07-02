@@ -4,7 +4,7 @@ _发布时间：_ 2016-01-26 _作者：_ 迹忆 _浏览次数：_
 
 在[《CGI初接触》][0]中我们提到了CGI和Server APIs的运行机制，以及各自的优点和缺点。本章我们来了解一下FastCGI，它结合了CGI和Server APIs各自的优点。
 
-**FastCGI****简单介绍**
+**FastCGI简单介绍**
 
 相对于CGI来说FastCGI有两点是和其不同的。第一点是FastCGI的进程是永久性的，也就是说用于处理请求的进程随着请求的结束并不会退出，而是继续运行等待有新的请求来处理。这样就解决了CGI由于频繁的创建和关闭进程所带来的性能问题；第二点是FastCGI和web服务器之间的通信方式是和CGI不同的。当FastCGI应用和web服务器在同一台机器上的时候，FastCGI和web服务器之间是使用全双工的连接进行通信，环境信息、输入信息、输出和错误信息都是通过这个全双工的连接进行传输的。而CGI是通过环境变量、stdin、stdout和stderr等文件进行通信的。如果FastCGI应用和web服务器在不同的机器上，这时双方是通过socket（也就是TCP连接）来进行通信的。
 
@@ -15,21 +15,21 @@ _发布时间：_ 2016-01-26 _作者：_ 迹忆 _浏览次数：_
 ![][1]
 
   
-**FastCGI****在PHP****中的应用**
+**FastCGI在PHP中的应用**
 
 在PHP5.3版本以后，PHP中集成了PHP-FPM，实现了FastCGI在PHP中的应用。FPM的具体应用请参考[《PHP中的FPM究竟做了什么》][2]这篇文章。这里仅针对上述第一点FastCGI的进程的永久性做一下说明。
 
 首先我们需要配置一下PHP-FPM（打开配置文件php安装目录/etc/php-fpm.conf），打开文件以后，找到 pm、pm.start_servers这两项分别进行以下配置
 
-pm = dynamic //在有请求连接的时候才会创建进程  
-pm.start_servers = 2 //开启的FastCGI的子进程数量
+    pm = dynamic //在有请求连接的时候才会创建进程  
+    pm.start_servers = 2 //开启的FastCGI的子进程数量
 
 当我们启动FPM服务以后，这时系统创建一个FastCGI主进程，然后由主进程创建两个子进程
 
-# ps –ef | grep php-fpm //查看fpm所有进程信息  
-root 6116 1 0 13:24 ? 00:00:00 php-fpm: master process (/usr/local/php5/etc/php-fpm.conf)  
-nobody 6117 6116 0 13:24 ? 00:00:00 php-fpm: pool www   
-nobody 6118 6116 0 13:24 ? 00:00:00 php-fpm: pool www
+    # ps –ef | grep php-fpm //查看fpm所有进程信息  
+    root 6116 1 0 13:24 ? 00:00:00 php-fpm: master process (/usr/local/php5/etc/php-fpm.conf)  
+    nobody 6117 6116 0 13:24 ? 00:00:00 php-fpm: pool www   
+    nobody 6118 6116 0 13:24 ? 00:00:00 php-fpm: pool www
 
 我们会看到有三条进程信息，当我们经过一段时间再次使用上述命令查看的时候，发现依旧是这三条信息。所以说FastCGI的进程是永久性的。
 
@@ -37,27 +37,27 @@ nobody 6118 6116 0 13:24 ? 00:00:00 php-fpm: pool www
 
 在配置文件中进行如下设置
 
-pm = ondemand  
-pm.max_children = 10  
-pm.process_idle_timeout = 10s //此选项只有在pm设为ondemand的时候才有效，其含义为当子进程处理完请求以后继续等待新的请求，如果超过10秒没有新的请求，那么该进程将会退出并释放资源。
+    pm = ondemand  
+    pm.max_children = 10  
+    pm.process_idle_timeout = 10s //此选项只有在pm设为ondemand的时候才有效，其含义为当子进程处理完请求以后继续等待新的请求，如果超过10秒没有新的请求，那么该进程将会退出并释放资源。
 
 当配置文件改完以后重启FPM服务，此时我们查看进程信息只有一条信息。
 
-#ps –ef | grep php-fpm  
-root 6415 1 0 13:38 ? 00:00:00 php-fpm: master process (/usr/local/php5/etc/php-fpm.conf)
+    #ps –ef | grep php-fpm  
+    root 6415 1 0 13:38 ? 00:00:00 php-fpm: master process (/usr/local/php5/etc/php-fpm.conf)
 
 此时只有系统创建的主进程，接着我们可以发起一条请求（例如：http://localhost/index.php）。
 
 然后我们再次查看进程信息
 
-# ps –ef | grep php-fpm  
-root 6415 1 0 13:38 ? 00:00:00 php-fpm: master process (/usr/local/php5/etc/php-fpm.conf)  
-nobody 6485 6415 0 13:42 ? 00:00:00 php-fpm: pool www
+    # ps –ef | grep php-fpm  
+    root 6415 1 0 13:38 ? 00:00:00 php-fpm: master process (/usr/local/php5/etc/php-fpm.conf)  
+    nobody 6485 6415 0 13:42 ? 00:00:00 php-fpm: pool www
 
 此时会有两条进程信息，除了主进程以后，还有处理请求的子进程。接着我们10秒不发请求，10秒以后我们再次查看进程信息
 
-#ps –ef | grep php-fpm  
-root 6415 1 0 13:38 ? 00:00:00 php-fpm: master process (/usr/local/php5/etc/php-fpm.conf)
+    #ps –ef | grep php-fpm  
+    root 6415 1 0 13:38 ? 00:00:00 php-fpm: master process (/usr/local/php5/etc/php-fpm.conf)
 
 此时又变成了一条主进程的信息。当然这条主进程是不会退出的，只要服务开着那它就会一直存在着监听某个端口看是否有新的请求，它和Web服务器进程是一样的，只有当关闭服务以后该进程才会被杀掉。
 
