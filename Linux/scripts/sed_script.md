@@ -88,3 +88,9 @@ done
 **范围比较不好实现 ，> < 总是出问题，暂时未解决**
 
     ls *.png | awk '{if(length() ==23)  print $0}' | xargs -I[ rm -rf [
+
+
+##### 去除问号之后的部分
+> sed 替换 改变分隔符
+
+     awk '/upload_images/{print $2}' *.md | awk -F'?' '{print $2}' | xargs -I[ sed -i "s@?[@@" *.md
