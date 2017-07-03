@@ -75,4 +75,4 @@
 
 [1]: http://www.cnblogs.com/ider/archive/2012/04/01/binary_search.html
 [2]: http://taop.marchtea.com/04.01.html
-[3]: http://upload-images.jianshu.io/upload_images/301894-b0b139ddc006b977?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240
+[3]: ../img/301894-b0b139ddc006b977.png

@@ -1,26 +1,6 @@
-# 排序-二叉排序树
+<?php 
 
- 作者  林湾村龙猫 关注 2016.01.21 01:03  
-
-## **概述**
-
-二叉排序树又称“二叉查找树”、“二叉搜索树”。二叉排序树：或者是一棵空树，或者是具有下列性质的二叉树：
-
-1. 若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值；
-1. 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值；
-1. 它的左、右子树也分别为二叉排序树。
-
-## **理论参考**
-
-[http://www.cnblogs.com/zhuyf87/archive/2012/11/09/2763113.html][1]  
-[http://blog.chinaunix.net/uid-22663647-id-1771796.html][2]  
-[http://blog.csdn.net/hackbuteer1/article/details/6583988][3]
-
-## **代码（PHP）**
-
-#### **1.二叉树类**
-
-在这个类中完成基本二叉树定义，包括定义属性（当前节点值，左子树，右子树）和一些基本方法（先序遍历，中序遍历，后序遍历）。
+header("Content-type:text/html; Charset=utf-8");
 
     //定义一个二叉树
     class BTree{
@@ -108,9 +88,6 @@
         }
     }
 
-#### **2.二叉排序树类**
-
-该类继承与二叉树类（BTree）,完成二叉排序树的插入节点，查找节点，删除节点。
 
     //定义二叉排序树
     class BinarySortTree extends BTree{
@@ -240,9 +217,7 @@
             }
         }
     }
-
-#### **3.调用**
-
+    
     $item = array(50, 30, 20,35,33,40,36, 100, 56, 78);
     $root = new BinarySortTree();
     foreach($item as $key){
@@ -254,18 +229,4 @@
     echo '后序遍历:'.implode(',',$root->postOrderTraversal()).'<br>';
     
     $root->deleteNode('30');
-    echo '删除节点后的先序遍历:'.implode(',',$root->preOrderTraversal()).'<br>';
-
-## **结果**
-
-![][4]
-
-
-
-二叉排序树PHP
-
-
-[1]: http://www.cnblogs.com/zhuyf87/archive/2012/11/09/2763113.html
-[2]: http://blog.chinaunix.net/uid-22663647-id-1771796.html
-[3]: http://blog.csdn.net/hackbuteer1/article/details/6583988
-[4]: ../img/301894-400dfdf86bd3eeac.png
+    echo '删除节点后的先序遍历:'.implode(',',$root->preOrderTraversal()).'<br>';    

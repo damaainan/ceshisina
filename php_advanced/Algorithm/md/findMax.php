@@ -1,18 +1,3 @@
-# 最大子序列和（4种方式）
-
-作者  林湾村龙猫关注 2016.01.21 01:32  
-
-## 一、问题描述
-
-输入一组整数，求出这组数字子序列和中最大值。也就是只要求出最大子序列的和，不必求出最大的那个序列。例如：
-
-1. 序列：-2 11 -4 13 -5 -2，则最大子序列和为20。
-1. 序列：-6 2 4 -7 5 3 2 -1 6 -9 10 -2，则最大子序列和为16。
-
-## 二、PHP代码实现
-
-实现可参考：[http://www.cnblogs.com/CCBB/archive/2009/04/25/1443455.html][1]
-
     <?php
     /**
      * 找出最大子序列和
@@ -136,10 +121,6 @@
         }
         return array($max_value,$start,$end);
     }
-
-## 三、测试
-
-    <?php
     // 获取一个随机数列
     function getArrayData($len=0){
         $arr_data = array('4','-6','8','2','-4','7','2','-5','1');
@@ -182,21 +163,4 @@
     list($max_value4,$start4,$end4)=findMax4($arr_data);
     echo "max_value:{$max_value4}\n";
     echo "{$start4}-{$end4}";echo "\n";
-    echo 'take time:'.(time()-$start_time);echo "\n";
-
-## 四、测试结果
-
-1. n=1000
-
-![][2]
-
-
-
-测试结果:n=1000
-1. n=5000
-
-还在测试中，第一种方案太慢了
-
-
-[1]: http://www.cnblogs.com/CCBB/archive/2009/04/25/1443455.html
-[2]: ../img/301894-968712ed404144d9.png.png
+    echo 'take time:'.(time()-$start_time);echo "\n";    

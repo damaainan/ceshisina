@@ -1,22 +1,5 @@
-# 查找-哈希表算法
+<?php 
 
-作者  林湾村龙猫 关注 2016.01.21 01:05 
-
-## **概述**
-
-Hash，一般翻译做“散列”，也有直接音译为“哈希”的，就是把任意长度的输入（又叫做预映射， pre-image），通过散列算法，变换成固定长度的输出，该输出就是散列值。这种转换是一种压缩映射，也就是，散列值的空间通常远小于输入的空间，不同的输入可能会散列成相同的输出，而不可能从散列值来唯一的确定输入值。简单的说就是一种将任意长度的消息压缩到某一固定长度的消息摘要的函数。
-
-## **理论**
-
-[http://blog.csdn.net/v_july_v/article/details/6256463][1]  
-[http://blog.sina.com.cn/s/blog_64e21a0a0100hy8a.html][2]  
-[http://blog.csdn.net/jdh99/article/details/8490704][3]
-
-## **代码（PHP）**
-
-php中，对象赋值默认是对象引用赋值，类似与c/c++中的指针。
-
-#### **1.链表节点类**
 
     //定义链表节点
     class Node{
@@ -27,8 +10,6 @@ php中，对象赋值默认是对象引用赋值，类似与c/c++中的指针。
             $this->data = $data;
         }
     }
-
-#### **2.哈希表类**
 
     //定义哈希表
     class HashTable{
@@ -152,11 +133,8 @@ php中，对象赋值默认是对象引用赋值，类似与c/c++中的指针。
         }
     }
 
-#### **3.数据准备**
-
     $item= array('1','10','100','test','test2','test3','33','22','26','90','101','100','47','63','txm','tom','cat','apache','nginx','777','333');
 
-#### **4.调用**
 
     $hashTable = new HashTable(10);
     $hashTable->initHashTable($item);
@@ -164,17 +142,3 @@ php中，对象赋值默认是对象引用赋值，类似与c/c++中的指针。
     var_dump($hashTable->deleteNode('100'));
     var_dump($hashTable->searchNode('100'));
     //$hashTable->printHashTable();
-
-## **结果**
-
-![][4]
-
-
-
-哈希表
-
-
-[1]: http://blog.csdn.net/v_july_v/article/details/6256463
-[2]: http://blog.sina.com.cn/s/blog_64e21a0a0100hy8a.html
-[3]: http://blog.csdn.net/jdh99/article/details/8490704
-[4]: ../img/301894-3c738f548860a394.png
