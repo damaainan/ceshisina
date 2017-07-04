@@ -94,3 +94,6 @@ done
 > sed 替换 改变分隔符
 
      awk '/upload_images/{print $2}' *.md | awk -F'?' '{print $2}' | xargs -I[ sed -i "s@?[@@" *.md
+
+##### 替换文件名
+     ls ../img | awk -F'.' '{system("sed -i \'s/"$1"/"$0"/\' *.md")}'
