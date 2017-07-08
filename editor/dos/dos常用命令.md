@@ -109,6 +109,7 @@ WMIC           Displays WMI information inside interactive command shell.
 
      tasklist /fi "imagename eq nginx.exe"
 
+     tasklist | findstr docsvw64
 杀死进程 
 
      taskkill /f /pid  <PID>  # 顺序很重要
