@@ -23,15 +23,14 @@ tenssun@163.com
 服务器名只能由英文字母a～z(不区分大小写)、数字0～9、下划线及点组成,@后点前面长度限制为1-10个字符,点后面的限制为com,cn,com.cn,net。 
 
 示例： 
-
-    
-
+```php
     <?php
     $email='wjj7r8y6@jj.net';
     if(ereg ("^[a-zA-Z][0-9a-zA-Z_]{4,19}@[0-9a-zA-Z_]{1,10}(\.)(com|cn|com.cn|net)$",$email)) {
-    echo 'email格式正确';
+        echo 'email格式正确';
     }
     ?>
+```
 **^ 和 $** 看到前面的邮件验证大部分人可能会感到头痛,别急下面我们慢慢分解。 
 
 还是得说说 ^ 和 $ 他们是分别用来匹配字符串的开始和结束，下面法举例说明： 
@@ -250,19 +249,20 @@ $或\Z | 匹配字符串串尾的原子
 {m,n} | 表示其前原子至少出现 m 次，至多出现 n 次 (n>m) 
 {m,} | 表示其前原子出现不少于 m 次
 
-**原子表**
-* 原子表"[]"中存放一组原子，彼此地位平等，且仅匹配其中的一个原子。如果想匹配一个 "a" 或 "e" 使用 / [ae]/, 例如: /Pr[ae]y/ 匹配 "Pray" 或者 "Prey "。
-* 原子表 "^" 或者称为排除原子表，匹配除表内原子外的任意一个字符。例如：/p[^u]/匹配"part"中的"pa"，但无法匹配"computer"中的"pu"因为"u"在匹配中被排除。
-* 通常，在原子表中用"-"连接一组按ASCII码顺序排列的原子，用以简化书写。 如/x[0123456789]可以写成/x[0-9]/,用来匹配一个由 "x" 字母与一个数字组成的字符串；
-* /0[xX][0-9a-fA-F]/匹配一个简单的十六进制数字，如"0x9"。/[^0-9a-zA-Z_]/匹配除英文字母、数字和下划线以外任何一个字符，其等价于/\W/。
+**原子表**  
+
+* 原子表"[]"中存放一组原子，彼此地位平等，且仅匹配其中的一个原子。如果想匹配一个 "a" 或 "e" 使用 / [ae]/, 例如: /Pr[ae]y/ 匹配 "Pray" 或者 "Prey "。  
+* 原子表 "^" 或者称为排除原子表，匹配除表内原子外的任意一个字符。例如：/p[^u]/匹配"part"中的"pa"，但无法匹配"computer"中的"pu"因为"u"在匹配中被排除。  
+* 通常，在原子表中用"-"连接一组按ASCII码顺序排列的原子，用以简化书写。 如/x[0123456789]可以写成/x[0-9]/,用来匹配一个由 "x" 字母与一个数字组成的字符串；  
+* /0[xX][0-9a-fA-F]/匹配一个简单的十六进制数字，如"0x9"。/[^0-9a-zA-Z_]/匹配除英文字母、数字和下划线以外任何一个字符，其等价于/\W/。  
 
 **重复匹配**
 
 正则表达式中有一些用于重复匹配其前原子的元字符："?"、"*"、"+"。他们主要的不同是重复匹配的次数不同。 
 
-* 元字符"？"表示0次或1次匹配紧接在其前的原子。例如：/colou?r/匹配"colour"或"color"。
-* 元字符"*"表示0次、1次或多次匹配紧接在其前的原子。例如：/^<[A-Za-z][A-Za-z0-9]*>$/可以匹配"<P>"、"<h1>"或"<Body>"等HTML标签，并且不严格的控制大小写。
-* 元字符"+"表示1次或多次匹配紧接在其前的原子。例如：/go+gle/ 匹配"gogle"、"google"或"gooogle"等中间含有多个o的字符串。上文中提及的十六进制数字的例子，实际上更加完善的匹配表达式是/^0?[ xX][0-9a-fA-F]+$/,可以匹配"0x9B3C"或者"X800"等。
+* 元字符"？"表示0次或1次匹配紧接在其前的原子。例如：`/colou?r/`匹配"colour"或"color"。
+* 元字符"*"表示0次、1次或多次匹配紧接在其前的原子。例如：`/^<[A-Za-z][A-Za-z0-9]*>$/`可以匹配`"<P>"、"<h1>"`或"<Body>"等HTML标签，并且不严格的控制大小写。
+* 元字符"+"表示1次或多次匹配紧接在其前的原子。例如：`/go+gle/`匹配"gogle"、"google"或"gooogle"等中间含有多个o的字符串。上文中提及的十六进制数字的例子，实际上更加完善的匹配表达式是`/^0?[ xX][0-9a-fA-F]+$/`,可以匹配"0x9B3C"或者"X800"等。
 
 要准确地指定原子重复的次数，还可以使用元字符"{}"指定所匹配的原子出现的次数。"{m}"表示其前原子恰好出现m次；"{m，n}"表示其前原子至少出现m次，至多出现n次；"{m，}"表示其前原子出现不少于m次。 
 
@@ -387,14 +387,14 @@ preg_match()函数在$content字符串中搜索与$pattern给出的正则表达�
     //使用通常的方法匹配时间
     if (preg_match ("/\d{4}-\d{2}-\d{2} \d{2}:\d{2} [ap]m/", $content, $m))
     {
-    echo "匹配的时间是：" .$m[0]. "\n";
+        echo "匹配的时间是：" .$m[0]. "\n";
     }
     
     //由于时间的模式明显，也可以简单的匹配
     if (preg_match ("/([\d-]{10}) ([\d:]{5} [ap]m)/", $content, $m))
     {
-    echo "当前日期是：" .$m[1]. "\n";
-    echo "当前时间是：" .$m[2]. "\n";
+        echo "当前日期是：" .$m[1]. "\n";
+        echo "当前时间是：" .$m[2]. "\n";
     }
     ?>
 ```
@@ -412,13 +412,13 @@ Ereg()是POSIX扩展中正则表达式的匹配函数.eregi()是ereg()函数的�
     //对文件名进行过滤，以保证系统安全
     if (!ereg('^[^./][^/]*$', $userfile))
     {
-    die('这是一个非法的文件名！');
+        die('这是一个非法的文件名！');
     }
     
     //对用户名进行过滤
     if (!ereg('^[^./][^/]*$', $username))
     {
-    die('这不是一个有效的用户名');
+        die('这不是一个有效的用户名');
     }
     
     //通过安全过滤，拼合文件路径
@@ -456,27 +456,27 @@ Preg_grep()函数返回一个数组,其中包括了$input数组中与给定的$p
     //输出：字符串
     function url2html($text)
     {
-    //匹配一个URL，直到出现空白为止
-    preg_match_all("/http:\/\/?[^\s]+/i", $text, $links);
-    
-    //设置页面显示URL地址的长度
-    $max_size = 40;
-    foreach($links[0] as $link_url)
-    {
-    //计算URL的长度。如果超过$max_size的设置，则缩短。
-    $len = strlen($link_url);
-    
-    if($len > $max_size)
-    {
-    $link_text = substr($link_url, 0, $max_size)."...";
-    } else {
-    $link_text = $link_url;
-    }
-    
-    //生成HTML文字
-    $text = str_replace($link_url,"<a href='$link_url'>$link_text</a>",$text);
-    }
-    return $text;
+        //匹配一个URL，直到出现空白为止
+        preg_match_all("/http:\/\/?[^\s]+/i", $text, $links);
+        
+        //设置页面显示URL地址的长度
+        $max_size = 40;
+        foreach($links[0] as $link_url)
+        {
+            //计算URL的长度。如果超过$max_size的设置，则缩短。
+            $len = strlen($link_url);
+            
+            if($len > $max_size)
+            {
+                $link_text = substr($link_url, 0, $max_size)."...";
+            } else {
+                $link_text = $link_url;
+            }
+            
+            //生成HTML文字
+            $text = str_replace($link_url,"<a href='$link_url'>$link_text</a>",$text);
+        }
+        return $text;
     }
     
     //运行实例
@@ -497,12 +497,12 @@ Preg_grep()函数返回一个数组,其中包括了$input数组中与给定的$p
     //循环便历
     foreach($rows as $line)
     {
-    If(trim($line))
+        If(trim($line))
     {
     //将匹配成功的参数写入数组中
     if(eregi("^([a-z0-9_.]*) *=(.*)", $line, $matches))
     {
-    $options[$matches[1]] = trim($matches[2]);
+        $options[$matches[1]] = trim($matches[2]);
     }
     unset($matches);
     }
@@ -585,7 +585,7 @@ Preg_replace较ereg_replace的功能更加强大，其前三个参数均可以�
 本函数返回一个字符串数组，每个单元为$string经正则表达式$pattern作为边界分割出的子串。如果设定了$limit,则返回的数组最多包含$limit个单元。而其中最后一个单元包含了$string中剩余的所有部分。Spliti是split的忽略大小版本。 
 
     
-
+```php
     <?php
     $date = "08/30/2006";
     
@@ -595,12 +595,13 @@ Preg_replace较ereg_replace的功能更加强大，其前三个参数均可以�
     //输出为另一种时间格式
     echo "Month: $month; Day: $day; Year: $year<br />\n";
     ?>
+```
 2、preg_split() 
 
 本函数与split函数功能一致。 
 
     
-
+```php
     <?php
     $seek  = array();
     $text   = "I have a dream that one day I can make it. So just do it, nothing is impossible!";
@@ -609,13 +610,13 @@ Preg_replace较ereg_replace的功能更加强大，其前三个参数均可以�
     $words = preg_split("/[.,;!\s']\s*/", $text);
     foreach($words as $val)
     {
-    $seek[strtolower($val)] ++;
+        $seek[strtolower($val)] ++;
     }
     
     echo "共有大约" .count($words). "个单词。";
     echo "其中共有" .$seek['i']. "个单词"I"。";
     ?>
-
+```
 **正则表达式的Wed验证应用** 电子邮件地址的校验 
 ```php
     <?php
@@ -651,18 +652,18 @@ Preg_replace较ereg_replace的功能更加强大，其前三个参数均可以�
 URL地址的校验 
 
     
-
+```php
     <?php
     /* 校验URL地址 */
     function checkDomain($domain)
     {
-    return ereg("^(http|ftp)s? ://(www\.)?.+(com|net|org)$", $domain);
+        return ereg("^(http|ftp)s? ://(www\.)?.+(com|net|org)$", $domain);
     }
     
     $rs = checkDomain ("www.taodoor.com");               //返回假
     $rs = checkDomain ("http://www.taodoor.com");        //返回真
     ?>
-
+```
 电话号码 
 ```php
 
@@ -670,16 +671,16 @@ URL地址的校验
     /* 校验电话号码 */
     function checkTelno($tel)
     {
-    //去掉多余的分隔符
-    $tel = ereg_replace("[\(\)\. -]", "", $tel);
-    
-    //仅包含数字，至少应为一个6位的电话号（即没有区号）
-    if(ereg("^\d+$", $tel))
-    {
-    return true;
-    }else{
-    return false;
-    }
+        //去掉多余的分隔符
+        $tel = ereg_replace("[\(\)\. -]", "", $tel);
+        
+        //仅包含数字，至少应为一个6位的电话号（即没有区号）
+        if(ereg("^\d+$", $tel))
+        {
+            return true;
+        }else{
+            return false;
+        }
     }
     
     $rs = checkTelno("(086)-0411-12345678");         //返回真
@@ -687,22 +688,24 @@ URL地址的校验
 ```
 邮政编码的校验 
 
+```php
     <?php
     /* 校验邮政编码 */
     function checkZipcode($code)
     {
-    //去掉多余的分隔符
-    $code = preg_replace("/[\. -]/", "", $code);
-    
-    //包含一个6位的邮政编码
-    if(preg_match("/^\d{6}$/", $code))
-    {
-    return true;
-    }else{
-    return false;
-    }
+        //去掉多余的分隔符
+        $code = preg_replace("/[\. -]/", "", $code);
+        
+        //包含一个6位的邮政编码
+        if(preg_match("/^\d{6}$/", $code))
+        {
+            return true;
+        }else{
+            return false;
+        }
     }
     
     $rs = checkZipCode("123456");    //返回真
     ?>
+```
 至此，最通俗易懂的php正则表达式教程结束！
