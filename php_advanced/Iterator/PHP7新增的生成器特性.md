@@ -1,0 +1,115 @@
+# PHP 7 新增的生成器特性
+
+ 时间 2017-07-12 18:12:21  [2gua][0]  [相似文章][1] (_1_)
+
+_原文_[http://www.2gua.info/post/83][2]
+
+ 主题 [PHP][3]
+
+PHP 7 新增的生成器特性
+
+2017.07.12 17:56:04
+
+![][4]
+
+今天继续 PHP 好味道。写 PHP 能够乐在其中，特别是有了 PHP 7 之后。管他别人怎么说呢，走自己的路就好啊！！！今天讲的是生成器委托、生成器返回表达式，最后来个跟生成器相关的Coroutine。
+
+## 生成器委托（Generator Delegation）
+
+生成器委托（Generator Delegation）是 PHP 7 添加的特性，官方文档描述是：
+
+“In PHP 7, generator delegation allows you to yield values from another generator, **Traversable** object, or [array][5] by using the **yield from** keyword. The outer generator will then yield all values from the inner generator, object, or array until that is no longer valid, after which execution will continue in the outer generator.”。 
+
+生成器委托的形式为： _yield <expr>_ 。 _<expr>_ 的结果得是可遍历对象或数组。 
+
+    <?php
+    declare(strict_types=1);
+    
+    $seh_seh_liām = function () {
+        $generator = function () {
+            yield from range(1, 3);
+    
+            foreach (range(4, 6) as $i) {
+                yield $i;
+            }
+        };
+    
+        foreach ($generator() as $value) {
+            echo "每天念 PHP 是最好的编程语言 6 遍...第 $value 遍...", PHP_EOL;
+        }
+    };
+    
+    $seh_seh_liām();
+
+## 生成器返回表达式（Generator Return Expression）
+
+生成器返回表达式（Generator Return Expression）为生成器函数提供了增强内力，在 PHP 7 之前是无法在生成器函数内返回值的。
+
+举例如下：
+
+    <?php
+    $traverser = (function () {
+      yield "foo";
+      yield "bar";
+      return "value";
+    })();
+    
+    $traverser->getReturn();  // Exception with message 'Cannot get return value of a generator that hasn't returned'
+    
+    foreach ($traverser as $value) {
+        echo "{$value}", PHP_EOL;
+    }
+    
+    $traverser->getReturn();  // "value"
+
+## 生成器与 Coroutine
+
+来个直接点的例子。
+
+    <?php
+    declare(strict_types=1);
+    
+    class Coroutine
+    {
+        public static function create(callable $callback) : Generator
+        {
+            return (function () use ($callback) {
+                try {
+                    yield $callback;
+                } catch (Exception $e) {
+                    echo "OH.. an error, but don't care and continue...", PHP_EOL;
+                }
+           })();
+        }
+    
+        public static function run(array $cos)
+        {
+            $cnt = count($cos);
+            while ($cnt > 0) {
+                $loc = random_int(0, $cnt-1);  // 用 random 模拟调度策略。
+                $cos[$loc]->current()();
+                array_splice($cos, $loc, 1);
+                $cnt--;
+            }
+        }
+    }
+    
+    $co = new Coroutine();
+    
+    $cos = [];
+    for ($i = 1; $i <= 10; $i++) {
+        $cos[] = $co::create(function () use ($i) { echo "Co.{$i}.", PHP_EOL; });
+    }
+    $co::run($cos);
+    
+    $cos = [];
+    for ($i = 1; $i <= 20; $i++) {
+        $cos[] = $co::create(function () use ($i) { echo "Co.{$i}.", PHP_EOL; });
+    }
+    $co::run($cos);
+
+[0]: /sites/ZJVNjmE
+[1]: /articles/dup?id=e2mUZzy
+[2]: http://www.2gua.info/post/83
+[4]: http://img1.tuicool.com/j2AZfiu.png!web
+[5]: http://php.net/manual/zh/language.types.array.php
