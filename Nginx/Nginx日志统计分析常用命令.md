@@ -1,10 +1,10 @@
 # Nginx日志统计分析常用命令
 
- 时间 2017-07-04 14:18:31  [石尧的博客][0]
+ 时间 2017-07-04 14:18:31  石尧的博客
 
 _原文_[https://opstrip.com/2017/07/04/Common-Commands-for-Nginx-Log-Statistics/][1]
 
- 主题 [AWK][2][Nginx][3][统计分析][4]
+
 
 * 统计IP访问量
 ```
@@ -92,8 +92,5 @@ _原文_[https://opstrip.com/2017/07/04/Common-Commands-for-Nginx-Log-Statistics
 ```
     tcpdump -i eth0 -tnn dst port 80 -c 1000 | awk -F"." '{print $1"."$2"."$3"."$4}' | sort | uniq -c | sort -nr
 ```
-[0]: /sites/FzuqIb2
+
 [1]: https://opstrip.com/2017/07/04/Common-Commands-for-Nginx-Log-Statistics/
-[2]: /topics/11200020
-[3]: /topics/11090014
-[4]: /topics/11020093
