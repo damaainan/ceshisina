@@ -18,24 +18,31 @@ interface Lion {
 }
 
 class AfricanLion implements Lion {
-    public function roar() {}
+    public function roar() {
+        echo "AfricanLion";
+    }
 }
 
 class AsianLion implements Lion {
-    public function roar() {}
+    public function roar() {
+        echo "AsianLion";
+    }
 }
 
 
 // 猎人需要狩猎任何狮子 `Lion` 接口的实现
 class Hunter {
     public function hunt(Lion $lion) {
+        echo $lion->roar();
     }
 }
 
 
 // 在游戏里加一个野狗 `WildDog`
 class WildDog {
-    public function bark() {}
+    public function bark() {
+        echo "bark";
+    }
 }
 
 // Adapter around wild dog to make it compatible with our game
@@ -58,3 +65,10 @@ $wildDogAdapter = new WildDogAdapter($wildDog);
 
 $hunter = new Hunter();
 $hunter->hunt($wildDogAdapter);
+
+
+$africanLion = new AfricanLion();
+$hunter->hunt($africanLion);
+
+$asianLion = new AsianLion();
+$hunter->hunt($asianLion);
