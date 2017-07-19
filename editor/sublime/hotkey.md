@@ -37,9 +37,9 @@ Ctrl + `：|调出控制台
 Ctrl + Enter：|在当前行下面新增一行然后跳至该行  
 Ctrl + Shift + Enter：|在当前行上面增加一行并跳至该行  
 Ctrl + ←/→：|进行逐词移动  
-Ctrl + Shift + ←/→进行逐词选择  
-Ctrl + ↑/↓移动当前显示区域  
-Ctrl + Shift + ↑/↓移动当前行  
+Ctrl + Shift + ←/→ | 进行逐词选择  
+Ctrl + ↑/↓ | 移动当前显示区域  
+Ctrl + Shift + ↑/↓ | 移动当前行  
 选择（Selecting）  
 Ctrl + D：|选择当前光标所在的词并高亮该词所有出现的位置，再次Ctrl + D选择该词出现的下一个位置，在多重选词的过程中，使用Ctrl + K进行跳过，使用Ctrl + U进行回退，使用Esc退出多重编辑  
 Ctrl + Shift + L：|将当前选中区域打散  
