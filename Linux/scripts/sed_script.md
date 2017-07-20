@@ -97,3 +97,29 @@ done
 
 ##### 替换文件名
      ls ../img | awk -F'.' '{system("sed -i \'s/"$1"/"$0"/\' *.md")}'
+
+
+#### sed 分隔符
+
+     echo sksksksksksk | sed 's@sk@SK@2g' 
+     skSKSKSKSKSK
+     echo sksksksksksk | sed 's@sk@SK@3g'
+     skskSKSKSKSK  
+     echo sksksksksksk | sed 's@sk@SK@4g'
+     skskskSKSKSK 
+
+
+**全面替换标记g**
+
+使用后缀 /g 标记会替换每一行中的所有匹配：
+
+     sed 's/book/books/g' file
+
+当需要从第N处匹配开始替换时，可以使用 /Ng：
+
+     echo sksksksksksk | sed 's/sk/SK/2g' 
+     skSKSKSKSKSK
+     echo sksksksksksk | sed 's/sk/SK/3g'
+     skskSKSKSKSK  
+     echo sksksksksksk | sed 's/sk/SK/4g'
+     skskskSKSKSK 
