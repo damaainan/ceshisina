@@ -108,6 +108,31 @@ done
      echo sksksksksksk | sed 's@sk@SK@4g'
      skskskSKSKSK 
 
+#### awk 中变量使用 
+
+    ls | xargs -i[ awk 'NR==1{mm=$2}END{system("mv [ "mm".md")}' [
+
+#### awk 批量修改文件名 
+
+```
+# 例子
+# 将 1.md 等 改为前面的名字， () 有歧义，需要消除
+
+自动化运维之日志系统ElasticSearch篇(一) 1.md
+自动化运维之日志系统上线规范(十) 10.md
+自动化运维之日志系统ES+Kibana展示(二) 2.md
+自动化运维之日志系统Logstash篇(三) 3.md
+自动化运维之日志系统Logstash实践Rsyslog(四) 4.md
+自动化运维之日志系统Logstash实践TCP(五) 5.md
+自动化运维之日志系统Logstash实践JAVA(六) 6.md
+自动化运维之日志系统Logstash实践Nginx(七) 7.md
+自动化运维之日志系统Logstash解耦实践(八) 8.md
+自动化运维之日志系统Logstash实践ES(九) 9.md
+```
+
+
+    ls | xargs -i[ awk 'NR==1{print $2"***["}' [ | awk '{sub(/\[0\]/,"");sub(/\[/,"");sub(/\]/,"");sub(/\(.\)/,"");print} | awk -F'***' '{system("mv "$2" "$1".m d")}'
+
 
 **全面替换标记g**
 
@@ -123,3 +148,18 @@ done
      skskSKSKSKSK  
      echo sksksksksksk | sed 's/sk/SK/4g'
      skskskSKSKSK 
+
+
+
+##### 替换
+
+      awk '/\[\!\[image\]/{print}' 10.md | awk -F'\"image\"' '{sub(/\)\]/,"",$2);print $2}' | xargs -i}  sed -i "s@}$@\![]}@" 10.md
+
+
+
+###### 替换例子
+    # [![image](./img/341820-20160509233115780-1438241527.png "image")](./img/341820-20160509233115202-1577926534.png)
+
+    sed -i 's@\[\!\[.*\]@@' 10.md #先去除前面部分
+
+    awk '/.\/img/{print $1}' 10.md  | xargs -i} sed  -i "s@}$@\![]}@" 10.md  #再加 ![]
