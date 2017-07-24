@@ -14,6 +14,7 @@
 
 ### 上代码吧
 
+```php
     <?php
     
     /**
@@ -261,6 +262,8 @@
     $node->getDeleteElem($pos);
     $node->getInsertElem(1,'gbw2');
     print_r($node->getAllElem());
+
+```
 
 [0]: /u/d75bddfb0fac
 [1]: ../img/2199772-e7e29dc79f5e86f7.jpg

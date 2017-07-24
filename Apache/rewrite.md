@@ -136,6 +136,7 @@ L last(结尾规则)的意思，就是已经匹配到了，就立即停止，不
 
 其实和上面说的一模一样的写法。可以完全的搬过来用。没问题。
 
+```apache
      <Directory "D:/wamp/www/testphp/">
         Options Indexes FollowSymLinks
         AllowOverride All
@@ -146,7 +147,7 @@ L last(结尾规则)的意思，就是已经匹配到了，就立即停止，不
         RewriteCond %{REQUEST_FILENAME} !-f
         RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
     </Directory>
-    
+```
 
 上面的apache的<Directory>里的这一块就可以完全的搬到.htaccess文件中来，且效果一模一样。
 

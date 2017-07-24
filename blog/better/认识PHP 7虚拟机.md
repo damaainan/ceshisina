@@ -61,6 +61,7 @@ OPCode与ByteCode在概念上是不同的。
 
 OPCode以zend_op结构体表示：
 
+```c
     struct _zend_op {
         const void *handler; /* 执行该OPCode的C函数 */
         znode_op op1; /* 操作数1 */
@@ -73,11 +74,12 @@ OPCode以zend_op结构体表示：
         zend_uchar op2_type; /* 操作数2类型 */
         zend_uchar result_type; /* 结果类型 */
     };
-
+```
 每一条OPcode都以相同的方式执行：OPCode有其对应的C函数，执行该C函数时，可能会用到0、1或2个操作数（op1，op2），最后将结果存储在result中，可能还会有一些额外的信息存储在extended_value。
 
 看下ZEND_ADD的OPCode长什么样子，在Zend/zend_vm_def.h源码文件中：
 
+```c
     ZEND_VM_HANDLER(1, ZEND_ADD, CONST|TMPVAR|CV, CONST|TMPVAR|CV)                                                                                      
     {
         USE_OPLINE
@@ -120,6 +122,7 @@ OPCode以zend_op结构体表示：
         FREE_OP2();
         ZEND_VM_NEXT_OPCODE_CHECK_EXCEPTION();
     }
+```
 
 可以看出这其实不是一个合法的C代码，可以把它看成代码模板。稍微解读下这个代码模板：1 就是在Zend/zend_vm_opcodes.h中define定义的ZEND_ADD的值；ZEND_ADD接收两个操作数，如果两个操作数都为IS_LONG类型，那么就调用fast_long_add_function（该函数内部使用汇编实现加法操作）；如果两个操作数，都为IS_DOUBLE类型或者1个是IS_DOUBLE类型，另1个是IS_LONG类型，那么就直接执行double的加法操作；如果存在1个操作数不是IS_LONG或IS_DOUBLE类型，那么就调用add_function（比如两个数组做加法操作）；最后检查是否有异常接着执行下一条OPCode。
 
@@ -213,6 +216,7 @@ ZEND_ADD的op1和op2的类型都有3种，所以一共生成了9个Handler，每
 
 那么这些Handler之间有什么不同呢？最大的不同应该就是获取操作数的方式：
 
+```c
     static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_ADD_SPEC_CONST_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
     {
         USE_OPLINE
@@ -266,7 +270,7 @@ ZEND_ADD的op1和op2的类型都有3种，所以一共生成了9个Handler，每
     
         ZEND_VM_NEXT_OPCODE_CHECK_EXCEPTION();
     }
-
+```
 #### OPArray
 
 - - -
@@ -320,6 +324,7 @@ OPArray包含的信息越多，即在编译期间尽量的将已知的信息计�
 
 OPCode的执行是通过一个while循环去做的：
 
+```c
     //删除了预处理语句
     ZEND_API void execute_ex(zend_execute_data *ex)
     {
@@ -342,9 +347,11 @@ OPCode的执行是通过一个while循环去做的：
         }
         zend_error_noreturn(E_CORE_ERROR, "Arrived at end of main loop which shouldn't happen");
     }
+```
 
 那么是如何切换到下一个OPCode去执行的呢？每个OPCode的Handler中都会调用到一个宏：
 
+```c
     #define ZEND_VM_NEXT_OPCODE_EX(check_exception, skip) \
         CHECK_SYMBOL_TABLES() \
         if (check_exception) { \
@@ -353,7 +360,7 @@ OPCode的执行是通过一个while循环去做的：
             OPLINE = opline + (skip); \
         } \
         ZEND_VM_CONTINUE()
-    
+```
 
 该宏会把当前的opline+skip（skip通常是1），将opline指向下一条OPCode。opline是一个全局变量，指向当前执行的OPCode。
 
@@ -365,6 +372,7 @@ OPCode的执行是通过一个while循环去做的：
 
 在Zend/zend_vm_execute.h中，会看到如下奇怪的代码：
 
+```c
     static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_INIT_ARRAY_SPEC_CONST_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
     {
         /* 省略 */
@@ -377,9 +385,10 @@ OPCode的执行是通过一个while循环去做的：
     #endif
         }
     }
+```
 
 你可能会对if (IS_CONST == IS_UNUSED)和#if 0 || (IS_CONST != IS_UNUSED)感到奇怪。看下其对应的模板代码：
-
+```c
     ZEND_VM_HANDLER(71, ZEND_INIT_ARRAY, CONST|TMP|VAR|UNUSED|CV, CONST|TMPVAR|UNUSED|CV)
     {
         zval *array;
@@ -410,6 +419,7 @@ OPCode的执行是通过一个while循环去做的：
     #endif
         }
     }
+```
 
 php zend_vm_gen.php在生成zend_vm_execute.h时，会把OP1_TYPE替换为op1的类型，从而生成这样子的代码：if (IS_CONST == IS_UNUSED)，但C编译器会把这些代码优化掉。
 
@@ -422,7 +432,7 @@ zend_vm_gen.php支持传入参数--without-specializer，当使用该参数时�
 前面已提到执行引擎是通过一个while循环执行OPCode，每个OPCode中将opline增加1（通常情况下），然后回到while循环中，继续执行下一个OPCode，直到遇到ZEND_RETURN。
 
 如果使用GOTO执行策略：
-
+```c
     /* GOTO策略下，execute_ex是一个超大的函数 */
     ZEND_API void execute_ex(zend_execute_data *ex)
     {
@@ -436,7 +446,7 @@ zend_vm_gen.php支持传入参数--without-specializer，当使用该参数时�
     
         /* 省略 */
     }
-
+```
 这里的goto并没有直接使用符号名，其实是goto一个特殊的用法：[Labels as Values][7]。
 
 ##### 执行引擎中的跳转
@@ -602,6 +612,8 @@ NOP表示不做任何操作，只是将当前opline指向下一条OPCode，编�
 
 不同点在于INIT_FCALL和INIT_DYNAMIC_CALL，看下两个函数的源码：
 
+
+```c
     static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_INIT_FCALL_SPEC_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
     {
         USE_OPLINE
@@ -636,6 +648,7 @@ NOP表示不做任何操作，只是将当前opline指向下一条OPCode，编�
     {
         /* 200多行代码，就不贴出来了，会根据CV的类型（字符串、对象、数组）做不同的函数查找 */
     }
+```
 
 很显然INIT_FCALL相比INIT_DYNAMIC_CALL要轻量许多。
 

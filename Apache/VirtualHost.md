@@ -18,7 +18,7 @@
 文件里面有几个例子，我们先搞一个，其实很简单。
 
     
-
+```apache
     NameVirtualHost *:80
     <VirtualHost *:80>
         DocumentRoot "D:/wamp/www/pptv_trunk"
@@ -30,6 +30,8 @@
             Allow from all
         </Directory>
     </VirtualHost>
+```
+
 好，这样一个虚拟域名在Apache上就配置好了。
 
 **3 .** 打开windows/Linux的hosts配置文件，这个文件是系统的dns路由文件：
@@ -66,7 +68,7 @@
 
 我们还是打开刚的一个虚拟域名，我们对着这个讲述，如何配置rewirite
 
-
+```apache
     NameVirtualHost *:80
     <VirtualHost *:80>
         DocumentRoot "D:/wamp/www/testphp/"
@@ -87,6 +89,7 @@
             RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
         </Directory>
     </VirtualHost>
+```
 我们一个一个的说下如何配置。
 
 **1 .** 首先需要申明虚拟域名包块，采用xml风格，开始和结束符号对应。*.80表示接受任何ip的80端口，一般是这样写，不改。

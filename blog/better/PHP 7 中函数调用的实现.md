@@ -44,6 +44,7 @@
 
 在CLI模式下，会调用zend_execute，当执行php /home/roketyyang/test.php时，op_array形参对应的实参就是/home/roketyyang/test.php文件的OPArray：
 
+```c
     ZEND_API void zend_execute(zend_op_array *op_array, zval *return_value)
     {
         zend_execute_data *execute_data; /* 执行上下文 */
@@ -64,11 +65,11 @@
         zend_execute_ex(execute_data); /* 执行 上下文 */
         zend_vm_stack_free_call_frame(execute_data);
     }
-
+```
 zend_execute所做的事情主要就是从堆栈中创建一个上下文，初始化上下文环境，然后执行这个上下文，最后释放它。
 
 堆栈是在虚拟机初始化的时候init_executor()调用zend_vm_stack_init()进行初始化的：
-
+```c
     static zend_always_inline zend_vm_stack zend_vm_stack_new_page(size_t size, zend_vm_stack prev) {
         zend_vm_stack page = (zend_vm_stack)emalloc(size);
     
@@ -85,7 +86,7 @@ zend_execute所做的事情主要就是从堆栈中创建一个上下文，初�
         EG(vm_stack_top) = EG(vm_stack)->top;
         EG(vm_stack_end) = EG(vm_stack)->end;
     }
-
+```
 这里有一个EG宏需要了解下，其定义在Zend/zend_globals_macros.h中：
 
     #ifdef ZTS
@@ -125,7 +126,7 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
     
 
 上下文的创建，zend_vm_stack_push_call_frame()->zend_vm_stack_push_call_frame_ex()：
-
+```c
     static zend_always_inline zend_execute_data *zend_vm_stack_push_call_frame_ex(uint32_t used_stack, uint32_t call_info, zend_function *func, uint32_t num_args, zend_class_entry *called_scope, zend_object *object)
     {
         zend_execute_data *call = (zend_execute_data*)EG(vm_stack_top); /* 从堆栈顶端分配内存 */
@@ -148,9 +149,9 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
         call->called_scope = called_scope;
         return call;
     }
-
+```
 我们看下表示上下文的结构体，与PHP 5相比更简洁了，关于PHP 5的execute_data可以看下这篇文章[PHP execute_data][0]：
-
+```c
     struct _zend_execute_data {
         const zend_op       *opline;           /* executed opline                */
         zend_execute_data   *call;             /* current call                   */
@@ -167,9 +168,9 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
         zval                *literals;         /* cache op_array->literals       */
     #endif
     };
-
+```
 在zend_execute中调用zend_vm_stack_push_call_frame时，对op_array进行了强制类型转换，转换为zend_function*类型，看下其结构体类型：
-
+```c
     union _zend_function {
         zend_uchar type;    /* MUST be the first element of this struct! */
     
@@ -252,7 +253,7 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
         struct _zend_module_entry *module;
         void *reserved[ZEND_MAX_RESERVED_RESOURCES];
     } zend_internal_function;
-
+```
 可以看出，zend_function作为union类型，能够表示：
 
 1. 非函数的OPArray，例如上文中提到的/home/roketyyang/test.php文件的OPArray
@@ -282,7 +283,7 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
 除了分配execute_data的存储空间外，还分配了CV（compiled variable，即PHP变量）、TMP_VAR（临时变量，例如执行if (!$a) echo 'a';，就需要一个临时变量来存储!$a的结果）的存储空间。
 
 从i_init_execute_data中看下execute_data的初始化，其中EX宏是用于访问execute_data的成员：
-
+```c
     static zend_always_inline void i_init_execute_data(zend_execute_data *execute_data, zend_op_array *op_array, zval *return_value)
     {
         ZEND_ASSERT(EX(func) == (zend_function*)op_array);
@@ -307,9 +308,9 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
         EG(current_execute_data) = execute_data;
         ZEND_VM_INTERRUPT_CHECK();
     }
-
+```
 初始化完execute_data后，就调用execute_ex执行opcode了：
-
+```c
     //删除了预处理语句
     ZEND_API void execute_ex(zend_execute_data *ex)
     {
@@ -332,7 +333,7 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
         }
         zend_error_noreturn(E_CORE_ERROR, "Arrived at end of main loop which shouldn't happen");
     }
-
+```
 以文章开头的例子看看OPCode执行时上下文的变化情况和函数调用是怎么实现的：
 
 在初始化完execute_data时：
@@ -340,7 +341,7 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
 ![][1]
 
 跳过NOP、ASSIGN，直接看INIT_CALL：
-
+```c
     static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_INIT_FCALL_SPEC_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
     {
         USE_OPLINE
@@ -369,13 +370,13 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
         EX(call) = call;
     
         ZEND_VM_NEXT_OPCODE();
-
+```
 此时execute_data情况：
 
 ![][2]
 
 跳过SEND_VAR（传参），看DO_UCALL：
-
+```c
     static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_DO_UCALL_SPEC_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
     {
         USE_OPLINE
@@ -400,13 +401,13 @@ ZTS是在编译的时候开启线程安全选项的时候才有定义的，关�
     
         ZEND_VM_ENTER(); /* execute_data = EG(current_execute_data); opline = EX(opline); return; */
     }
-
+```
 此时execute_data情况：
 
 ![][3]
 
 echo输出后，进入return：
-
+```c
     static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL zend_leave_helper_SPEC(ZEND_OPCODE_HANDLER_ARGS)
     {
         zend_execute_data *old_execute_data;
@@ -431,7 +432,7 @@ echo输出后，进入return：
         }
         /* 省略 */
     }
-
+```
 此时execute_data的情况：
 
 ![][4]
