@@ -3,12 +3,14 @@
 
 在给大家讲述这个问题之前，先给大家看一段nginx配置. 我们用到了 [set-misc-nginx-module][0]
 
+
+```nginx
     location /test/ {
         default_type text/html;
         set_md5 $hash "secret"$remote_addr;
         echo $hash;
     }
-    
+```
 
 这样输出来的内容，可能是下面这样的
 
@@ -21,6 +23,7 @@
 有的.  
 我们可以巧妙地使用if + 正则表达式来实现这个小需求:
 
+```nginx
     location /test/ {
         default_type text/html;
         set_md5 $hash "secret"$remote_addr;
@@ -29,7 +32,7 @@
         }
         echo $hash;
     }
-    
+```
 
 访问/test/输出的就是:
 
@@ -52,6 +55,7 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
 答案是No.  
 当你尝试这样配置, 重载nginx时, nginx会报出错误
 
+```nginx
         location = /test/ {
             default_type text/html;
             set $b 0;
@@ -60,7 +64,7 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
             }
             echo $b;
         }
-    
+```
 
     [root@test-vm ~]# /usr/local/nginx/sbin/nginx -t
     
@@ -70,6 +74,7 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
 
 那么我们应该怎样来实现and 和or的逻辑关系呢？
 
+```nginx
         location = /test_and/ {
             default_type text/html;
             set $a 0;
@@ -85,8 +90,9 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
             }
             echo $b;
         }
-    
+```
 
+```nginx
         location = /test_or/ {
             default_type text/html;
             set $a 0;
@@ -102,7 +108,7 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
             }
             echo $b;
         }
-    
+```
 
 [1]: http://segmentfault.com/blog/security/1190000002480053
 
@@ -117,6 +123,7 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
 
 我们需要用到[ngx_headers_more][2]模块
 
+```nginx
     location / {
         if ( $host = 'segmentfault.com' ){
             more_set_headers 'Server: Nginx';
@@ -126,13 +133,14 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
         }
         ....
     }
-    
+```
 
 像上面这样, 我们就可以来实现这功能了.  
 但这样靠谱吗？ 靠谱, 但是不满足A.R.G.U.S. 的编码风格, 我们绝不允许丑陋的代码让别人看着笑话.
 
 我们追求极客的代码:
 
+```nginx
     map $host $server_x_tag{
         'segmentfault.com' 'Nginx';
         '0x01.segmentfault.com' 'Nginx_improved';
@@ -145,7 +153,7 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
             more_set_headers 'Server: $server_x_tag';
         }
     }
-    
+```
 
 像这样子, 是不是好看多了?
 
@@ -159,6 +167,7 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
 尚需时日...  
 下面给的只是一个原型，尚未验证...
 
+```nginx
     server{
         location / {
             default_type text/html;
@@ -184,6 +193,7 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
             }
         }
     }
+```
 
 ----
 
@@ -194,6 +204,8 @@ NGINX支持if的 and 与 or 或者 && 与 || 吗？
 nginx的if支持=、!= 逻辑比较, 但不支持if中 <、<、>=、<= 比较.  
 本示例使用了[set-misc-nginx-module][3]
 
+
+```nginx
     location = /test/ {
         default_type html;
         set_random $a 0 9;      #$a 随机 从0-9取
@@ -204,12 +216,12 @@ nginx的if支持=、!= 逻辑比较, 但不支持if中 <、<、>=、<= 比较.
             echo 'a: $a is gte 5';
         }
     }
-    
+```
 
 上面的配置, 在启动nginx时会报错误的.
 
 即然不支持，那有没有办法小小地弥补下呢?
-
+```nginx
     location = /test/ {
         default_type html;
         set_random $a 0 9;     #$a 随机 从0-9取
@@ -220,10 +232,11 @@ nginx的if支持=、!= 逻辑比较, 但不支持if中 <、<、>=、<= 比较.
             echo 'a: $a is gte 5';
         }
     }
-    
+```
 
 测试10次：
 
+```
     a: 8 is gte 5
     a: 9 is gte 5
     a: 2 is lte 4
@@ -235,7 +248,7 @@ nginx的if支持=、!= 逻辑比较, 但不支持if中 <、<、>=、<= 比较.
     a: 4 is lte 4
     a: 5 is gte 5
     ...
-    
+```
 
 骚年, 速度加入A.R.G.U.S.网络安全小组, 跟老夫们一起学nginx吧~
 
@@ -243,7 +256,7 @@ nginx的if支持=、!= 逻辑比较, 但不支持if中 <、<、>=、<= 比较.
 
 
 NGINX竟然不支持这样的写法....
-
+```nginx
     location = /test/ {
         default_type html;
         set_random $a 0 9;     #$a 随机 从0-9取
@@ -256,7 +269,7 @@ NGINX竟然不支持这样的写法....
             echo 'a: $a is gt b: $b  ereg: $ereg';
         }
     }
-    
+```
 
 求大牛来实现...
 

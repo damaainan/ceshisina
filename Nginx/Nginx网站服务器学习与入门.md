@@ -55,6 +55,7 @@ Nginx服务器安装好之后，程序的主目录在/usr/local/nginx下，该�
 nginx主配置文件为/usr/local/nginx/conf/nginx.conf，配置文件包括全局，event，http，server设置。event主要用来定义Nginx工作模式，http提供Web功能，server用来设置虚拟主机，server必须位于http内部，一个配置文件可以由多个server，一个server表示一个虚拟主机。虚拟主机包括三种类型：基于域名的虚拟主机，基于IP的虚拟主机，基于端口的虚拟主机。
 
     [root@cc]# vim /usr/local/nginx/conf/nginx.conf
+```nginx
         #user  nobody;                                      //设置用户和组
         worker_processes  1;          //启动子进程，通过 ps -aux | grep nginx
         #error_log  logs/error.log;                  //错误日志文件，以及日志级别
@@ -171,7 +172,7 @@ nginx主配置文件为/usr/local/nginx/conf/nginx.conf，配置文件包括全�
             #    }
             #}
         }
-    
+```
 
 ### Nginx基本应用
 

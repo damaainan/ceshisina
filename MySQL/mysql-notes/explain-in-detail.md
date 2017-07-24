@@ -1,81 +1,81 @@
 ## 4. MySQL explain 详解
 
+[TOC]
+
 1. explain 语法
 1. explain 输出
-
-
-  1. id
-  1. select_type
-    1. SIMPLE
-    1. PRIMARY
-    1. UNION
-    1. DEPENDENT UNION
-    1. UNION RESULT
-    1. SUBQUERY
-    1. DEPENDENT SUBQUERY
-    1. DERIVED
-    1. MATERIALIZED
-    1. UNCACHEABLE SUBQUERY
-    1. UNCACHEABLE UNION
-  1. table
-  1. partitions
-  1. type
-    1. system
-    1. const
-    1. eq_ref
+    1. id
+    1. select_type
+        1. SIMPLE
+        1. PRIMARY
+        1. UNION
+        1. DEPENDENT UNION
+        1. UNION RESULT
+        1. SUBQUERY
+        1. DEPENDENT SUBQUERY
+        1. DERIVED
+        1. MATERIALIZED
+        1. UNCACHEABLE SUBQUERY
+        1. UNCACHEABLE UNION
+    1. table
+    1. partitions
+    1. type
+        1. system
+        1. const
+        1. eq_ref
+        1. ref
+        1. fulltext
+        1. ref_or_null
+        1. index_merge
+        1. unique_subquery
+        1. index_subquery
+        1. range
+        1. index
+        1. ALL
+    1. possible_keys
+    1. key
+    1. key_len
     1. ref
-    1. fulltext
-    1. ref_or_null
-    1. index_merge
-    1. unique_subquery
-    1. index_subquery
-    1. range
-    1. index
-    1. ALL
-  1. possible_keys
-  1. key
-  1. key_len
-  1. ref
-  1. rows
-  1. filtered
-  1. extra
-    1. Child of 'table' pushed join@1
-    1. const row not found
-    1. Deleting all rows
-    1. Distinct
-    1. FirstMatch
-    1. Full scan on NULL key
-    1. Impossible HAVING
-    1. Impossible WHERE
-    1. Impossible WHERE noticed after reading const tables
-    1. LooseScan(m..n)
-    1. No matching min/max row
-    1. no matching row in const table
-    1. No matching rows after partition pruning
-    1. No tables used
-    1. Not exists
-    1. Plan isn’t ready yet
-    1. Range checked for each record (index map: N)
-    1. Scanned N databases
-    1. Select tables optimized away
-    1. Skip_open_table, Open_frm_only, Open_trigger_only, Open_full_table
-      1. Skip_open_table
-      1. Open_frm_only
-      1. Open_trigger_only
-      1. Open_full_table
-    1. Start temporary, End temporary
-    1. unique row not found
-    1. Using filesort
-    1. Using index
-    1. Using index condition
-    1. Using index for group-by
-    1. Using join buffer (Block Nested Loop), Using join buffer (Batched Key Access)
-    1. Using MRR
-    1. Using sort_union(…​), Using union(…​), Using intersect(…​)
-    1. Using temporary
-    1. Using where
-    1. Using where with pushed condition
-    1. Zero limit
+    1. rows
+    1. filtered
+    1. extra
+        1. Child of 'table' pushed join@1
+        1. const row not found
+        1. Deleting all rows
+        1. Distinct
+        1. FirstMatch
+        1. Full scan on NULL key
+        1. Impossible HAVING
+        1. Impossible WHERE
+        1. Impossible WHERE noticed after reading const tables
+        1. LooseScan(m..n)
+        1. No matching min/max row
+        1. no matching row in const table
+        1. No matching rows after partition pruning
+        1. No tables used
+        1. Not exists
+        1. Plan isn’t ready yet
+        1. Range checked for each record (index map: N)
+        1. Scanned N databases
+        1. Select tables optimized away
+        1. Skip_open_table, Open_frm_only, Open_trigger_only, Open_full_table
+            1. Skip_open_table
+            1. Open_frm_only
+            1. Open_trigger_only
+            1. Open_full_table
+        1. Start temporary, End temporary
+        1. unique row not found
+        1. Using filesort
+        1. Using index
+        1. Using index condition
+        1. Using index for group-by
+        1. Using join buffer (Block Nested Loop), Using join buffer (Batched Key Access)
+        1. Using MRR
+        1. Using sort_union(…​), Using union(…​), Using intersect(…​)
+        1. Using temporary
+        1. Using where
+        1. Using where with pushed condition
+        1. Zero limit
 
 ### 4.1. EXPLAIN 语法
 

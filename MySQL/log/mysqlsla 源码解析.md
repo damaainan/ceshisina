@@ -6,11 +6,11 @@ Jul 14 2015 Updated:Jul 15 2015
 
 **Contents**
 
-1. [1. 知识结构][2]
-1. [2. Packages][3]
-1. [3. main 主要流程图][4]
-1. [4. 以slow log 分析为导火线][5]
-1. [5. 已知的bug list 以及 Bug 修复][6]
+[1. 知识结构][2]  
+[2. Packages][3]  
+[3. main 主要流程图][4]  
+[4. 以slow log 分析为导火线][5]  
+[5. 已知的bug list 以及 Bug 修复][6]  
 
 ## 知识结构
 
@@ -529,6 +529,7 @@ parse_logs() if @ARGV;
 ```
 由于代码比较多，这里我拿重点的出来讲：
 
+```
 foreach $log (@$logs)  # 由于参数中可以接很多日志文件，所以日志必须循环，然后一个个日志解析。
 
 next until $line =~ /^# User/;  # 这是第一个头，当mysqlsla 碰到 # User ，那么一个日志解析开始。
@@ -542,9 +543,11 @@ next until $line =~ /^# User/;  # 这是第一个头，当mysqlsla 碰到 # User
          next if (exists $mf{host} && !passes_meta_filter('host', $host, 's'));
 
          next if (exists $mf{ip}   && !passes_meta_filter('ip',   $IP,   's')); ## 还记得我们有mf参数么，如果mf没有，及可以跳过。
+```
 
 接下来就是read statament的部分代码：
 
+```
          READ_STATEMENTS:
 
          while($line = <LOG>)
@@ -564,6 +567,7 @@ next until $line =~ /^# User/;  # 这是第一个头，当mysqlsla 碰到 # User
          $valid_stmt = check_stmt(\$stmt, \$use_db);  # 这里是用于拼接statment 语句，判断其合法性
 
         $q = abstract_stmt($stmt);                  #  这里是重点，抽象valid SQL。
+```
 
 * **check_stmt: 用于检测statment合法性，并且合并SQL**
   

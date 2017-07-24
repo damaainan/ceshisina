@@ -64,11 +64,14 @@
 
 在nginx配置文件中添加下列location
 
+```nginx
     # /usr/local/nginx/conf/nginx.conf
             location ~* ^/lua(/.*) {
                     default_type 'text/plain';
                    content_by_lua 'ngx.say("hello, lua")';
             }
+```
+
 
 启动nginx
 
@@ -84,6 +87,7 @@
 
 启用如下选项
 
+```nginx
     #/usr/local/nginx/conf/nginx.conf
     location / {
                 root   /web;
@@ -97,6 +101,7 @@
                 fastcgi_param  SCRIPT_FILENAME  /$document_root$fastcgi_script_name;
                 include        fastcgi_params;
             }
+```
 
 在/web/目录下 新建index.php的测试页面，测试php是否能正常工作
 
@@ -123,6 +128,7 @@
 
 使用下列配置
 
+```nginx
     # /usr/local/nginx/conf/nginx.conf
     user  nginx;
     worker_processes  1;
@@ -192,6 +198,7 @@
             }
         }
     }
+```
 
 创建php文件，用来接收post请求，并返回数据
 

@@ -6,14 +6,14 @@ Jul 15 2015 Updated:Jul 15 2015
 
 **Contents**
 
-1. [1. 背景][2]
-1. [2. mysqlsla介绍][3]
-1. [3. mysqlsla安装][4]
-1. [4. mysqlsla的基本使用][5]
-1. [5. mysqlsla的核心功能之filter][6]
-1. [6. mysqlsla的核心功能之report][7]
-1. [7. mysqlsla的其他高级功能： replay，user-defined-logs][8]
-1. [8. 最后][9]
+[1. 背景][2]  
+[2. mysqlsla介绍][3]  
+[3. mysqlsla安装][4]  
+[4. mysqlsla的基本使用][5]  
+[5. mysqlsla的核心功能之filter][6]  
+[6. mysqlsla的核心功能之report][7]  
+[7. mysqlsla的其他高级功能： replay，user-defined-logs][8]  
+[8. 最后][9]  
 
 [hack mysqlsla 文档][10]
 

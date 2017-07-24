@@ -87,6 +87,7 @@ Paste_Image.png
 
 随即关键字变成了： nginx ngx_http_log_escape通过搜索发现了下列的源码解释
 
+```c
     static uintptr_t
     ngx_http_log_escape(u_char *dst, u_char *src, size_t size)
     {
@@ -156,7 +157,7 @@ Paste_Image.png
     
         return (uintptr_t) dst;
     }
-
+```
 感谢大神：[http://blog.csdn.net/l09711/article/details/46712325][8]
 
 从上面解释来看，我们只需要*src不转换16进制就可以。

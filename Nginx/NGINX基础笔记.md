@@ -174,6 +174,7 @@ Nginx Rewrite研究笔记 [入口][35]
 
 ### 配置文件结构
 
+```nginx
     http { #嵌入配置文件的根部， 一个http里可以配置多个server
     
         server { #声明一个站点
@@ -209,7 +210,7 @@ Nginx Rewrite研究笔记 [入口][35]
             }
         }
     }
-    
+```
 
 ## 模块
 
@@ -269,11 +270,12 @@ nginx真正的魅力在于它的模块，整个应用程序建立在一个模块
 
 e.g
 
+```nginx
     location {
         allow 127.0.0.1; #允许本地ip 注意顺序，allow要放在前面
         deny all; #禁止其他ip
     }
-    
+```
 
 ### Rewrite模块
 
@@ -283,6 +285,7 @@ e.g
 
 break/return/set等
 
+```nginx
     if (-f $uri) {
         break
     }
@@ -293,6 +296,7 @@ break/return/set等
         set $query $1;
         rewrite ^ /search.php?q=$query?;
     }
+```
 
 例子
 
@@ -322,6 +326,7 @@ rewrite语法
 
 默认模块，允许你讲客户端的HTTP请求转到后端服务器
 
+```nginx
     location / {
         proxy_pass_header Server;  #该指令强制一些被忽略的头传递到客户端
         proxy_redirect off; #允许改写出现在HTTP头却被后端服务器触发重定向的URL,对相应本身不做任何处理
@@ -330,29 +335,33 @@ rewrite语法
         proxy_set_header X-Scheme $scheme;
         proxy_pass http://localhost:8080;
     }
+```
 
 ### upstream模块
 
+```nginx
     upstream up_name {
         server 192.168.0.1:9000 weight=5; #权重
         server 192.168.0.2:9000 weight=5 max_fails=5 fail_timeout=60s; #在60s内，其错误通信超过5次,认为该服务失效
         server 192.168.0.3:9000 down; #服务标记为离线，不再使用
         server 192.168.0.4:9000 backup; #备份服务器，其他全部宕机了才启用
     }
-
+```
 ## 其他
 
 ### 配置静态化目录
 
+```nginx
         location /static/
         {
             root /var/www/app/;
             autoindex off;
         }
-    
+```
 
 ### 负载均衡
 
+```nginx
     http {
         include mime.types;
         default_type application/octet-stream;
@@ -380,9 +389,11 @@ rewrite语法
         }
     
     }
+```
 
 ### 控制页面缓存
 
+```nginx
     location ~ \.(htm|html|gif|jpg|jpeg|png|bmp|ico|css|js|txt)$ {
         root /opt/webapp;
         expires 24h;
@@ -395,6 +406,7 @@ rewrite语法
     expires 1d;
     expires max;
     expires off;
+```
 
 ### nginx的内置变量
 
@@ -433,13 +445,14 @@ rewrite语法
 
 [文档][36]
 
+```nginx
     location  ~ ^/static {
         ....
         ssi on;
         ssi_client_errors on;
         ssi_types text/shtml;
     }
-    
+```
 
 ### auth basic配置
 
@@ -453,13 +466,14 @@ rewrite语法
 
 配置
 
+```nginx
     location / {
         auth_basic "Restricted";
         auth_basic_user_file /usr/local/nginx/conf/kibana.htpasswd;
         root  /data/BKLogTool/kibana;
         index  index.html  index.htm;
     }
-    
+```
 
 reload nginx
 

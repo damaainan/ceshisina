@@ -56,7 +56,7 @@ key 和 mask 串接之后经过 SHA-1 处理，处理后的数据再经过一次
 上面 Server 端返回的 HTTP 状态码是 101，如果不是 101 ，那就说明握手一开始就失败了~
 
 下面就来个 demo，跟服务器握个手：
-
+```js
     var crypto = require('crypto');
     
     require('net').createServer(function(o){
@@ -71,14 +71,14 @@ key 和 mask 串接之后经过 SHA-1 处理，处理后的数据再经过一次
             };
         });
     }).listen(8000);
-
+```
 客户端代码：
-
+```js
     var ws=new WebSocket("ws://127.0.0.1:8000");
     ws.onerror=function(e){
       console.log(e);
     };
-
+```
  运行代码
 
 上面当然是一串不完整的代码，目的是演示握手过程中，客户端给服务端打招呼。在控制台我们可以看到：
@@ -92,7 +92,7 @@ key 和 mask 串接之后经过 SHA-1 处理，处理后的数据再经过一次
 但是 WebSocket协议 并不是 HTTP 协议，刚开始验证的时候借用了 HTTP 的头，连接成功之后的通信就不是 HTTP 了，不信你用 fiddler2 抓包试试，肯定是拿不到的，后面的通信部分是基于 TCP 的连接。
 
 服务器要成功的进行通信，必须有应答，往下看：
-
+```js
     //服务器程序
     var crypto = require('crypto');
     var WS = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
@@ -113,15 +113,15 @@ key 和 mask 串接之后经过 SHA-1 处理，处理后的数据再经过一次
             };
         });
     }).listen(8000);
-
+```
 关于crypto模块，可以看看[官方文档][6]，上面的代码应该是很好理解的，服务器应答之后，Client 拿到 Sec-WebSocket-Accept ，然后本地做一次验证，如果验证通过了，就会触发 onopen 函数。
-
+```js
     //客户端程序
     var ws=new WebSocket("ws://127.0.0.1:8000/");
     ws.onopen=function(e){
         console.log("握手成功");
     };
-
+```
  运行代码
 
 可以看到
@@ -169,7 +169,7 @@ key 和 mask 串接之后经过 SHA-1 处理，处理后的数据再经过一次
 
 数据帧的解析代码：
 
-
+```js
     function decodeDataFrame(e){
       var i=0,j,s,frame={
         //解析前两个字节的基本数据
@@ -199,13 +199,13 @@ key 和 mask 串接之后经过 SHA-1 处理，处理后的数据再经过一次
       //返回数据帧
       return frame;
     }
-
+```
  decodeDataFrame Function
 
 数据帧的编码：
 
 
-
+```js
     //NodeJS
     function encodeDataFrame(e){
       var s=[],o=new Buffer(e.PayloadData),l=o.length;
@@ -222,7 +222,7 @@ key 和 mask 串接之后经过 SHA-1 处理，处理后的数据再经过一次
       //返回头部分和数据部分的合并缓冲区
       return Buffer.concat([new Buffer(s),o]);
     }
-
+```
  en codeDataFrame Function
 
 有些童鞋可能没有明白，应该解析哪些数据。这的解析任务主要是服务端处理，客户端送过去的数据是二进制流形式的，比如： 
@@ -239,7 +239,7 @@ Server 收到的信息是这样的：
 ![][11]
 
 一个放在Buffer格式的二进制流。而当我们输出的时候解析这个二进制流：
-
+```js
     //服务器程序
     var crypto = require('crypto');
     var WS = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
@@ -261,7 +261,7 @@ Server 收到的信息是这样的：
             };
         });
     }).listen(8000);
-
+```
 那输出的就是一个帧信息十分清晰的对象了：
 
 ![][12]
@@ -297,21 +297,21 @@ decodeDataFrame 解析数据，得到的数据格式是：
     }
 
 那么可以对应上面查看，此帧的作用就是发送文本，为文本帧。因为连接是基于 TCP 的，直接关闭 TCP 连接，这个通道就关闭了，不过 WebSocket 设计的还比较人性化，关闭之前还跟你打一声招呼，在服务器端，可以判断frame的Opcode：
-
+```js
     var frame=decodeDataFrame(e);
     console.log(frame);
     if(frame.Opcode==8){
         o.end(); //断开连接
     }
-
+```
 客户端和服务端交互的数据（帧）格式都是一样的，只要客户端发送 ws.close()， 服务器就会执行上面的操作。相反，如果服务器给客户端也发送同样的关闭帧(close frame)：
-
+```js
     o.write(encodeDataFrame({
         FIN:1,
         Opcode:8,
         PayloadData:buf
     }));
-
+```
 客户端就会相应 onclose 函数，这样的交互还算是有规有矩，不容易出错。
 
 ### 二、注意事项

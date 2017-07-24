@@ -32,13 +32,14 @@ ps. 之前一篇 [nginx基础笔记][15]
 
 nginx.conf
 
+```nginx
     http {
     
         .......
         include /etc/nginx/conf.d/*.conf;
         include sites/*.conf;
     }
-    
+```
 
 ### gzip on
 
@@ -46,6 +47,7 @@ nginx.conf
 
 nginx.conf
 
+```nginx
     http {
     
     
@@ -59,12 +61,13 @@ nginx.conf
         gzip_types text/plain text/css application/javascript text/javascript application/x-javascript text/xml application/xml application/xml+rss application/json image/x-icon image/png image/jpg image/jpeg application/font-woff;
         gzip_vary on;
     }
-    
+```   
 
 ## for multi processers
 
 nginx.conf
 
+```nginx
     worker_processes  4;
     events {
         worker_connections  2048;
@@ -73,10 +76,11 @@ nginx.conf
     }
     
     worker_rlimit_nofile 100000;
-    
+```
 
 ## static file cache
 
+```nginx
         location ~* \.(?:css|js)$ {
           expires 12h;
           access_log off;
@@ -84,9 +88,11 @@ nginx.conf
           proxy_pass http://127.0.0.1:5000;
           proxy_redirect off;
         }
+```
 
 ## proxy pass
 
+```nginx
         location /
         {
             proxy_pass http://127.0.0.1:8000;
@@ -97,6 +103,7 @@ nginx.conf
             proxy_set_header Host $http_host;
             proxy_redirect off;
         }
+```
 
 可以设置超时时间
 
@@ -107,6 +114,7 @@ nginx.conf
 
 ## 静态目录 or 文件
 
+```nginx
         location /movies/ {
             alias /Volumes/Media/Movies/;
             allow all;
@@ -117,10 +125,11 @@ nginx.conf
             expires  30d;
             access_log off;
         }
-    
+```
 
 ## 静态站
 
+```nginx
     server {
         listen       192.168.1.1:80;
         server_name  www.abc.com;
@@ -133,11 +142,13 @@ nginx.conf
         index index.html;
     
     }
+```
 
 ## 服务转发
 
 将收到的服务url/参数等, 原封不动转给另一个服务
 
+```nginx
     server {
         listen 80;
         server_name  www.xxxx.com;
@@ -146,6 +157,7 @@ nginx.conf
             proxy_read_timeout 90;
         }
     }
+```
 
 ## return
 
@@ -157,6 +169,7 @@ nginx.conf
 
 e.g.
 
+```nginx
     location /api/test/ {
         return 403;
     }
@@ -168,12 +181,13 @@ e.g.
     location /ping/ {
         return 200;
     }
-    
+```
 
 ## for mobile
 
 移动端和网站端互相跳转
 
+```nginx
         location = / {
             try_files $uri @mobile_rewrite;
         }
@@ -234,6 +248,7 @@ e.g.
             proxy_set_header Host $http_host;
             proxy_redirect off;
         }
+```
 
 ## redirect to www
 
