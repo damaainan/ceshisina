@@ -9,9 +9,10 @@
 1. [双向冒泡排序][3]
 1. [选择排序][4]
 1. [插入排序][5]
-  1. [直接插入排序][6]
-  1. [折半插入排序][7]
-  1. [希尔排序][8]
+    1. [直接插入排序][6]
+    1. [折半插入排序][7]
+    1. [希尔排序][8]
+
 1. [归并排序][9]
 1. [快速排序][10]
 1. [堆排序][11]
@@ -50,7 +51,7 @@
 [![](./img/sort05.gif "冒泡排序")](./img/sort05.gif "冒泡排序")
 
 如下是上图的算法实现(对应**方案一**: 内/外层循环均是正序遍历).
-```
+```js
 //先将交换元素部分抽象出来
 
 function swap(i,j,array){
@@ -65,7 +66,7 @@ function swap(i,j,array){
 ```
     
 
-```
+```js
 function bubbleSort(array) {
 
   var length = array.length, isSwap;
@@ -96,7 +97,7 @@ function bubbleSort(array) {
 
     
 
-```
+```js
 function bubbleSort(array) {
 
   var length = array.length, isSwap;
@@ -127,7 +128,7 @@ function bubbleSort(array) {
 
     
 
-```
+```js
 function bubbleSort(array) {
 
   var length = array.length, isSwap;
@@ -155,7 +156,7 @@ function bubbleSort(array) {
 以上, 由于内循环是正序遍历, 因此靠后的元素位置先确定.
 
 **方案四**: 外循环逆序遍历, 内循环逆序遍历, 代码如下:
-```
+```js
 function bubbleSort(array) {
 
   var length = array.length, isSwap;
@@ -195,7 +196,7 @@ O(n²) | O(n) | O(n²) | O(1)
 双向冒泡排序是冒泡排序的一个简易升级版, 又称鸡尾酒排序. 冒泡排序是从低到高(或者从高到低)单向排序, 双向冒泡排序顾名思义就是从两个方向分别排序(通常, 先从低到高, 然后从高到低). 因此它比冒泡排序性能稍好一些.
 
 如下是算法实现:
-```
+```js
 
 function bothwayBubbleSort(array){
 
@@ -234,7 +235,7 @@ function bothwayBubbleSort(array){
 [![](./img/sort06.gif "选择排序")](./img/sort06.gif "选择排序")
 
 如下是上图的算法实现:
-```
+```js
 function selectSort(array) {
 
   var length = array.length, min;
@@ -278,7 +279,7 @@ function selectSort(array) {
 [![](./img/sort07.gif "直接插入排序")](./img/sort07.gif "直接插入排序")
 
 如下是上图的算法实现:
-```
+```js
 function directInsertionSort(array) {
 
   var length = array.length, index, current;
@@ -334,10 +335,10 @@ function directInsertionSort(array) {
 1. 将数组中插入位置之后的元素全部后移一位.
 1. 在指定位置插入第 i 个元素.
 
-> 注: > x>>1>  是位运算中的右移运算, 表示右移一位, 等同于x除以2再取整, 即 > x>>1 == Math.floor(x/2)>  .
+> 注: x>>1 是位运算中的右移运算, 表示右移一位, 等同于x除以2再取整, 即 x>>1 == Math.floor(x/2) .
 
 如下是算法实现:
-```
+```js
 function binaryInsertionSort(array){
 
   var current, i, j, low, high, m;
@@ -404,7 +405,7 @@ function binaryInsertionSort(array){
 可见, 希尔排序实际上就是不断的进行直接插入排序, 分组是为了先将局部元素有序化. 因为直接插入排序在元素基本有序的状态下, 效率非常高. 而希尔排序呢, 通过先分组后排序的方式, 制造了直接插入排序高效运行的场景. 因此希尔排序效率更高.
 
 我们试着抽象出共同点, 便不难发现上述希尔排序的第四步就是一次直接插入排序, 而希尔排序原本就是从”增量”为n开始, 直至”增量”为1, 循环应用直接插入排序的一种封装. 因此直接插入排序就可以看做是步长为1的希尔排序. 为此我们先来封装下直接插入排序.
-```
+```js
 //形参增加步数gap(实际上就相当于gap替换了原来的数字1)
 
 function directInsertionSort(array, gap) {
@@ -440,7 +441,7 @@ function directInsertionSort(array, gap) {
 }
 ```
 那么希尔排序的算法实现如下:
-```
+```js
 function shellSort(array){
 
   var length = array.length, gap = length>>1, current, i, j;
@@ -483,7 +484,7 @@ function shellSort(array){
 1. 自下而上的迭代
 
 如下是算法实现(方式1:递归):
-```
+```js
 function mergeSort(array) {  //采用自上而下的递归方法
 
   var length = array.length;
@@ -527,7 +528,7 @@ function merge(left, right){ //合并两个子数组
 * Safari v9.1.2: 50755
 
 以下是测试代码:
-```
+```js
 
 function computeMaxCallStackSize() {
 
@@ -568,7 +569,7 @@ console.log(time);
 [![](./img/sort09.gif "快速排序")](./img/sort09.gif "快速排序")
 
 如下是算法实现:
-```
+```js
 function quickSort(array, left, right) {
 
   var partitionIndex,
@@ -634,7 +635,7 @@ function partition(array, left ,right) {   //分区操作
 [![](./img/1867034-bf2472770e2258a9.gif "桶排序示意图")](./img/1867034-bf2472770e2258a9.gif "桶排序示意图")
 
 如下是算法实现:
-```
+```js
 function heapAdjust(array, i, length) {//堆调整
 
   var left = 2 * i + 1,
@@ -721,7 +722,7 @@ function heapSort(array) {
 [![](./img/sort10.gif "计数排序")](./img/sort10.gif "计数排序")
 
 如下是算法实现:
-```
+```js
 function countSort(array, max) {
 
     var tempLength = max + 1,
@@ -775,7 +776,7 @@ function countSort(array, max) {
 桶排序的核心就在于怎么把元素平均分配到每个桶里, 合理的分配将大大提高排序的效率.
 
 如下是算法实现:
-```
+```js
 function bucketSort(array, bucketSize) {
 
   if (array.length === 0) {
@@ -859,10 +860,10 @@ function bucketSort(array, bucketSize) {
 
 如下是LSD的动图效果:
 
-[![](http://louiszhai.github.io//docImages/sort11.gif "基数排序")](http://louiszhai.github.io//docImages/sort11.gif "基数排序"))
+[![](./img/sort11.gif "基数排序")](./img/sort11.gif "基数排序"))
 
 如下是算法实现:
-```
+```js
 function radixSort(array, max) {
 
     var buckets = [],

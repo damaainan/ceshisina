@@ -6,71 +6,80 @@
 
 1. [导读][1]
 1. [浏览器为ajax做了什么][2]
-  1. [MSXML][3]
-  1. [全平台兼容的XMLHttpRequest对象][4]
+    1. [MSXML][3]
+    1. [全平台兼容的XMLHttpRequest对象][4]
+
 1. [ajax有没有破坏js单线程机制][5]
 1. [ajax与setTimeout排队问题][6]
 1. [XMLHttpRequest 属性解读][7]
-  1. [inherit][8]
-  1. [readyState][9]
-  1. [onreadystatechange][10]
-  1. [status][11]
-  1. [statusText][12]
-  1. [onloadstart][13]
-  1. [onprogress][14]
-  1. [onload][15]
-  1. [onloadend][16]
-  1. [timeout][17]
-  1. [ontimeout][18]
-  1. [response responseText][19]
-  1. [responseXML][20]
-  1. [responseType][21]
-  1. [responseURL][22]
-  1. [withCredentials][23]
-  1. [abort][24]
-  1. [getResponseHeader][25]
-  1. [getAllResponseHeaders][26]
-  1. [setRequestHeader][27]
-  1. [onerror][28]
-  1. [upload][29]
-  1. [overrideMimeType][30]
+    1. [inherit][8]
+    1. [readyState][9]
+    1. [onreadystatechange][10]
+    1. [status][11]
+    1. [statusText][12]
+    1. [onloadstart][13]
+    1. [onprogress][14]
+    1. [onload][15]
+    1. [onloadend][16]
+    1. [timeout][17]
+    1. [ontimeout][18]
+    1. [response responseText][19]
+    1. [responseXML][20]
+    1. [responseType][21]
+    1. [responseURL][22]
+    1. [withCredentials][23]
+    1. [abort][24]
+    1. [getResponseHeader][25]
+    1. [getAllResponseHeaders][26]
+    1. [setRequestHeader][27]
+    1. [onerror][28]
+    1. [upload][29]
+    1. [overrideMimeType][30]
+
 1. [XHR一级][31]
 1. [XHR二级][32]
 1. [XDomainRequest][33]
 1. [$.ajax][34]
-  1. [参数列表][35]
-  1. [支持promise][36]
-  1. [使用转换器][37]
-  1. [事件触发顺序][38]
+    1. [参数列表][35]
+    1. [支持promise][36]
+    1. [使用转换器][37]
+    1. [事件触发顺序][38]
+
 1. [Axios][39]
 1. [Fetch][40]
 1. [ajax跨域请求][41]
-  1. [什么是CORS][42]
-  1. [移动端CORS兼容性][43]
-  1. [CORS有关的headers][44]
-  1. [CORS请求][45]
-  1. [HTML启用CORS][46]
-  1. [图片启用CORS][47]
+    1. [什么是CORS][42]
+    1. [移动端CORS兼容性][43]
+    1. [CORS有关的headers][44]
+    1. [CORS请求][45]
+    1. [HTML启用CORS][46]
+    1. [图片启用CORS][47]
+
 1. [ajax文件上传][48]
-  1. [js文件上传][49]
-  1. [fetch上传][50]
-  1. [jquery文件上传][51]
-  1. [angular文件上传][52]
+    1. [js文件上传][49]
+    1. [fetch上传][50]
+    1. [jquery文件上传][51]
+    1. [angular文件上传][52]
+
 1. [ajax请求二进制文件][53]
-  1. [FileReader][54]
-  1. [ajax请求二进制图片并预览][55]
-  1. [ajax请求二进制文本并展示][56]
+    1. [FileReader][54]
+    1. [ajax请求二进制图片并预览][55]
+    1. [ajax请求二进制文本并展示][56]
+
 1. [如何等待多个ajax请求完成][57]
 1. [ajax与history的兼容][58]
-  1. [pjax][59]
+    1. [pjax][59]
+
 1. [ajax缓存处理][60]
 1. [ajax的错误处理][61]
 1. [ajax调试技巧][62]
-  1. [hosts+nginx+node-webserver][63]
-  1. [编码问题][64]
+    1. [hosts+nginx+node-webserver][63]
+    1. [编码问题][64]
+
 1. [后端接口测试技巧][65]
-  1. [使用命令测试OPTIONS请求][66]
-  1. [postman][67]
+    1. [使用命令测试OPTIONS请求][66]
+    1. [postman][67]
+
 1. [ajax移动端兼容性][68]
 
 ### 导读
@@ -134,7 +143,7 @@ MSDN有篇文章专门讲解了各个版本的MSXML. 传送门: [Using the right
 以上, 思路已经很清晰了, 下面给出个全兼容的方法.
 
 #### 全平台兼容的XMLHttpRequest对象
-```
+```js
 function getXHR(){
 
   var xhr = null;
@@ -195,7 +204,7 @@ function getXHR(){
 ### ajax与setTimeout排队问题
 
 通常, ajax 和 setTimeout 的事件回调都被同等的对待, 按照顺序自动的被添加到 任务队列 的末尾, 等待js引擎空闲时执行. 但请注意, 并非xhr的所有回调执行都滞后于setTImeout的回调. 请看如下代码:
-```
+```js
 function ajax(url, method){
 
   var xhr = getXHR();
@@ -247,7 +256,7 @@ ajax('./img/ajax01.png','GET');
 [![](./img/ajax01.png "XMLHttpRequest")](./img/ajax01.png "XMLHttpRequest")
 
 运行以下代码.
-```
+```js
 var xhr = new XMLHttpRequest(),
 
     i=0;
@@ -292,7 +301,7 @@ readyState 对应常量 描述
 #### onreadystatechange
 
 onreadystatechange事件回调方法在readystate状态改变时触发, 在一个收到响应的ajax请求周期中, onreadystatechange 方法会被触发4次. 因此可以在 onreadystatechange 方法中绑定一些事件回调, 比如:
-```
+```js
 xhr.onreadystatechange = function(e){
 
   if(xhr.readystate==4){
@@ -342,7 +351,7 @@ ProgressEvent对象具有三个重要的Read only属性.
 onprogress事件回调方法在 readyState==3 状态时开始触发, 默认传入 ProgressEvent 对象, 可通过 e.loaded/e.total 来计算加载资源的进度, 该方法用于获取资源的下载进度.
 
 注意: 该方法适用于 IE10+ 及其他现代浏览器.
-```
+```js
 xhr.onprogress = function(e){
 
   console.log('progress:', e.loaded/e.total);
@@ -354,7 +363,7 @@ xhr.onprogress = function(e){
 onload事件回调方法在ajax请求成功后触发, 触发时机在 readyState==4 状态之后.
 
 想要捕捉到一个ajax异步请求的成功状态, 并且执行回调, 一般下面的语句就足够了:
-```
+```js
 xhr.onload = function(){
 
   var s = xhr.status;
@@ -382,7 +391,7 @@ timeout属性用于指定ajax的超时时长. 通过它可以灵活地控制ajax
 * 通常设置为0时不生效.
 * 设置为字符串时, 如果字符串中全部为数字, 它会自动将字符串转化为数字, 反之该设置不生效.
 * 设置为对象时, 如果该对象能够转化为数字, 那么将设置为转化后的数字.
-```
+```js
 xhr.timeout = 0; //不生效
 
 xhr.timeout = '123'; //生效, 值为123
@@ -396,7 +405,7 @@ xhr.timeout = {a:123}; //不生效
 #### ontimeout
 
 ontimeout方法在ajax请求超时时触发, 通过它可以在ajax请求超时时做一些后续处理.
-```
+```js
 xhr.ontimeout = function(e) {
 
   console.error("请求超时!!!")
@@ -441,7 +450,7 @@ getResponseHeader方法用于获取ajax响应头中指定name的值. 如果respo
 
 getAllResponseHeaders方法用于获取所有安全的ajax响应头, 响应头以字符串形式返回. 每个HTTP报头名称和值用冒号分隔, 如key:value, 并以\r\n结束.
 
-```
+```js
 xhr.onreadystatechange = function() {
 
   if(this.readyState == this.HEADERS_RECEIVED) {
@@ -459,7 +468,7 @@ xhr.onreadystatechange = function() {
 #### setRequestHeader
 
 既然可以获取响应头, 那么自然也可以设置请求头, setRequestHeader就是干这个的. 如下:
-```
+```js
 
 //指定请求的type为json格式
 
@@ -486,7 +495,7 @@ upload属性默认返回一个 XMLHttpRequestUpload 对象, 用于上传资源. 
 * onloadend
 
 上述方法功能同 xhr 对象中同名方法一致. 其中, onprogress 事件回调方法可用于跟踪资源上传的进度.
-```
+```js
 xhr.upload.onprogress = function(e){
 
   var percent = 100 * e.loaded / e.total |0;
@@ -501,7 +510,7 @@ overrideMimeType方法用于强制指定response 的 MIME 类型, 即强制修�
 
 [![](./img/ajax05.png "response headers")](./img/ajax05.png "response headers")
 
-```
+```js
 xhr.getResponseHeader('Content-Type');//"text/plain"
 
 xhr.responseXML;//null
@@ -539,7 +548,7 @@ XHR2 即 XMLHttpRequest Level 2. XHR2针对XHR1的上述缺点做了如下改进
 * 可以设置timeout 及 ontimeout, 方便设置超时时长和超时后续处理.
 
 这里就H5新增的FormData对象举个例.
-```
+```js
 //可直接创建FormData实例
 
 var data = new FormData();
@@ -649,7 +658,7 @@ $.ajax() 方法返回jqXHR对象(jq1.5起), 如果使用的不是XMLHttpRequest�
 #### 使用转换器
 
 $.ajax() 的转换器可以将支持的数据类型映射到其它数据类型. 如果需要将自定义数据类型映射到已知的类型. 需要使用 contents 选项在响应的 “Content-Type” 和实际数据类型之间添加一个转换函数.
-```
+```js
 $.ajaxSetup({
 
   contents: {
@@ -740,7 +749,7 @@ Axios大小仅12k, 目前最新版本号为:
 [![](https://camo.githubusercontent.com/9f600e10007ac86da6a8b90c16ca1e9504901730/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f6178696f732e7376673f7374796c653d666c61742d737175617265 "npm version")](https://camo.githubusercontent.com/9f600e10007ac86da6a8b90c16ca1e9504901730/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f6178696f732e7376673f7374796c653d666c61742d737175617265 "npm version")
 
 语法上Axios基本就和promise一样, 在then方法中处理回调, 在catch方法中处理异常. 如下:
-```
+```js
 axios.get("https://api.github.com/users/louiszhai")
 
   .then(function(response){
@@ -864,7 +873,7 @@ http-equiv 相当于http的响应头, 它回应给浏览器一些有用的信息
 通常, 图片允许跨域访问, 也可以在canvas中使用跨域的图片, 但这样做会污染画布, 一旦画布受污染, 将无法读取其数据. 比如无法调用 toBlob(), toDataURL() 或 getImageData()方法. 浏览器的这种安全机制规避了未经许可的远程服务器图片被滥用的风险.(该部分内容摘自 [启用了 CORS 的图片 - HTML（超文本标记语言） | MDN][75])
 
 因此如需在canvas中使用跨域的图片资源, 请参考如下apache配置片段(来自[HTML5 Boilerplate Apache server configs][76]).
-```
+```apache
 <IfModule mod_setenvif.c>
 
     <IfModule mod_headers.c>
@@ -880,6 +889,7 @@ http-equiv 相当于http的响应头, 它回应给浏览器一些有用的信息
     </IfModule>
 
 </IfModule>
+
 ```
 ### ajax文件上传
 
@@ -904,7 +914,7 @@ ajax实现文件上传非常简单, 这里我选取原生js, jq, angular 分别�
 #### js文件上传
 
 4.1) 封装一个用于发送ajax请求的方法.
-```
+```js
 function ajax(url, method, data){
 
   var xhr = null;
@@ -962,7 +972,7 @@ function ajax(url, method, data){
 }
 ```
 4.2) 上传文件并绑定事件.
-```
+```js
 var xhr = ajax(url, method, formData);
 
 xhr.upload.onprogress = function(e){
@@ -990,7 +1000,7 @@ xhr.onload = function(){
 #### fetch上传
 
 5) fetch只要发送一个post请求, 并且body属性设置为formData即可. 遗憾的是, fetch无法跟踪上传的进度信息.
-```
+```js
 fetch(url, {
 
   method: method,
@@ -1012,7 +1022,7 @@ fetch(url, {
 jq提供了各式各样的上传插件, 其原理都是利用jq自身的ajax方法.
 
 6) jq的ajax提供了xhr属性用于自定义各种事件.
-```
+```js
 $.ajax({
 
   type: method,
@@ -1066,7 +1076,7 @@ jq上传结果如下所示:
 #### angular文件上传
 
 7.1) angular提供了$http方法用于发送http请求, 该方法返回一个promise对象.
-```
+```js
 $http({
 
   method: method,
@@ -1088,7 +1098,7 @@ $http({
 angular文件上传的代码已上传至github, 请戳这里预览效果: [angular 文件上传 demo | louis][80].
 
 低版本angular中文件上传的功能并不完整, 直到angular1.5.5才在$http中加入了eventHandler和uploadEventHandlers等方法, 使得它支持上传进度信息. 如下:
-```
+```js
 $http({
 
   method: method,
@@ -1148,7 +1158,7 @@ IOS Safari Opera Mini Android Browser Chrome/Android UC/Android 7.1 - 4 53 11
 属性/方法名称 描述 **_error_** 表示读取文件期间发生的错误. **_readyState_** 表示读取文件的状态.默认有三个值:0表示文件还没有加载;1表示文件正在读取;2表示文件读取完成. **_result_** 读取的文件内容. **_abort()_** 取消文件读取操作, 此时readyState属性将置为2. **_readAsArrayBuffer()_** 读取文件(或blob对象)为类型化数组([ArrayBuffer][83]), 类型化数组允许开发者以数组下标的方式, 直接操作内存, 由于数据以二进制形式传递, 效率非常高. _readAsBinaryString()_ 读取文件(或blob对象)为二进制字符串, 该方法已移出标准api, 请谨慎使用. **_readAsDataURL()_** 读取文件(或blob对象)为base64编码的URL字符串, 与window.URL.createObjectURL方法效果类似. **_readAsText()_** 读取文件(或blob对象)为文本字符串. **_onload()_** 文件读取完成时的事件回调, 默认传入event事件对象. 该回调内, 可通过this.result 或 event.target.result获取读取的文件内容. 
 
 #### ajax请求二进制图片并预览
-```
+```js
 var xhr = new XMLHttpRequest(),
 
     url = "./img/ajax01.png";
@@ -1200,7 +1210,7 @@ xhr.onload = function(){
 xhr.send();
 ```
 #### ajax请求二进制文本并展示
-```
+```js
 var xhr = new XMLHttpRequest();
 
 xhr.open("GET","http://localhost:8080/Information/download.jsp?data=node-fetch.js");
@@ -1236,7 +1246,7 @@ xhr.send();
 原生js可以使用ES6新增的Promise. ES6的Promise基于 [Promises/A+][85] 规范(该部分 [Fetch入门指南][86] 一文也有提及).
 
 这里先提供一个解析responses的函数.
-``` 
+``` js
 
 function todo(responses){
 
@@ -1253,7 +1263,7 @@ function todo(responses){
 }
 ```
 原生js使用 Promise.all 方法. 如下:
-```
+```js
 var p1 = fetch("http://localhost:10108/test1"),
 
     p2 = fetch("http://localhost:10108/test2");
@@ -1271,7 +1281,7 @@ Promise.all([p1, p2]).then(function(responses){
 //"test2"
 ```
 jquery可以使用$.when方法. 该方法接受一个或多个Deferred对象作为参数, 只有全部成功才调用resolved状态的回调函数, 但只要其中有一个失败，就调用rejected状态的回调函数. 其实, jq的Deferred是基于 Promises/A规范实现, 但并非完全遵循. (传送门: [jQuery 中的 Deferred 和 Promises (2)][87] ).
-```
+```js
 var p1 = $.ajax("http://localhost:10108/test1"),
 
     p2 = $.ajax("http://localhost:10108/test2");
@@ -1289,7 +1299,7 @@ $.when(p1, p2).then(function(res1, res2){
 如上, $.when默认返回一个jqXHR对象, 可以直接进行链式调用. then方法的回调中默认传入相应的请求结果, 每个请求结果的都是数组, 数组中依次是responseText, 请求状态, 请求的jqXHR对象.
 
 angular中可以借助 $q.all() 来实现. 别忘了, $q 需要在controller中注入. 此外, $q 相关讲解可参考 [AngularJS: ng.$q][88] 或 [Angular $q service学习笔记][89] .
-```
+```js
 var p1 = fetch("http://localhost:10108/test1"),
 
     p2 = fetch("http://localhost:10108/test2");
@@ -1343,7 +1353,7 @@ pjax简单易用, 仅需要如下三个api:
     history.pushState("ajax请求相关参数", title, "xxx.html?state=标识符");
 
 3) 浏览器前进和后退时, popstate 事件会自动触发, 此时我们手动取出 history.state 
-```
+```js
 window.addEventListener("popstate", function(e) {
 
     var currentState = history.state;
@@ -1363,7 +1373,7 @@ popstate 事件触发时, 默认会传入 PopStateEvent 事件对象. 该对象�
 ### ajax缓存处理
 
 js中的http缓存没有开关, 受制于浏览器http缓存策略. 原生xhr请求中, 可通过如下设置关闭缓存.
-```
+```js
 xhr.setRequestHeader("If-Modified-Since","0");
 
 xhr.setRequestHeader("Cache-Control","no-cache");
@@ -1371,7 +1381,7 @@ xhr.setRequestHeader("Cache-Control","no-cache");
 //或者 URL 参数后加上  "?timestamp=" + new Date().getTime()
 ```
 jquery的http缓存是否开启可通过在settings中指定cache.
-```
+```js
 $.ajax({
 
   url : 'url',
