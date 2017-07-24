@@ -8,7 +8,9 @@ _原文_[http://lizhenliang.blog.51cto.com/7876557/1892112][1]
 
   上节讲了grep、sed工具，已经能满足常见的文本处理需求，但有些需求对于他们来说心有余而力不足，今天所讲的工具就能完全他们大多数的功能，它就是三剑客中的老大AWK，我相信一定不会让你失望，下面一起看看吧！
 
-##  8.3 awk awk是一个处理文本的编程语言工具，能用简短的程序处理标准输入或文件、数据排序、计算以及生成报表等等。
+##  awk 
+
+#### awk是一个处理文本的编程语言工具，能用简短的程序处理标准输入或文件、数据排序、计算以及生成报表等等。
 
 在Linux系统下默认awk是gawk，它是awk的GNU版本。可以通过命令查看应用的版本：ls -l /bin/awk
 
@@ -20,7 +22,8 @@ awk处理的工作方式与数据库类似，支持对记录和字段处理，�
 
 在awk中，缺省的情况下将文本文件中的一行视为一个记录，逐行放到内存中处理，而将一行中的某一部分作为记录中的一个字段。用1,2,3...数字的方式顺序的表示行（记录）中的不同字段。用$后跟数字，引用对应的字段，以逗号分隔，0表示整个行。
 
-###  8.3.1 选项 
+###  1 选项 
+
 | 选项 | 描述 |
 | --| --|
 | -f program-file | 从文件中读取awk程序源文件 |
@@ -30,7 +33,7 @@ awk处理的工作方式与数据库类似，支持对记录和字段处理，�
 | --dump-variables=[file] | 把awk命令时的全局变量写入文件，默认文件是awkvars.out |
 | --profile=[file] | 格式化awk语句到文件，默认是awkprof.out |
 
-###  8.3.2 模式 
+###  2 模式 
 常用模式有：
 
 |Pattern | Description|| BEGIN{ } | 给程序赋予初始状态，先执行的工作 |
@@ -46,7 +49,7 @@ awk处理的工作方式与数据库类似，支持对记录和字段处理，�
 
 示例：
 
-1）从文件读取awk程序处理文件
+#### 1）从文件读取awk程序处理文件
 
     # vi test.awk
     {print$2}
@@ -55,7 +58,7 @@ awk处理的工作方式与数据库类似，支持对记录和字段处理，�
     48128/tcp
     49000/tcp
 
-2）指定分隔符，打印指定字段 
+#### 2）指定分隔符，打印指定字段 
 
     打印第二字段，默认以空格分隔：
     # tail -n3 /etc/services |awk '{print $2}'
@@ -97,7 +100,7 @@ awk处理的工作方式与数据库类似，支持对记录和字段处理，�
 
 []元字符的意思是符号其中任意一个字符，也就是说每遇到一个/或#时就分隔一个字段，当用多个分隔符时，就能更方面处理字段了。
 
-3）变量赋值
+#### 3）变量赋值
 
     # awk-v a=123 'BEGIN{print a}'   
     123
@@ -109,7 +112,7 @@ awk处理的工作方式与数据库类似，支持对记录和字段处理，�
     # awk'BEGIN{print '$a'}'   
     123
 
-4）输出awk全局变量到文件
+#### 4）输出awk全局变量到文件
 
     # seq 5|awk --dump-variables '{print $0}'
     1
@@ -142,7 +145,7 @@ awk处理的工作方式与数据库类似，支持对记录和字段处理，�
     SUBSEP:string ("\034")
     TEXTDOMAIN:string ("messages")
 
-5）BEGIN和END
+#### 5）BEGIN和END
 
 BEGIN模式是在处理文件之前执行该操作，常用于修改内置变量、变量赋值和打印输出的页眉或标题。
 
@@ -180,7 +183,7 @@ END模式是在程序处理完才会执行。
     ===
     END......
 
-6）格式化输出awk命令到文件
+#### 6）格式化输出awk命令到文件
 
     # tail /etc/services |awk --profile 'BEGIN{print"Service\t\tPort\t\t\tDescription\n==="}{print $0}END{print"===\nEND......"}'
     Service         Port                    Description
@@ -218,7 +221,7 @@ END模式是在程序处理完才会执行。
                     print "===\nEND......"
             }
 
-7）/re/正则匹配
+#### 7）/re/正则匹配
 
     匹配包含tcp的行：
     # tail /etc/services |awk '/tcp/{print $0}'   
@@ -238,7 +241,7 @@ END模式是在程序处理完才会执行。
     iqobject       48619/udp              # iqobject
     matahari       49000/tcp              # Matahari Broker
 
-8）逻辑and、or和not
+#### 8）逻辑and、or和not
 
     匹配记录中包含blp5和tcp的行：
     #tail /etc/services |awk '/blp5/ && /tcp/{print $0}'      
@@ -259,18 +262,17 @@ END模式是在程序处理完才会执行。
     或
     # awk'/^[^#]|"^$"/' /etc/httpd/conf/httpd.conf
 
-9）匹配范围
+#### 9）匹配范围
 
     # tail /etc/services |awk '/^blp5/,/^com/'
     blp5           48129/tcp              # Bloomberg locator
     blp5           48129/udp              # Bloomberg locator
     com-bardac-dw      48556/tcp              # com-bardac-dw
 
-博客地址：http://lizhenliang.blog.51cto.com
 
-QQ群：323779636（Shell/Python运维开发群）
 
-###  8.3.3 内置变量 
+###  3 内置变量 
+
 | 变量名 | 描述 |
 |-|-|
 | FS | 输入字段分隔符，默认是空格或制表符 |
@@ -290,7 +292,7 @@ QQ群：323779636（Shell/Python运维开发群）
 
 示例：
 
-1）FS和OFS
+#### 1）FS和OFS
 
 在程序开始前重新赋值FS变量，改变默认分隔符为冒号，与-F一样。
 
@@ -322,7 +324,7 @@ QQ群：323779636（Shell/Python运维开发群）
     adm#x
     lp#x
 
-2）RS和ORS
+#### 2）RS和ORS
 
 RS默认是\n分隔每行，如果想指定以某个字符作为分隔符来处理记录：
 
@@ -345,7 +347,7 @@ RS默认是\n分隔每行，如果想指定以某个字符作为分隔符来处�
     iqobject       48619#udp              # iqobject
     matahari       49000#tcp              # Matahari Broker
 
-3）NF
+#### 3）NF
 
 NF是打印字段个数。
 
@@ -364,7 +366,7 @@ NF是打印字段个数。
     # echo "a b c d e f" |awk '{$1="";print $0}'
      bc d e f
 
-4）NR和FNR
+#### 4）NR和FNR
 
 NR统计记录编号，每处理一行记录，编号就会+1，FNR不同的是在统计第二个文件时会重新计数。
 
@@ -422,7 +424,7 @@ NR统计记录编号，每处理一行记录，编号就会+1，FNR不同的是�
 
 一般FNR在处理多个文件时会用到，下面会讲解。
 
-5）ARGC和ARGV
+#### 5）ARGC和ARGV
 
 ARGC是命令行参数数量
 
@@ -437,7 +439,7 @@ ARGV是将命令行参数存到数组，元素由ARGC指定，数组下标从0�
     # awk 'BEGIN{print ARGV[2]}' 1 2 
     2
 
-6）ARGIND
+#### 6）ARGIND
 
 ARGIND是当前正在处理的文件索引值，第一个文件是1，第二个文件是2，以此类推，从而可以通过这种方式判断正在处理哪个文件。
 
@@ -456,7 +458,7 @@ ARGIND是当前正在处理的文件索引值，第一个文件是1，第二个�
     b->d
     b->e
 
-7）ENVIRON
+#### 7）ENVIRON
 
 ENVIRON调用系统变量。
 
@@ -469,7 +471,7 @@ ENVIRON调用系统变量。
     # awk 'BEGIN{print ENVIRON["a"]}'
     123
 
-8）FILENAME
+#### 8）FILENAME
 
 FILENAME是当前处理文件的文件名。
 
@@ -487,11 +489,9 @@ FILENAME是当前处理文件的文件名。
 
 等于1代表忽略大小写。
 
-博客地址：http://lizhenliang.blog.51cto.com
 
-QQ群：323779636（Shell/Python运维开发群）
+###  4 操作符 
 
-###  8.3.4 操作符 
 | 运算符 | 描述|
 |-|-|
 | （....） | 分组 |
@@ -524,7 +524,7 @@ QQ群：323779636（Shell/Python运维开发群）
 
 示例：
 
-1）截取整数
+#### 1）截取整数
 
     # echo "123abc abc123 123abc123"|xargs -n1 | awk '{print +$0}'
     123
@@ -535,7 +535,7 @@ QQ群：323779636（Shell/Python运维开发群）
     0
     -123
 
-2）感叹号
+#### 2）感叹号
 
     打印奇数行：
     # seq 6 |awk 'i=!i'
@@ -553,7 +553,7 @@ QQ群：323779636（Shell/Python运维开发群）
     4
     6
 
-2）不匹配某行
+#### 2）不匹配某行
 
     # tail /etc/services |awk '!/blp5/{print$0}'
     3gpp-cbsp      48049/tcp               # 3GPPCell Broadcast Service isnetserv       48128/tcp              # Image Systems NetworkServices
@@ -564,7 +564,7 @@ QQ群：323779636（Shell/Python运维开发群）
     iqobject       48619/udp               # iqobject
     matahari       49000/tcp               # MatahariBroker
 
-3）乘法和除法
+#### 3）乘法和除法
 
     # seq 5 |awk '{print $0*2}'
     2
@@ -588,7 +588,7 @@ QQ群：323779636（Shell/Python运维开发群）
     3
     5
 
-4）管道符使用
+#### 4）管道符使用
 
     # seq 5 |shuf |awk '{print$0|"sort"}'
     1
@@ -597,7 +597,7 @@ QQ群：323779636（Shell/Python运维开发群）
     4
     5
 
-5）正则表达式匹配
+#### 5）正则表达式匹配
 
     # seq 5 |awk '$0~3{print $0}'
     3
@@ -618,12 +618,12 @@ QQ群：323779636（Shell/Python运维开发群）
     2
     5
 
-6）判断数组成员
+#### 6）判断数组成员
 
     # awk'BEGIN{a["a"]=123}END{if("a" in a)print "yes"}'</dev/null
     yes
 
-7）三目运算符
+#### 7）三目运算符
 
     # awk 'BEGIN{print1==1?"yes":"no"}'  # 三目运算作为一个表达式，里面不允许写print
     yes
@@ -668,7 +668,7 @@ QQ群：323779636（Shell/Python运维开发群）
     5 6
     # seq 6 |awk '{if(NR%2)ORS="";else ORS="\n";print}'
 
-8）变量赋值
+#### 8）变量赋值
 
     字段求和：
     # seq 5 |awk '{sum+=1}END{print sum}'
@@ -676,9 +676,9 @@ QQ群：323779636（Shell/Python运维开发群）
     # seq 5 |awk '{sum+=$0}END{print sum}'
     15
 
-###  8.3.5 流程控制  1 
+###  5 流程控制  
 
-**）if语句**
+#### 1）if语句
 
 格式：if(condition) statement [ else statement ]
 
@@ -702,7 +702,7 @@ QQ群：323779636（Shell/Python运维开发群）
     1
     no
 
- 2 **）while语句**
+#### 2）while语句
 
 格式：while(condition) statement
 
@@ -719,7 +719,7 @@ QQ群：323779636（Shell/Python运维开发群）
     9
     awk是按行处理的，每次读取一行，并遍历打印每个字段。
 
- 3 **）for语句C语言风格**
+#### 3）for语句C语言风格
 
 格式：for(expr1; expr2; expr3) statement
 
@@ -775,8 +775,10 @@ QQ群：323779636（Shell/Python运维开发群）
     #echo '10.10.10.1 10.10.10.2 10.10.10.3' |awk '{for(i=1;i<=NF;i++)printf"\047"$i"\047"}
     '10.10.10.1' '10.10.10.2'  '10.10.10.3'
     \047是ASCII码，可以通过showkey -a命令查看。
-    4）for语句遍历数组
-    格式：for(var in array) statement
+
+#### 4）for语句遍历数组
+格式：for(var in array) statement
+
     # seq-f "str%.g" 5 |awk '{a[NR]=$0}END{for(v in a)print v,a[v]}'
     4 str4
     5 str5
@@ -784,7 +786,7 @@ QQ群：323779636（Shell/Python运维开发群）
     2 str2
     3 str3
 
- 5 **）break和continue语句**
+####  5）break和continue语句
 
 break跳过所有循环，continue跳过当前循环。
 
@@ -797,7 +799,7 @@ break跳过所有循环，continue跳过当前循环。
     4
     5
 
- 6 **）删除数组和元素**
+####   6）删除数组和元素
 
 格式：
 
@@ -813,7 +815,7 @@ deletearray 删除数组
     1 str1
     2 str2
 
- 7 **）exit语句**
+####   7）exit语句
 
 格式：exit[ expression ]
 
@@ -823,7 +825,7 @@ exit退出程序，与shell的exit一样。[ expr]是0-255之间的数字。
     # echo $?
     123
 
-###  8.3.6 数组 数组是用来存储一系列值的变量，通过下标（索引）来访问值。
+###  6 数组 数组是用来存储一系列值的变量，通过下标（索引）来访问值。
 
 awk中数组称为关联数组，不仅可以使用数字作为下标，还可以使用字符串作为下标。
 
@@ -831,12 +833,12 @@ awk中数组称为关联数组，不仅可以使用数字作为下标，还可�
 
 数组格式：array[index]=value
 
-1）自定义数组
+####  1）自定义数组
 
     # awk 'BEGIN{a[0]="test";print a[0]}'
     test
 
-2）通过NR设置记录下标，下标从1开始
+####  2）通过NR设置记录下标，下标从1开始
 
     # tail -n3 /etc/passwd |awk -F: '{a[NR]=$1}END{print a[1]}'
     systemd-network
@@ -845,7 +847,7 @@ awk中数组称为关联数组，不仅可以使用数字作为下标，还可�
     # tail -n3 /etc/passwd |awk -F: '{a[NR]=$1}END{print a[3]}'
     user
 
-3）通过for循环遍历数组
+####  3）通过for循环遍历数组
 
     # tail -n5 /etc/passwd |awk -F: '{a[NR]=$1}END{for(v in a)print a[v],v}'
     zabbix4
@@ -868,7 +870,7 @@ awk中数组称为关联数组，不仅可以使用数字作为下标，还可�
 
 所以当下标是数字序列时，还是用for(expr1;expr2;expr3)循环表达式比较好，保持顺序不变。
 
-4）通过++方式作为下标
+####  4）通过++方式作为下标
 
     # tail -n5 /etc/passwd |awk -F: '{a[x++]=$1}END{for(i=0;i<=x-1;i++)printa[i],i}'
     admin0
@@ -879,7 +881,7 @@ awk中数组称为关联数组，不仅可以使用数字作为下标，还可�
 
 x被awk初始化值是0，没循环一次+1
 
-5）使用字段作为下标
+####  5）使用字段作为下标
 
     # tail -n5 /etc/passwd |awk -F: '{a[$1]=$7}END{for(v in a)print a[v],v}'
     /sbin/nologinadmin
@@ -888,7 +890,7 @@ x被awk初始化值是0，没循环一次+1
     /sbin/nologinsystemd-bus-proxy
     /sbin/nologinzabbix
 
-6）统计相同字段出现次数
+####  6）统计相同字段出现次数
 
     # tail /etc/services |awk '{a[$1]++}END{for(v in a)print a[v],v}'
     2com-bardac-dw
@@ -911,14 +913,14 @@ x被awk初始化值是0，没循环一次+1
 
 想要实现去重的的话就简单了，只要打印下标即可。
 
-7）统计TCP连接状态
+####  7）统计TCP连接状态
 
     # netstat -antp |awk '/^tcp/{a[$6]++}END{for(v in a)print a[v],v}'
     9LISTEN
     6ESTABLISHED
     6TIME_WAIT
 
-8）只打印出现次数大于等于2的
+####  8）只打印出现次数大于等于2的
 
     # tail /etc/services |awk '{a[$1]++}END{for(v in a) if(a[v]>=2){printa[v],v}}'
     2com-bardac-dw
@@ -926,7 +928,7 @@ x被awk初始化值是0，没循环一次+1
     2isnetserv
     2blp5
 
-9）去重
+####  9）去重
 
     只打印重复的行：
     # tail /etc/services |awk 'a[$1]++'
@@ -972,7 +974,7 @@ x被awk初始化值是0，没循环一次+1
     iqobject
     matahari
 
-10）统计每个相同字段的某字段总数：
+####  10）统计每个相同字段的某字段总数：
 
     # tail /etc/services |awk -F'[ /]+' '{a[$1]+=$2}END{for(v in a)print v, a[v]}'
     com-bardac-dw97112
@@ -982,7 +984,7 @@ x被awk初始化值是0，没循环一次+1
     isnetserv96256
     blp596258
 
-11）多维数组
+####  11）多维数组
 
 awk的多维数组，实际上awk并不支持多维数组，而是逻辑上模拟二维数组的访问方式，比如a[a,b]=1，使用SUBSEP（默认\034）作为分隔下标字段，存储后是这样a\034b。
 
@@ -1007,11 +1009,10 @@ awk的多维数组，实际上awk并不支持多维数组，而是逻辑上模�
     2 C-192.168.1.1
     2 B-192.168.1.2
 
-博客地址：http://lizhenliang.blog.51cto.com
 
-QQ群：323779636（Shell/Python运维开发群）
 
-###  8.3.7 内置函数 
+###  7 内置函数 
+
 | 函数 | 描述 |
 |-|-|
 | int(expr) | 截断为整数 |
@@ -1034,7 +1035,7 @@ QQ群：323779636（Shell/Python运维开发群）
 
 示例：
 
-1）int()
+####  1）int()
 
     # echo "123abc abc123 123abc123"|xargs -n1 | awk '{print int($0)}'
     123
@@ -1043,14 +1044,14 @@ QQ群：323779636（Shell/Python运维开发群）
     # awk 'BEGIN{print int(10/3)}'
     3
 
-2）sqrt()
+####  2）sqrt()
 
 获取9的平方根：
 
     # awk 'BEGIN{print sqrt(9)}'
     3
 
-3）rand()和srand()
+####  3）rand()和srand()
 
     rand()并不是每次运行就是一个随机数，会一直保持一个不变：
     # awk 'BEGIN{print rand()}'
@@ -1064,7 +1065,7 @@ QQ群：323779636（Shell/Python运维开发群）
 
 如果想更完美生成随机数，还得做相应的处理！
 
-4）asort()和asorti()
+####  4）asort()和asorti()
 
     # seq -f "str%.g" 5 |awk'{a[x++]=$0}END{s=asort(a,b);for(i=1;i<=s;i++)print b[i],i}'            
     str1 1
@@ -1081,7 +1082,7 @@ QQ群：323779636（Shell/Python运维开发群）
 
 asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号赋值给s，新数组b下标从1开始，然后遍历。
 
-5）sub()和gsub()
+####  5）sub()和gsub()
 
     # tail /etc/services |awk'/blp5/{sub(/tcp/,"icmp");print $0}'
     blp5           48129/icmp               #Bloomberg locator
@@ -1111,7 +1112,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     4
     5
 
-6）index()
+####  6）index()
 
     # tail -n 5 /etc/services |awk '{printindex($2,"tcp")}'
     7
@@ -1120,7 +1121,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     0
     7
 
-7）length()
+####  7）length()
 
     # tail -n 5 /etc/services |awk '{printlength($2)}'
     9
@@ -1132,7 +1133,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     # tail -n 5 /etc/services |awk'{a[$1]=$2}END{print length(a)}'
     3
 
-8）split()
+####  8）split()
 
     # echo -e "123#456#789\nabc#cde#fgh"|awk '{split($0,a);for(v in a)print a[v],v}'
     123#456#789 1
@@ -1145,7 +1146,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     cde 2
     fgh 3
 
-9）substr()
+####  9）substr()
 
     # echo -e "123#456#789\nabc#cde#fgh"|awk '{print substr($0,4)}'                    
     #456#789
@@ -1154,7 +1155,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     #456#
     #cde#
 
-10）tolower()和toupper()
+####  10）tolower()和toupper()
 
     # echo -e"123#456#789\nABC#cde#fgh" |awk '{print tolower($0)}'
     123#456#789
@@ -1163,7 +1164,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     123#456#789
     ABC#CDE#FGH
 
-11)时间处理
+####  11)时间处理
 
     返回当前时间戳：
     # awk 'BEGIN{print systime()}'
@@ -1172,7 +1173,9 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     # echo "1483297766" |awk '{printstrftime("%Y-%m-%d %H:%M:%S",$0)}'          
     2017-01-01 14:09:26
 
-###  8.3.8 I/O语句 
+###  8 I/O语句 
+
+
 | 语句 | 描述 |
 |-|-|
 | getline | 设置$0来自下一个输入记录 | 
@@ -1188,7 +1191,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
 
 示例：
 
-1）getline
+####  1）getline
 
     获取匹配的下一行：
     # seq 5 |awk'/3/{getline;print}'
@@ -1206,7 +1209,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     4*
     5
 
-2）getline var
+####  2）getline var
 
     把a文件的行追加到b文件的行尾：
     # cat a
@@ -1243,7 +1246,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     4
     5
 
-4）next
+####  4）next
 
     不打印匹配行：
     # seq 5 |awk '{if($0==3){next}else{print}}'
@@ -1279,13 +1282,13 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     hello  2 b
     hello  3 c
 
-5）system()
+####  5）system()
 
     执行shell命令判断返回值：
     # awk 'BEGIN{if(system("grep root /etc/passwd &>/dev/null")==0)print"yes";else print "no"}'
     yes
 
-6）打印结果写到文件
+####  6）打印结果写到文件
 
     # tail -n5 /etc/services |awk '{print $2 > "a.txt"}'
     # cat a.txt
@@ -1295,7 +1298,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     48129/tcp
     48129/udp
 
-7）管道连接shell命令
+####  7）管道连接shell命令
 
     将结果通过grep命令过滤：
     # tail -n5 /etc/services |awk '{print $2|"grep tcp"}'
@@ -1303,7 +1306,7 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     48619/tcp
     49000/tcp
 
-###  8.3.9 printf语句 
+###  9 printf语句 
 格式化输出，默认打印字符串不换行。
 
 格式：printf [format] arguments
@@ -1358,18 +1361,18 @@ asort将a数组的值放到数组b，a下标丢弃，并将数组b的总行号�
     # awk 'BEGIN{printf "%x %X",123,123}'
     7b 7B
 
-###  8.3.10 自定义函数 格式：function name(parameter list) { statements }
+###  10 自定义函数 格式：function name(parameter list) { statements }
 
 示例：
 
     # awk 'function myfunc(a,b){returna+b}BEGIN{print myfunc(1,2)}'     
     3
 
-博客地址：http://lizhenliang.blog.51cto.com
 
-QQ群：323779636（ Shell/Python运维开发群 ） 
 
-###  8.3.11 需求案例 1）分析Nginx日志
+###  11 需求案例 
+
+#### 1）分析Nginx日志
 
 日志格式：'$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for"'
 
@@ -1393,7 +1396,7 @@ QQ群：323779636（ Shell/Python运维开发群 ）
     统计访问IP是404状态次数：
     # awk '{if($9~/404/)a[$1" "$9]++}END{for(i in a)printv,a[v]}' access.log
 
-2）两个文件对比
+####  2）两个文件对比
 
 找出b文件在a文件相同记录：
 
@@ -1441,7 +1444,7 @@ QQ群：323779636（ Shell/Python运维开发群 ）
     方法3：
     # awk 'ARGIND==1{a[$0]=1}ARGIND==2&& a[$0]!=1' a b
 
-3）合并两个文件
+####  3）合并两个文件
 
 将a文件合并到b文件：
 
@@ -1479,7 +1482,7 @@ QQ群：323779636（ Shell/Python运维开发群 ）
 
 说明：数组a存储是$1=a[$1] $2，第一个a[$1]是以第一个字段为下标，值是a[$1] $2，也就是$1=a[$1] $2，值的a[$1]是用第一个字段为下标获取对应的值，但第一次数组a还没有元素，那么a[$1]是空值，此时数组存储是192.168.1.1=httpd，再遇到192.168.1.1时，a[$1]通过第一字段下标获得上次数组的httpd，把当前处理的行第二个字段放到上一次同下标的值后面，作为下标192.168.1.1的新值。此时数组存储是192.168.1.1=httpd tomcat。每次遇到相同的下标（第一个字段）就会获取上次这个下标对应的值与当前字段并作为此下标的新值。
 
-4）将第一列合并到一行
+####  4）将第一列合并到一行
 
     # cat file
     1 2 3
@@ -1512,7 +1515,7 @@ for循环是遍历每行的字段，NF等于3，循环3次。
 
 读取第三行时处理方式同上，数组最后还是三个下标，分别是1=1 4 7，2=2 5 8，3=36 9。最后for循环输出所有下标值。
 
-5）字符串拆分，统计出现的次数
+####  5）字符串拆分，统计出现的次数
 
 字符串拆分：
 
@@ -1542,7 +1545,7 @@ for循环是遍历每行的字段，NF等于3，循环3次。
     d 1
     e 1
 
-5）费用统计
+####  6）费用统计
 
     # cat a
     zhangsan 8000 1
@@ -1559,7 +1562,7 @@ for循环是遍历每行的字段，NF等于3，循环3次。
     wangwu 1500 1
     zhaoliu 11000 3
 
-6）获取数字字段最大值
+####  7）获取数字字段最大值
 
     # cat a
     a b 1
@@ -1581,7 +1584,7 @@ for循环是遍历每行的字段，NF等于3，循环3次。
     g h 3
     e f 3
 
-7）去除第一行和最后一行
+####  8）去除第一行和最后一行
 
     # seq 5 |awk'NR>2{print s}{s=$0}'
     2
@@ -1622,7 +1625,5 @@ for循环是遍历每行的字段，NF等于3，循环3次。
 
 这种方式与上面一样，只是用i++作为计数器。
 
-[0]: /sites/RfYBJfy
-[1]: http://lizhenliang.blog.51cto.com/7876557/1892112?utm_source=tuicool&utm_medium=referral
-[2]: /topics/11200020
-[3]: /topics/11200008
+
+[1]: http://lizhenliang.blog.51cto.com/7876557/1892112

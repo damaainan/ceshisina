@@ -344,6 +344,6 @@ EOF就是一直到文件的末尾
 
 [0]: http://aap.reetsee.com/page/timecat
 [1]: https://github.com/fanfank/timecat
-[2]: ./image2016-9-8-11-11-34.png
+[2]: ../IMG/image2016-9-8-11-11-34.png
 [3]: http://baike.baidu.com/link?url=BfNf3U8vhaab_yBLsj-24cgqTnqCnhmaUQgt3_5xLTlckrH8v-b9NJjvglNQhlz9yoswSI8xLtwcM4Q1fp73Sq
-[4]: ./image2016-9-8-11-35-9.png
+[4]: ../IMG/image2016-9-8-11-35-9.png

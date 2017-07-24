@@ -1,10 +1,10 @@
 # 使用sysbench对MySQL进行测试
 
- 时间 2016-12-16 19:09:02  [Focus on MySQL][0]
+ 时间 2016-12-16 19:09:02  Focus on MySQL
 
-_原文_[http://keithlan.github.io/2016/12/16/sysbench_mysql/][1]
+原文[http://keithlan.github.io/2016/12/16/sysbench_mysql/][1]
 
- 主题 [MySQL][2][sysbench][3]
+
 
 ## 为什么要测试，测什么东西？
 
@@ -132,64 +132,65 @@ _原文_[http://keithlan.github.io/2016/12/16/sysbench_mysql/][1]
 
 此模式用于测试真实数据库性能。在prepare阶段创建表，sbtest默认
 
-    CREATETABLE`sbtest`(
+```sql
+    CREATE TABLE `sbtest`(
     `id` int(10) unsigned NOT NULL auto_increment,
     `k` int(10) unsigned NOT NULL default '0',
     `c` char(120) NOT NULL default '',
     `pad` char(60) NOT NULL default '',
     PRIMARY KEY  (`id`),
     KEY `k` (`k`));
-    
+```
 
 在run阶段
 
 * simple模式
-```
+```sql
     SELECT c FROM sbtest WHERE id=N
 ```
 
 * Point queries
-```
+```sql
     SELECT c FROM sbtest WHERE id=N
 ```
 
 * Range queries:
-```
+```sql
     SELECT c FROM sbtest WHERE id BETWEEN N AND M
 ```
 
 * Range SUM() queries
-```
+```sql
     SELECT SUM(K) FROM sbtest WHERE id BETWEEN N and M
 ```
 
 * Range ORDER BY queries
-```
+```sql
     SELECT c FROM sbtest WHERE id between N and M ORDERBY c
 ```
 
 * Range DISTINCT queries
-```
+```sql
     SELECT DISTINCT c FROM sbtest WHERE id BETWEEN N and M ORDERBY c
 ```
 
 * UPDATEs on index column
-```
+```sql
     UPDATE sbtest SET k=k+1 WHERE id=N
 ```
 
 * UPDATEs on non-index column:
-```
+```sql
     UPDATE sbtest SET c=N WHERE id=M
 ```
 
 * DELETE queries
-```
+```sql
     DELETE FROM sbtest WHERE id=N
 ```
 
 * INSERT queries
-```
+```sql
     INSERT INTO sbtest VALUES (...)
 ```
 
@@ -313,10 +314,8 @@ _原文_[http://keithlan.github.io/2016/12/16/sysbench_mysql/][1]
 
 [http://www.mysql.com/why-mysql/benchmarks/][14]
 
-[0]: /sites/jMVrIr3
-[1]: http://keithlan.github.io/2016/12/16/sysbench_mysql/?utm_source=tuicool&utm_medium=referral
-[2]: /topics/11030000
-[3]: /topics/11350039
+
+[1]: http://keithlan.github.io/2016/12/16/sysbench_mysql/
 [4]: http://github.com/akopytov/sysbench
 [5]: ./img/2aMVnmz.jpg
 [6]: ./img/ymiAzu.jpg

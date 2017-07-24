@@ -7,9 +7,7 @@
 视图一经定义便存储在数据库中，预期相对应的数据并没有像表那样在数据库中再存储一份，通过视图看到的数据只是存放在基本表中的数据。当对通过视图看到的数据进行修改时，相应的基本表中的数据也要发生变化；同时，若基本表的数据发生变化，那么这种变化也自动地反映到视图中。
 
 下面创建两个表：
-
- 
-
+```sql
     CREATE TABLE teacher
     (
         teacherId INT,
@@ -22,16 +20,16 @@
         teacherAddr VARCHAR(40),
         teacherPhone    VARCHAR(20)
     );
-
+```
 **创建视图**
 
 创建视图使用CREATE VIEW语法，基本语法格式如下：
-
+```sql
     CREATE[OR REPLACE] [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}]
     VIEW view_name [(column_list)]
     AS SELECT_statement
     [WITH [CASCASDED | LOCAL] CHECK OPTION]
-
+```
 解释一下：
 
 1、CREATE表示创建新视图。REPLACE表示替换已经创建的视图
@@ -51,15 +49,15 @@
 **1、在单表上创建视图**
 
 比方说teacherinfo这张表我只需要teacherId和teacherPhone两个字段，那么：
-
+```sql
     CREATE VIEW view_teacherinfo(view_teacherId, view_teacherPhone)
      AS SELECT teacherId, teacherPhone from teacherinfo;
-
+```
 因为默认创建视图的字段和原表的字段是一样的，我这里指定视图的字段名称了。我现在往view_teacherinfo里面插入两个字段：
-
+```sql
     insert into view_teacherinfo values('111', '222');
     commit;
-
+```
 看一下视图view_teacherinfo和原表teacherinfo：
 
 ![][1]
@@ -71,11 +69,11 @@
 **2、在多表上创建视图**
 
 比方说我现在需要teacherId、teacherName、teacherPhone三个字段了，可以这么创建视图：
-
+```sql
     CREATE VIEW view_teacherunion(view_teacherId, view_teacherName, view_teacherPhone) 
     AS SELECT teacher.teacherId, teacher.teacherName, teacherinfo.teacherPhone
     FROM teacher, teacherinfo WHERE teacher.teacherId = teacherinfo.teacherId;
-
+```
 很简单，只是把表连一下而已
 
 **使用视图的作用**
@@ -163,11 +161,11 @@ SHOW CREATE VIEW也可以用来查看视图信息，基本语法为：
 **5、删除视图**
 
 当视图不再需要时，可以删除视图，删除一个或者多个视图可以使用DROP VIEW语句，基本语法为：
-
+```sql
     DROP VIEW [IF EXISTS]
         view_name [, view_name] ...
         [RESTRICT | CASCADE]
-
+```
 其中，view_name是要删除的视图名称，可以添加多个需要删除的视图名称，名称和名称之间使用逗号分隔开，删除视图必须拥有DROP权限。比如：
 
     DROP VIEW IF EXISTS view_teacherinfo, view_teacherunion;

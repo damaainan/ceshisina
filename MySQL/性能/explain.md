@@ -8,6 +8,7 @@ EXPLAIN 命令用法十分简单, 在 SELECT 语句前加上 Explain 就可以�
 
 为了接下来方便演示 EXPLAIN 的使用, 首先我们需要建立两个测试用的表, 并添加相应的数据:
 
+```sql
     CREATE TABLE `user_info` (
       `id`   BIGINT(20)  NOT NULL AUTO_INCREMENT,
       `name` VARCHAR(50) NOT NULL DEFAULT '',
@@ -28,7 +29,8 @@ EXPLAIN 命令用法十分简单, 在 SELECT 语句前加上 Explain 就可以�
     INSERT INTO user_info (name, age) VALUES ('g', 23);
     INSERT INTO user_info (name, age) VALUES ('h', 50);
     INSERT INTO user_info (name, age) VALUES ('i', 15);
-
+```
+```sql
     CREATE TABLE `order_info` (
       `id`           BIGINT(20)  NOT NULL AUTO_INCREMENT,
       `user_id`      BIGINT(20)           DEFAULT NULL,
@@ -49,11 +51,12 @@ EXPLAIN 命令用法十分简单, 在 SELECT 语句前加上 Explain 就可以�
     INSERT INTO order_info (user_id, product_name, productor) VALUES (4, 'p1', 'WHH');
     INSERT INTO order_info (user_id, product_name, productor) VALUES (6, 'p1', 'WHH');
     INSERT INTO order_info (user_id, product_name, productor) VALUES (9, 'p8', 'TE');
-
+```
 ## EXPLAIN 输出格式
 
 EXPLAIN 命令的输出内容大致如下:
 
+```sql
     mysql> explain select * from user_info where id = 2\G
     *************************** 1. row ***************************
                id: 1
@@ -69,6 +72,7 @@ EXPLAIN 命令的输出内容大致如下:
          filtered: 100.00
             Extra: NULL
     1 row in set, 1 warning (0.00 sec)
+```
 
 各列的含义如下:
 
@@ -100,6 +104,7 @@ select_type 表示了查询的类型, 它的常用取值有:
 
 最常见的查询类别应该是 SIMPLE 了, 比如当我们的查询没有子查询, 也没有 UNION 查询时, 那么通常就是 SIMPLE 类型, 例如: 
 
+```sql
     mysql> explain select * from user_info where id = 2\G
     *************************** 1. row ***************************
                id: 1
@@ -115,9 +120,11 @@ select_type 表示了查询的类型, 它的常用取值有:
          filtered: 100.00
             Extra: NULL
     1 row in set, 1 warning (0.00 sec)
+```
 
 如果我们使用了 UNION 查询, 那么 EXPLAIN 输出 的结果类似如下:
 
+```sql
     mysql> EXPLAIN (SELECT * FROM user_info  WHERE id IN (1, 2, 3))
         -> UNION
         -> (SELECT * FROM user_info WHERE id IN (3, 4, 5)) \G
@@ -161,6 +168,7 @@ select_type 表示了查询的类型, 它的常用取值有:
          filtered: NULL
             Extra: Using temporary
     3 rows in set, 1 warning (0.01 sec)
+```
 
 ### table
 
@@ -179,6 +187,7 @@ type 常用的取值有:
 
 例如下面的这个查询, 它使用了主键索引, 因此 type 就是 const 类型的. 
 
+```sql
     mysql> explain select * from user_info where id = 2\G
     *************************** 1. row ***************************
            id: 1
@@ -194,8 +203,9 @@ type 常用的取值有:
      filtered: 100.00
         Extra: NULL
     1 row in set, 1 warning (0.00 sec)
-* eq_ref: 此类型通常出现在多表的 join 查询, 表示对于前表的每一个结果, 都只能匹配到后表的一行结果. 并且查询的比较操作通常是 = , 查询效率较高. 例如: 
 ```
+* eq_ref: 此类型通常出现在多表的 join 查询, 表示对于前表的每一个结果, 都只能匹配到后表的一行结果. 并且查询的比较操作通常是 = , 查询效率较高. 例如: 
+```sql
     mysql> EXPLAIN SELECT * FROM user_info, order_info WHERE user_info.id = order_info.user_id\G
     *************************** 1. row ***************************
            id: 1
@@ -229,6 +239,7 @@ type 常用的取值有:
 
 例如下面这个例子中, 就使用到了 ref 类型的查询: 
 
+```sql
     mysql> EXPLAIN SELECT * FROM user_info, order_info WHERE user_info.id = order_info.user_id AND order_info.user_id = 5\G
     *************************** 1. row ***************************
            id: 1
@@ -257,12 +268,14 @@ type 常用的取值有:
      filtered: 100.00
         Extra: Using index
     2 rows in set, 1 warning (0.01 sec)
+```
 * range: 表示使用索引范围查询, 通过索引字段范围获取表中部分数据记录. 这个类型通常出现在 =, <>, >, >=, <, <=, IS NULL, <=>, BETWEEN, IN() 操作中.
 
 当 type 是 range 时, 那么 EXPLAIN 输出的 ref 字段为 NULL, 并且 key_len 字段是此次查询中使用到的索引的最长的那个. 
 
 例如下面的例子就是一个范围查询:
 
+```sql
     mysql> EXPLAIN SELECT *
     ->         FROM user_info
     ->         WHERE id BETWEEN 2 AND 8 \G
@@ -280,12 +293,15 @@ type 常用的取值有:
      filtered: 100.00
         Extra: Using where
     1 row in set, 1 warning (0.00 sec)
+```
+
 * index: 表示全索引扫描(full index scan), 和 ALL 类型类似, 只不过 ALL 类型是全表扫描, 而 index 类型则仅仅扫描所有的索引, 而不扫描数据.
 
 index 类型通常出现在: 所要查询的数据直接在索引树中就可以获取到, 而不需要扫描数据. 当是这种情况时, Extra 字段 会显示 Using index .
 
 例如:
 
+```sql
     mysql> EXPLAIN SELECT name FROM  user_info \G
     *************************** 1. row ***************************
                id: 1
@@ -301,6 +317,7 @@ index 类型通常出现在: 所要查询的数据直接在索引树中就可以
          filtered: 100.00
             Extra: Using index
     1 row in set, 1 warning (0.00 sec)
+```
 
 上面的例子中, 我们查询的 name 字段恰好是一个索引, 因此我们直接从索引中获取数据就可以满足查询的需求了, 而不需要查询表中的数据. 因此这样的情况下, type 的值是 index , 并且 Extra 的值是 Using index . 
 
@@ -308,6 +325,7 @@ index 类型通常出现在: 所要查询的数据直接在索引树中就可以
 
 下面是一个全表扫描的例子, 可以看到, 在全表扫描时, possible_keys 和 key 字段都是 NULL, 表示没有使用到索引, 并且 rows 十分巨大, 因此整个查询效率是十分低下的.
 
+```sql
     mysql> EXPLAIN SELECT age FROM  user_info WHERE age = 20 \G
     *************************** 1. row ***************************
            id: 1
@@ -323,6 +341,7 @@ index 类型通常出现在: 所要查询的数据直接在索引树中就可以
      filtered: 10.00
         Extra: Using where
     1 row in set, 1 warning (0.00 sec)
+```
 
 #### type 类型的性能比较
 
@@ -366,6 +385,7 @@ key_len 的计算规则如下:
 
 我们来举两个简单的栗子:
 
+```sql
     mysql> EXPLAIN SELECT * FROM order_info WHERE user_id < 3 AND product_name = 'p1' AND productor = 'WHH' \G
     *************************** 1. row ***************************
                id: 1
@@ -381,6 +401,7 @@ key_len 的计算规则如下:
          filtered: 11.11
             Extra: Using where; Using index
     1 row in set, 1 warning (0.00 sec)
+```
 
 上面的例子是从表 order_info 中查询指定的内容, 而我们从此表的建表语句中可以知道, 表 order_info 有一个联合索引: 
 
@@ -392,6 +413,7 @@ key_len 的计算规则如下:
 
 接下来我们来看一下下一个例子:
 
+```sql
     mysql> EXPLAIN SELECT * FROM order_info WHERE user_id = 1 AND product_name = 'p1' \G;
     *************************** 1. row ***************************
                id: 1
@@ -407,8 +429,11 @@ key_len 的计算规则如下:
          filtered: 100.00
             Extra: Using index
     1 row in set, 1 warning (0.00 sec)
+```
 
-这次的查询中, 我们没有使用到范围查询, key_len 的值为 161. 为什么呢? 因为我们的查询条件 WHERE user_id = 1 AND product_name = 'p1' 中, 仅仅使用到了联合索引中的前两个字段, 因此 keyLen(user_id) + keyLen(product_name) = 9 + 50 * 2 + 2 = 161### rows
+这次的查询中, 我们没有使用到范围查询, key_len 的值为 161. 为什么呢? 因为我们的查询条件 WHERE user_id = 1 AND product_name = 'p1' 中, 仅仅使用到了联合索引中的前两个字段, 因此` keyLen(user_id) + keyLen(product_name) = 9 + 50 * 2 + 2 = 161`
+
+### rows
 
 rows 也是一个重要的字段. MySQL 查询优化器根据统计信息, 估算 SQL 要查找到结果集需要扫描读取的数据行数.
 
@@ -424,6 +449,7 @@ EXplain 中的很多额外的信息会在 Extra 字段显示, 常见的有以下
 
 例如下面的例子:
 
+```sql
     mysql> EXPLAIN SELECT * FROM order_info ORDER BY product_name \G
     *************************** 1. row ***************************
            id: 1
@@ -439,6 +465,7 @@ EXplain 中的很多额外的信息会在 Extra 字段显示, 常见的有以下
      filtered: 100.00
         Extra: Using index; Using filesort
     1 row in set, 1 warning (0.00 sec)
+```
 
 我们的索引是
 
@@ -448,6 +475,7 @@ EXplain 中的很多额外的信息会在 Extra 字段显示, 常见的有以下
 
 如果我们将排序依据改为 ORDER BY user_id, product_name , 那么就不会出现 Using filesort 了. 例如: 
 
+```sql
     mysql> EXPLAIN SELECT * FROM order_info ORDER BY user_id, product_name \G
     *************************** 1. row ***************************
                id: 1
@@ -463,6 +491,7 @@ EXplain 中的很多额外的信息会在 Extra 字段显示, 常见的有以下
          filtered: 100.00
             Extra: Using index
     1 row in set, 1 warning (0.00 sec)
+```
 
 * Using index   
 "覆盖索引扫描", 表示查询在索引树中就可查找所需数据, 不用扫描表数据文件, 往往说明性能不错

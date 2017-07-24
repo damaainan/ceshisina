@@ -54,6 +54,7 @@ fierwalld可以直接修改配置文件进行配置，也可以通过配置工�
 
 先查看/etc/firewalld/firewalld.conf中DefaultZone的值，默认是DefaultZone=public，这时/etc/firewalld/zones/目录下应该有个public.xml文件，vi打开它修改成：
 
+```xml
     <?xmlversion="1.0" encoding="utf-8"?>
     <zone>
         <short>Public</short>
@@ -63,20 +64,22 @@ fierwalld可以直接修改配置文件进行配置，也可以通过配置工�
         <servicename="http"></servicename>
         <servicename="https"></servicename>
     </zone>
-    
+```
 
 这就代表在public zone中开放ssh（22）、http（80）、https（443）端口，其中对应每一个在/usr/lib/firewalld/services/下*.xml文件定义好的服务类型，比如http.xml文件如下：
 
+```xml
     <?xmlversion="1.0" encoding="utf-8"?>
     <service>
         <short>WWW (HTTP)</short>
         <description>HTTPis theprotocolusedto serveWebpages. If youplanto makeyourWebserverpubliclyavailable, enablethis option. This optionis not requiredfor viewingpageslocallyor developingWebpages.</description>
         <portprotocol="tcp" port="80"></portprotocol>
     </service>
-    
+```
 
 所以也可以直接在public.xml中这样：
 
+```xml
     <?xmlversion="1.0" encoding="utf-8"?>
     <zone>
         <short>Public</short>
@@ -86,7 +89,7 @@ fierwalld可以直接修改配置文件进行配置，也可以通过配置工�
         <portprotocol="tcp" port="80"></portprotocol> #等效的
         <servicename="https"></servicename>
     </zone>
-    
+```
 
 每次改配置文件还是比较麻烦的，firewalld可以使用firewall-config和firewall-cmd进行配置，前者是由于GUI模式下，后者为命令行下工具,一些常用命令如下：
 
@@ -406,10 +409,10 @@ iptables还支持自定义规则链。自定义的链必须和某个特定的链
 [2]: /topics/11100000
 [3]: /topics/11100034
 [4]: /topics/11000069
-[5]: http://img0.tuicool.com/NzIJf27.png!web
+[5]: ../IMG/NzIJf27.png
 [6]: https://fedoraproject.org/wiki/FirewallD/zh-cn
 [7]: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-using-firewalld-on-centos-7
-[8]: http://img0.tuicool.com/vmeiMnA.png!web
-[9]: http://img1.tuicool.com/myQJVrE.png!web
-[10]: http://img1.tuicool.com/rE7ZjuN.jpg!web
+[8]: ../IMG/vmeiMnA.png
+[9]: ../IMG/myQJVrE.png
+[10]: ../IMG/rE7ZjuN.jpg
 [11]: https://wiki.archlinux.org/index.php/Iptables_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)

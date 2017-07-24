@@ -16,7 +16,7 @@
 1. 客户端收到FIN后, 向服务器发出确认
 
 
-> (**> 注意:** )三阶段到四阶段, 主动关闭的一方进入TIME_WAIT状态, 为了可靠的实现TCP全双工连接的终止, 允许老的重复分解在网络中消失(P37)
+> (**注意:** )三阶段到四阶段, 主动关闭的一方进入TIME_WAIT状态, 为了可靠的实现TCP全双工连接的终止, 允许老的重复分解在网络中消失(P37)
 
 **套接字表面上可以认为由IP和端口号组成, IP用来表示不同的主机(也就是端到端), 端口号用来表示一台主机上不同的进程(不同进程使用不同的端口号)**
 
@@ -38,7 +38,7 @@
 
 * bind, connect, sendto, sendmsg是从进程到内核传递套接字
 * accept, recvfrom, recvmsg, getpeername, getsockname是从内核到进程传递套接字
-```
+```c
 //所有类型的套接字都至少是16字节  
 struct  sockaddr_in {  
     uint8_t sin_len;   /* length of struct */  
@@ -64,7 +64,7 @@ struct sockaddr_in serv;  //IPv4套接字结构
 * 网络协议指定网络字节序规则各字节传送顺序(使用大端字节序)
 
 ## ASCII字符串与网络字节序的二进制值进行转换
-```
+```c
 #include <arpa/inet.h>  
 /* 下面两个函数仅适用于IPv4 */  
 //将字符串转换为网络字节序二进制数, 字符串有效返回1, 否则返回0  
@@ -80,7 +80,7 @@ const char *inet_ntop(int af, const void * restrict src, char * restrict dst, so
 ## Rio
 
 **字节流套接字条用调用read或write输入和输出的字节数可以比请求的数量少, 原因在于内核中用于套接字的缓冲区可能已达到极限**, 这一点在CSAPP中Rio章节同样有深入的讲解.
-```
+```c
 /*********************************************************************  
  * The Rio package - robust I/O functions  
  **********************************************************************/  
@@ -213,7 +213,7 @@ ssize_t Rio_readlineb(rio_t *rp, void *usrbuf, size_t maxlen)
 ```
 > Stevens的UNP中使用static不是线程安全的，在CSapp中rio_readlineb和rio_readnb修改了两个缺陷，都是缓冲区读，并且线程安全， 其中核心为rio_t读缓冲区struct
 
-```
+```c
 /* Persistent state for the robust I/O (Rio) package */  
 /* $begin rio_t */  
 #define RIO_BUFSIZE 8192  

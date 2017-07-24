@@ -745,16 +745,13 @@ wait/io/table ： 表相关的IO等待。一般对于记录rows来说有fetch，
 不像其他等待事件，table I/O 还包含了其他的等待事件。比如：table io可能包含了文件IO和内存IO。因为读取table rows的时候，有可能会去从文件读取数据。
 
 * wait/lock
-
     * wait/lock/table ： 表操作的锁等待事件
 
 * wait/synch
-
     * wait/synch/cond ：condition就是线程与线程之间的信号。
-
     * wait/synch/mutex ： mutex主要用来锁住一块共享资源。
-
     * wait/synch/rwlock ： 读写锁
+
 22.5 performance schema 状态监控
 
 SHOW STATUS LIKE ‘perf%’

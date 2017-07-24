@@ -69,7 +69,7 @@ F14 | 3440 | weighted time spent doing I/Os (ms) | 块设备队列非空时间�
 
 在内核代码中grep “diskstats”即可找到定义在block/genhd.c中的diskstats_show函数。
     
-
+```c
     while ((hd = disk_part_iter_next(&piter))) {
       cpu = part_stat_lock();
       part_round_stats(cpu, hd);
@@ -90,7 +90,8 @@ F14 | 3440 | weighted time spent doing I/Os (ms) | 块设备队列非空时间�
              jiffies_to_msecs(part_stat_read(hd, io_ticks)),
              jiffies_to_msecs(part_stat_read(hd, time_in_queue))
           );
-
+    }
+```
 此段代码用seq_printf函数将保存在hd_struct结构体内的统计信息组成了diskstats文件。
 
 ### 数据结构
@@ -98,7 +99,7 @@ F14 | 3440 | weighted time spent doing I/Os (ms) | 块设备队列非空时间�
 用到的数据结构都定义在<linux/genhd.h>中，主要有disk_stats和hd_struct两个结构体，意义见注释：
 
 
-
+```c
     struct disk_stats {
         /*
          *sectors[0] <--> F6 
@@ -146,7 +147,7 @@ F14 | 3440 | weighted time spent doing I/Os (ms) | 块设备队列非空时间�
       atomic_t ref;
       struct rcu_head rcu_head;
     };
-
+```
 ### F7/F11 ticks
 
 见下一节
@@ -155,7 +156,7 @@ F14 | 3440 | weighted time spent doing I/Os (ms) | 块设备队列非空时间�
 
 如流程图所示，在每个IO结束后，都会调用blk_account_io_done函数，来对完成的IO进行统计。 blk_account_io_done统计了 ios(F4/F8)和ticks(F7/F11)，还处理了in_flight（后续节有分析）。
 
-
+```c
     static void blk_account_io_done(struct request *req)
     {
       /*
@@ -198,12 +199,12 @@ F14 | 3440 | weighted time spent doing I/Os (ms) | 块设备队列非空时间�
           part_stat_unlock();
       }
     }
-
+```
 ### F5/F9 merges
 
 内核每执行一次Back Merge或Front Merge，都会调用drive_stat_acct。 其实in_flight也是在这个函数中统计的，new_io参数用来区分是新的IO，如果不是新IO则是在merge的时候调用的：
     
-
+```c
     static void drive_stat_acct(struct request *rq, int new_io)
     {
       struct hd_struct *part;
@@ -233,12 +234,12 @@ F14 | 3440 | weighted time spent doing I/Os (ms) | 块设备队列非空时间�
     
       part_stat_unlock();
     }
-
+```
 ### F6/F10 sectors
 
 读写扇区总数是在blk_account_io_completion函数中统计的，如流程图中所示，这个函数在每次IO结束后调用：
 
-
+```c
     static void blk_account_io_completion(struct request *req, unsigned int bytes)
     {
         if (blk_do_io_stat(req)) {
@@ -256,7 +257,7 @@ F14 | 3440 | weighted time spent doing I/Os (ms) | 块设备队列非空时间�
             part_stat_unlock();
         }
     }
-
+```
 ### F12 in_flight
 
 in_flight这个统计比较特别，因为其他统计都是计算累加值，而它是记录当前队列中IO请求的个数。统计方法则是：
@@ -272,7 +273,7 @@ in_flight这个统计比较特别，因为其他统计都是计算累加值，�
 
 io_ticks统计块设备请求队列非空的总时间，统计时间点与in_flight相同，统计代码实现在part_round_stats_single函数中：
 
-
+```c
     static void part_round_stats_single(int cpu, struct hd_struct *part,
                       unsigned long now)
     {
@@ -295,7 +296,7 @@ io_ticks统计块设备请求队列非空的总时间，统计时间点与in_fli
       }
       part->stamp = now;
     }
-
+```
 整个代码实现的逻辑比较简单，在新IO请求插入队列（被merge不算），或完成一个IO请求的时候均执行如下操作：
 
 * 队列为空

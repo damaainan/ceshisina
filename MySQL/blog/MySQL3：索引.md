@@ -71,12 +71,13 @@ MySQL的索引可以分为以下几类：
 
 使用CREATE TABLE创建表的时候，除了可以定义列的数据类型，还可以定义主键约束、外键约束或者唯一性约束，而不论创建哪种约束，在定义约束的同时相当于在指定列上创建了一个索引。创建表时创建索引的基本语法如下：
 
+```sql
     CREATE TABLE table_name[col_name data_type]
     [UNIQUE|FULLTEXT|SPATIAL]
     [INDEX|KEY]
     [index_name](col_name[length])
     [ASC|DESC]
-
+```
 解释一下：
 
 1、UNIQUE、FULLTEXT和SPATIAL为可选参数，分别表示唯一索引、全文索引和空间索引
@@ -94,7 +95,7 @@ MySQL的索引可以分为以下几类：
 下面创建一个普通索引，没有唯一性之类的限制，其作用只是加快对于数据的访问速度：
 
  
-
+```sql
     CREATE TABLE book
     (
         bookId                        INT                        NOT NULL,
@@ -104,11 +105,11 @@ MySQL的索引可以分为以下几类：
         year_publication    YEAR                    NOT NULL,
         INDEX(year_publication)
     )
-
+```
 确认一下索引是否正在使用，可以使用EXPLAIN：
-
+```sql
     EXPLAIN select * from book where yead_publication = 1990
-
+```
 结果为：
 
 ![][1]
@@ -138,35 +139,34 @@ MySQL的索引可以分为以下几类：
 **2、创建唯一索引**
 
 唯一索引和普通索引类似，不过唯一索引索引列的值必须唯一，但允许有空值，如果是组合索引，则列值的组合必须唯一。看一下创建唯一索引的方式：
-
+```sql
     CREATE TABLE uniquetable
     (
         id         INT             NOT NULL,
         name    CHAR(30)    NOT NULL,
         UNIQUE INDEX UniqIdx(id)
     )
-
+```
 这就在表的id字段上创建了一个名为UniqIdx的唯一索引
 
 **3、创建单列索引**
 
 单列索引是在数据表中的某一个字段上创建的索引，一个表中可以创建多个单列索引，前面两个例子中创建的索引都是单列索引，比如：
-
+```sql
     CREATE TABLE singletable
     (
         id      INT         NOT NULL,
         name    CHAR(30)    NOT NULL,
         UNIQUE INDEX SingleIdx(name(20))
     )
-
+```
 这就在name字段上建立了一个名为SingleIdx的单列索引，索引长度为20
 
 **4、创建组合索引**
 
 组合索引是在多个字段上创建一个索引，比如：
 
- 
-
+```sql
     create table uniontable
     (
         id         INT                NOT NULL,
@@ -175,15 +175,14 @@ MySQL的索引可以分为以下几类：
         info     　VARCHAR(255),
         INDEX UnionIdx(id, name, age)
     )
-
+```
 这就为id、name和age三个字段成功创建了一个名为UnionIdx的组合索引
 
 **5、创建全文索引**
 
 全文索引可以对全文进行搜索，只有MyISAM存储引擎支持全文索引，并且只为CHAR、VARCHAR和TEXT列，索引总是对整个列进行，不支持局部索引，比如：
 
- 
-
+```sql
     CREATE TABLE fulltexttable
     (
         id         INT                NOT NULL,
@@ -192,7 +191,7 @@ MySQL的索引可以分为以下几类：
         info    VARCHAR(255),
         FULLTEXT INDEX FullTxtIdx(info)
     )ENGINE=MyISAM
-
+```
 因为默认的存储引擎为InnoDB，而全文索引只支持MyISAM，所以这里创建表的时候要手动指定一下引擎。
 
 看到这么创建，就在info字段上成功建立了一个名为FullTxtIdx的FULLTEXT全文索引，全文索引非常适合大型数据库，而对于小的数据集，它的用处可能比较小
@@ -204,10 +203,10 @@ MySQL的索引可以分为以下几类：
 **1、使用ALTER TABLE语句创建索引**
 
 ALTER TABLE创建索引的基本语法为：
-
+```sql
     ALTER TABLE table_name ADD [UNIQUE|FUUTEXT|SPATIAL]
     [INDEX|KEY] [index_name] (col_name[length],...) [ASC|DESC]
-
+```
 与创建表时创建索引的语法不同的是，这里用了ALTER TABLE和ADD关键字，ADD表示向表中添加索引。以book这张表为例，先看一下这张表里面有哪些索引：
 
     SHOW INDEX FROM book
@@ -261,7 +260,7 @@ CREATE INDEX语句可以在已经存在的表上添加索引，MySQL中CREATE IN
 看到和ALTER INDEX语句的语法基本一样，下面把book表删除了再创建，所有字段都没有索引，用CREATE INDEX语句创建一次索引：
 
  
-
+```sql
     -- 为bookname字段建立名为BkNameIdx的普通索引
     CREATE INDEX BkNameIdx ON book(bookname);
     -- 为bookid字段建立名为UniqidIdx的唯一索引
@@ -270,7 +269,7 @@ CREATE INDEX语句可以在已经存在的表上添加索引，MySQL中CREATE IN
     CREATE INDEX BkAuAndInfoIdx ON book(author(20), info(50));
     -- 为year_publication字段建立名为BkyearIdx的普通索引
     CREATE INDEX BkyearIdx ON book(year_publication);
-
+```
 此时我们SHOW一下INDEX，可以看到为5个字段建立了4个索引：
 
 ![][4]

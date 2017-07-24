@@ -1,10 +1,9 @@
 # 掌握这17个tar命令实例让你秒变大牛
 
- 时间 2016-10-11 09:11:31  [51CTO][0]  [相似文章][1] (_1_)
+ 时间 2016-10-11 09:11:31  51CTO
 
-_原文_[http://os.51cto.com/art/201610/518551.htm][2]
+原文[http://os.51cto.com/art/201610/518551.htm][2]
 
- 主题 [Unix][3][Java][4]
 
 Tar(Tape ARchive，磁带归档的缩写;最初设计用于将文件打包到磁带上，现在我们大都使用它来实现备份某个分区或者某些重要的目录)是类 Unix 系统中使用最广泛的命令，用于归档多个文件或目录到单个归档文件中，并且归档文件可以进一步使用 gzip 或者 bzip2 等技术进行压缩。换言之，tar 命令也可以用于备份：先是归档多个文件和目录到一个单独的 tar 文件或归档文件，然后在需要之时将 tar 文件中的文件和目录释放出来。 本文将介绍 tar 的 17 个实用示例。
 
@@ -279,11 +278,9 @@ tar 命令语法如下：
 
 ![][7]
 
-[0]: /sites/rMjaeyJ
+
 [1]: /articles/dup?id=vEvmYv2
-[2]: http://os.51cto.com/art/201610/518551.htm?utm_source=tuicool&utm_medium=referral
-[3]: /topics/11000145
-[4]: /topics/11000072
-[5]: http://img0.tuicool.com/aM3aeeu.jpg!web
-[6]: http://img0.tuicool.com/i22ui2n.jpg!web
-[7]: http://img2.tuicool.com/ueumUzM.jpg!web
+[2]: http://os.51cto.com/art/201610/518551.htm
+[5]: http://img0.tuicool.com/aM3aeeu.jpg
+[6]: http://img0.tuicool.com/i22ui2n.jpg
+[7]: http://img2.tuicool.com/ueumUzM.jpg

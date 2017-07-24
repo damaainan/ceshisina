@@ -289,11 +289,11 @@ KernelShark是trace-cmd的前端工具，提供了对trace.dat的可视化分析
 [2]: https://riboseyim.github.io/tags/Linux/
 [3]: www.kernel.org/doc/Documentation/trace
 [4]: https://en.wikipedia.org/wiki/Debugfs)。
-[5]: http://og2061b3n.bkt.clouddn.com/DTrace_ftrace_tracers.png
-[6]: http://og2061b3n.bkt.clouddn.com/DTrace_ftrace_arch.png
+[5]: ./img/DTrace_ftrace_tracers.png
+[6]: ./img/DTrace_ftrace_arch.png
 [7]: https://github.com/brendangregg/perf-tools
-[8]: https://static.lwn.net/images/2011/ks-success-zoom-task.png
-[9]: http://og2061b3n.bkt.clouddn.com/DTrace_ftrace_KernelShark_Filters.png
+[8]: ./img/ks-success-zoom-task.png
+[9]: ./img/DTrace_ftrace_KernelShark_Filters.png
 [10]: https://jvns.ca/blog/2017/03/19/getting-started-with-ftrace/
 [11]: https://www.ibm.com/developerworks/cn/linux/l-cn-ftrace/
 [12]: https://lwn.net/Articles/365835/

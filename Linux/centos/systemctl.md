@@ -565,13 +565,13 @@ journalctl功能强大，用法非常多。
 [1]: http://www.ruanyifeng.com/blog/2016/03/
 [2]: http://www.ruanyifeng.com/blog/2016/02/linux-daemon.html
 [3]: http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-part-two.html
-[4]: http://www.ruanyifeng.com/blogimg/asset/2016/bg2016030701.gif
+[4]: ../IMG/MBvuQjN.gif
 [5]: http://www.ruanyifeng.com/blog/2013/08/linux_boot_process.html
 [6]: https://en.wikipedia.org/wiki/Init
-[7]: http://www.ruanyifeng.com/blogimg/asset/2016/bg2016030702.jpg
+[7]: ../IMG/bUfmiez.jpg
 [8]: https://en.wikipedia.org/wiki/Lennart_Poettering
 [9]: http://www.ruanyifeng.com/blog/2009/06/unix_philosophy.html
-[10]: http://www.ruanyifeng.com/blogimg/asset/2016/bg2016030703.png
+[10]: ../IMG/muIv6n.png
 [11]: mailto:root@rhel
 [12]: mailto:clamd@scan
 [13]: mailto:usr/lib/systemd/system/clamd@scan.service

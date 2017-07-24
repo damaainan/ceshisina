@@ -38,6 +38,7 @@ supervisor 是使用Python开发的一套通用的进程管理程序，能够将
 
 详细配置说明：
 
+```conf
     ;*为必须填写项
     ;*[program:应用名称]
     [program:cat]
@@ -109,6 +110,8 @@ supervisor 是使用Python开发的一套通用的进程管理程序，能够将
     environment=A="1",B="2"
     
     serverurl=AUTO
+```
+
 
 **启动**如果编辑默认的supervisor.conf，则需要重启supervisor使配置文件生效：
 

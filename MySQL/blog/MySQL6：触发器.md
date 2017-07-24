@@ -9,9 +9,10 @@ MySQL的触发器（trigger）和存储过程一样，都是嵌入到MySQL中的
 触发器是个特殊的存储过程，不同的是， **执行存储过程要使用CALL语句来调用，而触发器的执行不需要使用CALL语句调用，也不需要手工启动，只要当一个预定义的事件发生的时候，就会被MySQL自动调用** 。比如对student表进行操作（INSERT、DELETE或UPDATE ）时就会激活它执行。
 
 触发器可以查询其他表，而且可以包含复杂的SQL语句。它们主要用于满足复杂的业务规则或要求。可以创建只有一条语句的触发器，不过一般都是有多个执行语句的触发器用得比较多，即使单条语句的触发器，也可以使用多条语句的触发器的写法来写，看下有多个执行语句的触发器的基本写法：
-
+```sql
     CREATE TRIGGER trigger_name trigger_time trigger_event
     ON tbl_name FOR EACH ROW trigger_stmt
+```
 
 解释一下：
 
@@ -27,8 +28,7 @@ MySQL的触发器（trigger）和存储过程一样，都是嵌入到MySQL中的
 
 触发器程序可以使用begin和end作为开始和结束，中间包含多条语句。举个例子，还是以前的学生表：
 
- 
-
+```sql
     create table student
     (
         studentId            int                 primary key    auto_increment    not null,
@@ -36,11 +36,10 @@ MySQL的触发器（trigger）和存储过程一样，都是嵌入到MySQL中的
         studentAge        int,
         studentPhone    varchar(15)
     )
-
+```
 给学生表的studentName、studentAge、studentPhone三个字段都创建一个触发器表：
-
  
-
+```sql
     create table triggerstudentname
     (
         t_studentName VARCHAR(10)
@@ -55,11 +54,10 @@ MySQL的触发器（trigger）和存储过程一样，都是嵌入到MySQL中的
     (
         t_studentPhone VARCHAR(15)
     );
-
+```
 创建一个触发器，每次插入一条数据之后分别往三张表插字段：
-
  
-
+```sql
     CREATE TRIGGER trigger_student AFTER INSERT ON student
     FOR EACH ROW 
     BEGIN
@@ -67,14 +65,14 @@ MySQL的触发器（trigger）和存储过程一样，都是嵌入到MySQL中的
         INSERT INTO triggerstudentAge values(NEW.studentAge);
         INSERT INTO triggerstudentPhone values(NEW.studentPhone);
     END
-
+```
 插入三条数据：
-
+```sql
     insert into student values(null,'Jack', '11', '55555555');
     insert into student values(null,'Dicky', '14', '66666666');
     insert into student values(null,'Coco', '19', '77777777');
     commit;
-
+```
 看一下三张表的情况：
 
 ![][1]

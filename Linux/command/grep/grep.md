@@ -2,11 +2,11 @@
 
  时间 2017-01-05 09:57:52  李振良的技术博客
 
-_原文_[http://lizhenliang.blog.51cto.com/7876557/1889166][1]
+原文[http://lizhenliang.blog.51cto.com/7876557/1889166][1]
 
 
 
-7.1 grep
+## grep
 
 过滤来自一个文件或标准输入匹配模式内容。
 
@@ -53,25 +53,25 @@ Usage: grep [OPTION]... PATTERN [FILE]...
 
 示例：
 
-1） 输出b文件中在a文件相同的行
+#### 1） 输出b文件中在a文件相同的行
 
     # grep -f a b
 
-2） 输出b文件中在a文件不同的行
+#### 2） 输出b文件中在a文件不同的行
 
     # grep -v -f a b
 
-3） 匹配多个模式
+#### 3） 匹配多个模式
 
     # echo "a bc de" |xargs -n1 |grep -e 'a' -e 'bc'
     a
     bc
 
-4） 去除空格http.conf文件空行或开头#号的行
+#### 4） 去除空格http.conf文件空行或开头#号的行
 
     # grep -E -v "^$|^#" /etc/httpd/conf/httpd.conf
 
-5） 匹配开头不分大小写的单词
+#### 5） 匹配开头不分大小写的单词
 
     # echo "A a b c" |xargs -n1 |grep -i a
     或
@@ -79,13 +79,13 @@ Usage: grep [OPTION]... PATTERN [FILE]...
     A
     a
 
-6） 只显示匹配的字符串
+#### 6） 只显示匹配的字符串
 
     # echo "this is a test" |grep -o 'is'
     is
     is
 
-7） 输出匹配的前五个结果
+#### 7） 输出匹配的前五个结果
 
     # seq 1 20  |grep -m 5 -E '[0-9]{2}'
     10
@@ -94,40 +94,40 @@ Usage: grep [OPTION]... PATTERN [FILE]...
     13
     14
 
-8）统计匹配多少行
+#### 8）统计匹配多少行
 
     # seq 1 20  |grep -c -E '[0-9]{2}'
     11
 
-9） 匹配b字符开头的行
+#### 9） 匹配b字符开头的行
 
     # echo "a bc de" |xargs -n1 |grep '^b'
     bc
 
-10） 匹配de字符结尾的行并输出匹配的行
+#### 10） 匹配de字符结尾的行并输出匹配的行
 
     # echo "a ab abc abcd abcde" |xargs -n1 |grep -n 'de$'
     5:abcde
 
-11） 递归搜索/etc目录下包含ip的conf后缀文件
+#### 11） 递归搜索/etc目录下包含ip的conf后缀文件
 
     # grep -r '192.167.1.1' /etc --include *.conf
 
-12） 排除搜索bak后缀的文件
+#### 12） 排除搜索bak后缀的文件
 
     # grep -r '192.167.1.1' /opt --exclude *.bak
 
-13） 排除来自file中的文件
+#### 13） 排除来自file中的文件
 
     # grep -r '192.167.1.1' /opt --exclude-from file
 
-14） 匹配41或42的数字
+#### 14） 匹配41或42的数字
 
     # seq 41 45 |grep -E '4[12]'
     41
     42
 
-15） 匹配至少2个字符
+#### 15） 匹配至少2个字符
 
     # seq 13 |grep -E '[0-9]{2}'
     10
@@ -135,17 +135,17 @@ Usage: grep [OPTION]... PATTERN [FILE]...
     12
     13
 
-16） 匹配至少2个字符的单词，最多3个字符的单词
+#### 16） 匹配至少2个字符的单词，最多3个字符的单词
 
     # echo "a ab abc abcd abcde" |xargs -n1 |grep -E -w -o '[a-z]{2,3}'
     ab
     abc
 
-17） 匹配所有IP
+#### 17） 匹配所有IP
 
     # ifconfig |grep -E -o "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
 
-18） 打印匹配结果及后3行
+#### 18） 打印匹配结果及后3行
 
     # seq 1 10 |grep 5 -A 3
     5
@@ -153,7 +153,7 @@ Usage: grep [OPTION]... PATTERN [FILE]...
     7
     8
 
-19） 打印匹配结果及前3行
+#### 19） 打印匹配结果及前3行
 
     # seq 1 10 |grep 5 -B 3
     2
@@ -161,7 +161,7 @@ Usage: grep [OPTION]... PATTERN [FILE]...
     4
     5
 
-20） 打印匹配结果及前后3行
+#### 20） 打印匹配结果及前后3行
 
     # seq 1 10 |grep 5 -C 3
     2
@@ -172,7 +172,7 @@ Usage: grep [OPTION]... PATTERN [FILE]...
     7
     8
 
-21） 不显示输出
+#### 21） 不显示输出
 
 不显示错误输出：
 
@@ -187,4 +187,4 @@ Usage: grep [OPTION]... PATTERN [FILE]...
 grep支持上一章的基础和扩展正则表达式字符。
 
 
-[1]: http://lizhenliang.blog.51cto.com/7876557/1889166?utm_source=tuicool&utm_medium=referral
+[1]: http://lizhenliang.blog.51cto.com/7876557/1889166

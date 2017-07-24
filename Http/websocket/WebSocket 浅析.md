@@ -23,6 +23,7 @@
 
 WebSocket 对象提供了一组 API，用于创建和管理 WebSocket 连接，以及通过连接发送和接收数据。浏览器提供的WebSocket API很简洁，调用示例如下：
 
+```js
     var ws = new WebSocket('wss://example.com/socket');   
     // 创建安全WebSocket 连接（wss）  
     ws.onerror = function (error) { ... }   
@@ -45,11 +46,11 @@ WebSocket 对象提供了一组 API，用于创建和管理 WebSocket 连接，�
     // 处理文本信息
           }
     }
-
+```
 ### 1.1.接收和发送数据
 
 WebSocket提供了极简的API，开发者可以轻松的调用，浏览器会为我们完成缓冲、解析、重建接收到的数据等工作。应用只需监听onmessage事件，用回调处理返回数据即可。 WebSocket支持文本和二进制数据传输，浏览器如果接收到文本数据，会将其转换为DOMString 对象，如果是二进制数据或Blob 对象，可直接将其转交给应用或将其转化为ArrayBuffer，由应用对其进行进一步处理。从内部看，协议只关注消息的两个信息：净荷长度和类型（前者是一个可变长度字段），据以区别UTF-8 数据和二进制数据。示例如下：
-
+```js
     var wss = new WebSocket('wss://example.com/socket');
     ws.binaryType = "arraybuffer"; 
     
@@ -76,6 +77,7 @@ WebSocket提供了极简的API，开发者可以轻松的调用，浏览器会�
           var blob = new Blob([buffer]);
           socket.send(blob); 
     }
+```
 
 > Blob 对象是包含有只读原始数据的类文件对象，可存储二进制数据，它会被写入磁盘；ArrayBuffer （缓冲数组）是一种用于呈现通用、固定长度的二进制数据的类型，作为内存区域可以存放多种类型的数据。
 
@@ -83,6 +85,7 @@ WebSocket提供了极简的API，开发者可以轻松的调用，浏览器会�
 
 WebSocket 提供的信道是全双工的，在同一个TCP 连接上，可以双向传输文本信息和二进制数据，通过数据帧中的一位（bit）来区分二进制或者文本。WebSocket 只提供了最基础的文本和二进制数据传输功能，如果需要传输其他类型的数据，就需要通过额外的机制进行协商。WebSocket 中的send( ) 方法是异步的：提供的数据会在客户端排队，而函数则立即返回。在传输大文件时，不要因为回调已经执行，就错误地以为数据已经发送出去了，数据很可能还在排队。要监控在浏览器中排队的数据量，可以查询套接字的bufferedAmount 属性：
 
+```js
     var ws = new WebSocket('wss://example.com/socket');
     
     ws.onopen = function () {
@@ -91,6 +94,7 @@ WebSocket 提供的信道是全双工的，在同一个TCP 连接上，可以双
         ws.send(evt.data); 
       });
     };
+```
 
 前面的例子是向服务器发送应用数据，所有WebSocket 消息都会按照它们在客户端排队的次序逐个发送。因此，大量排队的消息，甚至一个大消息，都可能导致排在它后面的消息延迟——队首阻塞！为解决这个问题，应用可以将大消息切分成小块，通过监控bufferedAmount 的值来避免队首阻塞。甚至还可以实现自己的优先队列，而不是盲目都把它们送到套接字上排队。要实现最优化传输，应用必须关心任意时刻在套接字上排队的是什么消息！
 
@@ -106,15 +110,18 @@ WebSocket 提供的信道是全双工的，在同一个TCP 连接上，可以双
 
 WebSocket构造器方法如下所示：
 
+```js
     WebSocket WebSocket(
         in DOMString url,   
         // 表示要连接的URL。这个URL应该为响应WebSocket的地址。  
         in optional DOMString protocols   
         // 可以是一个单个的协议名字字符串或者包含多个协议名字字符串的数组。默认设为一个空字符串。  
     );
+```
 
 通过上述WebSocket构造器方法的第二个参数，客户端可以在初次连接握手时，可以告知服务器自己支持哪种协议。如下所示：
 
+```js
     var ws = new WebSocket('wss://example.com/socket',['appProtocol', 'appProtocol-v2']);
     
     ws.onopen = function () {  if (ws.protocol == 'appProtocol-v2') { 
@@ -123,6 +130,7 @@ WebSocket构造器方法如下所示：
         ...
       }
     }
+```
 
 如上所示，WebSocket 构造函数接受了一个可选的子协议名字的数组，通过这个数组，客户端可以向服务器通告自己能够理解或希望服务器接受的协议。当服务器接收到该请求后，会根据自身的支持情况，返回相应信息。
 

@@ -32,6 +32,8 @@ _原文_[https://wuyuans.com/2017/04/logrotate-usage][1]
 
 logrotate由系统的cron运行，位置在/etc/cron.daily/logrotate
 
+
+```bash
     #!/bin/sh
     
     /usr/sbin/logrotate -s /var/lib/logrotate/logrotate.status /etc/logrotate.conf
@@ -40,6 +42,7 @@ logrotate由系统的cron运行，位置在/etc/cron.daily/logrotate
         /usr/bin/logger -t logrotate "ALERT exited abnormally with [$EXITVALUE]"
     fi
     exit 0
+```
 
 可以看到入口配置文件是/etc/logrotate.conf，依次运行/etc/logrotate.conf.d里的配置文件 _如果发现配置的logrotate没有执行，可以看下系统的crond服务有没有开启_
 
@@ -154,6 +157,5 @@ logrotate由系统的cron运行，位置在/etc/cron.daily/logrotate
 
 没问题的话日志就会被移到old目录下，并带上日期，之前的log文件会被清空
 
-[1]: https://wuyuans.com/2017/04/logrotate-usage?utm_source=tuicool&utm_medium=referral
-
+[1]: https://wuyuans.com/2017/04/logrotate-usage
 

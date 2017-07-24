@@ -22,8 +22,9 @@ TCP 用一个 16 位端口号来标识一个端口，可允许有 65536 ( 2的16
 端口号根据服务器使用还是客户端使用，以及常见不常见的维度来区分，主要有以下类别：
 
 1. 服务器端使用的端口号
-  - 熟知端口号
-  - 登记端口号
+    - 熟知端口号
+    - 登记端口号
+
 2. 客户端使用的端口号
 
 下面展开来说说。    
@@ -667,7 +668,7 @@ ssize_t write(int fd, const void *buf, size_t count);
 # 实现一个简单 TCP 交互
 ## 服务端
 
-```C++
+```c++
 // socket_server.cpp
 
 #include <stdio.h>
@@ -739,7 +740,7 @@ int main(int argc, char **argv)
 ```
 
 ## 客户端
-```C++
+```c++
 // socket_client.cpp
 
 #include <stdio.h>
@@ -811,7 +812,7 @@ int main(int argc, char **argv)
 
 # Run
 首先创建 `makefile` 文件
-```makefile
+```
 all:server client
 server:socket_server.o
     g++ -g -o socket_server socket_server.o

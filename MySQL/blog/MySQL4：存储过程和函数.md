@@ -6,16 +6,16 @@
 简单说，存储过程就是一条或多条SQL语句的集合，可视为批文件，但是起作用不仅限于批处理。本文主要讲解如何创建存储过程和存储函数以及变量的使用，如何调用、查看、修改、删除存储过程和存储函数等。使用的数据库和表还是之前写JDBC用的数据库和表：
 
  
-
+```sql
     create database school;
     
     use school;
     
     create table student
     (
-        studentId            int                 primary key    auto_increment    not null,
-        studentName        varchar(10)                                                            not null,
-        studentAge        int,
+        studentId    int  primary key    auto_increment    not null,
+        studentName     varchar(10)     not null,
+        studentAge   int,
         studentPhone    varchar(15)
     )
     
@@ -25,7 +25,7 @@
     insert into student values(null,'Steve', '27', '33333333');
     insert into student values(null,'James', '22', '44444444');
     commit;
-
+```
 存储程序可以分为存储过程和函数，MySQL中创建存储过程和函数的语句分别是：CREATE PROCEDURE和CREATE FUNCTION。使用CALL语句来调用存储过程，只能用输出变量返回值。函数可以从语句外调用（即通过引用函数名），也能返回标量值。存储过程也可以调用其他存储过程。
 
 **创建存储过程**
@@ -33,7 +33,7 @@
 创建存储过程，需要使用CREATE PROCEDURE语句，语句基本格式如下：
 
     CREATE PROCEDURE sp_name([proc_parameter])   
-[characteristics ...] routine_body
+    [characteristics ...] routine_body
 
 解释一下：
 
@@ -48,7 +48,7 @@
 5、routime_body是SQL代码的内容，可以用BEGIN...END来表示SQL代码的开始和结束
 
 编写存储过程不是简单的事情，可能存储过程中需要复杂的SQL语句，并且要有创建存储过程的权限；但是使用存储过程将简化操作，减少冗余的操作步骤，同时还可以减少操作过程中的事物，提高效率，因此存储过程是非常有用的。下面看两个存储过程，一个查询student表中的所有字段，一个根据student表的Age字段算一个Age的平均值：
-
+```sql
     CREATE PROCEDURE proc ()
     BEGIN
         SELECT * FROM student;
@@ -58,15 +58,15 @@
     BEGIN
         SELECT AVG(studentAge) AS avgAge FROM student;
     END;
-
+```
 上面都是不带参数的存储过程，下面看一个带参数的存储过程：
-
+```sql
     DELIMITER //
     CREATE PROCEDURE CountStudent(IN sName VARCHAR(10), OUT num INT)
     BEGIN
         SELECT COUNT(*) INTO num FROM student WHERE studentName = sName;
     END //
-
+```
 上述代码的作用是创建一个获取student表记录条数的存储过程，名称为CountStudent，根据传入的学生姓名COUNT(*)后把结果放入参数num中。
 
 注意另外一个细节，上述代码第一行使用了"DELIMITER //"，这句语句的作用是把MySQL的结束符设置为"//"，因为MySQL默认的语句结束符号为分号";"，为了避免与存储过程中SQL语句结束符相冲突，需要使用DELIMITER改变存储过程的结束符，并以"END //"结束存储过程。存过程定义完毕之后再使用"DELIMITER ;"恢复默认结束符。DELIMITER也可以指定其他符号作为结束符。
@@ -74,10 +74,10 @@
 **创建存储函数**
 
 创建存储函数需要使用CREATE FUNCATION语句，其基本语法如下：
-
+```sql
     CREATE FUNCTION func_name([func_parameter]) RETURNS type
     [characteristic ...] routine_body
-
+```
 解释一下：
 
 1、CREATE_FUNCTION为用来创建存储函数的关键字
@@ -91,10 +91,10 @@
 5、characteristic表示存储函数的特性，和存储过程一样
 
 举个例子：
-
+```sql
     CREATE FUNCTION NameByZip() RETURNS CHAR(50)
     RETURN (select studentPhone from student where studentName = 'JAMES');
-
+```
 提两点：
 
 1、如果在存储函数中的RETURN语句返回一个类型不同于函数的RETURNS自居指定的类型的值，返回值将被强制为恰当的类型
@@ -118,19 +118,19 @@
     SET var_name=expr[, var_name=expr] ...;
 
 举个例子：
-
+```sql
     DECLARE var1 INT DEFAULT 100;
     DECLARE var2, var3, var4 INT;
     SET var2 = 10, var3 = 20;
     SET var4 = var2 + var3;
-
+```
 当然，我们使用SELECT语句也可以给变量赋值：
-
+```sql
     DECLARE t_studentName CHAR(20);
     DECLARE t_studentAge INT;
     SELECT studentName, studentId INTO t_studentName, t_studentAge FROM student where studentName = 'Bruce';DECLARE t_studentName CHAR(20);
     DECLARE t_studentAge INT;
-
+```
 **游标的使用**
 
 查询语句可能返回多条记录，如果数据量非常大，需要在存储过程和存储函数中使用游标来逐条读取查询结果集中的记录。应用程序可以根据需要滚动或浏览器中的程序。
@@ -158,9 +158,8 @@
     CLOSE cursor_name{游标名称}
 
 举个例子：
-
  
-
+```sql
     DECLARE t_studentName CHAR(20);
     DECLARE t_studentAge INT;
     DECLARE cur_student CURSOR FOR SELECT studentName, studentId FROM student where studentName = 'Bruce';
@@ -168,7 +167,7 @@
     FETCH cur_student INTO t_studentName, t_studentAge;
     ...
     CLOSE cur_student;
-
+```
 studentName为Bruce的在数据里面不止一条记录，创建游标之后就从student表中查出了studentName和studentId的值。OPEN这个游标，通过FETCH之后遍历每一组studentName和studentAge，并放入申明的变量t_studentName和t_studentAge中，之后想怎么用这两个字段怎么用这两个字段了。注意，游标用完关闭掉。
 
 **IF、CASE、LOOP、LEAVE、ITERATE、REPEAT**
@@ -178,49 +177,49 @@ studentName为Bruce的在数据里面不止一条记录，创建游标之后就�
 **1、IF**
 
 IF语句包含多个判断条件，根据判断的结果为TRUE或FALSE执行相应的语句，其格式为：
-
+```sql
     IF expr_condition THEN statement_list
         [ELSEIF expr_condition THEN statement_list]
         [ELSE statement_list]    
     END IF
-
+```
 比如：
-
+```sql
     IF t_studentName IS NULL
         THEN SELECT studentName INTO t_studentName FROM student where studentName = 'Bruce';
         ELSE UPDATE studentName set student = NULL where studentName = 'Bruce';
     END IF;
-
+```
 **2、CASE**
 
 case是另外一个进行条件判断的语句，该语句有两种格式，第一种格式如下：
-
+```sql
     CASE case_expr
         WHEN when_value THEN statement_list
         [WHEN when_value THEN statement_list] ...
         [ELSE statement_list]
     END CASE
-
+```
 其中，case_expr参数表示判断的表达式，决定了哪一个WHEN自居会被执行；when_value表示表达式可能的值，如果某个when_value表达式与case_expr表达式结果相同，则执行对应THEN关键字后的statement_list中的语句；statement_list参数表示不同when_value值的执行语句。
 
 CASE语句的第二种格式为：
-
+```sql
     CASE
         WHEN expr_condition THEN statement_list
         [WHEN expr_condition THEN statement_list] ...
         [ElSE statement_list]
     END CASE
-
+```
 只是写法稍微变了一下，参数还是第一种写法的意思
 
 **3、LOOP**
 
 LOOP循环用来重复执行某些语句，与IF和CASE相比，LOOP只是创建一个循环操作的过程，并不进行条件判断。LOOP内的语句一直被重复执行直到循环被退出，跳出循环过程，使用LEAVE子句。LOOP语句j的基本格式如下：
-
+```sql
     [loop_label:] LOOP
         statement_list
     END LOOP
-
+```
 其中loop_label表示LOOP语句的标注名称，该参数可以省略；statement_list参数表示需要循环执行的语句
 
 **4、LEAVE**
@@ -238,12 +237,12 @@ ITERATE语句将执行顺序转到语句段开头出，语句基本格式如下�
 **6、REPEAT**
 
 REPEAT语句用来创建一个带有条件判断的循环过程，每次与局执行完毕之后，会对条件表达式进行判断，如果表达式为真，则循环结束，否则重复执行循环中的语句。REPEAT语句的基本格式如下：
-
+```sql
     [repeat_label:] REPEAT
         statement_list
     UNTIL expr_condition
     END REPEAT
-
+```
 其中，repeat_label为REPEAT语句的标注名称，该参数可以省略；REPEAT语句内的语句或语句群被重复，直至expr_condition为真
 
 **调用存储过程和函数**
@@ -257,10 +256,10 @@ REPEAT语句用来创建一个带有条件判断的循环过程，每次与局�
     CALL sp_name([parameter[,...]])
 
 举个例子，就调用最前面那个CountStudent的存储过程：
-
+```sql
     CALL CountStudent('Bruce', @num);
     select @num;
-
+```
 运行结果为：
 
 ![][1]
