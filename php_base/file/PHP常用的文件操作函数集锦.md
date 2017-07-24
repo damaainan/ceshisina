@@ -42,7 +42,7 @@ dirname();
 ```
 **三、得到给定文件有用信息数组**(很有用)
 
-1. fstat();   
+1、 fstat();   
 通过已打开的文件指针取得文件信息  
 获取由文件指针 handle 所打开文件的统计信息。本函数和 stat() 函数相似，除了它是作用于已打开的文件指针而不是文件名。
 ```php
@@ -56,20 +56,22 @@ dirname();
  // 只显示关联数组部分   
 [print_r][11] ( [array_slice][12] ( $fstat ,  13 ) ) ;
 ```
-2. stat()   
+2、 stat()   
 获取由 filename 指定的文件的统计信息(类比fstat())
 
 **四、计算大小**  
- 1. filesize()   
-返回文件大小的字节数，如果出错返回 FALSE 并生成一条 E_WARNING 级的错误。
+
+1、 filesize()   
+ 返回文件大小的字节数，如果出错返回 FALSE 并生成一条 E_WARNING 级的错误。
 ```php
  <?php   
  // 输出类似：somefile.txt: 1024 bytes   
  $filename  =  'somefile.txt' ;   
  echo  $filename  .  ': '  . [filesize][13] ( $filename )  .  ' bytes' ;
 ```
-2. disk_free_space()   
-获得目录所在磁盘分区的可用空间（字节单位）
+
+2、 disk_free_space()   
+ 获得目录所在磁盘分区的可用空间（字节单位）
 ```php
  <?php   
  // $df 包含根目录下可用的字节数   
@@ -78,9 +80,10 @@ dirname();
 [disk_free_space][14] ( "C:" ) ;   
 [disk_free_space][14] ( "D:" ) ;
 ```
-3. disk_total_space()   
-返回一个目录的磁盘总大小  
-eg:(同上，换掉函数)
+
+3、 disk_total_space()   
+ 返回一个目录的磁盘总大小  
+ eg:(同上，换掉函数)
 
 另：如需要计算一个目录大小，可以编写一个递归函数来实现
 ```php
@@ -109,7 +112,7 @@ function dir_size($dir){
 
 **六、 文件的I/O操作**
 
-1. fopen -- 打开文件或者 URL  
+1、 fopen -- 打开文件或者 URL  
 mode 说明  
 'r' 只读方式打开，将文件指针指向文件头。  
 'r+' 读写方式打开，将文件指针指向文件头。  
@@ -123,7 +126,7 @@ eg:
 
 $handle = fopen("/home/rasmus/file.txt", "r");
 
-2. file -- 把整个文件读入一个数组中(此函数是很有用的)
+2、 file -- 把整个文件读入一个数组中(此函数是很有用的)
 
 和 file_get_contents() 一样，只除了 file() 将文件作为一个数组返回。数组中的每个单元都是文件中相应的一行，包括换行符在内。如果失败 file() 返回 FALSE。
 ```php
@@ -137,7 +140,7 @@ foreach ($lines as $line_num => $line) {
 // 另一个例子将 web 页面读入字符串。参见 file_get_contents()。
 $html = implode('', file ('http://www.example.com/'));
 ```
-3. fgets -- 从文件指针中读取一行
+3、 fgets -- 从文件指针中读取一行
 
 从 handle 指向的文件中读取一行并返回长度最多为 length - 1 字节的字符串。碰到换行符（包括在返回值中）、EOF 或者已经读取了 length - 1 字节后停止（看先碰到那一种情况）。如果没有指定 length，则默认为 1K，或者说 1024 字节。
 ```php
@@ -151,13 +154,14 @@ if ($handle) {
     fclose($handle);
 }
 ```
-4. fgetss -- 从文件指针中读取一行并过滤掉 HTML 标记
+4、 fgetss -- 从文件指针中读取一行并过滤掉 HTML 标记
 
 和 fgets() 相同，只除了 fgetss 尝试从读取的文本中去掉任何 HTML 和 PHP 标记。
 
 可以用可选的第三个参数指定哪些标记不被去掉
 
 另：对的目录的操作：  
+
  1. opendir -- 打开目录句柄，打开一个目录句柄，可用于之后的 closedir()，readdir() 和 rewinddir() 调用中。  
  2. readdir -- 从目录句柄中读取条目，返回目录中下一个文件的文件名。文件名以在文件系统中的排序返回。
 ```php
@@ -178,11 +182,10 @@ if ($handle = opendir('/path/to/files')) {
      closedir($handle);
 }
 ```
-
-3. scandir -- 列出指定路径中的文件和目录(很有用),返回一个 array，包含有 directory 中的文件和目录。  
+ 3.scandir -- 列出指定路径中的文件和目录(很有用),返回一个 array，包含有 directory 中的文件和目录。  
 默认的排序顺序是按字母升序排列。如果使用了可选参数 sorting_order（设为 1），则排序顺序是按字母降序排列。
 
-777
+·
 
     <?php
     $dir    = '/tmp';

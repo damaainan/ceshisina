@@ -41,11 +41,12 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 2、 构造方法的在类中的声明格式
 
+```
     function __constrct([参数列表]){
     
         方法体 //通常用来对成员属性进行初始化赋值
     }
-    
+```
 
 3、 在类中声明构造方法需要注意的事项
 
@@ -55,7 +56,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     
 
 下面是它的例子：
-
+```php
     <?php
         class Person
         {                                                                      
@@ -82,22 +83,28 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
             }   
                                                                                                
         }
-    
+```
 
 创建对象$Person1且不带任参数
 
+```php
     $Person1 = new Person();
     echo $Person1->say(); //输出:我叫：，性别：男，年龄：27
+```
 
 创建对象$Person2且带参数“小明”
 
+```php
     $Person2 = new Person("小明");
     echo $Person2->say(); //输出：我叫：张三，性别：男，年龄：27
+```
 
 创建对象$Person3且带三个参数
 
+```php
     $Person3 = new Person("李四","男",25);
     echo $Person3->say(); //输出：我叫：李四，性别：男，年龄：25
+```
 
 ### 二、__destruct()，类的析构函数
 
@@ -125,7 +132,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     
 
 举例演示，如下：
-
+```php
     <?php
     class Person{     
                                                             
@@ -159,7 +166,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     
     $Person = new Person("小明");
     unset($Person); //销毁上面创建的对象$Person
-    
+```
 
 上面的程序运行时输出：
 
@@ -172,11 +179,13 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 1、 __call() 方法的格式：
 
+```
     function __call(string $function_name, array $arguments)
     {
         // 方法体
     }
-    
+```
+
 
 2、 __call() 方法的作用：
 
@@ -186,7 +195,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     
 
 请参考如下代码：
-
+```php
     <?php
     class Person
     {                             
@@ -210,7 +219,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     $Person->run("teacher"); // 调用对象中不存在的方法，则自动调用了对象中的__call()方法
     $Person->eat("小明", "苹果");             
     $Person->say();                        
-    
+```
 
 运行结果：
 
@@ -226,7 +235,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 此方法与上面所说的 __call() 功能除了 __callStatic() 是未静态方法准备的之外，其它都是一样的。
 
 请看下面代码：
-
+```php
     <?php
     class Person
     {
@@ -250,7 +259,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     $Person::run("teacher"); // 调用对象中不存在的方法，则自动调用了对象中的__call()方法
     $Person::eat("小明", "苹果");
     $Person->say();
-
+```
 运行结果如下：
 
     你所调用的静态方法：run(参数：Array ( [0] => teacher ) )不存在！
@@ -267,7 +276,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     
 
 我们通过下面的 __get() 的实例来更进一步的连接它吧：
-
+```php
     <?php
     class Person
     {
@@ -302,7 +311,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     $Person = new Person("小明", 60);   // 通过Person类实例化的对象，并通过构造方法为属性赋初值
     echo "姓名：" . $Person->name . "<br>";   // 直接访问私有属性name，自动调用了__get()方法可以间接获取
     echo "年龄：" . $Person->age . "<br>";    // 自动调用了__get()方法，根据对象本身的情况会返回不同的值
-
+```
 运行结果：
 
     姓名：小明
@@ -315,7 +324,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 __set( $property, $value )` 方法用来设置私有属性， 给一个未定义的属性赋值时，此方法会被触发，传递的参数是被设置的属性名和值。
 
 请看下面的演示代码：
-
+```php
     <?php
     class Person
     {
@@ -358,7 +367,7 @@ __set( $property, $value )` 方法用来设置私有属性， 给一个未定义
     $Person->age = 16; //赋值成功
     $Person->age = 160; //160是一个非法值，赋值失效
     $Person->say();  //输出：我叫小红，今年16岁了
-
+```
 运行结果：
 
     我叫小红，今年16岁了
@@ -374,7 +383,7 @@ __set( $property, $value )` 方法用来设置私有属性， 给一个未定义
 
 * __isset()的作用：当对不可访问属性调用 isset() 或 empty() 时，__isset() 会被调用。
 请看下面代码演示：
-
+```php
     <?php
     class Person
     {
@@ -404,6 +413,7 @@ __set( $property, $value )` 方法用来设置私有属性， 给一个未定义
     echo isset($person->sex),"<br>";
     echo isset($person->name),"<br>";
     echo isset($person->age),"<br>";
+```
 
 运行结果如下：
 
@@ -428,7 +438,7 @@ __set( $property, $value )` 方法用来设置私有属性， 给一个未定义
 虽然有以上两种情况，但我想说的是同样如果你在一个对象里面加上__unset()这个方法，就可以在对象的外部去删除对象的私有成员属性了。在对象里面加上了__unset()这个方法之后，在对象外部使用“unset()”函数删除对象内部的私有成员属性时，对象会自动调用__unset()函数来帮我们删除对象内部的私有成员属性。
 
 请看如下代码：
-
+```php
     <?php
     class Person
     {
@@ -458,7 +468,7 @@ __set( $property, $value )` 方法用来设置私有属性， 给一个未定义
     unset($person->sex);
     unset($person->name);
     unset($person->age);
-
+```
 运行结果：
 
     当在类外部使用unset()函数来删除私有成员时自动调用的
@@ -484,7 +494,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     
 
 具体请参考如下代码：
-
+```php
     <?php
     class Person
     {
@@ -512,7 +522,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     $person = new Person('小明'); // 初始赋值
     echo serialize($person);
     echo '<br/>';
-
+```
 代码运行结果：
 
     当在类外部使用serialize()时会调用这里的__sleep()方法
@@ -536,7 +546,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     
 
 还是看代码：
-
+```php
     <?php
     class Person
     {
@@ -574,7 +584,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     $person = new Person('小明'); // 初始赋值
     var_dump(serialize($person));
     var_dump(unserialize(serialize($person)));
-
+```
 运行结果：
 
     当在类外部使用serialize()时会调用这里的__sleep()方法
@@ -600,7 +610,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     
 
 代码：
-
+```php
     <?php
     class Person
     {
@@ -623,7 +633,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     
     $person = new Person('小明'); // 初始赋值
     echo $person;
-
+```
 结果：
 
     go go go
@@ -631,7 +641,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
 那么如果类中没有 __toString() 这个魔术方法运行会发生什么呢？让我们来测试下：
 
 代码：
-
+```php
     <?php
     class Person
     {
@@ -650,7 +660,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     
     $person = new Person('小明'); // 初始赋值
     echo $person;
-
+```
 结果：
 
     Catchable fatal error: Object of class Person could not be converted to string in D:\phpStudy\WWW\test\index.php on line 18
@@ -670,7 +680,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     
 
 直接上代码：
-
+```php
     <?php
     class Person
     {
@@ -693,7 +703,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     
     $person = new Person('小明'); // 初始赋值
     $person();
-
+```
 查看运行结果：
 
     这可是一个对象哦
@@ -716,7 +726,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
 下面我们先来看看在没有加 __set_state() 情况按下，代码及运行结果如何：
 
 上代码：
-
+```php
     <?php
     class Person
     {
@@ -735,7 +745,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     
     $person = new Person('小明'); // 初始赋值
     var_export($person);
-
+```
 看结果：
 
     Person::__set_state(array( 'sex' => '男', 'name' => '小明', 'age' => 25, ))
@@ -745,7 +755,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
 加了 __set_state() 之后：
 
 继续上代码：
-
+```php
     <?php
     class Person
     {
@@ -772,7 +782,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     $person = new Person('小明'); // 初始赋值
     $person->name = '小红';
     var_export($person);
-
+```
 继续看结果：
 
     Person::__set_state(array( 'sex' => '男', 'name' => '小红', 'age' => 25, ))
@@ -798,7 +808,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     
 
 看代码：
-
+```php
     <?php
     class Person
     {
@@ -828,7 +838,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
     echo '<br>';
     var_dump('persion2:');
     var_dump($person2);
-
+```
 看结果：
 
     Person::__clone你正在克隆对象
@@ -852,6 +862,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
 
 先看看以往的方式：
 
+```php
     /** 
      * 文件non_autoload.php 
      */ 
@@ -870,11 +881,13 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
         $b = new B();  
         // … 业务逻辑  
     }
+```
 
 看到了吗？不用100个，只是3个看起来就有点烦了。而且这样就会有一个问题：如果脚本执行“条件B”这个分支时，C.php这个文件其实没有必要包含。因为，任何一个被包含的文件，无论是否使用，均会被php引擎编译。如果不使用，却被编译，这样可以被视作一种资源浪费。更进一步，如果C.php包含了D.php，D.php包含了E.php。并且大部分情况都执行“条件B”分支，那么就会浪费一部分资源去编译C.php,D.php,E.php三个“无用”的文件。
 
 那么如果使用 __autoload() 方式呢？
 
+```php
     /** 
      * 文件autoload_demo.php 
      */ 
@@ -895,6 +908,7 @@ serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如�
         $b = new B();  
         // … 业务逻辑  
     }
+```
 
 ok,不论效率怎么用，最起码界面看起来舒服多了，没有太多冗余的代。
 
@@ -920,7 +934,7 @@ ok,不论效率怎么用，最起码界面看起来舒服多了，没有太多�
     
 
 看代码：
-
+```php
     <?php
     class C {
         private $prop;
@@ -940,7 +954,7 @@ ok,不论效率怎么用，最起码界面看起来舒服多了，没有太多�
     }
     
     var_dump(new C(42));
-
+```
 结果：
 
     object(C)#1 (1) { ["propSquared"]=> int(1764) }

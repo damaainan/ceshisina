@@ -15,12 +15,12 @@ PHP SPL标准库总共有6个接口，如下：
 ```php
 class Mycount implements Countable  
 {  
-public function count()  
-{  
-static $count = 0;  
-$count++;  
-return $count;  
-}  
+    public function count()  
+    {  
+        static $count = 0;  
+        $count++;  
+        return $count;  
+    }  
 }  
   
 $count = new Mycount();  
@@ -42,14 +42,14 @@ count()函数的第二个参数将不会产生影响
 //IteratorIterator是OuterIterator的一个实现类  
 class MyOuterIterator extends IteratorIterator {  
   
-public function current()  
-{  
-return parent::current() . 'TEST';  
-}  
+    public function current()  
+    {  
+        return parent::current() . 'TEST';  
+    }  
 }  
   
 foreach(new MyOuterIterator(new ArrayIterator(['b','a','c'])) as $key => $value) {  
-echo "$key->$value".PHP_EOL;  
+    echo "$key->$value".PHP_EOL;  
 }  
 /*  
 结果：  
@@ -75,52 +75,52 @@ RecursiveIterator::hasChildren 判断当前元素下是否有迭代器
 ```php 
 class MyRecursiveIterator implements RecursiveIterator  
 {  
-private $_data;  
-private $_position = 0;  
-  
-public function __construct(array $data) {  
-$this->_data = $data;  
-}  
-  
-public function valid() {  
-return isset($this->_data[$this->_position]);  
-}  
-  
-public function hasChildren() {  
-return is_array($this->_data[$this->_position]);  
-}  
-  
-public function next() {  
-$this->_position++;  
-}  
-  
-public function current() {  
-return $this->_data[$this->_position];  
-}  
-  
-public function getChildren() {  
-print_r($this->_data[$this->_position]);  
-}  
-  
-public function rewind() {  
-$this->_position = 0;  
-}  
-  
-public function key() {  
-return $this->_position;  
-}  
+    private $_data;  
+    private $_position = 0;  
+      
+    public function __construct(array $data) {  
+        $this->_data = $data;  
+    }  
+      
+    public function valid() {  
+        return isset($this->_data[$this->_position]);  
+    }  
+      
+    public function hasChildren() {  
+        return is_array($this->_data[$this->_position]);  
+    }  
+      
+    public function next() {  
+        $this->_position++;  
+    }  
+      
+    public function current() {  
+        return $this->_data[$this->_position];  
+    }  
+      
+    public function getChildren() {  
+        print_r($this->_data[$this->_position]);  
+    }  
+      
+    public function rewind() {  
+        $this->_position = 0;  
+    }  
+      
+    public function key() {  
+        return $this->_position;  
+    }  
 }  
   
 $arr = array(0, 1=> array(10, 20), 2, 3 => array(1, 2));  
 $mri = new MyRecursiveIterator($arr);  
   
 foreach ($mri as $c => $v) {  
-if ($mri->hasChildren()) {  
-echo "$c has children: " .PHP_EOL;  
-$mri->getChildren();  
-} else {  
-echo "$v" .PHP_EOL;  
-}  
+    if ($mri->hasChildren()) {  
+        echo "$c has children: " .PHP_EOL;  
+        $mri->getChildren();  
+    } else {  
+        echo "$v" .PHP_EOL;  
+    }  
   
 }  
 /*  
@@ -147,59 +147,59 @@ Array
 ```php 
 class MySeekableIterator implements SeekableIterator {  
   
-private $position = 0;  
-  
-private $array = array(  
-"first element" ,  
-"second element" ,  
-"third element" ,  
-"fourth element"  
-);  
-  
-public function seek ( $position ) {  
-if (!isset( $this -> array [ $position ])) {  
-throw new OutOfBoundsException ( "invalid seek position ( $position )" );  
-}  
-  
-$this -> position = $position ;  
-}  
-  
-public function rewind () {  
-$this -> position = 0 ;  
-}  
-  
-public function current () {  
-return $this -> array [ $this -> position ];  
-}  
-  
-public function key () {  
-return $this -> position ;  
-}  
-  
-public function next () {  
-++ $this -> position ;  
-}  
-  
-public function valid () {  
-return isset( $this -> array [ $this -> position ]);  
-}  
+    private $position = 0;  
+      
+    private $array = array(  
+    "first element" ,  
+    "second element" ,  
+    "third element" ,  
+    "fourth element"  
+    );  
+      
+    public function seek ( $position ) {  
+        if (!isset( $this -> array [ $position ])) {  
+            throw new OutOfBoundsException ( "invalid seek position ( $position )" );  
+        }  
+          
+        $this -> position = $position ;  
+    }  
+      
+    public function rewind () {  
+        $this -> position = 0 ;  
+    }  
+      
+    public function current () {  
+        return $this -> array [ $this -> position ];  
+    }  
+      
+    public function key () {  
+        return $this -> position ;  
+    }  
+      
+    public function next () {  
+        ++ $this -> position ;  
+    }  
+      
+    public function valid () {  
+        return isset( $this -> array [ $this -> position ]);  
+    }  
 }  
   
 try {  
   
-$it = new MySeekableIterator ;  
-echo $it -> current (), "\n" ;  
-  
-$it -> seek ( 2 );  
-echo $it -> current (), "\n" ;  
-  
-$it -> seek ( 1 );  
-echo $it -> current (), "\n" ;  
-  
-$it -> seek ( 10 );  
+    $it = new MySeekableIterator ;  
+    echo $it -> current (), "\n" ;  
+      
+    $it -> seek ( 2 );  
+    echo $it -> current (), "\n" ;  
+      
+    $it -> seek ( 1 );  
+    echo $it -> current (), "\n" ;  
+      
+    $it -> seek ( 10 );  
   
 } catch ( OutOfBoundsException $e ) {  
-echo $e -> getMessage ();  
+    echo $e -> getMessage ();  
 }  
 /*  
 结果：  
@@ -215,40 +215,40 @@ SplObserver和SplSubject接口用来实现观察者设计模式，观察者设�
 ```php 
 //SplSubject结构 被观察的对象  
 interface SplSubject{  
-public function attach(SplObserver $observer); //添加观察者  
-public function detach(SplObserver $observer); //剔除观察者  
-public function notify(); //通知观察者  
+    public function attach(SplObserver $observer); //添加观察者  
+    public function detach(SplObserver $observer); //剔除观察者  
+    public function notify(); //通知观察者  
 }  
   
 //SplObserver结构 代表观察者  
 interface SplObserver{  
-public function update(SplSubject $subject); //更新操作  
+    public function update(SplSubject $subject); //更新操作  
 }
 ```
 看下面一个实现观察者的例子：
 ```php  
 class Subject implements SplSubject  
 {  
-private $observers = array();  
+    private $observers = array();  
+      
+    public function attach(SplObserver $observer)  
+    {  
+        $this->observers[] = $observer;  
+    }  
+      
+    public function detach(SplObserver $observer)  
+    {  
+        if($index = array_search($observer, $this->observers, true)) {  
+            unset($this->observers[$index]);  
+        }  
+    }  
   
-public function attach(SplObserver $observer)  
-{  
-$this->observers[] = $observer;  
-}  
-  
-public function detach(SplObserver $observer)  
-{  
-if($index = array_search($observer, $this->observers, true)) {  
-unset($this->observers[$index]);  
-}  
-}  
-  
-public function notify()  
-{  
-foreach($this->observers as $observer) {  
-$observer->update($this);  
-}  
-}  
+    public function notify()  
+    {  
+        foreach($this->observers as $observer) {  
+            $observer->update($this);  
+        }  
+    }  
   
   
 }  
@@ -263,10 +263,11 @@ echo "逻辑1代码".PHP_EOL;
   
 class Observer2 implements SplObserver  
 {  
-public function update(SplSubject $subject)  
-{  
-echo "逻辑2代码".PHP_EOL;  
-}  
+    public function update(SplSubject $subject)  
+    {  
+        echo "逻辑2代码".PHP_EOL;  
+        echo "逻辑2代码".PHP_EOL;  
+    }  
 }  
   
   

@@ -25,6 +25,7 @@ php中的进程是以扩展的形式来完成。通过这些扩展，我们能�
 
 一个简单的PHP多进程例子，该例子中，一个子进程，一个父进程。子进程输出5次，退出程序。
 
+```php
     $parentPid = posix_getpid();
     echo "parent progress pid:{$parentPid}\n";
     $childList = array();
@@ -49,6 +50,7 @@ php中的进程是以扩展的形式来完成。通过这些扩展，我们能�
     // 等待子进程结束
     pcntl_wait($status);
     echo "({$parentPid})main progress end!";
+```
 
 完美，终于创建了一个子进程，一个父进程。完了么？没有，各个进程之间相互独立的，没有任何交集，使用范围严重受到现在。怎么办，哪就进程间通信(interprogress communication)呗。
 
@@ -60,6 +62,7 @@ php中的进程是以扩展的形式来完成。通过这些扩展，我们能�
 
 消息队列是存放在内存中的一个队列。如下代码将创建3个生产者子进程，2个消费者子进程。这5个进程将通过消息队列通信。
 
+```php
     $parentPid = posix_getpid();
     echo "parent progress pid:{$parentPid}\n";$childList = array();
     // 创建消息队列,以及定义消息类型(类似于数据库中的库)
@@ -125,6 +128,7 @@ php中的进程是以扩展的形式来完成。通过这些扩展，我们能�
         }
     }
     echo "({$parentPid})main progress end!\n";
+```
 
 由于消息队列去数据是，只有一个进程能去到，所以不需要额外的锁或信号量。
 
@@ -136,6 +140,7 @@ php中的进程是以扩展的形式来完成。通过这些扩展，我们能�
 
 以下，创建多个进程修改内存中的同一个值。
 
+```php
     $parentPid = posix_getpid();
     echo "parent progress pid:{$parentPid}\n";
     $childList = array();
@@ -206,11 +211,13 @@ php中的进程是以扩展的形式来完成。通过这些扩展，我们能�
     shm_remove($shareMemory);
     sem_remove($signal);
     echo "({$parentPid})main progress end!\n";
+```
 
 #### 3.信号
 
 信号是一种系统调用。通常我们用的kill命令就是发送某个信号给某个进程的。具体有哪些信号可以在liunx/mac中运行kill -l查看。下面这个例子中，父进程等待5秒钟，向子进程发送sigint信号。子进程捕获信号，掉信号处理函数处理。
 
+```php
     $parentPid = posix_getpid();
     echo "parent progress pid:{$parentPid}\n";
     
@@ -245,11 +252,13 @@ php中的进程是以扩展的形式来完成。通过这些扩展，我们能�
         sleep(5);
     }
     echo "({$parentPid})main progress end!\n";
+```
 
 #### 4.管道（有名管道）
 
 管道是比较常用的多进程通信手段，管道分为无名管道与有名管道，无名管道只能用于具有亲缘关系的进程间通信，而有名管道可以用于同一主机上任意进程。这里只介绍有名管道。下面的例子，子进程写入数据，父进程读取数据。
 
+```php
     // 定义管道路径,与创建管道
     $pipe_path = '/data/test.pipe';
     if(!file_exists($pipe_path)){
@@ -277,6 +286,7 @@ php中的进程是以扩展的形式来完成。通过这些扩展，我们能�
             sleep($rand);
         }
     }
+```
 
 #### 5.socket
 

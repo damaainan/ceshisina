@@ -6,6 +6,7 @@
   
 01)单个绑定值(PDOStatement::bindValue)
 
+```php
     //预处理:?号占位符,绑定值,单个值
     //使用1,2等数字绑定值
     //注意对应关系,例如 name->?(第一个?号)->1
@@ -41,6 +42,7 @@
     $stmt->bindValue(':sex',1);
     $stmt->bindValue(':classid','lamp87');
     $stmt->execute();
+```
 
 
 02)使用批量添加方法

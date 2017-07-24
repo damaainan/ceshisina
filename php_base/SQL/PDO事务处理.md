@@ -25,7 +25,7 @@ MySQL常用的表类型：MyISAM(非事务)增删改速度快、InnodB（事务�
 示例：
 
  
-
+```php
     $m = new PDO($dsn,$user,$pwd);
     $m->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
     try{
@@ -47,6 +47,7 @@ MySQL常用的表类型：MyISAM(非事务)增删改速度快、InnodB（事务�
         $m->rollBack();//回滚
         die("提交失败！");
     }
+```
 
 **作者：飞鸿影~**
 

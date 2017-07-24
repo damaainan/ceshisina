@@ -47,20 +47,20 @@ spl_autoload_call()调用所有spl_autoload_register注册函数来加载文件
 <?php  
 class Test  
 {  
-public function getFilename()  
-{  
-echo 'test1.php';  
-}  
+    public function getFilename()  
+    {  
+        echo 'test1.php';  
+    }  
 }  
   
 /*test2.lib.php*/  
 <?php  
 class Test  
 {  
-public function getFilename()  
-{  
-echo 'test2.lib.php';  
-}  
+    public function getFilename()  
+    {  
+        echo 'test2.lib.php';  
+    }  
 }  
   
 /*test.php*/  
@@ -68,12 +68,12 @@ echo 'test2.lib.php';
   
 function loader($classname)  
 {  
-if($classname == 'Test1') {  
-require __DIR__ . '/test1.php';  
-}  
-if($classname == 'Test2') {  
-require __DIR__ . '/test2.lib.php';  
-}  
+    if($classname == 'Test1') {  
+        require __DIR__ . '/test1.php';  
+    }  
+    if($classname == 'Test2') {  
+        require __DIR__ . '/test2.lib.php';  
+    }  
 }  
   
 spl_autoload_register('loader');  
@@ -106,8 +106,8 @@ print_r(iterator_apply($iterator, 'print_item', array($iterator)));//为迭代�
   
 function print_item(Iterator $iterator)  
 {  
-echo strtoupper ( $iterator -> current ()) . "\n" ;  
-return TRUE ;  
+    echo strtoupper ( $iterator -> current ()) . "\n" ;  
+    return TRUE ;  
 }
 ```
 [0]: http://www.jb51.net/article/49984.htm

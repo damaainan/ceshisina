@@ -14,6 +14,7 @@ PDO(php data object)扩展类库为php访问数据库定义了轻量级的、一
 
 PDO大大简化了数据库的操作并能够屏蔽不同数据库之间的差异，使用pdo可以很方便地进行跨数据库程序的开发,以及不同数据库间的移植,是将来php在数据库处理方面的主要发展方向。
 
+```php
     <?php
     
     $db = array(
@@ -100,6 +101,8 @@ PDO大大简化了数据库的操作并能够屏蔽不同数据库之间的差�
         list($name, $gender, $age) = $vo;
         $stmt->execute();
     }
+```
+
 
 > pdo::query() 方法  
 > 当执行返回结果集的select查询时,或者所影响的行数无关紧要时,应当使用pdo对象中的query()方法.  
@@ -240,7 +243,7 @@ pdo::exec()方法
 示例：
 
  
-
+```php
     <?php
     try{
     　　$m=new PDO("mysql:host=localhost;dbname=test","root","123");
@@ -251,6 +254,7 @@ pdo::exec()方法
     $stmt=$m->query("select * from stu");//返回PDOStatement对象$stmt
     echo $stmt->rowCount();
     ?>
+```
 
 -------------------------------------------------------------------------------------------
 

@@ -10,7 +10,7 @@ PHP SOAP：http://php.net/manual/zh/book.soap.php
 
 # 2. 示例
  
-
+```php
     /**
      * server.php
      */
@@ -46,13 +46,13 @@ PHP SOAP：http://php.net/manual/zh/book.soap.php
         //输出错误
         echo $e->getMessage();
     }
-
+```
 
 提示：可以添加多个addFunction();或者添加所有addFunction(SOAP_FUNCTIONS_ALL);
 
 # 3. class
 
-
+```php
     //添加class
     class test {
         function run() {
@@ -64,7 +64,7 @@ PHP SOAP：http://php.net/manual/zh/book.soap.php
     //调用class
     $res = $client->run();
     print_r($res);
-
+```
 
 
 提示：setClass();只允许使用一次！addFunction(); 和 setClass(); 互相排斥不能同时使用。
@@ -74,7 +74,7 @@ PHP SOAP：http://php.net/manual/zh/book.soap.php
 getMessage();无法捕捉server端的PHP报错，这样开发调试起来十分麻烦。
 
 
-
+```php
     $opt = array(
         //调试
         'trace' => true,
@@ -86,7 +86,7 @@ getMessage();无法捕捉server端的PHP报错，这样开发调试起来十分�
     
     //输出返回(必须启用trace选项)
     echo $client->__getLastResponse();
-
+```
 
 
 # 5. PHP兼容
@@ -103,7 +103,7 @@ client.php
 
  
 
-
+```php
     <?php
     $opt = array(
         //调试
@@ -130,11 +130,12 @@ client.php
         //输出返回(必须启用trace选项)
         echo $client->__getLastResponse();
     }
+```
 
 
 server.php
 
-
+```php
     <?php
     function t($x) {
         return $x;
@@ -159,5 +160,6 @@ server.php
     //$server->setClass('test');
     //执行
     $server->handle();
+```
 
 [0]: http://www.cnblogs.com/xiejixing/p/5403592.html

@@ -1,4 +1,4 @@
-# [[转]：PHP 使用协同程序实现合作多任务][0]
+# [PHP 使用协同程序实现合作多任务][0]
 
 * [php][1]
 
@@ -13,8 +13,7 @@
 
 生成器最基本的思想也是一个函数，这个函数的返回值是依次输出，而不是只返回一个单独的值。或者，换句话说，生成器使你更方便的实现了迭代器接口。下面通过实现一个xrange函数来简单说明：
 
-<?php
-
+```php
     <?php
     
     function xrange($start, $end, $step = 1) {
@@ -26,6 +25,7 @@
     foreach (xrange(1, 1000000) as $num) {
         echo $num, "\n";
     }
+```
 
 上面这个xrange（）函数提供了和PHP的内建函数range()一样的功能。但是不同的是range()函数返回的是一个包含属组值从1到100万的数组（注：请查看手册）。而xrange（）函数返回的是依次输出这些值的一个迭代器，而且并不会真正以数组形式计算。
 
@@ -39,16 +39,19 @@
 
 紧接着上面的例子，如果你调用xrange(1,1000000)的话，xrange()函数里代码没有真正地运行。相反，PHP只是返回了一个实现了迭代器接口的 生成器类实例： 
 
+```php
     <?php
     
     $range = xrange(1, 1000000);
     var_dump($range); // object(Generator)#1
     var_dump($range instanceof Iterator); // bool(true)
+```
 
 **协程**
 
 协程给上面功能添加的主要东西是回送数据给生成器的能力。这将把生成器到调用者的单向通信转变为两者之间的双向通信。
 
+```php
     <?php
     
     function logger($fileName) {
@@ -61,11 +64,13 @@
     $logger = logger(__DIR__ . '/log');
     $logger->send('Foo');
     $logger->send('Bar')
+```
 
 正如你能看到，这儿yield没有作为一个语句来使用，而是用作一个表达式。即它有一个返回值。yield的返回值是传递给send()方法的值。 在这个例子里，yield将首先返回"Foo",然后返回"Bar"。
 
 上面的例子里yield仅作为接收者。混合两种用法是可能的，即既可接收也可发送。接收和发送通信如何进行的例子如下：
 
+```php
     <?php
     
     function gen() {
@@ -81,6 +86,7 @@
                                   // string(6) "yield2" (the var_dump of the ->send() return value)
     var_dump($gen->send('ret2')); // string(4) "ret2"   (again from within gen)
                                   // NULL               (the return value of ->send())
+```
 
 **多任务协作**
 
@@ -92,6 +98,8 @@
 
 我们的目的是 对 “任务”用更轻量级的包装的协程函数:
 
+
+```php
     <?php
     
     class Task {
@@ -128,9 +136,11 @@
             return !$this->coroutine->valid();
         }
     }
+```
 
 任务ID标记
 
+```php
     <?php
     
     function gen() {
@@ -148,9 +158,12 @@
     
     // The rewind() will advance to the first yield (and ignore its value), the send() will
     // advance to the second yield (and dump its value). Thus we loose the first yielded value!
+```
 
 调度器现在不得不比多任务循环要做稍微多点了，然后才运行多任务：
 
+
+```php
     <?php
     
     class Scheduler {
@@ -187,7 +200,9 @@
             }
         }
     }
+```
 
+```php
     <?php
     
     function task1() {
@@ -210,6 +225,8 @@
     $scheduler->newTask(task2());
     
     $scheduler->run();
+```
+
 
     This is task 1 iteration 1.
     This is task 2 iteration 1.
@@ -227,10 +244,13 @@
     This is task 1 iteration 9.
     This is task 1 iteration 10.
 
-### **与调度器之间通信**既然调度器已经运行了，那么我们就转向日程表的下一项：任务和调度器之间的通信。我们将使用进程用来和操作系统会话的同样的方式来通信：系统调用。我们需要系统调用的理由是操作系统与进程相比它处在不同的权限级别上。因此为了执行特权级别的操作（如杀死另一个进程），就不得不以某种方式把控制传回给内核，这样内核就可以执行所说的操作了。再说一遍，这种行为在内部是通过使用中断指令来实现的。过去使用的是通用的int指令，如今使用的是更特殊并且更快速的syscall/sysenter指令。
+### 与调度器之间通信
+
+既然调度器已经运行了，那么我们就转向日程表的下一项：任务和调度器之间的通信。我们将使用进程用来和操作系统会话的同样的方式来通信：系统调用。我们需要系统调用的理由是操作系统与进程相比它处在不同的权限级别上。因此为了执行特权级别的操作（如杀死另一个进程），就不得不以某种方式把控制传回给内核，这样内核就可以执行所说的操作了。再说一遍，这种行为在内部是通过使用中断指令来实现的。过去使用的是通用的int指令，如今使用的是更特殊并且更快速的syscall/sysenter指令。
 
 为了说明系统调用，我将对可调用的系统调用做一个小小的封装：
 
+```php
     <?php
     
     class SystemCall {
@@ -245,7 +265,10 @@
             return $callback($task, $scheduler);
         }
     }
+```
 
+
+```php
     <?php
     public function run() {
         while (!$this->taskQueue->isEmpty()) {
@@ -264,7 +287,10 @@
             }
         }
     }
+```
 
+
+```php
     <?php
     function getTaskId() {
         return new SystemCall(function(Task $task, Scheduler $scheduler) {
@@ -272,7 +298,9 @@
             $scheduler->schedule($task);
         });
     }
+```
 
+```php
     <?php
     
     function task($max) {
@@ -289,7 +317,10 @@
     $scheduler->newTask(task(5));
     
     $scheduler->run();
+```
 
+
+```php
     <?php
     
     function newTask(Generator $coroutine) {
@@ -309,9 +340,11 @@
             }
         );
     }
+```
 
 killTask函数需要在调度器里增加一个方法：
 
+```php
     <?php
     
     public function killTask($tid) {
@@ -332,7 +365,9 @@ killTask函数需要在调度器里增加一个方法：
     
         return true;
     }
+```
 
+```php
     <?php
     
     function childTask() {
@@ -358,6 +393,7 @@ killTask函数需要在调度器里增加一个方法：
     $scheduler = new Scheduler;
     $scheduler->newTask(task());
     $scheduler->run();
+```
 
 这段代码将打印以下信息：
 

@@ -14,6 +14,7 @@
 
 全部代码：
 
+```php
     <?php
     
     $db = array(
@@ -79,6 +80,8 @@
     
     //关闭数据库
     mysqli_close($link);
+```
+
 
 > 相比原生 MySQL API，面向过程化的MySQLi里的> $link> 是不可以省略的，如果没有填写，会抛出一个警告。由上面代码也可以看出，面向过程化的MySQLi与原生 MySQL API基本一致。
 
@@ -86,6 +89,7 @@
 
 MySQLi还支持面向对象编程，推荐使用。
 
+```php
     <?php
     
     $db = array(
@@ -152,6 +156,7 @@ MySQLi还支持面向对象编程，推荐使用。
     
     //关闭数据库
     $link -> close();
+```
 
 比较重要的是MySQLi类和mysqli_result类，前者用于发送查询，后者用于从结果集返回数据。
 

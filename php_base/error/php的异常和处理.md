@@ -14,49 +14,41 @@
 ### 常见错误级别
 
 * Deprecated 最低级别的错误
-
-
-  * 不推荐，不建议，使用一些过期函数的时候会出现，程序继续执行
+    * 不推荐，不建议，使用一些过期函数的时候会出现，程序继续执行
 * Notice 通知级别的错误
-
-
-  * 使用一些未定义变量、常量或者数组key没有加引号的时候会出现，程序继续执行
+    * 使用一些未定义变量、常量或者数组key没有加引号的时候会出现，程序继续执行
 * Waning 警告级别的错误
-
-
-  * 程序出问题了，需要修改代码！！！程序继续执行
+    * 程序出问题了，需要修改代码！！！程序继续执行
 * Fatal Error 错误级别的错误
-
-
-  * 程序直接报错，需要修改代码！！！中断程序执行
+    * 程序直接报错，需要修改代码！！！中断程序执行
 * parse error 语法解析错误
-
-
-  * 语法检查阶段报错，需要修改代码！！！中断程序执行
+    * 语法检查阶段报错，需要修改代码！！！中断程序执行
 * E_USER_相关的错误
-
-
-  * 用户定义的错误，用户手动抛出错误，进行自定义错误处理
+    * 用户定义的错误，用户手动抛出错误，进行自定义错误处理
 
 ### PHP配置文件和错误相关选项
 
 _设置错误级别_  
 1、通过修改php.ini文件设置错误级别，静态设置，需要重启apache  
-// error_reporting = E_ALL&~E_NOTICE; //显示所有错误，除了E_NOTICE级别  
-// display_errors = 1; //线下开启，先上关闭
+
+    // error_reporting = E_ALL&~E_NOTICE; //显示所有错误，除了E_NOTICE级别  
+    // display_errors = 1; //线下开启，先上关闭
 
 2、通过error_reporting()函数设置，动态设置  
-// error_reporting(E_ALL&~E_NOTICE); //显示所有错误，除了E_NOTICE级别  
-// error_reporting(0); //屏蔽所有错误，只会显示语法解析错误  
-// erorr_reporting(-1); //显示所有错误
+    
+    // error_reporting(E_ALL&~E_NOTICE); //显示所有错误，除了E_NOTICE级别  
+    // error_reporting(0); //屏蔽所有错误，只会显示语法解析错误  
+    // erorr_reporting(-1); //显示所有错误
 
 3、通过ini_set()函数进行运行时设置，动态设置  
-// ini_set('error_reporting',0);  
-// ini_set('error_reporting',-1);  
-// ini_set('display_errors',0);
+
+    // ini_set('error_reporting',0);  
+    // ini_set('error_reporting',-1);  
+    // ini_set('display_errors',0);
 
 ### 使用triggerr_error进行错误抛出
 
+```php
     <?php
     header('content-type:text/html;charset=utf-8');
     
@@ -78,20 +70,22 @@ _设置错误级别_
     }
     
     echo '<br />代码继续执行';
-    
+```
 
 ### 记录错误
 
-_配置php.ini脚本设置记录错误_  
-log_errors = On //是否将产生错误信息记录到日志或者error_log中  
-;error_log = syslog //设置脚本错误将记录到系统日志中  
-log_errors_max_len = 1024 //设置错误报错最大值，单位字节  
-ignore_repeated_errors = Off //是否忽略重复的错误信息  
-ignore_repeated_source = Off //是否忽略重复错误消息的来源  
-track_errors = On //如果开启，最后一个错误将永远保存在$php_errormsg中
+#### 配置php.ini脚本设置记录错误  
 
-_将错误记录到指定的文件中_
+    log_errors = On //是否将产生错误信息记录到日志或者error_log中  
+    ;error_log = syslog //设置脚本错误将记录到系统日志中  
+    log_errors_max_len = 1024 //设置错误报错最大值，单位字节  
+    ignore_repeated_errors = Off //是否忽略重复的错误信息  
+    ignore_repeated_source = Off //是否忽略重复错误消息的来源  
+    track_errors = On //如果开启，最后一个错误将永远保存在$php_errormsg中
 
+#### 将错误记录到指定的文件中
+
+```php
     <?php
     //运行时设置错误处理
     ini_set('display_errors','off');
@@ -106,9 +100,11 @@ _将错误记录到指定的文件中_
     echo '<hr />';
     
     test(); //Fatal error
+```
 
-_将日志文件保存到系统日志中_
+##### 将日志文件保存到系统日志中
 
+```php
     <?php
     error_reporting(-1);
     ini_set('display_errors',0);
@@ -118,8 +114,9 @@ _将日志文件保存到系统日志中_
     openlog('PHP5.4.0',LOG_PID,LOG_SYSLOG);
     syslog(LOG_ERR,'this is syslog !!!daye:'.date('Y/m/d H:i:s'));
     closelog();
+```
 
-_将错误以邮件形式发送_  
+##### 将错误以邮件形式发送 
 1、首先需要配置邮件服务器！  
 2、去php.ini中配置邮件参数  
 3、写代码
@@ -132,6 +129,7 @@ _将错误以邮件形式发送_
 
 ### 如何使用Set_error_handler()
 
+```php
     <?php
     
     header('content-type:text/html;charset=utf-8');
@@ -204,9 +202,12 @@ _将错误以邮件形式发送_
     //错误代码：[2] settype() [function.settype]: Invalid type 
     //错误行号：D:\phpStudy\WWW\example\index.php文件中的第 66 
     //PHP版本：5.3.29(WINNT) 
+```
+
 
 ### 自定义一个错误处理器
 
+```php
     <?php
     
     class MyErrorHandler{
@@ -258,7 +259,7 @@ _将错误以邮件形式发送_
     产生错误的信息：{$this->msg}
     产生错误的行号：{$this->line}
     追踪信息：{$backtrace}
-    EOF;
+EOF;
             //发送邮件的错误日志
             //error_log($errmsg,1,'87399497@qq.com');
             //记录到错误日志
@@ -276,7 +277,7 @@ _将错误以邮件形式发送_
     产生警告的文件：{$this->filename}
     产生警告的信息：{$this->msg}
     产生警告的行号：{$this->line}
-    EOF;
+EOF;
             error_log($errmsg,3,'D:/logs/customer_warning.log');
         }
     
@@ -292,7 +293,7 @@ _将错误以邮件形式发送_
     产生错误的信息：{$this->msg}
     产生错误的行号：{$this->line}
     产生通知的时间：{$date}
-    EOF;
+EOF;
             error_log($errmsg,3,'D:/logs/customer_notice.log');
         }
     }
@@ -310,11 +311,12 @@ _将错误以邮件形式发送_
     
     //手动触发一个错误
     trigger_error('手动抛出一个错误',E_USER_ERROR);
-    
+```
     
 
 ### register_shutdown_function()函数
 
+```php
     <?php 
     //register_shutdown_function该函数将会在PHP执行关闭时调用
     //使用场景
@@ -342,6 +344,7 @@ _将错误以邮件形式发送_
     register_shutdown_function(array('Showdown','endScript'));
     
     echo md6();
+```
 
 ### 错误抑制符
 

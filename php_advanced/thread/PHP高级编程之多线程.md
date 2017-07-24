@@ -6,26 +6,26 @@ Mr. Neo Chen (netkiller), 陈景峰(BG7NYT)
 
 目录
 
-* 1. 多线程环境安装
-  * 1.1. PHP 5.5.9
-  * 1.2. 安装 pthreads 扩展
-* 2. Thread
-* 3. Worker 与 Stackable
-* 4. 互斥锁
-  * 4.1. 多线程与共享内存
-* 5. 线程同步
-* 6. 线程池
-  * 6.1. 线程池
-  * 6.2. 动态队列线程池
-  * 6.3. pthreads Pool类
-* 7. 多线程文件安全读写（文件锁）
-* 8. 多线程与数据连接
-  * 8.1. Worker 与 PDO
-  * 8.2. Pool 与 PDO
-  * 8.3. 多线程中操作数据库总结
-* 9. Thread And ZeroMQ
-  * 9.1. 数据库端
-  * 9.2. 数据处理端
+1. 多线程环境安装  
+    1.1. PHP 5.5.9  
+    1.2. 安装 pthreads 扩展    
+2. Thread  
+3. Worker 与 Stackable  
+4. 互斥锁  
+    4.1. 多线程与共享内存    
+5. 线程同步  
+6. 线程池  
+    6.1. 线程池  
+    6.2. 动态队列线程池  
+    6.3. pthreads Pool类    
+7. 多线程文件安全读写（文件锁）  
+8. 多线程与数据连接  
+    8.1. Worker 与 PDO  
+    8.2. Pool 与 PDO  
+    8.3. 多线程中操作数据库总结  
+9. Thread And ZeroMQ  
+    9.1. 数据库端  
+    9.2. 数据处理端  
 
 ## 1. 多线程环境安装
 
@@ -92,7 +92,7 @@ https://github.com/oscm/shell/blob/master/php/5.5.9.sh
 
 ## 2. Thread
 
-            
+```php
     <?php
     class HelloWorld extends Thread {
         public function __construct($world) {
@@ -110,12 +110,11 @@ https://github.com/oscm/shell/blob/master/php/5.5.9.sh
         printf("Thread #%lu says: %s\n", $thread->getThreadId(), $thread->join());
     }
     ?>
-            
-            
+```
 
 ## 3. Worker 与 Stackable
 
-            
+```php
     <?php
     class SQLQuery extends Stackable {
     
@@ -160,8 +159,7 @@ https://github.com/oscm/shell/blob/master/php/5.5.9.sh
     $worker->start();
     $worker->shutdown();
     ?>
-            
-            
+```
 
 ## 4. 互斥锁
 
@@ -169,7 +167,7 @@ https://github.com/oscm/shell/blob/master/php/5.5.9.sh
 
 下面我们举一个例子，一个简单的计数器程序，说明有无互斥锁情况下的不同。
 
-            
+```php
     <?php
     $counter = 0;
     //$handle=fopen("php://memory", "rw");
@@ -223,8 +221,7 @@ https://github.com/oscm/shell/blob/master/php/5.5.9.sh
     Mutex::destroy($mutex);
     
     ?>
-            
-            
+```
 
 我们使用文件/tmp/counter.txt保存计数器值，每次打开该文件将数值加一，然后写回文件。当多个线程同时操作一个文件的时候，就会线程运行先后取到的数值不同，写回的数值也不同，最终计数器的数值会混乱。
 
@@ -238,7 +235,7 @@ https://github.com/oscm/shell/blob/master/php/5.5.9.sh
 
 在共享内存的例子中，没有使用任何锁，仍然可能正常工作，可能工作内存操作本身具备锁的功能。
 
-                
+```php
     <?php
     $tmp = tempnam(__FILE__, 'PHP');
     $key = ftok($tmp, 'a');
@@ -275,8 +272,7 @@ https://github.com/oscm/shell/blob/master/php/5.5.9.sh
     shm_remove( $shmid );
     shm_detach( $shmid );
     ?>
-                
-                
+```
 
 ## 5. 线程同步
 
@@ -284,7 +280,7 @@ https://github.com/oscm/shell/blob/master/php/5.5.9.sh
 
 $thread->wait();测作用是 thread->start()后线程并不会立即运行，只有收到 $thread->notify(); 发出的信号后才运行 
 
-            
+```php
     <?php
     $tmp = tempnam(__FILE__, 'PHP');
     $key = ftok($tmp, 'a');
@@ -331,8 +327,7 @@ $thread->wait();测作用是 thread->start()后线程并不会立即运行，只
     shm_remove( $shmid );
     shm_detach( $shmid );
     ?>
-            
-            
+```
 
 ## 6. 线程池
 
@@ -340,7 +335,7 @@ $thread->wait();测作用是 thread->start()后线程并不会立即运行，只
 
 自行实现一个Pool类
 
-                
+```php
     <?php
     class Update extends Thread {
     
@@ -436,14 +431,13 @@ $thread->wait();测作用是 thread->start()后线程并不会立即运行，只
         echo '[' , date('H:i:s') , ']', '系统错误', $e->getMessage(), "\n";
     }
     ?>
-                
-                
+```
 
 ### 6.2. 动态队列线程池
 
 上面的例子是当线程池满后执行start统一启动，下面的例子是只要线程池中有空闲便立即创建新线程。
 
-                
+```php
     <?php
     class Update extends Thread {
     
@@ -514,14 +508,13 @@ $thread->wait();测作用是 thread->start()后线程并不会立即运行，只
         echo '【' , date('H:i:s') , '】', '【系统错误】', $e->getMessage(), "\n";
     }
     ?>
-                
-                
+```
 
 ### 6.3. pthreads Pool类
 
 pthreads 提供的 Pool class 例子
 
-                
+```php
     <?php
     
     class WebWorker extends Worker {
@@ -586,8 +579,7 @@ pthreads 提供的 Pool class 例子
     });
     
     var_dump($pool);
-                
-                
+```
 
 ## 7. 多线程文件安全读写（文件锁）
 
@@ -601,7 +593,7 @@ pthreads 提供的 Pool class 例子
 
 共享锁例子
 
-            
+```php
     <?php
     
     $fp = fopen("/tmp/lock.txt", "r+");
@@ -618,12 +610,11 @@ pthreads 提供的 Pool class 例子
     fclose($fp);
     
     ?>
-            
-            
+```
 
 共享锁例子2
 
-            
+```php
     <?php
     $fp = fopen('/tmp/lock.txt', 'r+');
     
@@ -637,8 +628,7 @@ pthreads 提供的 Pool class 例子
     
     fclose($fp);
     ?>
-            
-            
+```
 
 ## 8. 多线程与数据连接
 
@@ -646,7 +636,7 @@ pthreads 与 pdo 同时使用是，需要注意一点，需要静态声明public
 
 ### 8.1. Worker 与 PDO
 
-                
+```php
     <?php
     class Work extends Stackable {
     
@@ -688,14 +678,13 @@ pthreads 与 pdo 同时使用是，需要注意一点，需要静态声明public
     $worker->start();
     $worker->shutdown();
     ?>
-                
-                
+```
 
 ### 8.2. Pool 与 PDO
 
 在线程池中链接数据库
 
-                
+```php
     # cat pool.php
     <?php
     class ExampleWorker extends Worker {
@@ -791,12 +780,11 @@ pthreads 与 pdo 同时使用是，需要注意一点，需要静态声明public
     $pool->shutdown();
     
     ?>
-                
-                
+```
 
 进一步改进上面程序，我们使用单例模式 $this->worker->getInstance(); 全局仅仅做一次数据库连接，线程使用共享的数据库连接
 
-                
+```php
     <?php
     class ExampleWorker extends Worker {
     
@@ -921,9 +909,7 @@ pthreads 与 pdo 同时使用是，需要注意一点，需要静态声明public
     $pool->shutdown();
     
     ?>
-    
-                
-                
+```
 
 ### 8.3. 多线程中操作数据库总结
 
@@ -931,14 +917,13 @@ pthreads 与 pdo 同时使用是，需要注意一点，需要静态声明public
 
 数据库持久链接很重要，否则每个线程都会开启一次数据库连接，然后关闭，会导致很多链接超时。
 
-                
+```php
     <?php
     $dbh = new PDO('mysql:host=localhost;dbname=test', $user, $pass, array(
         PDO::ATTR_PERSISTENT => true
     ));
     ?>
-                
-                
+```
 
 ## 9. Thread And ZeroMQ
 
@@ -948,7 +933,7 @@ pthreads 与 pdo 同时使用是，需要注意一点，需要静态声明public
 
 首先安装ZeroMQ 与 MySQL UDF https://github.com/netkiller/mysql-zmq-plugin, 然后创建触发器。
 
-                
+```sql
     CREATE DEFINER=`dba`@`192.168.%` PROCEDURE `Table_Example`(IN `TICKET` INT, IN `LOGIN` INT, IN `CMD` INT, IN `VOLUME` INT)
         LANGUAGE SQL
         NOT DETERMINISTIC
@@ -971,12 +956,11 @@ pthreads 与 pdo 同时使用是，需要注意一点，需要静态声明public
     CREATE DEFINER=`dba`@`192.168.6.20` TRIGGER `Table_AFTER_INSERT` AFTER INSERT ON `MT4_TRADES` FOR EACH ROW BEGIN
         call Table_Example(NEW.TICKET,NEW.LOGIN,NEW.CMD,NEW.VOLUME);
     END
-                
-                
+```
 
 ### 9.2. 数据处理端
 
-                
+```php
     <?php
     class ExampleWorker extends Worker {
     
@@ -1131,8 +1115,7 @@ pthreads 与 pdo 同时使用是，需要注意一点，需要静态声明public
     
     $example = new Example();
     $example->main($argv);
-                
-                
+```
 
 使用方法
 

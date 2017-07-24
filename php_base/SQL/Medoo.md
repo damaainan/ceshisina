@@ -34,6 +34,7 @@ Medoo支持Composer安装和直接下载。
 
 引入Medoo并配置数据库：
 
+```php
     <?php
     
     //使用Composer安装的这样引入
@@ -62,7 +63,8 @@ Medoo支持Composer安装和直接下载。
             PDO::ATTR_CASE => PDO::CASE_NATURAL
         ]
     ]);
-     
+```
+
 
 如果是SQLite:
 

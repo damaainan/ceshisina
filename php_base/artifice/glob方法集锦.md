@@ -10,9 +10,9 @@
 ```php
 function foo($arg1 = '', $arg2 = '') {
 
-echo "arg1: $arg1\n";
+    echo "arg1: $arg1\n";
 
-echo "arg2: $arg2\n";
+    echo "arg2: $arg2\n";
 
 }
 
@@ -26,15 +26,15 @@ foo();
 
 function foo() {
 
-// 取得所有的传入参数的数组
+    // 取得所有的传入参数的数组
 
-$args = func_get_args();
+    $args = func_get_args();
 
-foreach ($args as $k => $v) {
+    foreach ($args as $k => $v) {
 
-echo "arg".($k+1).": $v\n";
+        echo "arg".($k+1).": $v\n";
 
-}
+    }
 
 }
 
@@ -92,7 +92,7 @@ echo "Initial: ".memory_get_usage()." bytes \n";
 
 for ($i = 0; $i < 100000; $i++) {
 
-$array []= md5($i);
+    $array []= md5($i);
 
 }
 
@@ -100,7 +100,7 @@ $array []= md5($i);
 
 for ($i = 0; $i < 100000; $i++) {
 
-unset($array[$i]);
+    unset($array[$i]);
 
 }
 
@@ -170,7 +170,7 @@ echo "System time: ".
 
 $data['ru_stime.tv_usec'] / 1000000);
 
-sleep是不占用系统时间的，我们可以来看下面的一个例子：
+//sleep是不占用系统时间的，我们可以来看下面的一个例子：
 
 // loop 10 million times (busy)
 
@@ -255,7 +255,7 @@ my_debug("another debug message", __LINE__);
 
 function my_debug($msg, $line) {
 
-echo "Line $line: $msg\n";
+    echo "Line $line: $msg\n";
 
 }
 ```
@@ -267,7 +267,7 @@ echo "Line $line: $msg\n";
 
 echo md5(time() . mt_rand(1,1000000));
 
-其实，PHP中有一个叫?uniqid() 的函数是专门用来干这个的：
+//其实，PHP中有一个叫?uniqid() 的函数是专门用来干这个的：
 
 // generate unique string
 
@@ -440,13 +440,13 @@ register_shutdown_function('my_shutdown');
 
 function my_shutdown() {
 
-global $start_time;
+    global $start_time;
 
-echo "execution took: ".
+    echo "execution took: ".
 
-(microtime(true) - $start_time).
+    (microtime(true) - $start_time).
 
-" seconds.";
+    " seconds.";
 
 }
 ```
