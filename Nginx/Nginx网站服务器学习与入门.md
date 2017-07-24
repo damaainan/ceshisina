@@ -17,44 +17,45 @@ Nginx 同时也是一个非常优秀的邮件代理服务器（最早开发这�
 Nginx软件包使用源码编译安装。需要提前将其依赖包进行安装。
 
 1. 安装依赖包
-
+```
     [root@cc]# yum -y insstall gcc gcc-c++ make pcre pcre-devel openssl zlib
-
+```
 1. 源码包编译安装Nginx，在官网下载[http://nginx.org][4]
-
+```
     [root@cc]# tar -xf  nginx-1.8.0.tar.gz -C /usr/local/    //解包
     [root@cc]# cd /usr/local/nginx-1.8.0
     [root@cc]# ./configure --with-http_ssl_module            //配置
     [root@cc]# make                                          //编译
     [root@cc]# make install                                  //安装
-
+```
 1. 将nginx程序做个软连接，方便执行
-
+```
     [root@cc]# ln -s /usr/local/nginx/sbin/nginx /usr/sbin   //连接
-
+```
 Nginx软件包采用的是模块化的设计，模块分为内置模块和第三方模块。
 
 Nginx服务器安装好之后，程序的主目录在/usr/local/nginx下，该目录下分别为conf(主配置文件目录)，html(网页根目录)，logs(日志文件目录)，sbin(主程序目录)。Nginx默认无执行脚本，需要手动输入命令来管理。常用的命令如下：
 
 1. 启动主程序
 
-
+```
     [root@cc]# nginx
-
+```
 1. 关闭主程序
-
+```
     [root@cc]# nginx -s stop
-
+```
 1. 重载nginx配置
 
-
+```
     [root@cc]# nginx -s reload
-
+```
 ### 配置文件解析
 
 nginx主配置文件为/usr/local/nginx/conf/nginx.conf，配置文件包括全局，event，http，server设置。event主要用来定义Nginx工作模式，http提供Web功能，server用来设置虚拟主机，server必须位于http内部，一个配置文件可以由多个server，一个server表示一个虚拟主机。虚拟主机包括三种类型：基于域名的虚拟主机，基于IP的虚拟主机，基于端口的虚拟主机。
 
     [root@cc]# vim /usr/local/nginx/conf/nginx.conf
+
 ```nginx
         #user  nobody;                                      //设置用户和组
         worker_processes  1;          //启动子进程，通过 ps -aux | grep nginx
@@ -439,12 +440,12 @@ _2.Nginx地址重写规则案例_
 
  操作如下：
 
-
+```
     [root@cc]# vim /usr/local/nginx/conf/nginx.conf
     rewrite a.html /b.html;                              //加在server里
     [root@cc]# echo "BBB" > /usr/local/nginx/html/b.html
     [root@cc]# nginx -s reload
-    
+```
 
 客户端访问:
 
@@ -521,7 +522,8 @@ curl [http://192.168.4.5][13] 返回curl
 
 ![][14]
 
-_rewrite语法选项详解：_  
+rewrite语法选项详解：
+
 rewrite regex replacement [选项]  
 选项：break , last, redirect, permanent  
 —break：停止执行其他的重写规则，完成本次请求  

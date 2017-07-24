@@ -60,11 +60,13 @@ vim phpinfo.php
 3、测试(以DVWA 为主要测试对象）   
 实例1：sql注入漏洞 
 
+```php
     $user = $_GET['username'];
     $pass = $_GET['password'];
     $pass = md5($pass);
     $qry = "SELECT * FROM `users` WHERE user='$user' AND password='$pass';";
     $result = mysql_query( $qry ) or die( '<pre>' . mysql_error() . '</pre>' );
+```
 
 运行页面，警告信息如下所示
 
@@ -78,6 +80,7 @@ vim phpinfo.php
 
 实例2：命令执行漏洞
 
+```php
     <?php
     if( isset( $_POST['submit'])){
         $target = $_REQUEST['ip'];// Determine OS and execute the ping command.if(stristr(php_uname('s'),'Windows NT')){ 
@@ -87,6 +90,7 @@ vim phpinfo.php
     
         $cmd = shell_exec('ping  -c 3 '. $target );
         echo '<pre>'.$cmd.'</pre>';}}?>
+```
 
 运行页面，警告信息如下所示
 
@@ -94,9 +98,11 @@ vim phpinfo.php
 
 实例3：文件包含漏洞（常伴随着目录遍历漏洞）
 
+```php
     <?php
     $file=$_GET['file'];
     include($file);?>
+```
 
 运行页面，警告信息如下所示
 
@@ -104,6 +110,7 @@ vim phpinfo.php
 
 实例4：xss漏洞
 
+```php
     <?php
     if(!array_key_exists ("name", $_GET)|| $_GET['name']== NULL || $_GET['name']==''){
      $isempty =true;}else{
@@ -111,6 +118,7 @@ vim phpinfo.php
      echo '<pre>';
      echo 'Hello '. $_GET['name'];
      echo '</pre>';}?>
+```
 
 运行页面，警告信息如下所示
 
@@ -118,19 +126,22 @@ vim phpinfo.php
 
 实例5：代码执行eval
 
+```php
     <?php
     $cmd=$_GET['cmd'];eval("$cmd;");?>
+```
 
 ![][8]
 
 实例6：文件读取操作
 
+```php
     <?php
     print"<h2>Number 3: file()  functions: </h2>";
     $path=$_GET['path'];
     $contents=file($path);foreach($contents as $line_num => $line){
     echo "Line #<b>{$line_num}</b> : ".htmlspecialchars($line)."<br>\n";}?>
-
+```
 ![][9]
 
 **二、RIPS**

@@ -108,7 +108,7 @@ ejs模板
 ![][5]
 
 * 解码
-```
+```js
         var unescape = function(html, options) {
                 options = merge(options, decode.options);
                 var strict = options.strict;
@@ -183,7 +183,7 @@ ejs模板
 ```
 
 * DOM Parse和过滤
-```
+```js
     var parse=function(str){  
         var results='';
         try {

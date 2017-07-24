@@ -54,7 +54,8 @@ CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请
 
   
 清单 1. 在 Filter 中验证 Referer  
-                    
+
+```java               
      // 从 HTTP 头中取得 Referer 值
      String referer=request.getHeader("Referer"); 
      // 判断 Referer 是否以 bank.example 开头
@@ -63,7 +64,7 @@ CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请
      }else{ 
         request.getRequestDispatcher(“error.jsp”).forward(request,response); 
      } 
-    
+```
 
   
 以上代码先取得 Referer 值，然后进行判断，当其非空并以 bank.example 开头时，则继续请求，否则的话可能是 CSRF 攻击，转到 error.jsp 页面。
@@ -72,7 +73,8 @@ CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请
 
   
 清单 2. 在 filter 中验证请求中的 token  
-                    
+  
+```java          
      HttpServletRequest req = (HttpServletRequest)request; 
      HttpSession s = req.getSession(); 
     
@@ -99,7 +101,7 @@ CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请
             request.getRequestDispatcher(“error.jsp”).forward(request,response); 
         } 
      } 
-    
+```
 
   
 首先判断 session 中有没有 csrftoken，如果没有，则认为是第一次访问，session 是新建立的，这时生成一个新的 token，放于 session 之中，并继续执行请求。如果 session 中已经有 csrftoken，则说明用户已经与服务器之间建立了一个活跃的 session，这时要看这个请求中有没有同时附带这个 token，由于请求可能来自于常规的访问或是 XMLHttpRequest 异步访问，我们分别尝试从请求中获取 csrftoken 参数以及从 HTTP 头中获取 csrftoken 自定义属性并与 session 中的值进行比较，只要有一个地方带有有效 token，就判定请求合法，可以继续执行，否则就转到错误页面。生成 token 有很多种方法，任何的随机[算法][9]都可以使用，Java 的 UUID 类也是一个不错的选择。
@@ -108,7 +110,8 @@ CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请
 
   
 清单 3. 在客户端对于请求附加 token  
-                    
+       
+```js          
      function appendToken(){ 
         updateForms(); 
         updateTags(); 
@@ -171,7 +174,7 @@ CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请
             element.setAttribute(attr, location); 
         } 
      } 
-    
+```
 
   
 在客户端 html 中，主要是有两个地方需要加上 token，一个是表单 form，另一个就是链接 a。这段代码首先遍历所有的 form，在 form 最后添加一隐藏字段，把 csrftoken 放入其中。然后，代码遍历所有的链接标记 a，在其 href 属性中加入 csrftoken 参数。注意对于 a.href 来说，可能该属性已经有参数，或者有锚标记。因此需要分情况讨论，以不同的格式把 csrftoken 加入其中。
@@ -180,7 +183,7 @@ CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请
 
   
 清单 4. 在 HTTP 头中自定义属性  
-                    
+```js           
      var plainXhr = dojo.xhr; 
     
      // 重写 dojo.xhr 方法
@@ -195,7 +198,7 @@ CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请
         args.headers["csrftoken"] = (token) ? token : "  "; 
         return plainXhr(method,args,hasBody); 
      }; 
-    
+```
 
   
 这里改写了 dojo.xhr 的方法，首先确保 dojo.xhr 中存在 HTTP 头，然后在 args.headers 中添加 csrftoken 字段，并把 token 值从 session 里拿出放入字段中。

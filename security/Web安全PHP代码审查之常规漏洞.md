@@ -132,7 +132,6 @@ SQL注入漏洞一直是web系统漏洞中占比非常大的一种漏洞，下�
 
 * gpc/rutime 魔术引号
 * 过滤函数和类
-
     * addslashes
     * mysql_real_escape_string
     * intval

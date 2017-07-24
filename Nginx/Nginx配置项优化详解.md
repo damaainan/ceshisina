@@ -145,7 +145,7 @@ send_timeout 响应客户端超时时间，这个超时时间仅限于两个活�
     client_max_body_size上传文件大小限制
 
 ###（5） fastcgi调优
-
+```
 fastcgi_connect_timeout 600;
 
 fastcgi_send_timeout 600;
@@ -210,7 +210,7 @@ proxy_cache的作用是缓存后端服务器的内容，可能是任何内容，
 fastcgi_cache的作用是缓存fastcgi生成的内容，很多情况是php生成的动态的内容。  
 proxy_cache缓存减少了nginx与后端通信的次数，节省了传输时间和后端宽带。  
 fastcgi_cache缓存减少了nginx与php的通信的次数，更减轻了php和数据库(mysql)的压力。
-
+```
 ###（6）gzip调优
 
 使用gzip压缩功能，可能为我们节约带宽，加快传输速度，有更好的体验，也为我们节约成本，所以说这是一个重点。
@@ -259,6 +259,7 @@ gzip_vary on; #varyheader支持，改选项可以让前端的缓存服务器缓�
 
 缓存，主要针对于图片，css，js等元素更改机会比较少的情况下使用，特别是图片，占用带宽大，我们完全可以设置图片在浏览器本地缓存365d，css，js，html可以缓存个10来天，这样用户第一次打开加载慢一点，第二次，就非常快了！缓存的时候，我们需要将需要缓存的拓展名列出来， Expires缓存配置在server字段里面
 
+```nginx
     location ~* \.(ico|jpe?g|gif|png|bmp|swf|flv)$ {
     
     expires 30d;
@@ -278,7 +279,7 @@ gzip_vary on; #varyheader支持，改选项可以让前端的缓存服务器缓�
     access_log off;
     
     }
-
+```
 注：log_not_found off;是否在error_log中记录不存在的错误。默认是。
 
 总结：
@@ -291,6 +292,7 @@ gzip_vary on; #varyheader支持，改选项可以让前端的缓存服务器缓�
 
 防止别人直接从你网站引用图片等链接，消耗了你的资源和网络流量，那么我们的解决办法由几种： 1：水印，品牌宣传，你的带宽，服务器足够 2：防火墙，直接控制，前提是你知道IP来源 3：防盗链策略下面的方法是直接给予404的错误提示
 
+```nginx
     location ~*^.+\.(jpg|gif|png|swf|flv|wma|wmv|asf|mp3|mmf|zip|rar)$ {
     
     valid_referers noneblocked www.benet.com benet.com;
@@ -308,6 +310,7 @@ gzip_vary on; #varyheader支持，改选项可以让前端的缓存服务器缓�
     access_log off;
     
     }
+```
 
 参数可以使如下形式：  
 none 意思是不存在的Referer头(表示空的，也就是直接访问，**比如直接在浏览器打开一个图片**)  
