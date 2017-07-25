@@ -18,6 +18,7 @@ yaf.use_spl_autoload=1 ;开启自动加载
 2.将 Smarty 文件夹放在 library 目录下面
 3.在 Smarty 目录下面添加 Adapter.php，代码如下：
 
+```php
     <?php
     Yaf_Loader::import( "Smarty/Smarty.class.php");
     Yaf_Loader::import( "Smarty/sysplugins/smarty_internal_templatecompilerbase.php");
@@ -193,7 +194,7 @@ yaf.use_spl_autoload=1 ;开启自动加载
         }
     
     }
-
+```
   
 4.在 application.ini 中添加配置。如下： 
 
