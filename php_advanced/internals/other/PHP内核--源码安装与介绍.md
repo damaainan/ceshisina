@@ -42,8 +42,7 @@
 
 在PHP代码中经常能看到一些类似PG()， EG()之类的函数，他们都是PHP中定义的宏，这系列宏主要的作用是解决线程安全所写的全局变量包裹宏， 如$PHP_SRC/main/php_globals.h文件中就包含了很多这类的宏。例如PG这个PHP的核心全局变量的宏。 如下所示代码为其定义。
 
-
-
+```c
     #ifdef ZTS   // 编译时开启了线程安全则使用线程安全库
     # define PG(v) TSRMG(core_globals_id, php_core_globals *, v)
     extern PHPAPI int core_globals_id;
@@ -51,12 +50,11 @@
     # define PG(v) (core_globals.v) // 否则这其实就是一个普通的全局变量
     extern ZEND_API struct _php_core_globals core_globals;
     #endif
-
+```
   
 如上，ZTS是线程安全的标记，这个在以后的章节会详细介绍，这里就不再说明。下面简单说说，PHP运行时的一些全局参数， 这个全局变量为如下的一个结构体，各字段的意义如字段后的注释：
 
-
-
+```c
     struct _php_core_globals {
             zend_bool magic_quotes_gpc; //  是否对输入的GET/POST/Cookie数据使用自动字符串转义。
             zend_bool magic_quotes_runtime; //是否对运行时从外部资源产生的数据使用自动字符串转义
@@ -175,7 +173,7 @@
      
             zend_bool in_error_log;
     };
-
+```
 上面的字段很大一部分是与php.ini文件中的配置项对应的。 在PHP启动并读取php.ini文件时就会对这些字段进行赋值， 而用户空间的ini_get()及ini_set()函数操作的一些配置也是对这个全局变量进行操作的。
 
 在PHP代码的其他地方也存在很多类似的宏，这些宏和PG宏一样，都是为了将线程安全进行封装，同时通过约定的 G 命名来表明这是全局的， 一般都是个缩写，因为这些全局变量在代码的各处都会使用到，这也算是减少了键盘输入。 我们都应该[尽可能的懒][8]不是么？

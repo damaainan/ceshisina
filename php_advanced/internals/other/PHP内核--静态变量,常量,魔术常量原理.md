@@ -28,8 +28,7 @@
 
 **Zend/zend_compiles.h 384行，执行环境结构体**
 
-
-
+```c
     struct _zend_execute_data {
         struct _zend_op *opline;
         zend_function_state function_state;
@@ -47,14 +46,11 @@
         call_slot *call_slots;
         call_slot *call;
     };
-    
-    
+```
 
 **Zend/zend_compiles.h 261行,op_array结构代码**   
  
-
-
-
+```c
     struct _zend_op_array {
         /* Common elements */
         zend_uchar type;
@@ -63,18 +59,18 @@
         HashTable *static_variables;//294行 ,静态变量
     ...
     ｝
+```
 
 举例：
 
-
-
+```c
     t1() {
     $a +=1 ;
     static $b +=1;
     t1();
     t1();
     } //加自身共调用3次
-
+```
 结果$a每回都是1，而$b = 1,2,3
 
 原因如下：
@@ -105,8 +101,7 @@
 
 常量的结构 (Zend/zend_constants.h文件的33行）
 
-
-
+```c
     typedef struct _zend_constant {
         zval value; /* zval结构，PHP内部变量的存储结构 */
         char *name; /* 常量名称 */
@@ -114,6 +109,7 @@
         int flags;  /* 常量的标记如 CONST_PERSISTENT | CONST_CS */
         int module_number;  /* 模块号 */
     } zend_constant;
+```
 
 结构体如上，name,name_len一目了然，值得一提的是zval与变量中存储的zval结构一模一样，(详见[PHP内核的存储机制（分离/改变）][8])
 

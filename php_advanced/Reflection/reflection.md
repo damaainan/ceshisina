@@ -10,7 +10,7 @@
 ## **如何使用反射API**
 
 以下面代码为例 
-```
+```php
 class HandsonBoy
 {
     public $name = 'chenqionghe';
@@ -37,7 +37,7 @@ $boy->hair = 'short';
 
 
 现在,要获取这个student对象的方法和属性列表该怎么做?可以用反射来实现,代码如下
-```
+```php
 $reflect = new ReflectionObject($boy);
 $props = $reflect->getProperties();
 //获取属性的名字
@@ -54,7 +54,7 @@ foreach($methos as $method)
 ```
 
 也可以不用反射API,使用class函数,返回对象属性的关联数组以及更多的信息:(针对于公开的属性和):
-```
+```php
 //返回对象属性的关联数组
 var_dump(get_object_vars($boy));
 //类属性
@@ -65,7 +65,7 @@ var_dump(get_class_methods(get_class($boy)));
 
 反射API的功能显然更强大，甚至能还原这个类的原型,包括方法的访问权限,以下简单封装了一个打印类的代码
 
-```
+```php
 /**
  * @param $classObject 对象或者类名
  */
@@ -108,7 +108,7 @@ function getClass($classObject)
 反射可以用于文档生成,因此可以用它对文件里的类进行扫描,逐个生成描述文档.
 
 既然反射可以探知类内部结构, 那么是不是 可以用它做hook实现插件功能呢?或者是作动态代理呢?抛砖引玉,以下代码是个简单的例子 
-```
+```php
 <?php
 class mysql
 {

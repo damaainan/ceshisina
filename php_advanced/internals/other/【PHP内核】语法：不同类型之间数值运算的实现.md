@@ -39,6 +39,7 @@ cli下执行一个php脚本的主要的流程是：main() -> do_cli() -> php_exe
 
 这个方法比较简单，只有两个参数：编译阶段生成的opcode array、返回值指针，这个方法是vm执行的入口，所有的php脚本最终都是在这里开始执行的。opcode是zend引擎的执行指令，比如加减、赋值、调用函数等等，所有的opcode定义在zend_vm_opcodes.h中。下面是opcode指令具体的结构：
 
+```c
     //zend_compile.h #155
     struct _zend_op {
         const void *handler; //该指令的处理函数
@@ -67,11 +68,12 @@ cli下执行一个php脚本的主要的流程是：main() -> do_cli() -> php_exe
         zval          *zv;
     #endif
     } znode_op;
-
+```
 
 php脚本编译的过程就是从AST生成一个个zend_op的结构，然后将opcodes数组传给zend_execute()执行。   
 执行的过程中有一个非常核心的结构：zend_execute_data，这个结构定义也定义在zend_compile.h中：
 
+```c
     #430
     struct _zend_execute_data {
         const zend_op       *opline;           /* executed opline                */
@@ -89,7 +91,7 @@ php脚本编译的过程就是从AST生成一个个zend_op的结构，然后将o
         zval                *literals;         /* cache op_array->literals       */
     #endif
     };
-
+```
 zend_execute_data这个结构可以简单的认为是一个运行栈，它记录着执行过程中的opcode、符号表等等，最终执行的过程就是从zend_execute_data->opline开始，然后zend_execute_data->opline++执行下一条指令。
 
 函数调用会新开辟一个zend_execute_data，接着初始化，返回ZEND_VM_ENTER进入新的execute，然后开始从新的zend_execute_data->opline开始执行函数内部的opcode，执行完再将之前的zend_execute_data指针还原，接着执行下面的操作。关于函数、类的执行机制这里不多说，后续会有专门的介绍。
@@ -104,6 +106,7 @@ zend_execute_data这个结构可以简单的认为是一个运行栈，它记录
 
 handler是根据opcode、op1_type、op2_type确定的，换句话说，每一个opcode都可以根据不同的操作数类型定义不同的handler，所以一个opcode最多有5x5=25个handler，在定义的时候也需要定义25个，当然定义为null，具体的对应方法见：
 
+```c
     //zend_vm_execute.h #49741
     ZEND_API void zend_vm_set_opcode_handler(zend_op* op)
     {
@@ -115,7 +118,7 @@ handler是根据opcode、op1_type、op2_type确定的，换句话说，每一个
         .....
         return zend_opcode_handlers[opcode * 25 + zend_vm_decode[op->op1_type] * 5 + zend_vm_decode[op->op2_type]];
     }
-
+```
 
 opcode handler也全部定   
 义在zend_vm_execute.h，从php的代码可以看出各语句对应的opcode：
@@ -129,6 +132,7 @@ opcode handler也全部定
 
 string + int的加法运算opcode就是ZEND_ADD，对应的handler是**ZEND_ADD_SPEC_CV_CONST_HANDLER**：
 
+```c
     //zend_vm_execute.h #29773
     static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_ADD_SPEC_CV_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
     {
@@ -157,10 +161,11 @@ string + int的加法运算opcode就是ZEND_ADD，对应的handler是**ZEND_ADD_
     
         ZEND_VM_NEXT_OPCODE_CHECK_EXCEPTION();
     }
-
+```
 
 示例中是一个string + int的操作，有非数值类型，所以会由add_function()处理：
 
+```c
     //zend_operators.c #865
     ZEND_API int ZEND_FASTCALL add_function(zval *result, zval *op1, zval *op2)
     {
@@ -175,10 +180,11 @@ string + int的加法运算opcode就是ZEND_ADD，对应的handler是**ZEND_ADD_
             }
        }
     }
-
+```
 
 看到了吧zendi_convert_scalar_to_number()，这就是内核帮我们转化类型的地方，到这里我们应该就能明白php不同类型之间运算的实现方式了吧，再具体追下zendi_convert_scalar_to_number，这其实是个宏：
 
+```c
     //zend_operators.c #190
     #define zendi_convert_scalar_to_number(op, holder, result)          \
         if (op==result) {                                               \
@@ -197,12 +203,13 @@ string + int的加法运算opcode就是ZEND_ADD，对应的handler是**ZEND_ADD_
                     }                                                           \
                 case IS_NULL:  
                 ...
-
+```
 
 op2是IS_LONG，不需要处理，这里只有op1从string -> long，这个宏传了三个参数：op1，op1_copy，result，转化为long的值放到了op1_copy中，然后替换为op1，这时候add_function()下一次循环就到“case TYPE_PAIR(IS_LONG, IS_LONG)： ”处理了，从这里我们看出**内核是对变量转化后的新值进行的运算，对原变量并没有作处理**。
 
 具体的类型转化可以看is_numeric_string()方法，这里是根据字符(+、-、.)确定是转为long还是double的，具体过程有兴趣的可以仔细看下[算法][15]：
 
+```c
     //zend_operators.h #138
     static zend_always_inline zend_uchar is_numeric_string_ex(const char *str, size_t length, zend_long *lval, double *dval, int allow_errors, int *oflow_info)
     {
@@ -221,7 +228,7 @@ op2是IS_LONG，不需要处理，这里只有op1从string -> long，这个宏�
     {
         ...
     }
-
+```
 [0]: http://blog.csdn.net/pangudashu/article/details/50961686
 [1]: http://static.blog.csdn.net/images/bole_recommd_logo.png
 [2]: http://www.csdn.net/tag/php

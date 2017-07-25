@@ -24,6 +24,7 @@
 
 PHP中有个类型运算符instanceof 用于确定一个 PHP 变量是否属于某一类 class，引用官方文档中的例子：
 
+```php
     <?php
     class MyClass
     {
@@ -40,7 +41,7 @@ PHP中有个类型运算符instanceof 用于确定一个 PHP 变量是否属于�
     ==============================
     bool(true)
     bool(false)
-
+```
 
 instanceof也可用来确定一个变量是不是继承自某一父类的子类，或是确定一个变量是不是实现了某个接口的对象。关于详细的instanceof可以查看：[http://php.net/manual/zh/language.operators.type.php][17]
 
@@ -48,6 +49,7 @@ instanceof也可用来确定一个变量是不是继承自某一父类的子类�
 
 我们还是从一个简单的示例入手：
 
+```php
     <?php
     class MyClass
     {
@@ -61,7 +63,7 @@ instanceof也可用来确定一个变量是不是继承自某一父类的子类�
     ================================
     bool(true)
     bool(true)
-
+```
 
 编译完成后的opcodes见下图：
 
@@ -69,11 +71,12 @@ instanceof也可用来确定一个变量是不是继承自某一父类的子类�
 
 这个例子opcode比较多，忽略其它opcode，这里这讨论ZEND_INSTANCEOF，对于“$a instanceof MyClass”，根据op1（16）、op2（1）计算：
 
+```c
     //zend_vm_execute.h #49720
     zend_opcode_handlers[opcode * 25 + zend_vm_decode[op->op1_type] * 5 + zend_vm_decode[op->op2_type]];
     
     138*25 + 4*5 + 0 = 3470
-
+```
 
 得到此opcode的处理handler为：**ZEND_INSTANCEOF_SPEC_CV_CONST_HANDLER**
 
@@ -83,6 +86,7 @@ instanceof也可用来确定一个变量是不是继承自某一父类的子类�
 
 ## 1、ZEND_INSTANCEOF_SPEC_CV_CONST_HANDLER
 
+```c
     static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_INSTANCEOF_SPEC_CV_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
     {
         USE_OPLINE
@@ -101,12 +105,13 @@ instanceof也可用来确定一个变量是不是继承自某一父类的子类�
             result = ce && instanceof_function(Z_OBJCE_P(expr), ce);
         }
     }
-
+```
 
 zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class结构，它返回一个zend_class_entry指针，用户定义的类在内核中就是对应一个 zend_class_entry，而object结构中会保存它所属的class，所以可以猜测instanceof的实现：要判断两个变量是否是同一个类实例化的对象只需要判断一下这两个对象指向的class是否为同一个即可。
 
 下面是class与object的结构：
 
+```c
     //zend.h #131
     struct _zend_class_entry {
         char type;
@@ -138,10 +143,11 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
         HashTable        *properties;
         zval              properties_table[1];
     };
-
+```
 
 具体的判断逻辑在instanceof_function()函数中：
 
+```c
     //zend_operators.c #2129
     ZEND_API zend_bool ZEND_FASTCALL instanceof_function(const zend_class_entry *instance_ce, const zend_class_entry *ce)
     {
@@ -151,7 +157,7 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
             return instanceof_class(instance_ce, ce);
         }
     }
-
+```
 
 这里将分情况判断：
 
@@ -159,6 +165,7 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
 
 即判断左值所属class是否实现了右值的interface。
 
+```php
     <?php
     interface Type{}
     
@@ -170,10 +177,11 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
     ?>
     ===============================
     bool(true)
-
+```
 
 这种情况由instanceof_interface()处理：
 
+```c
     //zend_operators.c #2098
     static zend_bool ZEND_FASTCALL instanceof_interface(const zend_class_entry *instance_ce, const zend_class_entry *ce)
     {
@@ -188,10 +196,11 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
         //实际还是通过下面这个方法判断的，上面只是将左值实现的接口遍历了一遍，逐个比较           
         return instanceof_class(instance_ce, ce);
     }
-
+```
 
 这时候你可能会问：如果左值class继承的父类实现了右值interface呢？这种情况是否为true呢？就像下面这个例子：
 
+```php
     <?php
     interface Type{}
     
@@ -204,7 +213,7 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
     var_dump($obj instanceof Type);
     ==============================
     bool(true)
-
+```
 
 答案是肯定的，从上面的源码可以看出实际还是由instanceof_class()函数判断的，这种情况与右值不是interface的相同，下面一起讨论。
 
@@ -212,6 +221,7 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
 
 上面那种情况实际最终也是调的instanceof_class()进行判断的：
 
+```c
     //zend_operators.c #2086
     static zend_always_inline zend_bool instanceof_class(const zend_class_entry *instance_ce, const zend_class_entry *ce)
     {   
@@ -224,7 +234,7 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
         }
         return 0;
     }
-
+```
 
 从这个方法可以很清楚的看到只要左值所属class及其父类中有一个与右值class相同就表示instanceof为true。
 
@@ -232,6 +242,7 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
 
 这种情况比较简单，即A instanceof B，A、B都是object的情况，这种判断的依据是比较A所属class及所有父类与B所属class是否相同，也就是说不考虑B的父类，只依据B所属的class，例如：
 
+```php
     <?php
     interface Type{}
     
@@ -246,10 +257,10 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
     var_dump($a instanceof $b);
     ===========================
     bool(false)
-
+```
 
 虽然AB都继承了myClassParent，但是判断的时候是这个条件：（A == B || myClassParent == B）。
-
+```php
     <?php
     interface Type{}
     
@@ -264,7 +275,7 @@ zend_fetch_class_by_name这个函数是从EG(class_table)中查找对应的class
     var_dump($a instanceof $b);
     ===========================
     bool(true)
-
+```
 
 这个判断的是：（A == myClassParent || myClassParent == myClassParent）。
 

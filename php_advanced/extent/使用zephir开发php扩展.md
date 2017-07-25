@@ -20,10 +20,11 @@ Zephir提供了一种类似php的高级语言语法的方式，来自动生成�
 
     composer global require phalcon/zephir
 1. git clone 编译安装
-
+```
     git clone https://github.com/phalcon/zephir
     cd zephir
     ./install -c #-c 将zepir加入到系统全局变量中
+```
 
 ps：根据官方手册，如果是linux下可能需要安装依赖库 
 

@@ -13,6 +13,7 @@ PHP底层HashTable的实现有两个非常重要的结构分别是:HashTable和B
 先说一下HashTable结构:  
 HashTable的底层实现代码如下:
 
+```c
     typedef struct _hashtable{
         uint nTableSize;         // hash Bucket的大小，最小为8
         uint nTableMask;         //nTableSize - 1, 索引取值的优化
@@ -30,12 +31,13 @@ HashTable的底层实现代码如下:
         int inconsistent           
     #endif 
     }HashTable
-    
+```
 
 建议不太了解hash数据结构的同学先简单了解一下hash结构。  
 简单说一下php中hashtable的初始化操作:  
 代码如下：
 
+```c
      ZEND_API int _zend_hash_init(HashTable *ht, uint nSize, hash_func_t pHashFunction, dtor_func_t pDestructor, zend_bool persistent ZEND_FILE_LINE_DC)
     {
         uint i = 3;
@@ -68,13 +70,14 @@ HashTable的底层实现代码如下:
     
         return SUCCESS;
     }
-    
+```
 
 最开始判断需要初始化的hashtable大小是不是超过了系统能使用的最大大小。下面是对tablesize大小的一个处理。将用户自定义的大小改成需要的大小。例如:如果用户定义的hashtable大小是6，那初始化时，就会将6变成8，如果用户定义的大小为11，那初始化后的Hashtable的大小为16.  
 下面就是一个简单的判断，来决定是按照C语言本身的分配内存函数来分配内存，还是根据php封装好的内存分配函数来分配内存。
 
 再谈一下 bucket的结构
 
+```c
     typedef struct bucket{
         ulong h;       //对key索引以后的值，数字key不做kash
         uint nKeyLength; //key的长度
@@ -86,7 +89,7 @@ HashTable的底层实现代码如下:
         struct bucket *pLast;       //本bucket里面的上一个元素
         char arKey[1];
     }Bucket
-    
+```
 
 这里用一张网络上的很火的图来说明(图原地址没找到，没有做来源说明):
 

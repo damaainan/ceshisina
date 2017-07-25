@@ -81,8 +81,7 @@ wikipedia中说，"an iterator is an object which allows a programmer to travers
     while ( $row = mysql_fetch_array($result) ) {
        // do stuff with the row here
     }
-    
-    
+
 
 读出一个目录中的内容，需要这样写：
 
@@ -93,8 +92,6 @@ wikipedia中说，"an iterator is an object which allows a programmer to travers
     while ( $file = readdir($dh) ) {
        // do stuff with the file here
     }
-    
-    
 
 读出一个文本文件的内容，需要这样写：
 
@@ -108,8 +105,7 @@ wikipedia中说，"an iterator is an object which allows a programmer to travers
        // do stuff with the line here
     
     }
-    
-    
+
 
 上面三段代码，虽然处理的是不同的resource（资源），但是功能都是遍历结果集（loop over contents），因此Iterator的基本思想，就是将这三种不同的操作统一起来，用同样的命令界面，处理不同的资源。
 
@@ -210,8 +206,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
        return $this->valid;
      }
     }
-    
-    
+
 
 使用方法如下：
 
@@ -222,8 +217,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     foreach ( $colors as $color ) {
      echo $color."<br>";
     }
-    
-    
+
 
 你也可以在foreach循环中使用key()方法：
 
@@ -231,8 +225,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     foreach ( $colors as $key => $color ) {
      echo "$key: $color<br>";
     }
-    
-    
+
 
 除了foreach循环外，也可以使用while循环，
 
@@ -242,13 +235,11 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     // Loop while valid
     while ( $colors->valid() ) {
     
-       echo $colors->key().": ".$colors->current()."  
-> ";
+       echo $colors->key().": ".$colors->current()." > ";
        $colors->next();
     
     }
-    
-    
+
 
 根据测试，while循环要稍快于foreach循环，因为运行时少了一层中间调用。
 
@@ -278,9 +269,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
           a value of null. In the case of numerical arrays, this 
           offset should not be deleted and the array should 
           not be reindexed unless that is specifically the 
-          behavior you want.
-    
-    
+
 
 下面就是一个部署ArrayAccess界面的实例：
 
@@ -349,8 +338,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
      }
     
     }
-    
-    
+
 
 使用方法如下：
 
@@ -375,8 +363,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     echo 'Final State:<div>';
     print_r($A);
     echo '</div>';
-    
-    
+
 
 运行结果如下：
 
@@ -396,8 +383,6 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
        [title] => SPL _really_ rocks
        [category] => PHP
     )
-    
-    
 
 可以看到，$A虽然是一个object，但是完全可以像array那样操作。
 
@@ -408,8 +393,6 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
          return strtolower($this->{$key});
        }
      }
-    
-    
 
 **5. IteratorAggregate界面**
 
@@ -429,8 +412,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
      function getIterator() {
        return new ArrayIterator($this);
      }
-    
-    
+
 
 使用方法如下：
 
@@ -445,8 +427,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     
     // Get the size of the iterator (see how many properties are left)
     echo "Object has ".sizeof($A->getIterator())." elements";
-    
-    
+
 
 显示结果如下：
 
@@ -457,8 +438,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     category : PHP
     
     Object has 3 elements
-    
-    
+
 
 **6. RecursiveIterator界面**
 
@@ -470,6 +450,7 @@ SeekableIterator界面也是Iterator界面的延伸，除了Iterator的5个方�
 
 下面是一个是实例：
 
+```php
     <?php
     
     class PartyMemberIterator implements SeekableIterator
@@ -499,8 +480,7 @@ SeekableIterator界面也是Iterator界面的延伸，除了Iterator的5个方�
     }
     
     ?>
-    
-    
+```
 
 **8. Countable界面**
 
@@ -514,6 +494,7 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
 
 查看所有的内置类，可以使用下面的代码：
 
+```php
     <?php
     // a simple foreach() to traverse the SPL class names
     foreach(spl_classes() as $key=>$value)
@@ -521,13 +502,13 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
             echo $key.' -> '.$value.'<br />';
             }
     ?>
-    
-    
+```
 
 **10. DirectoryIterator类**
 
 这个类用来查看一个目录中的所有文件和子目录：
 
+```php
     <?php
     
     try{
@@ -542,11 +523,10 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
         echo 'No files Found!<br />';
     }
     ?>
-    
-    
-
+```
 查看文件的详细信息：
 
+```php
     <table>
     <?php
     
@@ -584,11 +564,11 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
     }
     ?>
     </table>
-    
-    
+```
 
 除了foreach循环外，还可以使用while循环：
 
+```php
     <?php
     /*** create a new iterator object ***/
     $it = new DirectoryIterator('./');
@@ -601,11 +581,11 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
         $it->next();
         }
     ?>
-    
-    
+```
 
 如果要过滤所有子目录，可以在valid()方法中过滤：
 
+```php
     <?php
     /*** create a new iterator object ***/
     $it = new DirectoryIterator('./');
@@ -623,13 +603,13 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
             $it->next();
             }
     ?>
-    
-    
+```
 
 **11. ArrayObject类**
 
 这个类可以将Array转化为object。
 
+```php
     <?php
     
     /*** a simple array ***/
@@ -649,8 +629,7 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
         echo $iterator->key() . ' => ' . $iterator->current() . '<br />';
         }
     ?>
-    
-    
+```
 
 增加一个元素：
 
@@ -701,6 +680,8 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
 
 示例如下：
 
+
+```php
     <?php
     /*** a simple array ***/
     $array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
@@ -716,12 +697,11 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
         {
         echo $e->getMessage();
         }
-    ?>
-    
-    
+```
 
 ArrayIterator类也支持offset类方法和count()方法：
 
+```php
     <ul>
     <?php
     /*** a simple array ***/
@@ -753,13 +733,13 @@ ArrayIterator类也支持offset类方法和count()方法：
         }
     ?>
     </ul>
-    
-    
+```
 
 **13. RecursiveArrayIterator类和RecursiveIteratorIterator类**
 
 ArrayIterator类和ArrayObject类，只支持遍历一维数组。如果要遍历多维数组，必须先用RecursiveIteratorIterator生成一个Iterator，然后再对这个Iterator使用RecursiveIteratorIterator。
 
+```php
     <?php
     $array = array(
         array('name'=>'butch', 'sex'=>'m', 'breed'=>'boxer'),
@@ -772,8 +752,7 @@ ArrayIterator类和ArrayObject类，只支持遍历一维数组。如果要遍�
         echo $key.' -- '.$value.'<br />';
         }
     ?>
-    
-    
+```
 
 **14. FilterIterator类**
 
@@ -781,6 +760,7 @@ FilterIterator类可以对元素进行过滤，只要在accept()方法中设置�
 
 示例如下：
 
+```php
     <?php
     /*** a simple array ***/
     $animals = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'NZ'=>'kiwi', 'kookaburra', 'platypus');
@@ -805,11 +785,11 @@ FilterIterator类可以对元素进行过滤，只要在accept()方法中设置�
         echo $key.' == '.$value.'<br />';
         }
     ?>
+```
     
-    
-
 下面是另一个返回质数的例子：
 
+```php
     <?php
     
     class PrimeFilter extends FilterIterator{
@@ -847,8 +827,7 @@ FilterIterator类可以对元素进行过滤，只要在accept()方法中设置�
         echo $value.' is prime.<br />';
         }
     ?>
-    
-    
+```
 
 **15. SimpleXMLIterator类**
 
@@ -856,6 +835,7 @@ FilterIterator类可以对元素进行过滤，只要在accept()方法中设置�
 
 示例如下：
 
+```php
     <?php
     
     /*** a simple xml tree ***/
@@ -944,13 +924,12 @@ FilterIterator类可以对元素进行过滤，只要在accept()方法中设置�
         echo $e->getMessage();
         }
     ?>
-    
-    
-
+```
 new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的子元素。
 
 显示某一个特定的元素值，可以这样写：
 
+```php
     <?php
     try {
         /*** a new simpleXML iterator object ***/
@@ -969,11 +948,11 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $e->getMessage();
         }
     ?>
-    
-    
+```
 
 相对应的while循环写法为：
 
+```php
     <?php
     
     try {
@@ -995,11 +974,11 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
        echo $e->getMessage();
        }
     ?>
-    
-    
+```
 
 最方便的写法，还是使用xpath：
 
+```php
     <?php
     try {
         /*** a new simpleXML iterator object ***/
@@ -1019,11 +998,12 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $e->getMessage();
         }
     ?>
-    
-    
+```
 
 下面的例子，显示有namespace的情况：
 
+
+```php
     <?php
     
     /*** a simple xml tree ***/
@@ -1133,11 +1113,11 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $e->getMessage();
         }
     ?>
-    
-    
+```
 
 增加一个节点：
 
+```php
     <?php 
      $xmlstring = <<<XML
     <?xml version = "1.0" encoding="UTF-8" standalone="yes"?>
@@ -1175,11 +1155,11 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $e->getMessage();
         }
     ?>
-    
-    
+```
 
 增加属性：
 
+```php
     <?php 
     $xmlstring =<<<XML
     <?xml version = "1.0" encoding="UTF-8" standalone="yes"?>
@@ -1213,8 +1193,7 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $e->getMessage();
         }
     ?>
-    
-    
+```
 
 **16. CachingIterator类**
 
@@ -1222,6 +1201,7 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
 
 示例如下：
 
+```php
     <?php
     /*** a simple array ***/
     $array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
@@ -1243,8 +1223,7 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $e->getMessage();
         }
     ?>
-    
-    
+```
 
 **17. LimitIterator类**
 
@@ -1252,6 +1231,7 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
 
 示例如下：
 
+```php
     <?php
     /*** the offset value ***/
     $offset = 3;
@@ -1268,11 +1248,11 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $it->getPosition().'<br />';
         }
     ?>
-    
-    
+```
 
 另一个例子是：
 
+```php
     <?php
     
     /*** a simple array ***/
@@ -1290,8 +1270,7 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $e->getMessage() . "<br />";
         }
     ?>
-    
-    
+```
 
 **18. SplFileObject类**
 
@@ -1299,6 +1278,7 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
 
 示例如下：
 
+```php
     <?php
     
     try{
@@ -1312,11 +1292,11 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $e->getMessage();
         }
     ?>
-    
-    
+```
 
 返回文本文件的第三行，可以这样写：
 
+```php
     <?php
     
     try{
@@ -1331,8 +1311,7 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         echo $e->getMessage();
         }
     ?>
-    
-    
+```
 
 [参考文献]
 

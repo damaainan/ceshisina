@@ -6,7 +6,7 @@
 * 推荐 **3** 推荐
 * 收藏 **14** 收藏，**774** 浏览
 
-# PHP编译特点
+### PHP编译特点
 
 **编译型语言**
 
@@ -37,7 +37,7 @@ PHP本身不支持，但是apc，xcache等加速器，实现了这样的效果�
 
 ![](./img/1/3627580871-57bfb9f682a14_articlex.png)
 
-# 变量的底层实现
+### 变量的底层实现
 
 PHP底层是C语言来实现的，C语言是强类型，而PHP是弱类型语言，是如何实现的
 
@@ -62,6 +62,7 @@ PHP的大部分功能，都是以extenstion形式来完成的。
 
 弱类型语言变量的实现
 
+```c
     /* zend.h  */
     struct _zval_struct {
         zvalue_value value;  /* 值 */
@@ -69,7 +70,7 @@ PHP的大部分功能，都是以extenstion形式来完成的。
         zend_uchar type; /* 活动类型 */
         zend_uchar is_ref__gc;    
     }
-    
+```
 
 PHP中的一个变量，zend虚拟机中，使用的是 _zval_struct 的结构体来描述，变量的值也是一个就结构体来描述.
 
@@ -79,6 +80,7 @@ zvalue_value value; /* 值 */PHP变量的值，存储这个字段中。
 
 具体存储的位置：
 
+```c
     /* value 值 是一个 联合 */
     /* zend.h */
     typedef union _zval_value {
@@ -91,19 +93,20 @@ zvalue_value value; /* 值 */PHP变量的值，存储这个字段中。
         HashTable *ht; /* hash table 指针 */
         zend_object_value obj;
     } zvalue_value;
-    
+```
 
 > Zend对变量的表示
 
 zend实现了 zval结构体
 
+```c
     {
         value: [联合体] /* 联合体的内容可能是C语言中的long,double,hashtable(*ht),obj, 联合体只能是其中一种类型，是一个枚举 */
         type: 变量类型 , /* IS_NULL,IS_BOOL,IS_STRING, IS_LONG,IS_DOUBLE,IS_ARRAY,IS_OBJECT,IS_RESOURCE */
         refcount_gc
         is_ref_gc 
     }
-    
+```
 
 C语言中类型对应PHP中的数据类型：
 
@@ -116,6 +119,7 @@ C语言中类型对应PHP中的数据类型：
 
 例如：
 
+```php
     $a = 3;
     {
         value: [long lval = 3]
@@ -128,9 +132,8 @@ C语言中类型对应PHP中的数据类型：
         value: [double dval = 3.5]
         type: IS_DOUBLE
     }
-    
-
-# 变量类型的实现
+```
+### 变量类型的实现
 
 zend_uchar type; /* 活动类型 */可以根据上下文环境来强制转换。  
 例如：需要echo 的时候 就转换成 string  
@@ -141,14 +144,16 @@ PHP 中有8中数据类型，为什么zval->value 联合体中，只有5中 ?
 2：BOOL， zval->type = IS_BOOL. 再设置 zval.value.lval = 1/0; (C语言中没有布尔值，都是通过1，0，来表示)  
 3: resource ，资源型，往往是服务器上打开一个接口，如果 文件读取接口。 zval->type = IS_RESOURCE, zval->type.lval = 服务器上打开的接口编号。
 
+```c
     struct {
         char * val;
         int len;
     } str;
-    
+```
 
 PHP中，字符串类型，长度是已经缓存的，调用strlen时，系统可以直接返回其长度，不需要计算。
 
+```php
     $b = 'hello';
     
     /**
@@ -171,10 +176,9 @@ PHP中，字符串类型，长度是已经缓存的，调用strlen时，系统�
     //在PHP中字符串的长度，是直接体现在其结构体中,所以调用strlen(); 速度非常快，时间复杂度为0(1)
     
     echo strlen($b);
-    
-    
+```
 
-# 符号表
+### 符号表
 
 符号表symbol_table，变量的花名册
 
@@ -183,6 +187,7 @@ PHP中，字符串类型，长度是已经缓存的，调用strlen时，系统�
 符号表示一张哈希表(哈希结构理解成关联数组)  
 里面存储了变量名-> 变量zval结构体的地址
 
+```c
     struct _zend_executor_globals {
         ...
         ...
@@ -190,10 +195,11 @@ PHP中，字符串类型，长度是已经缓存的，调用strlen时，系统�
         HashTable symbol_table /* 全局符号表 */
         HashTable included_files; /* files already included */
     }
-    
+```
 
 - - -
 
+```php
     // 变量花名册
     $a = 3;
     $b = 1.223;
@@ -214,9 +220,9 @@ PHP中，字符串类型，长度是已经缓存的，调用strlen时，系统�
      // 第一：结构体生成
      // 第二：符号表中多了记录，变量的花名册
      // 第三：指向结构体 
-    
+```
 
-# 传值赋值
+### 传值赋值
 
 传值赋值发生了什么
 
@@ -228,10 +234,11 @@ refcount_gc 值为 2 (如果没有指针指引，会有垃圾回收机制清除)
 
 ![](./img/1/1459753420-57c0561f50bff_articlex.png)
 
-# 写时复制
+### 写时复制
 
 cow写时复制特性
 
+```php
     $a = 3;
     $b = $a;
     
@@ -246,7 +253,7 @@ cow写时复制特性
     
     echo $a, $b; // 3, 5
     // $a,$b 指向同一个结构体，那么，修改$b或$a，对方会不会受干扰 ? 没有干扰到对方。具有写时复制的特性 
-    
+```
 
 如果有一方修改，将会造成结构体的分裂
 
@@ -254,7 +261,7 @@ cow写时复制特性
 
 ![](./img/1/3785839946-57c06159f2dc4_articlex.png)
 
-# 引用赋值
+### 引用赋值
 
 引用赋值发生了什么
 
@@ -264,8 +271,9 @@ cow写时复制特性
 
 ![](./img/1/3937693745-57c0642444996_articlex.png)
 
-# 强制分裂
+### 强制分裂
 
+```php
     <?php
     
     // 强制分裂
@@ -338,11 +346,11 @@ cow写时复制特性
      */    
     
     echo $a, $b, $c; // 5 , 3 , 5 
-    
-    
+```
 
 引用数组时的一些奇怪现象
 
+```php
     // 引用数组时的怪现象
         
     $arr = array(0, 1, 2, 3);
@@ -354,12 +362,13 @@ cow写时复制特性
     echo $arr[1]; // 1
     
     // 数组不会比较细致的检查，多维数组存在。 因此，判断的时候，只会判断外面 一层的 结构体。
-    
+```
 
 ![](./img/1/1279275490-57c12344efe73_articlex.png)
 
 数组不会比较细致的检查
 
+```php
     // 先 引用 后 赋值
     $arr = array(0, 1, 2, 3);
     
@@ -384,12 +393,13 @@ cow写时复制特性
     $arr[1] = 999;
     
     echo $tmp[1]; // 1     
-    
+```
 
-# 循环数组
+### 循环数组
 
 循环数组时的怪现象
 
+```php
     // 循环数组时的怪现象
     $arr = array(0, 1, 2, 3);
     
@@ -408,12 +418,11 @@ cow写时复制特性
     } 
     
     var_dump(current($arr)); // 1
-    
-    
+```
 
 - - -
 
-    
+```php
     $arr = array('a', 'b', 'c', 'd');
     
     foreach ( $arr as &$val ) {  // 该foreach 会导致 $val = &$arr[3];
@@ -427,13 +436,14 @@ cow写时复制特性
     // 两个问题： 
     // 数组使用时，要慎用引用。
     // foreach 使用后，不会把数组的内部指针重置, 使用数组时，不要假想内部指针指向数组头部. 也可以在foreach 之后 reset(); 指针。
-    
+```
 
-# 符号表与作用域
+### 符号表与作用域
 
 当执行到函数时，会生成函数的“执行环境结构体”，包含函数名，参数，执行步骤，所在的类（如果是方法），以及为这个函数生成一个符号表。  
 符号表统一放在栈上，并把active_symbol_table指向刚产生的符号表。
 
+```c
     // Zend/zend_compiles.h 文件中
     
     // 源码：
@@ -455,10 +465,11 @@ cow写时复制特性
         call_slot *call_slots;
         call_slot *call;
     };
-    
+```
 
 - - -
 
+```c
     // 简化：
     
     struct _zend_execute_data {
@@ -470,7 +481,7 @@ cow写时复制特性
         zval * current_object;  // object 的指向
         ...
     }
-    
+```
 
 ![](./img/1/653384369-57c15f7068a18_articlex.png)
 
@@ -480,6 +491,7 @@ cow写时复制特性
 
 函数什么时候调用， 函数编译后的 opcode 什么时候执行。
 
+```php
     $age = 23;
     
     function t() {
@@ -498,12 +510,13 @@ cow写时复制特性
      * 注意： 函数可能调用多次。栈中可能有某函数的多个执行环境 入栈。但是 op_array 只有一个。
      * 
      */
-    
+```
 
-# 静态变量
+### 静态变量
 
 静态变量的实现
 
+```c
     // Zend/zend_compile.h  
     struct _zend_op_array {
         /* Common elements */
@@ -557,20 +570,22 @@ cow写时复制特性
     
         void *reserved[ZEND_MAX_RESERVED_RESOURCES];
     };
-    
+```
 
 - - -
 
+```c
     // 简化
     struct _zend_op_array {
         ... 
         HashTable *static_variables;    // 静态变量
         ...
     }
-    
+```
 
 编译后的 op_array 只有一份。 静态变量并没有存储在符号表(symbol_table)中.而是存放在op_array中。
 
+```php
     function t() {
         
         static $age = 1;
@@ -584,14 +599,13 @@ cow写时复制特性
     echo t();
     
     // 静态变量 不再和 执行的结构体， 也不再和 入栈的符号表有关。
-    
-    
+```
 
 ![](./img/1/305991353-57c1696b4f3f7_articlex.png)
 
-# 常量
+### 常量
 
-    
+```c
     // Zend/zend_constants.h
     // 常量结构体 
     typedef struct _zend_constant {
@@ -601,15 +615,16 @@ cow写时复制特性
         uint name_len; // 
         int module_number; // 模块名
     } zend_constant;
-    
+```
 
-## define函数的实现
+#### define函数的实现
 
 define函数当然是 调用zend_register_constant声明的常量  
 具体如下：Zend/zend_builtin_functions.c
 
 // 源码：
 
+```c
     ZEND_FUNCTION(define)
     {
         char *name;
@@ -682,11 +697,11 @@ define函数当然是 调用zend_register_constant声明的常量
         } else {
             RETURN_FALSE;
         }
-    }
-    
+```
 
 - - -
 
+```c
     // 关键代码：
     
     c.value = *val;
@@ -706,24 +721,24 @@ define函数当然是 调用zend_register_constant声明的常量
     } else {
         RETURN_FALSE;
     }
-    
+```
 
 常量就一个符号(哈希)表. 都使用一个符号表。所以全局有效。
 
 常量的生成
 
+```c
     int zend_register_constant(zend_constant *c TSRMLS_DC) {
         ...
         ...
         zend_hash_add(EG(zend_constants), name, c->name_len, (vaid*)c,sizeof(zend_constant, NULL) == FAILURE);
         ...
         ...
-    }
-    
+```
 
 对象定义常量
 
-    
+```php
     class Dog {
         
         public $name = 'kitty';
@@ -744,15 +759,15 @@ define函数当然是 调用zend_register_constant声明的常量
     /**
      * define 值为对象时，会把对象装成标量来存储，需要类有 __toString魔术方法
      */    
-     
-    
+```
 
-# 对象
+### 对象
 
 对象的底层实现
 
 Zend/zend.h
 
+```c
     struct _zval_struct {
         /* Variable information */
         zvalue_value value;        /* value */
@@ -777,15 +792,16 @@ Zend/zend.h
     // 在 zend.h 中 查看到 `zend_object_value obj;`  是以zend_object_value 定义. 在Zend/zend_types.h 文件中继续查看
     
     // Zend/zend_types.h
-    
+```
 
 定义zend_object_value 结构体
 
+```c
     typedef struct _zend_object_value {
         zend_object_handle handle;
         const zend_object_handlers *handlers;
     } zend_object_value;
-    
+```
 
 通过new出来的对象，返回的是什么。是zend_object_value. 并不是真正的对象，而是对象的指针。
 
@@ -797,6 +813,7 @@ Zend/zend.h
 
 对象存储时的特点：
 
+```php
     // 对象
     
     class Dog {
@@ -824,12 +841,11 @@ Zend/zend.h
     $d2 = false;
     
     echo $dog->leg; // 5
-        
-    
+```
 
 ![](./img/1/935602427-57c2473f1e186_articlex.png)
 
-# 内存分层
+### 内存分层
 
 内存管理与垃圾回收
 
@@ -850,17 +866,19 @@ PHP 底层 所有的变量都是 放在 zend_mm_heap 中。 然后通过 各自�
 > zend虚拟机的运行原理
 
 * PHP语法实现
-
+```
     Zend/zend_language_scanner.l
     Zend/zend_language_parser.y
+```
 * OPcode编译
-
+```
     Zend/zend.compile.c
+```
 * 执行引擎
-
+```
     Zend/zend_vm_*
     Zend/zend_execute.c
-
+```
 
 > 以apache模块运行时的流程
 

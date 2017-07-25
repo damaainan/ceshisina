@@ -8,7 +8,7 @@
 
  1、zend_execute_data:opcode执行期间非常重要的一个结构，记录着当前执行的zend_op、返回值、所属函数/对象指针、符号表等 
 
-
+```c
     struct _zend_execute_data {
         const zend_op       *opline;           /* executed opline 指向第一条opcode */
         zend_execute_data   *call;             /* current call                   */
@@ -25,7 +25,7 @@
         zend_execute_data   *prev_execute_data;
         zend_array          *symbol_table;
     };
-    
+```
 
   
  2、zend_op:zend指令   

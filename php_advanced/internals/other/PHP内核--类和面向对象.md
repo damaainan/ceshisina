@@ -24,8 +24,7 @@
 
  引用TIPI的一个事例：
 
-
-
+```php
     class ParentClass {
     }
      
@@ -49,6 +48,7 @@
             public static function access() {
             }
     }
+```
 
 > 这里定义了一个父类ParentClass，一个接口Ifce，一个子类Tipi。子类继承父类ParentClass， 实现接口Ifce，并且有一个静态变量$sa，一个类常量 CA，一个公用方法，一个私有方法和一个公用静态方法。 这些结构在Zend引擎内部是如何实现的？类的方法、成员变量是如何存储的？访问控制，静态成员是如何标记的？
 
@@ -192,8 +192,6 @@ function_name=access | type=2 | fn_flags=257
 
 成员变量是定义在类里面，并和成员方法处于同一层次。如下一个简单的PHP代码示例，定义了一个类， 并且这个类有一个成员变量。
 
-
-
     class Tipi { 
         public $var;
     }
@@ -216,8 +214,6 @@ function_name=access | type=2 | fn_flags=257
 
 比如：.
 
-
-
     class Tipi { 
         public final $var;
     }
@@ -232,14 +228,11 @@ function_name=access | type=2 | fn_flags=257
 
 对于一个类的多个成员方法，它是以HashTable的数据结构存储了多个zend_function结构体。 和前面的成员变量一样，在类声明时成员方法也通过调用zend_initialize_class_data方法，初始化了整个方法列表所在的HashTable。 在类中我们如果要定义一个成员方法，格式如下：
 
-
     class Tipi{ 
          public function t() {echo 1; }
     }
 
 除去访问控制关键字，一个成员方法和常规函数是一样的，从语法解析中调用的函数一样（都是zend_do_begin_function_declaration函数）， 但是其调用的参数有一些不同，第三个参数is_method，成员方法的赋值为1，表示它作为成员方法的属性。 在这个函数中会有一系统的编译判断，比如 **在接口中不能声明私有的成员方法** 。 看这样一段代码：
-
-
 
     interface Ifce { 
         private function method();

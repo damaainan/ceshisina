@@ -32,7 +32,6 @@
 
 ----
 
-
 # Closure::__construct
 
 (PHP 5 >= 5.3.0, PHP 7)
@@ -83,10 +82,7 @@
 返回一个新的 Closure 对象 或者在失败时返回 **FALSE**
 
 
-
 -----
-
-
 
 # Closure::bindTo
 

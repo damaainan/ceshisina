@@ -12,8 +12,8 @@
 1. [实例二][7]
 1. [分离指的是分离两个变量存储的zval的位置让分开不指向同一个空间 那如何判定是否要分离呢依据是什么见下边 改变指的是有引用赋值时要把新开辟的zval 的 is_ref 赋值为1][8]
 1. [实例三内存是如何泄漏的][9]
-  1. [数组变量与普通变量生成的zval非常类似但也有很大不同][10]
-  1. [本文参考文献][11]
+    1. [数组变量与普通变量生成的zval非常类似但也有很大不同][10]
+    1. [本文参考文献][11]
 
  前言：
 
@@ -38,11 +38,9 @@ PHP是若类型语言，也就是说一个PHP变量可以保存任何的数据�
 
 1.zval结构
 
-
      typedef struct _zval_struct zval;
 
-
-
+```c
      typedef union _zvalue_value {
         long lval;      /* long value */
         double dval;    /* double value */
@@ -53,11 +51,9 @@ PHP是若类型语言，也就是说一个PHP变量可以保存任何的数据�
         HashTable *ht;    /* hash table value */
         zend_object_value obj;
      } zvalue_value;
+```
 
-
-
-
-
+```c
      struct _zval_struct {
         /* Variable information */
         zvalue_value value;  /* 变量值保存在这里 12字节*/
@@ -65,17 +61,15 @@ PHP是若类型语言，也就是说一个PHP变量可以保存任何的数据�
         zend_uchar type;   /* active type变量类型 1字节*/
         zend_uchar is_ref;//是否变量被&引用，0表示非引用，1表示引用，1字节
         };
-
+```
  2. zend_uchar type   
  PHP中的变量包括 四种标量类型 （bool,int,float,string）， 两种复合类型 （array, object）和 两种特殊的类型 （resource 和NULL）。在zend内部，这些类型对应于下面的宏（代码位置 phpsrc/Zend/zend.h） Zend根据type值来决定访问value的哪个成员，可用值如下：
 
- 
 
 ![][17]   
  3 . zend_uint refcount__gc
 
 该值实际上是一个计数器，用来保存有多少变量（或者符号， symbols ,所有的符号都存在符号表（symble table）中, 不同的作用域使用不同的符号表，关于这一点，我们之后会论述）指向该zval。在变量生成时，其refcount=1，典型的赋值操作如$a = $b会令zval的refcount加1，而unset操作会相应的减1。在PHP5.3之前，使用引用计数的机制来实现GC，如果一个zval的refcount较少到0，那么Zend引擎会认为没有任何变量指向该zval，因此会释放该zval所占的内存空间。但，事情有时并不会那么简单。后面我们会看到， 单纯的引用计数机制无法GC掉循环引用的zval(详见后举例3) ，即使指向该zval的变量已经被unset，从而导致了内存泄露（ Memory Leak ）。
-
   
  4.is_ref__gc
 
@@ -91,8 +85,6 @@ Xdebug的安装我在前边PHPstorm Xdebug调试也介绍过，这里不赘述�
 
 安装成功后， 你的脚本中，可以通过 xdebug_debug_zval 打印Zval的信息，用法：
 
-
-
      $var = 1;
      debug_zval_dump($var);
      $var_dup = $var;
@@ -100,24 +92,18 @@ Xdebug的安装我在前边PHPstorm Xdebug调试也介绍过，这里不赘述�
 
 ## **实例** **一：**
 
-
-
         $a = 1;
         $b = $a;
         $c = $b;
         $d = &$c; // 在一堆非引用赋值中，插入一个引用
     
 
-  
   整个过程图示如下：   
 ![][19]
 
-  
 ---------------------------------------------------------
 
 ## **实例二：**
-
-
 
        $a = 1;
         $b = &$a;
@@ -129,8 +115,6 @@ Xdebug的安装我在前边PHPstorm Xdebug调试也介绍过，这里不赘述�
 
 ![][20]
 
-  
-  
  通过实例一、二，展现了，这就是PHP的 **copy on write写时分离机制 、** change on write写时改变机制
 
 **过程：**
@@ -148,17 +132,11 @@ PHP在修改一个变量以前，会首先查看这个变量的refcount，如果
 ##   
 判定是否分离的条件：如果is_ref =1 或recount == 1,则不分离 
 
-
-
     if((*val)->is_ref || (*val)->refcount<2){
               //不执行Separation
             ... ;//process
       }
 
-  
-  
-  
-  
  ---------------------------------------------------------------------------------------------------
 
 ## 实例三：(内存是如何泄漏的) 
@@ -167,15 +145,11 @@ PHP在修改一个变量以前，会首先查看这个变量的refcount，如果
 
 举例：
 
-
-
     $a = $array('one');  
     $a[] = &$a;  
     xdebug_debug_zval('a'); 
 
  debug_zval_dump打印出zval的结构是：
-
-
 
     a: (refcount=2, is_ref=1)=array (
         0 => (refcount=1, is_ref=0)='one', 
@@ -185,13 +159,8 @@ PHP在修改一个变量以前，会首先查看这个变量的refcount，如果
  上述输出中，…表示指向原始数组，因而这是一个循环的引用。如下图所示：
 
 ![][21]
-
-  
-  
   
  现在，我们对$a执行unset操作，这会在symbol table中删除相应的symbol,同时，zval的refcount减1（之前为2），也就是说，现在的zval应该是这样的结构：
-
-
 
     unset($a);
     (refcount=1, is_ref=1)=array (
@@ -199,7 +168,6 @@ PHP在修改一个变量以前，会首先查看这个变量的refcount，如果
         1 => (refcount=1, is_ref=1)=...
     )
 
-  
 ![][22]
 
 （应该ref_count=1）
@@ -212,7 +180,6 @@ Unset之后，虽然没有变量指向该zval，但是该zval却不能被GC（�
 
 如果这种内存泄露仅仅发生了一次或者少数几次，倒也还好，但如果是成千上万次的内存泄露，便是很大的问题了。尤其在长时间运行的脚本中（例如守护程序，一直在后台执行不会中断），由于无法回收内存，最终会导致系统“再无内存可用”，所以说，一定要避免这种操作。
 
-  
 垃圾回收机制：
 
 1.php原来是通过引用计数器来实现内存回收，也就是是多个php变量可能会引用同一份内存，这种情况unset掉其中一个是不会释放内存的；   

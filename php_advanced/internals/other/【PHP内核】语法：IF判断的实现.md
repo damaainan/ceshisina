@@ -42,6 +42,7 @@
 其中opcode=38是$a = ”的执行操作，opcode=43是if的操作，下面具体看这一步是如何执行的。   
 根据opcode及两个操作数类型可以找到对应的handler为：**ZEND_JMPZ_SPEC_CV_HANDLER**
 
+```c
     //zend_vm_execute.h #28307
     static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_JMPZ_SPEC_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
     {   
@@ -77,12 +78,13 @@
         }
         ZEND_VM_JMP(opline);
     }
-
+```
 
 从这个函数可以看出if的执行过程：如果条件为true的话则opline++，顺序执行下一条opcode（即if内语句），否则进行跳转，跳过if内语句直接执行if外语句。
 
 **i_zend_is_true**这个函数就是用来判断各种类型的值是否为真，前面那部分是判断是否为bool型，是的话则直接处理。
 
+```c
     //zend_operators.h #283
     static zend_always_inline int i_zend_is_true(zval *op)
     {   
@@ -135,7 +137,7 @@
         }
         return result;
     }
-
+```
 
 isset、empty函数后续补充……
 

@@ -36,15 +36,14 @@ PHP中的哈希表实现在Zend/zend_hash.h中，先看看PHP实现中的数据�
 
 3:将其加入符号表 
 
-
-
+```c
     {    
     zval *fooval;     
     MAKE_STD_ZVAL(fooval);    
     ZVAL_STRING(fooval, "hello", 1);    
     ZEND_SET_SYMBOL( EG(active_symbol_table) ,  "foo" , fooval);
     }
-
+```
 前两步在上一篇的变量结构中有提到过， 详见 [PHP内核的存储机制（分离/改变）][7]
 
 符号表是什么?
@@ -53,7 +52,7 @@ PHP中的哈希表实现在Zend/zend_hash.h中，先看看PHP实现中的数据�
 
 // zend/zend_globals.h 161行 符号表
 
-
+```c
     struct _zend_executor_globals { 
           ...   
           ...   
@@ -62,13 +61,13 @@ PHP中的哈希表实现在Zend/zend_hash.h中，先看看PHP实现中的数据�
     HashTable included_files;   /* files already included */
          ...
     }
+```
 
 > 当执行到函数时,会生成函数的"执行环境结构体",包含函数名,参数,执行步骤,所在的类(如果是方法),以及为这个函数生成一个符号表.符号表统一放在栈上.并把active_symbol_table指向刚产生的符号表
 
 Zend/zend_compiles.h 384行，执行环境结构体：
 
-
-
+```c
     struct _zend_execute_data {
         struct _zend_op *opline;
         zend_function_state function_state;
@@ -86,7 +85,7 @@ Zend/zend_compiles.h 384行，执行环境结构体：
         call_slot *call_slots;
         call_slot *call;
     };
-
+```
 上面这个,是当前函数执行时的符号表。
 
 **通过下边例子，来描述下函数在执行中，PHP对各个存储空间的分配，以及解释了为什么PHP的静态变量可以共享。**
@@ -107,8 +106,7 @@ Zend/zend_compiles.h 384行，执行环境结构体：
 
 当函数调用时,为此函数生成了一个”执行环境变量”的结构体,里面存储了当前函数的名称,参数,对应的类....等等信息.称为_zend_execute_data {}结构体
 
-
-
+```c
     struct _zend_execute_data {
         struct _zend_op *opline;
         zend_function_state function_state;
@@ -126,6 +124,7 @@ Zend/zend_compiles.h 384行，执行环境结构体：
         call_slot *call_slots;
         call_slot *call;
     };
+```
 
 这个结构体中,有2个重要的信息需要注意！:
 
@@ -173,8 +172,7 @@ Zend引擎哈希表结构和关系：
 
 Zend/zend_hash.h 55行
 
-
-
+```c
     typedef struct bucket {
         ulong h;                        /* Used for numeric indexing */
         uint nKeyLength;
@@ -204,7 +202,7 @@ Zend/zend_hash.h 55行
         int inconsistent;
     #endif
     } HashTable;
-    
+```
 
 Zend/zend_compiles.h 261行,op_array结构代码
 

@@ -2,12 +2,13 @@
 
  时间 2017-03-12 15:12:00  
 
-_原文_[http://www.cnblogs.com/sweng/p/6392336.html][1]
+原文[http://www.cnblogs.com/sweng/p/6392336.html][1]
 
 
 
 先看一个例子：
 
+```php
     <?php
     
     class A
@@ -60,6 +61,7 @@ _原文_[http://www.cnblogs.com/sweng/p/6392336.html][1]
     $a->Method();
     
     ?>
+```
 
 上面代码，我们很容易理解一句话：
 
@@ -75,6 +77,7 @@ A类 **依赖** B类和C类
 
 第一种方法叫做：构造器注入（这种方法也不推荐用，但比不用要好）
 
+```php
     class A
     {
         public $b;
@@ -90,6 +93,7 @@ A类 **依赖** B类和C类
             $this->c->Method();
         } 
     }
+```
 
 客户端类这样写：
 
@@ -100,6 +104,7 @@ A类的构造器依赖B类和C类，通过构造器的参数传入，至少实�
 
 假如有一天，我们需要扩充B类，做两个B类的子类
 
+```php
     class B
     {
         public function B()
@@ -134,6 +139,7 @@ A类的构造器依赖B类和C类，通过构造器的参数传入，至少实�
             echo 'b2';
         }
     }
+```
 
 也很简单，客户端类这么写：
 
@@ -144,6 +150,7 @@ A类的构造器依赖B类和C类，通过构造器的参数传入，至少实�
 
 第二种方法叫做：工厂模式注入（推荐使用）
 
+```php
     class Factory
     {
         public function Factory()
@@ -172,9 +179,11 @@ A类的构造器依赖B类和C类，通过构造器的参数传入，至少实�
             }
         }
     }
+```
 
 我们A类代码改为：
 
+```php
     class A
     {
         public $b;
@@ -195,6 +204,7 @@ A类的构造器依赖B类和C类，通过构造器的参数传入，至少实�
             //TODO
         } 
     }
+```
 
 其实已经解耦了一小部分，至少如果B类和C类的构造函数要是发生变化，比如修改函数参数等，我们只需要改Factory类就可以了。
 
@@ -209,6 +219,7 @@ A类的构造器依赖B类和C类，通过构造器的参数传入，至少实�
 
 这样，A类中的$b变量和$c变量就不再是一个具体的变量了，而是一个抽象类型的变量，不到运行那一刻，不知道他们的Method方式是怎么实现的。
 
+```php
     class B implements IMethod
     {
         public function B()
@@ -234,6 +245,7 @@ A类的构造器依赖B类和C类，通过构造器的参数传入，至少实�
             echo 'c';
         }
     }
+```
 
 总结几点：
 
@@ -241,4 +253,4 @@ A类的构造器依赖B类和C类，通过构造器的参数传入，至少实�
 
 2.原本A类依赖B类和C类，现在变成了A依赖Factory，Factory依赖B和C。
 
-[1]: http://www.cnblogs.com/sweng/p/6392336.html?utm_source=tuicool&utm_medium=referral
+[1]: http://www.cnblogs.com/sweng/p/6392336.html

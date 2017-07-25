@@ -1,6 +1,6 @@
 # PHP 7 新增的生成器特性
 
- 时间 2017-07-12 18:12:21  [2gua][0]  [相似文章][1] (_1_)
+ 时间 2017-07-12 18:12:21  2gua
 
 _原文_[http://www.2gua.info/post/83][2]
 
@@ -22,6 +22,7 @@ PHP 7 新增的生成器特性
 
 生成器委托的形式为： _yield <expr>_ 。 _<expr>_ 的结果得是可遍历对象或数组。 
 
+```php
     <?php
     declare(strict_types=1);
     
@@ -40,6 +41,7 @@ PHP 7 新增的生成器特性
     };
     
     $seh_seh_liām();
+```
 
 ## 生成器返回表达式（Generator Return Expression）
 
@@ -47,6 +49,7 @@ PHP 7 新增的生成器特性
 
 举例如下：
 
+```php
     <?php
     $traverser = (function () {
       yield "foo";
@@ -61,11 +64,13 @@ PHP 7 新增的生成器特性
     }
     
     $traverser->getReturn();  // "value"
+```
 
 ## 生成器与 Coroutine
 
 来个直接点的例子。
 
+```php
     <?php
     declare(strict_types=1);
     
@@ -107,9 +112,9 @@ PHP 7 新增的生成器特性
         $cos[] = $co::create(function () use ($i) { echo "Co.{$i}.", PHP_EOL; });
     }
     $co::run($cos);
+```
 
-[0]: /sites/ZJVNjmE
-[1]: /articles/dup?id=e2mUZzy
+
 [2]: http://www.2gua.info/post/83
-[4]: http://img1.tuicool.com/j2AZfiu.png!web
+[4]: ../img/j2AZfiu.png
 [5]: http://php.net/manual/zh/language.types.array.php
