@@ -10,7 +10,7 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
 
 ![][3]
 
-## Tablespace 
+#### Tablespace 
 
 1. Tablespace是InnoDB存储引擎逻辑存储结构的 最高层 ， 所有数据 都存放在Tablespace中
 1. 分类 
@@ -18,14 +18,14 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
   * Separate Tablespace
   * General Tablespace
 
-## System Tablespace 
+#### System Tablespace 
 
 1. System Tablespace 即我们常见的 共享表空间 ，变量为 innodb_data_file_path ，一般为 ibdata1 文件
 1. 里面存放着 undo logs ， change buffer ， doublewrite buffer 等信息（后续将详细介绍），在没有开启 file-per-table 的情况下，还会包含 所有表的索引和数据 信息
 1. 没有开启 file-per-table 时存在的问题 
   * 所有的表和索引都会在 System Tablespace 中， 占用空间会越来越大
   * 碎片越来越多 （如 truncate table 时，占用的磁盘空间依旧保留在 System Tablespace ）
-```
+```sql
     mysql>  SHOW VARIABLES LIKE 'innodb_data_file_path';
     +-----------------------+------------------------+
     | Variable_name         | Value                  |
@@ -46,7 +46,7 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
     -rw-r----- 1 mysql mysql 76M May  6 20:00 /var/lib/mysql/ibdata1
 ```
 
-## Separate Tablespace 
+#### Separate Tablespace 
 
 1. MySQL参考手册中并没有 Separate Tablespace 这个术语，这里只为了行文方便，表示在开启 file-per-table 的情况下，每个表有自己 独立的表空间 ，变量为 innodb_file_per_table
 1. 里面存放在 每个表的索引和数据信息 ，后缀一般为 .ibd
@@ -54,7 +54,7 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
 1. 好处 
   * 避免 System Tablespace 越来越大
   * 减少碎片（ truncate table ，操作系统会 自动回收空间 ）
-```
+```sql
     mysql> use test
     Reading table information for completion of table and column names
     You can turn off this feature to get a quicker startup with -A
@@ -90,13 +90,13 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
     -rw-r----- 1 mysql mysql  96K May  7 17:03 t.ibd
 ```
 
-## General Tablespace 
+#### General Tablespace 
 
 1. General Tablespace 是 MySQL 5.7.6 引入的新特性，具体内容请参照下面链接 
 
 [15.7.9 InnoDB General Tablespaces][4]
 
-## Segment 
+#### Segment 
 
 ![][5]
 
@@ -107,7 +107,7 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
 1. InnoDB中的 B+Tree索引 ，由 Leaf node segment 和 Non-Leaf node segment 组成
 1. 一个Segment由 多个Extent和Page 组成
 
-## Extent 
+#### Extent 
 
 1. Extent 是由连续页（默认页大小为 16KB ）组成，在 默认页大小 时，为 64个连续页 ，大小为 64*16KB=1MB
   * 不同页大小： 4KB*256 or 8KB*128 or 16KB*64 or 32KB*64 or 64KB*64
@@ -116,8 +116,9 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
 
 {% note warning %} 下列操作过程中涉及到了`ROW_FORMAT`的部分内容，本文并没有详细展开，只为佐证结果 {% endnote %} 
 
-## 创建表 
+#### 创建表 
 
+```sql
     # 创建表
     mysql> CREATE TABLE t (
         -> a INT NOT NULL AUTO_INCREMENT,
@@ -128,7 +129,7 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
     
     mysql> system sudo ls -lh /var/lib/mysql/test/t.ibd
     -rw-r----- 1 mysql mysql 96K May  7 17:09 /var/lib/mysql/test/t.ibd
-    
+```
 
     # 查看表空间信息
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
@@ -171,8 +172,9 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
   * page offset=3 ， (16K)*3 = 0xc000 ，该页范围为 0xc000 ~ 0xffff
   * 理论上 0xc078 为 第一个记录的开始 ，此时尚未插入任何记录，所以为 0 （行记录格式 ROW_FORMAT 后续将详细介绍）
 
-## 插入2条记录 
+#### 插入2条记录 
 
+```sql
     # 插入2条记录
     mysql> INSERT INTO t SELECT NULL,REPEAT('a',7000);
     Query OK, 1 row affected (0.00 sec)
@@ -186,7 +188,7 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
     [sudo] password for zhongmingmao:
     -rw-r----- 1 mysql mysql 96K May  7 17:26 /var/lib/mysql/test/t.ibd
     mysql>
-    
+```
 
     # 查看表空间信息
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
@@ -238,7 +240,7 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
 1. 第2条记录位于page offset=3的页，地址范围为 0xdbe9 ~ 0xf759 ，占用 7025 Byte
 1. 此时， page offset=3 的页已经无法再容纳下一条同样长度的记录，但此时还有 2个可用页 ，可用于 B+Tree的分裂 （此时只有叶子节点）
 
-## 插入第3条记录 
+#### 插入第3条记录 
 
     # 插入第3条记录
     mysql> INSERT INTO t SELECT NULL,REPEAT('a',7000);
@@ -326,8 +328,9 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
 1. 此时， page offset=4 和 page offset=5 的页都已经无法再容纳同样长度的记录，而且表空间初始的 96KB 中 已无可用页
   * 在插入同样长度的记录，表空间会增大
 
-## 创建存储过程 
+#### 创建存储过程 
 
+```sql
     mysql> DELIMITER //
     mysql> CREATE PROCEDURE load_t (count INT UNSIGNED)
         -> BEGIN
@@ -341,10 +344,9 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
         -> //
     Query OK, 0 rows affected (0.09 sec)
     
-    mysql> DELIMITER ;
-    
+```
 
-## 插入60条记录 
+#### 插入60条记录 
 
     # 通过调用存储过程，插入60条记录
     mysql> CALL load_t(60);
@@ -378,7 +380,7 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
 1. 上一步操作中，默认的表空间大小已无法再容纳新的同样长度的记录，且已使用了 2个B+Tree叶子节点 ，申请 Extent 前可以再使用 30个B+Tree叶子节点 ，所以再插入60条记录（每页只能容纳2条记录）
 1. 此时处于 临界状态 ， B+Tree叶子节点为32个 ，再插入同样长度的记录时，将进行 Extent 的申请
 
-## 插入第64条记录 
+#### 插入第64条记录 
 
     # 插入第64条记录
     mysql> CALL load_t(1);
@@ -418,10 +420,10 @@ _原文_[http://zhongmingmao.me/2017/05/06/innodb-table-logical-structure/][1]
 
 1. 插入第64条记录时，就需要进行 Extent 的申请，从 page offset=0x40 处申请一个 Extent （ 0x40*16KB=1MB ），之前的部分空间作为 可用页 ，此时表空间大小为 2MB
 
-## Page 
+#### Page 
 
 1. Page 是InnoDB 磁盘管理的最小单位 ，变量为 innodb_page_size
-```
+```sql
     mysql>  SHOW VARIABLES LIKE 'innodb_page_size';
     +------------------+-------+
     | Variable_name    | Value |

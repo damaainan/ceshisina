@@ -9,7 +9,7 @@
 
 显示当前session中所有统计参数的值：
 
-```
+```sql
 show status like 'Com_%';
 
 +-----------------------------+-------+
@@ -41,7 +41,7 @@ Com_xxx表示每个xxx语句执行次数，常关心：Com_select/insert/update/
 ###通过EXPLAIN分析SQL的执行计划
 找到效率低的SQL后，可通过EXPLAIN或者DESC命令获取MySQL如何执行SELECT语句的信息，如执行查询过程中表如何连接和连接顺序等，如：
 
-```
+```sql
 mysql> desc select sum(amount) from customer a,payment b where 1=1 and a.customer_id=b.customer_id and email='JANE.BENNETT@sakilacustomer.org'\G
 *************************** 1. row ***************************
            id: 1
@@ -73,9 +73,9 @@ possible_keys: idx_fk_customer_id
 ```
 - select_type：select的类型，常见有SIMPLE（简单表）、PRIMARY（主查询）、UNION、SUBQUERY（子查询中的第一个SELECT）等。
 - table：输出结果集的表
-- type：在表中找到所需行的方式，也叫访问类型。性能为：ALL(全表)<idnex(全索引)<range(索引范围扫描)<ref(非唯一索引或者唯一索引前缀)<eq_ref(唯一索引)<const,system(单表中最多只有一个匹配行)<NULL(不需访问表或索引)
+- type：在表中找到所需行的方式，也叫访问类型。性能为：`ALL(全表)<idnex(全索引)<range(索引范围扫描)<ref(非唯一索引或者唯一索引前缀)<eq_ref(唯一索引)<const,system(单表中最多只有一个匹配行)<NULL(不需访问表或索引)`
 	
-	```
+```sql
 	mysql> explain select * from (select * from customer where email='AARON.SELBY@sakilacustomer.org')a\G
 *************************** 1. row ***************************
            id: 1
@@ -92,7 +92,7 @@ possible_keys: uk_email
         Extra: NULL
 1 row in set, 1 warning (0.01 sec)
 
-	```
+```
 	
 - possible_keys:可能使用的索引
 - key：实际使用的索引
@@ -108,7 +108,7 @@ MySQL5.1支持分区后，explain也对分区增加了支持，通过`explain pa
 ###通过show profile分析SQL
 MySQL从5.0.37增加对`show profiles`和`show profile`的支持，通过have_profiling参数可查看是否支持profile。默认profiling是关闭的，可通过set在Session级别开启：
 
-```
+```sql
 mysql> select @@have_profiling;
 +------------------+
 | @@have_profiling |
@@ -131,7 +131,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 通过profile可以更清楚了解SQL执行过程。通过`show profile for query id`可查看执行过程中线程的每个状态和耗时：
 
-```
+```sql
 mysql> show profiles;
 +----------+------------+-------------------------------+
 | Query_ID | Duration   | Query                         |
@@ -166,7 +166,7 @@ mysql> show profile for query 5;
 
 MySQL支持进一步选择all、cpu、block io、context、switch、page faults等明细类型查看MySQL在使用什么资源上耗费过高时间：
 
-```
+```sql
 mysql> show profile cpu for query 5;
 +----------------------+----------+----------+------------+
 | Status               | Duration | CPU_user | CPU_system |
@@ -189,7 +189,7 @@ mysql> show profile cpu for query 5;
 
 还可通过source查看SQL解析过程中每步源码：
 
-```
+```sql
 mysql> show profile source for query 5;
 +----------------------+----------+-----------------------+----------------------+-------------+
 | Status               | Duration | Source_function       | Source_file          | Source_line |
@@ -212,7 +212,7 @@ mysql> show profile source for query 5;
 ###通过trace分析优化器如何选择执行计划
 MySQL5.6提供了对SQL跟踪trace，通过trace可了解优化器为何选择优化器A而不是B。使用方式：首先打开trace，格式为JSON，设置最大使用内存，避免不够不能完整显示解析过程；然后执行想做trace的SQL，最后检查INFORMATION_SCHEMA.OPTIMIZER_TRACE即可。
 
-```
+```sql
 mysql> select @@optimizer_trace;
 +-------------------------+
 | @@optimizer_trace       |
@@ -262,7 +262,7 @@ B-Tree代表平衡树
 ###MySQL中能使用索引的典型场景
 - 匹配全值，对索引中所有列都有等值匹配的条件。
 
-```
+```sql
 mysql> desc select * from rental where rental_date='2005-05-25 17:22:10' and inventory_id=373 and customer_id=343\G
 *************************** 1. row ***************************
            id: 1
@@ -282,7 +282,7 @@ possible_keys: rental_date,idx_fk_inventory_id,idx_fk_customer_id
 
 - 匹配值得范围查询，多索引的值能进行范围查找。
 
-```
+```sql
 mysql> desc select * from rental where customer_id>=373 and customer_id<400 \G
 *************************** 1. row ***************************
            id: 1
@@ -307,7 +307,7 @@ possible_keys: idx_fk_customer_id
 - 仅对索引进行查询，当查询列都在索引的字段中时，查询效率更高。此时Extra部分可能变为了Using index，即不需要回表再查了。
 - 匹配列前缀，仅仅使用索引中的第一列，并只包含索引第一列的开头一部分进行查找。如查找标题title以AFRICAN开头的电影信息：
 
-```
+```sql
 mysql> desc select title from film_text where title like 'AFRICAN%'\G
 *************************** 1. row ***************************
            id: 1
@@ -332,7 +332,7 @@ possible_keys: idx_title_desc_part,idx_title_description
 ###存在索引但不能使用索引的典型场景
 - 以%开头的LIKE查询不能利用B-Tree索引，执行计划中key的值为NULL表示没有使用索引：
 
-```
+```sql
 mysql> desc select * from actor where last_name like '%IN%'\G
 *************************** 1. row ***************************
            id: 1

@@ -63,6 +63,7 @@ DELETE t1,t2,...,tn FROM t1,t2,...,tn [WHERE CONDITIO
 ### 查询记录
 - 聚合
 ```
+
 SELECT [field1,field2,...,fieldn] fun_name
 	FROM tablename 
 	[WHERE where_contition] 
@@ -81,7 +82,7 @@ SELECT [field1,field2,...,fieldn] fun_name
 	
 ```
 SELECT [filed1,...,filedn] FROM table1name [LEFT | RIGHT] JOIN table2name ON CONDITION
-```
+
 - 子查询
  	
  	查询时需要的条件是另一个select语句的结果，用子查询。子查询关键字主要包括in、not in、=、!=、exists、not exists等。
@@ -96,9 +97,11 @@ SELECT [filed1,...,filedn] FROM table1name [LEFT | RIGHT] JOIN table2name ON CON
 	UNION | UNION ALL
 	SELECT * FROM tn
 ```
+	
 	> UNION和UNION ALL的主要区别是UNION ALL将结果集直接合并在一起，而UNION会进行一次DISTINCT。
 
 ## DCL语句
+
 - 创建用户并且分配权限
 ```
 	GRANT func[INSERT|SELECT] ON dbname.table[*] to 'USERNAME'@'ADDR' IDENTIFIED BY 'PASSWD'
@@ -107,6 +110,7 @@ SELECT [filed1,...,filedn] FROM table1name [LEFT | RIGHT] JOIN table2name ON CON
 ```
 REVOKE table ON tablename.* from 'USER'@'PASSWD'
 ```
+
 	> 注意使用mysql的帮助文档，即为`? content`。
 	
 - 查询元数据信息

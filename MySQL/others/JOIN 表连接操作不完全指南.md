@@ -24,6 +24,8 @@
 
 在现实世界的场景中，CROSS JOIN在执行报告时非常有用，例如，你可以生成一组日期（例如一个月的天数）并与数据库中的所有部门交叉连接，以创建完整的天/部门表。使用PostgreSQL语法：
 
+
+```sql
     SELECT *
     
     -- This just generates all the days in January 2017
@@ -35,6 +37,7 @@
     
     -- Here, we're combining all days with all departments
     CROSS JOIN departments
+```
 
 想象一下，我们有以下数据：
 
@@ -82,6 +85,7 @@ CROSS JOIN是笛卡尔乘积，即“乘法”中的乘积。数学符号使用�
 
 以前，在ANSI JOIN语法被引入到SQL之前，大家就会在FROM子句中写以逗号分隔的表格列表来编写CROSS JOIN。上面的查询等价于：
 
+```sql
     SELECT *
     FROM
       generate_series(
@@ -90,6 +94,7 @@ CROSS JOIN是笛卡尔乘积，即“乘法”中的乘积。数学符号使用�
         INTERVAL '1 day'
       ) AS days(day),
       departments
+```
 
 一般来说，我强烈建议使用CROSS JOIN关键字，而不是以逗号分隔的表格列表，因为如果你有意地想要执行CROSS JOIN，那么没有什么可以比使用实际的关键字能更好地传达这个意图（对下一个开发人员而言）。何况用逗号分隔的表格列表中有这么多地方都有可能会出错。你肯定不希望看到这样的事情！
 
@@ -97,6 +102,7 @@ CROSS JOIN是笛卡尔乘积，即“乘法”中的乘积。数学符号使用�
 
 构建在先前的CROSS JOIN操作之上，INNER JOIN（或者只是简单的JOIN，有时也称为“THETA”JOIN）允许通过某些谓词过滤笛卡尔乘积的结果。大多数时候，我们把这个谓词放在ON子句中，它可能是这样的：
 
+```sql
     SELECT *
     
     -- Same as before
@@ -109,6 +115,7 @@ CROSS JOIN是笛卡尔乘积，即“乘法”中的乘积。数学符号使用�
     -- Now, exclude all days/departments combinations for
     -- days before the department was created
     JOIN departments AS d ON day >= d.created_at
+```
 
 在大多数数据库中，INNER关键字是可选的，因此我在本文中略去了。
 
@@ -163,6 +170,7 @@ INNER JOIN操作是过滤后的CROSS JOIN操作。这意味着如果两个表中
 
 虽然ON子句对于INNER JOIN操作是强制的，但是你不需要在其中放置JOIN谓词（虽然从可读性角度强烈推荐）。大多数数据库将以同样的方式优化以下等价查询：
 
+```sql
     SELECT *
     FROM generate_series(
       '2017-01-01'::TIMESTAMP,
@@ -177,9 +185,11 @@ INNER JOIN操作是过滤后的CROSS JOIN操作。这意味着如果两个表中
     -- ... and then turn the CROSS JOIN back into an INNER JOIN
     -- by putting the JOIN predicate in the WHERE clause:
     WHERE day >= d.created_at
+```
 
 当然，再次，那只是为读者模糊了查询，但你可能有你的理由，对吧？如果我们进一步，那么下面的查询也是等效的，因为大多数优化器可以指出等价物并转而执行INNER JOIN：
 
+```sql
     SELECT *
     FROM generate_series(
       '2017-01-01'::TIMESTAMP,
@@ -190,9 +200,11 @@ INNER JOIN操作是过滤后的CROSS JOIN操作。这意味着如果两个表中
     -- Now, this is really a syntactic CROSS JOIN
     CROSS JOIN departments AS d
     WHERE day >= d.created_at
+```
 
 …并且，如前所述，CROSS JOIN只是用逗号分隔的表格列表的语法糖。在这种情况下，我们保留WHERE子句以获得在引入ANSI JOIN语法之前人们经常做的事情：
 
+```sql
     SELECT *
     FROM
       generate_series(
@@ -202,6 +214,7 @@ INNER JOIN操作是过滤后的CROSS JOIN操作。这意味着如果两个表中
       ) AS days(day),
       departments AS d
     WHERE day >= d.created_at
+```
 
 所有这些语法都了做同样的事情，通常没有性能损失，但显然，它们比原始的INNER JOIN语法更不可读。
 
@@ -264,6 +277,7 @@ USING子句替换ON子句，并允许列出必须在JOIN操作的两侧出现的
 
 虽然这产生的结果与ON子句完全相同（几乎相同），但读取和写入更快。我之所以“几乎”是因为一些数据库（以及SQL标准）指定，任何出现在USING子句中的列失去其限定。例如：
 
+```sql
     SELECT
       f.title,   -- Ordinary column, can be qualified
       f.film_id, -- USING column, shouldn't be qualified
@@ -271,14 +285,17 @@ USING子句替换ON子句，并允许列出必须在JOIN操作的两侧出现的
     FROM actor AS a
     JOIN film_actor AS fa USING (actor_id)
     JOIN film AS f USING (film_id)
+```
 
 另外，当然，这种语法有点限制。有时，你的表中有多个外键，但不是所有键都具有主键列名称。例如：
 
+```sql
     CREATE TABLE film (
       ..
       language_id          BIGINT REFERENCES language,
       original_language_id BIGINT REFERENCES language,
     )
+```
 
 如果你想通过ORIGINAL_LANGUAGE_ID连接，则必须诉诸ON子句。
 
@@ -308,6 +325,7 @@ USING子句替换ON子句，并允许列出必须在JOIN操作的两侧出现的
 
 OUTER JOIN允许我们保留rowson的左/ 右侧，因此我们就找不到匹配的组合。让我们回到日期和部门的例子：
 
+```sql
     SELECT *
     FROM generate_series(
       '2017-01-01'::TIMESTAMP,
@@ -315,6 +333,7 @@ OUTER JOIN允许我们保留rowson的左/ 右侧，因此我们就找不到匹�
       INTERVAL '1 day'
     ) AS days(day)
     LEFT JOIN departments AS d ON day >= d.created_at
+```
 
 同样，OUTER关键字是可选的，所以我在示例中省略了它。
 
@@ -358,6 +377,7 @@ OUTER JOIN允许我们保留rowson的左/ 右侧，因此我们就找不到匹�
 
 正式地说，LEFT OUTER JOIN是一个像这样带有UNION的INNER JOIN：
 
+```sql
     -- Convenient syntax:
     SELECT *
     FROM a LEFT JOIN b ON <predicate>
@@ -371,6 +391,7 @@ OUTER JOIN允许我们保留rowson的左/ 右侧，因此我们就找不到匹�
     WHERE NOT EXISTS (
       SELECT * FROM b WHERE <predicate>
     )
+```
 
 ### RIGHT OUTER JOIN
 
@@ -390,6 +411,7 @@ RIGHT OUTER JOIN正好相反。它保留结果中来自右表的所有行。让�
 
 运行此查询：
 
+```sql
     SELECT *
     FROM generate_series(
       '2017-01-01'::TIMESTAMP,
@@ -397,6 +419,7 @@ RIGHT OUTER JOIN正好相反。它保留结果中来自右表的所有行。让�
       INTERVAL '1 day'
     ) AS days(day)
     RIGHT JOIN departments AS d ON day >= d.created_at
+```
 
 将产生：
 
@@ -438,8 +461,10 @@ RIGHT OUTER JOIN正好相反。它保留结果中来自右表的所有行。让�
     | Jan 31 |   | Dept 5     | Apr 02     |
     +--------+   +------------+------------+
 
+
 现在，让我们运行这个查询：
 
+```sql
     SELECT *
     FROM generate_series(
       '2017-01-01'::TIMESTAMP,
@@ -447,6 +472,7 @@ RIGHT OUTER JOIN正好相反。它保留结果中来自右表的所有行。让�
       INTERVAL '1 day'
     ) AS days(day)
     FULL JOIN departments AS d ON day >= d.created_at
+```
 
 现在结果看起来像这样：
 
@@ -476,6 +502,7 @@ RIGHT OUTER JOIN正好相反。它保留结果中来自右表的所有行。让�
 
 如果你坚持，正式地说来，LEFT OUTER JOIN是一个像这样带有UNION的INNER JION：
 
+```sql
     -- Convenient syntax:
     SELECT *
     FROM a LEFT JOIN b ON <predicate>
@@ -497,6 +524,7 @@ RIGHT OUTER JOIN正好相反。它保留结果中来自右表的所有行。让�
     WHERE NOT EXISTS (
       SELECT * FROM a WHERE <predicate>
     )
+```
 
 ### 备选语法：“EQUI”OUTER JOIN
 
@@ -520,6 +548,7 @@ RIGHT OUTER JOIN正好相反。它保留结果中来自右表的所有行。让�
 
 这两个数据库在ANSI语法建立之前有OUTER JOIN。它看起来像这样：
 
+```sql
     -- Oracle
     SELECT *
     FROM actor a, film_actor fa, film f
@@ -531,6 +560,7 @@ RIGHT OUTER JOIN正好相反。它保留结果中来自右表的所有行。让�
     FROM actor a, film_actor fa, film f
     WHERE a.actor_id *= fa.actor_id
     AND fa.film_id *= f.film_id
+```
 
 很好，假定某个时间点（在80年代？？），ANSI没有指定OUTER JOIN。但80年代是在30多年前，所以，可以安全地说这个东西已经过时了。
 
@@ -544,6 +574,7 @@ SQL Server做了正确的事情，很久以前就弃用（以及后面删除）�
 
 这很难用文字描述，用例子讲就容易多了。下面是使用Oracle语法的查询：
 
+```sql
     WITH
     
       -- Using CONNECT BY to generate all dates in January
@@ -566,6 +597,7 @@ SQL Server做了正确的事情，很久以前就弃用（以及后面删除）�
     LEFT JOIN departments 
       PARTITION BY (department) -- This is where the magic happens
       ON day >= created_at
+```
 
 不幸的是，PARTITION BY用在具有不同含义的各种上下文中（例如针对窗口函数）。在这种情况下，这意味着我们通过departments.department 列“partition” 我们的数据，为每个部门创建一 个“partition”。现在 ，每个（partition）分区 将获得 每一天的副本，无论在我们的谓词中是否有匹配（不像在普通的LEFT JOIN情况下，我们有一堆“缺少部门”的日期）。上面的查询结果现在是这样的：
 
@@ -760,6 +792,7 @@ IN和EXISTS完全等同于“SEMI”JOIN模拟。以下查询将在大多数数�
 
 LATERAL是SQL标准中相对较新的关键字，并且它得到了PostgreSQL和Oracle的支持。SQL Server人员有一个特定于供应商的替代语法，总是使用APPLY关键字（这个我个人更喜欢）。让我们看一个使用PostgreSQL / Oracle LATERAL关键字的例子：
 
+```sql
     WITH
       departments(department, created_at) AS (
         VALUES ('Dept 1', DATE '2017-01-10'),
@@ -775,6 +808,7 @@ LATERAL是SQL标准中相对较新的关键字，并且它得到了PostgreSQL和
       '2017-01-31'::TIMESTAMP, 
       INTERVAL '1 day'
     ) AS days(day)
+```
 
 事实上，与其在所有部门和所有日子之间进行CROSS JOIN，为什么不直接为每个部门生成必要的日期？这就是LATERAL的作用。它是任何JOIN操作（包括INNER JOIN，LEFT OUTER JOIN等）右侧的前缀，允许右侧从左侧访问列。
 
@@ -782,6 +816,7 @@ LATERAL是SQL标准中相对较新的关键字，并且它得到了PostgreSQL和
 
 另一个非常受欢迎的用例是将“TOP-N”查询连接到常规表中。 如果你想找到每个演员，以及他们最畅销的TOP 5电影：
 
+```sql
     SELECT a.first_name, a.last_name, f.*
     FROM actor AS a
     LEFT OUTER JOIN LATERAL (
@@ -797,6 +832,7 @@ LATERAL是SQL标准中相对较新的关键字，并且它得到了PostgreSQL和
       LIMIT 5
     ) AS f
     ON true
+```
 
 结果可能会是：
 
@@ -808,6 +844,7 @@ LATERAL是SQL标准中相对较新的关键字，并且它得到了PostgreSQL和
 
 基本上，子查询计算每个演员最畅销的TOP 5电影。 因此，它不是“经典的”派生表，而是返回多个行和一列的相关子查询。 我们都习惯于写这样的相关子查询：
 
+```sql
     SELECT
       a.first_name, 
       a.last_name, 
@@ -815,6 +852,7 @@ LATERAL是SQL标准中相对较新的关键字，并且它得到了PostgreSQL和
        FROM film_actor AS fa 
        WHERE fa.actor_id = a.actor_id) AS films
     FROM actor AS a
+```
 
 特点：
 
@@ -830,6 +868,7 @@ LATERAL关键字并没有真正改变被应用的JOIN类型的语义。如果你
 
 SQL Server没有选择混乱的LATERAL关键字，它们很久以前就引入了APPLY关键字（更具体地说：CROSS APPLY和OUTER APPLY），这更有意义，因为我们对表的每一行应用一个函数。让我们假设我们在SQL Server中有一个generate_series()函数：
 
+```sql
     -- Use with care, this is quite inefficient!
     CREATE FUNCTION generate_series(@d1 DATE, @d2 DATE)
     RETURNS TABLE AS
@@ -842,9 +881,11 @@ SQL Server没有选择混乱的LATERAL关键字，它们很久以前就引入了
         WHERE d < @d2
       ) 
       SELECT * FROM t;
+```
 
 然后，我们可以使用CROSS APPLY为每个部门调用函数：
 
+```sql
     WITH
       departments AS (
         SELECT * FROM (
@@ -861,15 +902,18 @@ SQL Server没有选择混乱的LATERAL关键字，它们很久以前就引入了
       d.created_at, -- We can dereference a column from department!
       CAST('2017-01-31' AS DATE)
     )
+```
 
 这个语法的好处是——再次——我们对表的每一行应用一个函数，并且该函数产生行。听起来耳熟？在Java 8中，我们将对此使用Stream.flatMap()！考虑以下流的使用：
 
+```sql
     departments.stream()
     .flatMap(department -> generateSeries(
                 department.createdAt, 
                  LocalDate.parse("2017-01-31"))
                  .map(day -> tuple(department, day))
     );
+```
 
 这里发生了什么？
 
@@ -887,6 +931,7 @@ SQL Server没有选择混乱的LATERAL关键字，它们很久以前就引入了
 
 来一个假设的例子（使用SQL标准语法，而不是Oracle的），像这样：
 
+```sql
     SELECT a.*, MULTISET (
       SELECT f.*
       FROM film AS f
@@ -894,6 +939,7 @@ SQL Server没有选择混乱的LATERAL关键字，它们很久以前就引入了
       WHERE a.actor_id = fa.actor_id
     ) AS films
     FROM actor
+```
 
 MULTISET运算符使用相关子查询参数，并在嵌套集合中聚合其所有生成的行。这和LEFT OUTER JOIN（我们得到了所有的演员，并且如果他们参演电影的话，我们也得到了他们的所有电影）的工作方式类似，但不是复制结果集中的所有演员，而是将它们收集到嵌套集合中。
 
@@ -915,6 +961,7 @@ MULTISET运算符使用相关子查询参数，并在嵌套集合中聚合其所
 
 正如我所说，Oracle实际上支持MULTISET，但是你不能创建ad-hoc嵌套集合。由于某种原因，Oracle选择为这些嵌套集合实现名义类型化，而不是通常的SQL样式结构类型化。所以你必须提前声明你的类型：
 
+```sql
     CREATE TYPE film_t AS OBJECT ( ... );
     CREATE TYPE film_tt AS TABLE OF FILM;
     
@@ -929,6 +976,7 @@ MULTISET运算符使用相关子查询参数，并在嵌套集合中聚合其所
         ) AS film_tt
       ) AS films
     FROM actor
+```
 
 有点更冗长，但仍然取得了成功！真赞！
 
@@ -936,6 +984,7 @@ MULTISET运算符使用相关子查询参数，并在嵌套集合中聚合其所
 
 超棒的PostgreSQL缺少了一个优秀的SQL标准功能，但有一个解决方法：数组！这次，我们可以使用结构类型，哇哦！所以下面的查询将在PostgreSQL中返回一个嵌套的行数组：
 
+```sql
     SELECT
       a AS actor,
       array_agg(
@@ -945,6 +994,7 @@ MULTISET运算符使用相关子查询参数，并在嵌套集合中聚合其所
     JOIN film_actor AS fa USING (actor_id)
     JOIN film AS f USING (film_id)
     GROUP BY a
+```
 
 结果是每个人的ORDBMS梦想！嵌套记录和集合无处不在（只有两列）：
 

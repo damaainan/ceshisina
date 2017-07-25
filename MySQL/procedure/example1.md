@@ -10,19 +10,26 @@ Sp_name:存储过程的名称，默认在当前数据库中创建。这个名称
 Proc_parameter:存储过程的参数列表  
 格式[IN|OUT|INOUT]param_name type  
 Param_name为参数名，type为参数的数据类型。多个参数彼此间用逗号分隔。输入参数、输出参数和输入/输出参数，分别用in/out/inout标识。参数的取名不要与数 据表的列名相同。  
+
 Characteristic:存储过程的某些特征设定，分别介绍  
+
 1 COMMENT‘string‘:用于对存储过程的描述，其中string为描述内容,comment为关键字。  
+
 2 LANGUAGE SQL:指明编写这个存储过程的语言为SQL语言。这个选项可以不指定。  
+
 3 DETERMINISTIC:表示存储过程对同样的输入参数产生相同的结果;NOT DETERMINISTIC，则表示会产生不确定的结果（默认）。  
+
 4 contains sql | no sql | reads sql data | modifies sql data Contains sql表示存储过程包含读或写数据的语句（默认）  
 No sql表示不包含sql语句  
 Reads sql data表示存储过程只包含读数据的语句  
 Modifies sql data 表示存储过程只包含写数据的语句  
+
 5 sql security:这个特征用来指定存储过程使用创建该存储过程的用户(definer)的许可来执行，还是使用调用者(invoker)的许可来执行。默认是definer  
 Routine_body:存储过程的主体部分，包含了在过程调用的时候必须执行的sql语句。以begin开始，以end结束。如果存储过程体中只有一条sql语句,可以省略begin-end标志。  
+
 **1.2、数据准备**
 
-```
+```sql
 CREATE TABLE
  t_user
  (
@@ -42,7 +49,7 @@ CREATE TABLE
 
 **1.3 IN、OUT、INOUT参数**  
 **（1）、带IN的存储过程**
-```
+```sql
 //创建储存过程.cmd 中运行
 CREATE PROCEDURE SP_SEARCH(IN p_name CHAR(20))
 BEGIN
@@ -61,7 +68,7 @@ END
 ![MySql存储过程、函数][1]
 
 调用：
-```
+```sql
 //调用并输出结果
 CALL SP_SEARCH(‘林炳文‘)
 ```
@@ -72,7 +79,7 @@ CALL SP_SEARCH(‘林炳文‘)
 
 **（2）、带OUT的存储过程**
 
-```
+```sql
 //带OUT返回的
 CREATE PROCEDURE SP_SEARCH2(IN p_name CHAR(20),OUT p_int INT)
 BEGIN
@@ -87,7 +94,7 @@ END
 
 调用输出：统计带林开头的人数
 
-```
+```sql
 //调用并输出结果
 CALL SP_SEARCH2(‘林%‘,@p_num);
 SELECT @p_num;
@@ -97,7 +104,7 @@ SELECT @p_num;
 
 **（3）、带INOUT的存储过程**
 
-```
+```sql
 //带INOUT的存储过程
 CREATE PROCEDURE sp_inout(INOUT p_num INT)
 BEGIN
@@ -118,7 +125,7 @@ SELECT @p_num;
 **1、局部变量**  
 在存储过程体中可以声明局部变量，用来存储存储过程体中临时结果。
 
-```
+```sql
 DECLARE var_name[,…] type [DEFAULT value]
 Var_name:指定局部变量的名称
 Type:用于声明局部变量的数据类型
@@ -143,7 +150,7 @@ Set cid=910;
 
 **3、select … into 语句**  
 把选定列的值直接存储到局部变量中，语法格式
-```
+```sql
 Select col_name[,…] into var_name[,…] table_expr
 Col_name:用于指定列名
 Var_name:用于指定要赋值的变量名
@@ -151,7 +158,7 @@ Table_expr:表示select语句中的from字句及后面的语法部分
 ```
 说明:存储过程体中的select…into语句返回的结果集只能有一行数据。  
 **4、定义处理程序**是事先定义程序执行过程中可能遇到的问题。并且可以在处理程序中定义解决这些问题的办法。这种方式可以提前预测可能出现的问题，并提出解决方法。
-```
+```sql
 DECLARE handler_type HANDLER FOR condition_value[,…] sp_statement
 handler_type:CONTINUE | EXIT | UNDO
 Condition_value:Sqlwarning | not found | sqlexception
@@ -159,7 +166,7 @@ Condition_value:Sqlwarning | not found | sqlexception
 
 **5、流程控制语句**（1）条件判断语句  
 **If语句**
-```
+```sql
 If search_condition then statement_list
 [elseif search_condition then statement_list]…
 [else statement_list]
@@ -173,7 +180,7 @@ Statement_list参数:不同条件的执行语句
 数据准备
 
 学生表：
-```
+```sql
 CREATE TABLE
  t_student
  (
@@ -193,7 +200,7 @@ CREATE TABLE
 ![MySql存储过程、函数][4]
 
 成绩表（STU_ID是学生表是外键关系）：
-```
+```sql
 CREATE TABLE
  t_grade
  (
@@ -209,7 +216,7 @@ CREATE TABLE
 
 
 然后写一个存储过程：返回各个分数等级的人
-```
+```sql
 //带多重IF的存储过程
 CREATE PROCEDURE SP_SCHOLARSHIP_LEVEL(IN p_level char(1))
 BEGIN
@@ -227,7 +234,7 @@ END IF;
 END
 ```
 调用过程：
-```
+```sql
 //调用并输出结果
 CALL SP_SCHOLARSHIP_LEVEL(‘A‘);
 ```
@@ -236,7 +243,7 @@ CALL SP_SCHOLARSHIP_LEVEL(‘A‘);
 
 **Case 语句**  
 **表达形式1**
-```
+```sql
 Case case_value
 When when_value then statement_list
 [When when_value then statement_list]…
@@ -245,14 +252,14 @@ End case
 ```
 
 **表达形式2**
-```
+```sql
 Case
 When search_condition then statement_list
 End case
 ```
 
 **使用范例**
-```
+```sql
 CREATE PROCEDURE SP_SCHOLARSHIP_LEVEL3(IN p_level char(1))
 BEGIN
 DECLARE p_num int DEFAULT 0;
@@ -273,7 +280,7 @@ END
 ```
 
 **调用：**
-```
+```sql
 //调用并输出结果
 CALL SP_SCHOLARSHIP_LEVEL3(‘d‘);
 ```
@@ -282,7 +289,7 @@ CALL SP_SCHOLARSHIP_LEVEL3(‘d‘);
 
 **(2)循环语句**While语句、repeat语句和loop语句。  
 **While语句**
-```
+```sql
 [begin_label:]
 while search_condition do
 Statement_list
@@ -292,7 +299,7 @@ End while
 
 判断条件search_condition是否为真,若为真,则执行statement_list中的语句，然后再进行判断，如若仍然为真则继续循环，直至条件判断不为真时循环结束。  
 **使用范例**
-```
+```sql
 //带while的存储过程
 CREATE PROCEDURE sp_cal(IN p_num INT,OUT p_result INT)
 BEGIN
@@ -325,7 +332,7 @@ End repeat
 Repeat语句首先执行statement_list中的语句，然后判断条件search_condition是否为真，倘若为真，则结束循环，若不为真，继续循环。  
 Repeat先执行后判断，while先判断后执行。  
 **使用范例：**
-```
+```sql
 //带repeat的存储过程
 CREATE PROCEDURE sp_cal2(IN p_num INT,OUT p_result INT)
 BEGIN
@@ -382,7 +389,7 @@ Select fn_search(2);
 
 **2.2、函数使用例子**  
 （比较大小 ，返回大的数）
-```
+```sql
 /**函数使用**/
 CREATE FUNCTION sp_cal_max(p_num1 INT,p_num2 INT)
 RETURNS INT
@@ -395,7 +402,7 @@ END IF;
 END
 ```
 调用：
-```
+```sql
 SET @p_num1=2;
 SET @p_num2=34;
 SELECT sp_cal_max(@p_num1,@p_num2);
@@ -442,7 +449,7 @@ Close cur_employee;
 每个光标不再需要时都应该被关闭，使用close语句将会释放光标所使用的全部资源。在一个光标被关闭后，如果没有重新被打开，则不能被使用。对于声明过的光标，则不需要再次声明，可直接使用open语句打开。  
 **3.2、使用范例**
 （将表test_cur1数据复制到test_cur2）
-```
+```sql
 CREATE TABLE `test_cur1` (
  `id` int(11) NOT NULL auto_increment,
  `type` char(11) default NULL,
@@ -463,7 +470,7 @@ CREATE TABLE `test_cur2` (
 ```
 
 然后写光标了：
-```
+```sql
 create procedure get_cur ()
 BEGIN
  DECLARE done INT DEFAULT 0;
@@ -486,7 +493,7 @@ BEGIN
 END
 ```
 运行：
-```
+```sql
 call get_cur()
 ```
 来看看两张表的数据：这是表2

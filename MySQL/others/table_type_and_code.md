@@ -72,7 +72,7 @@ MEMORY存储引擎用存在于内存中的内容来创建表。每个MEMORY表�
 ####MERGE
 MERGE存储引擎是一组MyISAM表的组合，表结构完全相同，MERGE表本身并没有数据，对MERGE类型表的操作实际会映射为对内部MyISAM表的操作，对MERGE插入操作，通过INSERT_METHOD自定义插入的表，该值有三个FIRST或者LAST或不定义/NO（表示不能执行插入操作）。可对MERGE进行DROP操作，但是只删除MERGE定义，对内部表没有影响。MERGE表在磁盘上保留两个文件，一个.frm文件存储表定义，另一个.MRG文件包含组合表的信息。可以通过修改.MRG文件来修改MERGE表，修改后通过FLUSH TABLES刷新。以下为示例：
 
-```
+```sql
 create table payment_2006(
 	country_id smallint,
 	payment_date datetime,
@@ -120,7 +120,7 @@ create table payment_all(
 ####TEXT和BLOB
 1. BLOB和TEXT值会引起一些性能问题，特别是执行大量的删除操作时。删除会在数据表中留下很大“空洞”，建议定期使用`OPTIMIZE TABLE`对这类表进行碎片整理。如下示例：
 
-```
+```sql
 create table t(id varcahr(100),context text);
 insert into t values(1,repeat('haha',100));
 insert into t values(2,repeat('haha',100));

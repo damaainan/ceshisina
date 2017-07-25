@@ -6,7 +6,9 @@ _原文_[http://zhongmingmao.me/2017/05/13/innodb-btree-index/][1]
 
  主题 [InnoDB][2]
 
-本文主要介绍 InnoDB 存储引擎的 B+Tree索引## B+Tree数据结构 
+本文主要介绍 InnoDB 存储引擎的 B+Tree索引
+
+## B+Tree数据结构 
 
 ![][3]
 
@@ -52,6 +54,7 @@ _原文_[http://zhongmingmao.me/2017/05/13/innodb-btree-index/][1]
 
 #### 表初始化 
 
+```sql
     mysql> CREATE TABLE t (
         -> a INT NOT NULL PRIMARY KEY,
         -> b VARCHAR(3500)
@@ -73,7 +76,7 @@ _原文_[http://zhongmingmao.me/2017/05/13/innodb-btree-index/][1]
     mysql> INSERT INTO t SELECT 40,REPEAT('a',3500);
     Query OK, 1 row affected (0.00 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -99,10 +102,11 @@ _原文_[http://zhongmingmao.me/2017/05/13/innodb-btree-index/][1]
 
 #### Insert 50 
 
+```sql
     mysql> INSERT INTO t SELECT 50,REPEAT('a',3500);
     Query OK, 1 row affected (0.02 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -140,10 +144,10 @@ _原文_[http://zhongmingmao.me/2017/05/13/innodb-btree-index/][1]
 
 接着上述步骤继续操作，直接将行记录 a=15 插入到 page offset=4 的 Leaf Page#### Insert 15 
 
+```sql
     mysql> INSERT INTO t SELECT 15,REPEAT('a',3500);
     Query OK, 1 row affected (0.06 sec)
-    Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -203,6 +207,7 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 #### 表初始化 
 
+```sql
     mysql> CREATE TABLE t (
         -> a VARCHAR(750) NOT NULL PRIMARY KEY,
         -> b VARCHAR(6500)
@@ -224,7 +229,7 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
     
     mysql> CALL load_t(41);
     Query OK, 0 rows affected (0.09 sec)
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -279,10 +284,11 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 #### Insert 42th Reocrd 
 
+```sql
     mysql> INSERT INTO t SELECT REPEAT(CONCAT(CHAR(48+4),CHAR(48+1)),375) , REPEAT('z',6500);
     Query OK, 1 row affected (0.31 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -351,6 +357,7 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 ### 表初始化 
 
+```sql
     mysql> CREATE TABLE t (
         -> a INT NOT NULL PRIMARY KEY,
         -> b VARCHAR(3500)
@@ -387,7 +394,7 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
     mysql> INSERT INTO t SELECT 0x80,REPEAT('a',3500);
     Query OK, 1 row affected (0.01 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -423,9 +430,10 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 ### Delete 0x10 
 
+```sql
     mysql> DELETE FROM t WHERE a=0x10;
     Query OK, 1 row affected (0.03 sec)
-    
+```
 
     # page offset=3
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
@@ -501,13 +509,14 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 ### Delete 0x10 + Insert 0x08 
 
+```sql
     mysql> DELETE FROM t WHERE a=0x10;
     Query OK, 1 row affected (0.00 sec)
     
     mysql> INSERT INTO t SELECT 0x08,REPEAT('a',3500);
     Query OK, 1 row affected (0.00 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -552,10 +561,11 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 ### Insert 0x68 
 
+```sql
     mysql> INSERT INTO t SELECT 0x68,REPEAT('a',3500);
     Query OK, 1 row affected (0.01 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -607,9 +617,10 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 ### Delete 0x30,0x40,0x50,0x60 
 
+```sql
     mysql> DELETE FROM t WHERE a IN (0x30,0x40,0x50,0x60);
     Query OK, 4 rows affected (0.03 sec)
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -666,10 +677,11 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 ### Insert 0x48 
 
+```sql
     mysql> INSERT INTO t SELECT 0x48,REPEAT('a',3500);
     Query OK, 1 row affected (0.00 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -711,6 +723,7 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 ### 表初始化 
 
+```sql
     mysql> CREATE TABLE t (
         -> a INT NOT NULL PRIMARY KEY,
         -> b VARCHAR(3500)
@@ -747,16 +760,17 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
     mysql> INSERT INTO t SELECT 0x80,REPEAT('a',3500);
     Query OK, 1 row affected (0.01 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
 ![][11]
 
 ### 更新主键列 
 
+```sql
     mysql> UPDATE t SET a=0x68 WHERE a=0x70;
     Query OK, 1 row affected (0.01 sec)
     Rows matched: 1  Changed: 1  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -809,10 +823,12 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 ### 更新非主键列 
 
+
+```sql
     mysql> UPDATE t SET b=REPEAT('b',100) WHERE a=0x68;
     Query OK, 1 row affected (0.00 sec)
     Rows matched: 1  Changed: 1  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -854,6 +870,7 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 ## 聚集索引与辅助索引 
 
+```sql
     mysql> CREATE TABLE t (
         -> a INT NOT NULL,
         -> b INT NOT NULL,
@@ -891,7 +908,7 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
     mysql> INSERT INTO t SELECT 0x50,0x500,REPEAT('a',3500);
     Query OK, 1 row affected (0.02 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -971,6 +988,7 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
 
 不能有效利用联合索引的查询： WHERE a=xxx ，因为没有一个索引 (b) 或 (b,a)
 
+```sql
     mysql> CREATE TABLE t (
         -> a INT NOT NULL,
         -> b INT NOT NULL,
@@ -998,7 +1016,7 @@ Leaf Page中显示的是 逻辑顺序 10，15，20
     mysql> INSERT INTO t SELECT 3,1,REPEAT('a',3500);
     Query OK, 1 row affected (0.01 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>

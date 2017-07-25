@@ -99,6 +99,7 @@ PAGE_BTR_SEG_TOP | 10 | B+Tree非叶子节点所在 Non-Leaf Node Segment 的Seg
 -|-|-
 FIL_PAGE_END_LSN | 8 | 前4Bytes与File Header中的FIL_PAGE_SPACE一致，后4Bytes与File Header中的FIL_PAGE_LSN的后4Bytes一致 
 
+```sql
     mysql> SHOW VARIABLES LIKE 'innodb_checksums';
     +------------------+-------+
     | Variable_name    | Value |
@@ -114,12 +115,13 @@ FIL_PAGE_END_LSN | 8 | 前4Bytes与File Header中的FIL_PAGE_SPACE一致，后4B
     | innodb_checksum_algorithm | crc32 |
     +---------------------------+-------+
     1 row in set (0.00 sec)
-    
+```
 
 ## 实例 
 
 ## 表初始化 
 
+```sql
     mysql> CREATE TABLE t (
         -> a INT UNSIGNED NOT NULL AUTO_INCREMENT,
         -> b CHAR(10),
@@ -154,7 +156,7 @@ FIL_PAGE_END_LSN | 8 | 前4Bytes与File Header中的FIL_PAGE_SPACE一致，后4B
     | 5 | cccccccccc |
     +---+------------+
     5 rows in set (0.02 sec)
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>

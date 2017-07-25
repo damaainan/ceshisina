@@ -10,12 +10,12 @@ _原文_[http://zhongmingmao.me/2017/05/07/innodb-table-row-format/][1]
 
 ![][3]
 
-## Named File Format 
+#### Named File Format 
 
 1. InnoDB 早期 的文件格式（ 页格式 ）为 Antelope ，可以定义两种行记录格式，分别是 Compact 和 Redundant
 1. Named File Format 为了解决不同版本下 页结构的兼容性 ，在 Barracuda 可以定义两种新的行记录格式 Compressed 和 Dynamic
 1. 变量为 innodb_file_format 和 innodb_default_row_format
-```
+```sql
     mysql>  SHOW VARIABLES LIKE 'innodb_file_format';
     +--------------------+-----------+
     | Variable_name      | Value     |
@@ -33,17 +33,17 @@ _原文_[http://zhongmingmao.me/2017/05/07/innodb-table-row-format/][1]
     1 row in set (0.38 sec)
     
 ```
-## 行记录最大长度 
+#### 行记录最大长度 
 
 1. 页大小（ page size ）为 4KB 、 8KB 、 16KB 和 32KB 时，行记录最大长度（ maximum row length ）应该略小于 页大小的一半
   * 默认页大小为 16KB ，因此行记录最大长度应该略小于 8KB ，因此一个 B+Tree叶子节点最少有2个行记录
 1. 页大小为 64KB 时，行记录最大长度略小于 16KB
 
-## CHAR(N)与VARCHAR(N) 
+#### CHAR(N)与VARCHAR(N) 
 
 N 指的是 **字符长度** ，而不是 Byte大小 ，在不同的编码下，同样的字符会占用不同的空间，如 LATIN1 （ 定长编码 ）和 UTF8 ( 变长编码 ) 
 
-## 变长列 
+#### 变长列 
 
 在InnoDB中，变长列（ variable-length column ）可能是以下几种情况 
 
@@ -51,7 +51,7 @@ N 指的是 **字符长度** ，而不是 Byte大小 ，在不同的编码下，
 1. 对于 长度固定 的数据类型，如 CHAR ，如果 实际存储 占用的空间 大于768Byte ，InnoDB会将其视为变长列
 1. 变长编码 下的 CHAR
 
-## 行溢出 
+#### 行溢出 
 
 1. 当 行记录的长度 没有超过 行记录最大长度 时， 所有数据 都会存储在 当前页
 1. 当 行记录的长度 超过 行记录最大长度 时，变长列（ variable-length column ）会选择外部溢出页（ overflow page ，一般是 Uncompressed BLOB Page ）进行存储 
@@ -62,21 +62,21 @@ N 指的是 **字符长度** ，而不是 Byte大小 ，在不同的编码下，
 
 ![][4]
 
-## Redundant 
+#### Redundant 
 
 MySQL 5.0 之前的ROW_FORMAT 
 
-## 格式 
+#### 格式 
 
 ![][5]
 
-### 字段偏移列表 
+##### 字段偏移列表 
 
 1. 按照列的顺序 逆序 放置
 1. 列长度 小于255Byte ，用 1Byte 存储
 1. 列长度 大于255Byte ，用 2Byte 存储
 
-### 记录头信息 
+##### 记录头信息 
 
 名称 | 大小（bit）| 描述 
 -|-|-
@@ -91,7 +91,7 @@ heap_no | 13 | 索引堆中该条记录的索引号
 next_record | 16 | 页中下一条记录的相对位置 
 Total | 48(6Byte) | nothing 
 
-### 隐藏列 
+##### 隐藏列 
 
 1. ROWID   
 没有 显式定义主键 或 唯一非NULL的索引 时，InnoDB会 自动创建6Byte的ROWID
@@ -99,10 +99,11 @@ Total | 48(6Byte) | nothing
 事务ID
 1. Roll Pointer
 
-## 非行溢出实例 
+#### 非行溢出实例 
 
-### 表初始化 
+##### 表初始化 
 
+```sql
     mysql> CREATE TABLE t (
         -> a VARCHAR(10),
         -> b VARCHAR(10),
@@ -113,8 +114,7 @@ Total | 48(6Byte) | nothing
     
     mysql> INSERT INTO t VALUES ('1','22','22','333'),('4',NULL,NULL,'555');
     Query OK, 2 rows affected (0.08 sec)
-    Records: 2  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -133,7 +133,7 @@ Total | 48(6Byte) | nothing
 
 行记录在 page offset=3 的页中 
 
-### 16进制信息 
+##### 16进制信息 
 
     # Vim,:%!xxd
     # page offset=3
@@ -223,10 +223,11 @@ n_fields | 7 | 记录中列的数量
 * d（ 35 35 35 ） 
   * 字符 555 ，VARCHAR(10)， 3个字符 只占用了 3Byte
 
-## 行溢出实例 
+#### 行溢出实例 
 
-### 表初始化 
+##### 表初始化 
 
+```sql
     mysql> CREATE TABLE t (
         -> a VARCHAR(9000)
         -> ) ENGINE=INNODB CHARSET=LATIN1 ROW_FORMAT=REDUNDANT;
@@ -235,7 +236,7 @@ n_fields | 7 | 记录中列的数量
     mysql> INSERT INTO t SELECT REPEAT('a',9000);
     Query OK, 1 row affected (0.05 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -255,7 +256,7 @@ n_fields | 7 | 记录中列的数量
 
 行记录的前 768Byte 在 page offset=3 的页中，但由于 9000>8192>行记录最大长度 ，所以将剩余数据放在了 溢出页 ，即 page offset=4 的页中 
 
-### 16进制信息 
+##### 16进制信息 
 
     # Vim,:%!xxd
     # page offset=3
@@ -312,21 +313,21 @@ n_fields | 4 | 记录中列的数量
   * page offset=3 ，前768Byte（ 0xc09e~0xc39d ），在溢出页的长度为 0x2028 ，即 8232
   * page offset=4 为 溢出页 ，存放后8232Byte的数据( 0x1002e~0x12055 )
 
-## Compact 
+#### Compact 
 
 MySQL 5.0 引入， MySQL 5.1 默认ROW_FORMAT 
 
-## 对比Redundant 
+#### 对比Redundant 
 
 1. 减少了大约 20% 的空间
 1. 在某些操作下会增加 CPU 的占用
 1. 在 典型 的应用场景下，比Redundant快
 
-## 格式 
+#### 格式 
 
 ![][6]
 
-### 变长字段长度列表 
+##### 变长字段长度列表 
 
 1. 条件 
   * VARCHAR 、 BLOB 等
@@ -334,13 +335,13 @@ MySQL 5.0 引入， MySQL 5.1 默认ROW_FORMAT
 1. 放置排序： 逆序
 1. 用 2Byte 存储的情况：需要用 溢出页 ； 最大长度 超过 255Byte ； 实际长度 超过 127Byte
 
-### NULL标志位 
+##### NULL标志位 
 
 1. 行记录中是否有NULL值，是一个位向量（ Bit Vector ）
 1. 可为NULL的列数量为N，则该标志位占用的 CEILING(N/8)Byte
 1. 列为NULL时 不占用实际空间
 
-### 记录头信息 
+##### 记录头信息 
 
 名称 | 大小（bit） | 描述 
 -|-|-
@@ -354,12 +355,13 @@ record_type | 3 | 记录类型，000（普通），001（B+Tree节点指针）�
 next_record | 16 | 页中下一条记录的相对位置 
 Total | 40(5Byte) | nothing 
 
-## 实例 
+#### 实例 
 
 行溢出 时的处理方式与 Redundant 类似，这里仅给出 非行溢出 的实例 
 
-### 表初始化 
+##### 表初始化 
 
+```sql
     mysql> CREATE TABLE t (
         -> a VARCHAR(10),
         -> b VARCHAR(10),
@@ -370,7 +372,7 @@ Total | 40(5Byte) | nothing
     
     mysql> INSERT INTO t VALUES ('1','22','22','333'),('4',NULL,NULL,'555');                                                               Query OK, 2 rows affected (0.02 sec)
     Records: 2  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -389,7 +391,7 @@ Total | 40(5Byte) | nothing
 
 行记录在 page offset=3 的页中 
 
-### 16进制信息 
+##### 16进制信息 
 
     # Vim,:%!xxd
     # page offset=3
@@ -454,14 +456,15 @@ Total | 40(5Byte) | nothing
 1. d（ 35 35 35 ） 
   * 字符 555 ，VARCHAR(10)， 3个字符 只占用了 3Byte
 
-## Dynamic和Compressed 
+#### Dynamic和Compressed 
 
 1. Dynamic 和 Compressed 是 Compact 的变种形式
 1. Compressed 会对存储在其中的行数据会以 zlib 的算法进行压缩，对 BLOB 、 TEXT 、 VARCHAR 这类 大长度类型 的数据能够进行非常有效的存储
 1. Dynamic （或 Compressed ）与 Compact （或 Redundant ）比较大的差异是 行溢出 的处理方式，下面是 Dynamic行溢出实例
 
-## 表初始化 
+#### 表初始化 
 
+```sql
     mysql> CREATE TABLE t (
         -> a VARCHAR(9000)
         -> ) ENGINE=INNODB CHARSET=LATIN1 ROW_FORMAT=DYNAMIC;
@@ -469,7 +472,7 @@ Total | 40(5Byte) | nothing
     
     mysql> INSERT INTO t SELECT REPEAT('a',9000);                                                                                          Query OK, 1 row affected (0.02 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     $ sudo python py_innodb_page_info.py -v /var/lib/mysql/test/t.ibd
     page offset 00000000, page type <File Space Header>
@@ -487,7 +490,7 @@ Total | 40(5Byte) | nothing
     Uncompressed BLOB Page: 1
     
 
-## 16进制信息 
+#### 16进制信息 
 
     # Vim,:%!xxd
     # page offset=3
@@ -517,15 +520,16 @@ Total | 40(5Byte) | nothing
 1. page offset=3 中没有前缀的 768Byte ， Roll Pointer 后直接跟着 20Byte 的指针
 1. page offset=4 为 溢出页 ，存储实际的数据，范围为 0x1002d~0x12355 ，总共 9000 ，即完全溢出
 
-## UTF8与CHAR 
+#### UTF8与CHAR 
 
 1. Latin1 与 UTF8 代表了两种编码类型，分别是 定长编码 和 变长编码
 1. UTF8 对 CHAR(N) 的的处理方式在 Redundant 和 Compact （或Dynamic、Compressed）中是不一样的 
   * Redundant 中占用 N * Maximum_Character_Byte_Length
   * Compact 中 最小化 占用空间
 
-## Redundant实例 
+#### Redundant实例 
 
+```sql
     mysql> CREATE TABLE t (
         -> a CHAR(10)
         -> ) ENGINE=INNODB CHARSET=UTF8 ROW_FORMAT=REDUNDANT;
@@ -534,7 +538,7 @@ Total | 40(5Byte) | nothing
     mysql> INSERT INTO t SELECT 'a';
     Query OK, 1 row affected (0.00 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     0000c090: 1409 69ae 0000 018d 0110 6120 2020 2020  ..i.......a
     0000c0a0: 2020 2020 2020 2020 2020 2020 2020 2020
@@ -543,8 +547,9 @@ Total | 40(5Byte) | nothing
 
 0xc09a~0xc0b7 总共占用了 30Byte (= 3 *10) 
 
-## Compact实例 
+#### Compact实例 
 
+```sql
     mysql> CREATE TABLE t (
         -> a CHAR(10)
         -> ) ENGINE=INNODB CHARSET=UTF8 ROW_FORMAT=REDUNDANT;
@@ -553,7 +558,7 @@ Total | 40(5Byte) | nothing
     mysql> INSERT INTO t SELECT 'a';
     Query OK, 1 row affected (0.00 sec)
     Records: 1  Duplicates: 0  Warnings: 0
-    
+```
 
     0000c090: 0110 6120 2020 2020 2020 2020 0000 0000  ..a         ....
     

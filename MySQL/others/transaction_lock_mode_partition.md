@@ -152,7 +152,7 @@ MySQL分区优点：
 
 和非分区表设置存储引擎一样，分区表设置存储引擎，只能用[STORAGE] ENGINE字句。如下创建一个使用InnoDB引擎并有6个HASH分区的表：
 
-```
+```sql
 create table emp(empid int,salary decimal(7,2),birth_date DATE)
 engine=innodb
 prrtition by hash(month(birth_date))
@@ -170,7 +170,7 @@ partition 6;
 ####Range分区
 区间连续不能互相重叠，使用`VALUES LESS THAN`操作符进行分区定义。
 
-```
+```sql
 CREATE TABLE emp(
 id int not null,
 ename varchar(30),
@@ -192,7 +192,7 @@ partition by range (store_id)(
 
 MySQL支持在VALUES LESS THAN子句中使用表达式，如：
 
-```
+```sql
 CREATE TABLE emp_date(
 id int not null,
 ename varchar(30),
@@ -215,7 +215,7 @@ RANGE分区功能特别适用于以下情况：
 ####List分区
 LIST分区是建立离散的值来分区，LIST分区是一个枚举列表的值得集合，RANGE分区是一个连续区间值得集合。例如：
 
-```
+```sql
 CREATE TABLE expenses(
 expense_date DATE NOT NULL,
 category INT,
@@ -232,7 +232,7 @@ amount DECIMAL(10,3)
 
 5.5版本支持非整数分区，如：
 
-```
+```sql
 CREATE TABLE expenses(
 	expense_date DATE NOT NULL,
 	category VARCHAR(30),
@@ -249,7 +249,7 @@ CREATE TABLE expenses(
 ####Columns分区
 Columns分区在MySQL5.5引入的分区类型，结局了RANGE和LIST只支持整数分区的问题，除此之外，Columns分区还支持多列分区。如：
 
-```
+```sql
 CREATE TABLE rc3(
 	a INT,
 	b INT
@@ -268,7 +268,7 @@ PARTITION BY RANGE COLUMNS(a,b)(
 ####Hash分区
 HASH分区主要用来分散**热点度**，确保数据在预先确定个数的分区中尽可能平均分布。MySQL支持**常规HASH分区**和**线性HASH分区**，常规使用取模算法，线性使用一个线性的2的幂的运算法则。如：
 
-```
+```sql
 CREATE TABLE emp(
 	id INT NOT NULL,
 	ename VARCHAR(30),
@@ -286,7 +286,7 @@ PARTITION BY HASH(store_id) PARTITIONS 4;
 ####Key分区
 类似于HASH分区，只不过HASH分区允许使用用户自定义的表达式，而Key分区需要使用MySQL服务器提供的HASH函数；KEY分区支持除BLOB or Text类型外其他类型的列作为分区键。如：
 
-```
+```sql
 CREATE TABLE emp(
 	id int not null,
 	ename varchar(30),
@@ -303,7 +303,7 @@ PARTITION BY KEY(job) PARTITIONS 4;
 ####子分区和分区中处理NULL值方式
 分区表中对每个分区的再次分割，即复合分区。适合保存非常大量的数据记录。如：
 
-```
+```sql
 CREATE TABLE ts(id int,purchased date)
 partition by range(year(purchased))
 subpartition by hash(to_days(purchased))
@@ -324,7 +324,7 @@ MySQL提供添加、删除、重定义、合并、拆分分区命令。
 	- 增加分区：`ALTER TABLE tbl_name ADD PARTITION(expr)`
 	- 重新定义分区：`ALTER TABLE REORGANIZE PARTITION INFO`
 
-	```
+	```sql
 	删除分区：
 	alter table emp_date drop partition p2;
 	增加分区：
@@ -339,10 +339,10 @@ MySQL提供添加、删除、重定义、合并、拆分分区命令。
 	
 >重新定义分区只能重新定义相邻的分区，重新定义的分区区间必须和原来分区区间覆盖相同，也不能使用重新定义分区来改变表分区的类型。
 
-####HASH & KEY分区
+#### HASH & KEY分区
 修改操作：`ALTER TABLE COALESCE PARTITION`
 
-```
+```sql
 减少分区：
 alter table emp coalesce partition 2
 增加8个分区：

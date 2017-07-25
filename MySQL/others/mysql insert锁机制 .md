@@ -23,7 +23,7 @@
 如下，仅仅只列出个别比较重要的参数。
 
 ### 1.数据库版本
-```
+```sql
 mysql> select version();
 +-----------+
 | version() |
@@ -32,7 +32,7 @@ mysql> select version();
 +-----------+
 ```
 ### 2. 数据库引擎
-```
+```sql
 mysql> show variables like '%engine%';
 +----------------------------+--------+
 | Variable_name              | Value  |
@@ -46,7 +46,7 @@ mysql> show variables like '%engine%';
 **注**：InnoDB支持事务，Myisam不支持事务；InnoDB支持行锁和表锁；Myisam不支持行锁。
 
 ### 3. 事务隔离级别
-```
+```sql
 mysql> select @@global.tx_isolation, @@session.tx_isolation, @@tx_isolation;
 +-----------------------+------------------------+-----------------+
 | @@global.tx_isolation | @@session.tx_isolation | @@tx_isolation  |
@@ -57,7 +57,7 @@ mysql> select @@global.tx_isolation, @@session.tx_isolation, @@tx_isolation;
 **注**：几种事务隔离级别：READ UNCOMMITTED | READ COMMITTED | REPEATABLE READ | SERIALIZABLE
 
 ### 4. 查看gap锁开启状态
-```
+```sql
 mysql> show variables like 'innodb_locks_unsafe_for_binlog';
 +--------------------------------+-------+
 | Variable_name                  | Value |
@@ -81,7 +81,7 @@ innodb_locks_unsafe_for_binlog：默认值为0，即启用gap lock。
 > The effect of enabling innodb_locks_unsafe_for_binlog is similar to but not identical to setting the transaction isolation level to READ COMMITTED.
 
 ### 5. 查看自增锁模式
-```
+```sql
 mysql> show variables like 'innodb_autoinc_lock_mode';
 +--------------------------+-------+
 | Variable_name            | Value |
@@ -245,7 +245,7 @@ Insert Intention Locks的引入，我理解是为了提高数据插入的并发�
 这个场景主要发生在两个以上的事务同时进行唯一键值相同的记录插入操作。
 
 #### 表结构
-```
+```sql
 CREATE TABLE `aa` (
   `id` int(10) unsigned NOT NULL COMMENT '主键',
   `name` varchar(20) NOT NULL DEFAULT '' COMMENT '姓名',
@@ -257,7 +257,7 @@ CREATE TABLE `aa` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 #### 表数据
-```
+```sql
 mysql> select * from aa;
 +----+------+-----+-------+
 | id | name | age | stage |
@@ -287,7 +287,7 @@ rollback; |-|-
 #### 事务锁占用情况
 
 T1 rollback前，各事务锁占用情况：
-```
+```sql
 mysql> select * from information_schema.innodb_locks;
 +--------------+-------------+-----------+-----------+-------------+------------+------------+-----------+----------+-----------+
 | lock_id      | lock_trx_id | lock_mode | lock_type | lock_table  | lock_index | lock_space | lock_page | lock_rec | lock_data |
@@ -355,7 +355,7 @@ T1回滚释放索引id=6上的排他记录锁(LOCK_X | LOCK_REC_NOT_GAP)，T2和
 ### 2. GAP与Insert Intention冲突引发的死锁
 
 #### 表结构
-```
+```sql
 CREATE TABLE `t` (
   `a` int(11) NOT NULL,
   `b` int(11) DEFAULT NULL,
@@ -365,7 +365,7 @@ CREATE TABLE `t` (
 
 ```
 #### 表数据
-```
+```sql
 mysql> select * from t;
 +----+------+
 | a  | b    |
@@ -392,7 +392,7 @@ Query OK, 1 row affected (5.45 sec) |-
 
 T2 insert前，各事务锁占用情况：
 
-```
+```sql
 mysql> select * from information_schema.innodb_locks;
 +--------------+-------------+-----------+-----------+------------+------------+------------+-----------+----------+-----------+
 | lock_id      | lock_trx_id | lock_mode | lock_type | lock_table | lock_index | lock_space | lock_page | lock_rec | lock_data |
