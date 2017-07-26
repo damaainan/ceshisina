@@ -1,0 +1,1 @@
+seq -w 3 25 | awk '{system("cat 02.php > "$0".php")}'
