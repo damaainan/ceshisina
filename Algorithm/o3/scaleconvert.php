@@ -25,7 +25,7 @@ function scaleconvert($input,$output_scale){
             $stack=new StackLinked();
             while($a!=0){
                 $mod=$a % $output_scale;
-                $stack--->getPushStack($mod);
+                $stack->getPushStack($mod);
                 $a=(int)($a-$mod)/$output_scale;
             }
             $elems=$stack->getAllPopStack();

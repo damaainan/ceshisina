@@ -61,6 +61,7 @@ r 数组存储排好序的 a 数组
 
 我们先来看看主函数部分：
 
+```php
     //交换函数
     function swap(array &$arr,$a,$b){
         $temp = $arr[$a];
@@ -74,12 +75,13 @@ r 数组存储排好序的 a 数组
         $end = count($arr) - 1;
         MSort($arr,$start,$end);
     }
-
+```
 
 在总函数中，我们只调用了一个 MSort() 函数，因为我们要使用递归调用，所以将 MSort() 封装起来。
 
 下面我们来看看 MSort() 函数：
 
+```php
     function MSort(array &$arr,$start,$end){
         //当子序列长度为1时，$start == $end，不用再分组
         if($start < $end){
@@ -89,12 +91,13 @@ r 数组存储排好序的 a 数组
             Merge($arr,$start,$mid,$end);       //将$arr[$start - $mid]部分和$arr[$mid+1 - $end]部分合并起来成为有序的$arr[$start - $end]
         }
     }
-
+```
 
 上面的 MSort() 函数实现将数组分半再分半（直到子序列长度为1），然后将子序列合并起来。
 
 现在是我们的归并操作函数 Merge() :
 
+```php
     //归并操作
     function Merge(array &$arr,$start,$mid,$end){
         $i = $start;
@@ -124,7 +127,7 @@ r 数组存储排好序的 a 数组
             $arr[$i] = $temparr[$i];
         }
     }
-
+```
 
 到了这里，我们的归并算法就完了。我们调用试试：
 

@@ -92,6 +92,7 @@ PS：在这里我们介绍的基数排序我们采用 LSD（最低位优先）�
 还是看代码吧。
 
 ## 算法实现：
+
 ```php
     //交换函数
     function swap(array &$arr,$a,$b){
@@ -191,6 +192,7 @@ PS：在这里我们介绍的基数排序我们采用 LSD（最低位优先）�
 
 
 其实这些代码我是在挺早之前写的，今天在写博客的时候发现，其实桶就是一个队列，所以上面的 R_Sort（）函数复杂了，我们使用 array_push() 和 array_shift() 来重写该方法（当然，要模拟队列的话，用 SPL 提供的 splqueue 是最为恰当的，在这里为了简便我就不用了）：
+
 ```php
     function R_Sort(array &$arr,$loop){
         $tempArr = array();
