@@ -89,6 +89,7 @@ $app = new Yaf_Application($config);
 ```
     
 输出
+
 ```php
 object(Yaf_Application)(6) {
 ...
@@ -367,6 +368,7 @@ Yaf_Config_Abstract
 ```
     
 输出
+
 ```php  
      Yaf_Config Object
      (

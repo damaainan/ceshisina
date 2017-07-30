@@ -59,6 +59,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
 ```
     
 在入口文件:
+
 ```php
 <?php
 /* 默认的, Yaf_Application将会读取配置文件中在php.ini中设置的ap.environ的配置节 */
