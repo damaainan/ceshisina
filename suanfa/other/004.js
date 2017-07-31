@@ -10,6 +10,18 @@
         八:8,
         九:9
     };
+    var chnNumChar2 = {
+        0:'零',
+        1:'一',
+        2:'二',
+        3:'三',
+        4:'四',
+        5:'五',
+        6:'六',
+        7:'七',
+        8:'八',
+        9:'九'
+    };
     var chnNameValue = {
         十:{value:10, secUnit:false},
         百:{value:100, secUnit:false},
@@ -17,9 +29,18 @@
         万:{value:10000, secUnit:true},
         亿:{value:100000000, secUnit:true}
     }
-    var chnUnitChar = [
-        "","十","百","千"
-    ];
+
+
+    var chnUnitChar = {
+        0:"",1:"十",2:"百",3:"千"
+    };
+
+    var chnUnitSection = {
+        0:'',
+        1:'万',
+        2:'亿',
+        3:'兆'
+    };
 
     function SectionToChinese(section){
         var strIns = '', chnStr = '';
@@ -30,18 +51,20 @@
             if(v === 0){
                 if(!zero){
                     zero = true;
-                    chnStr = chnNumChar[v] + chnStr;
+                    chnStr = chnNumChar2[v] + chnStr;
                 }
             }else{
                 zero = false;
-                strIns = chnNumChar[v];
+                strIns = chnNumChar2[v];
                 strIns += chnUnitChar[unitPos];
                 chnStr = strIns + chnStr;
             }
             unitPos++;
             section = Math.floor(section / 10);
         }
+        // console.log('chnStr**'+chnStr);
         return chnStr;
+
     }
 
     function NumberToChinese(num){
@@ -55,12 +78,20 @@
     
         while(num > 0){
             var section = num % 10000;
+
+            // console.log('section'+section);
+
             if(needZero){
                 chnStr = chnNumChar[0] + chnStr;
             }
             strIns = SectionToChinese(section);
+            // console.log('strIns1'+strIns);
             strIns += (section !== 0) ? chnUnitSection[unitPos] : chnUnitSection[0];
+            // console.log('strIns2'+strIns);
+
             chnStr = strIns + chnStr;
+            // console.log('chnStr'+chnStr);
+
             needZero = (section < 1000) && (section > 0);
             num = Math.floor(num / 10000);
             unitPos++;
@@ -101,8 +132,8 @@
     }
 
 
-    var nn=ChineseToNumber("一万六千七百三十二");
+    var nn=ChineseToNumber("十二");
     console.log(nn);
 
-    var ss=NumberToChinese(3652897);
+    var ss=NumberToChinese(10);
     console.log(ss);

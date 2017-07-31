@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Knn</title>
+</head>
+<body>
+    <script>
+    {
+        function show(str) {
+            let fn = window.document.write || window.alert || console.log
+            if (fn.name === "write") {
+                window.document.write(str);
+            } else {
+                fn.call(null, str);
+            }
+        }
+
+        //计算欧几里德距离
+        function calcDis(point1, point2) {
+            let dis = 0;
+            if ( point1.length !== point2.length ) {
+                return -1;  
+            }
+            point1.forEach((val, index)=>{
+                dis = dis + Math.abs(point1[index] - point2[index])**2
+            });
+            return Math.sqrt(dis);
+        }
+
+        //获取数据
+        function getData() {
+            let data = {
+                "A类别": {
+                    data: [{
+                        dis: 0,
+                        point: [1.0,2.0]
+                    },{
+                        dis: 0,
+                        point: [1.2,0.1]
+                    }],
+                    count: 0
+                },
+                "B类别": {
+                    data: [{
+                        dis: 0,
+                        point: [0.1,1.4]
+                    },{
+                        dis: 0,
+                        point: [0.3,3.5]
+                    }],
+                    count: 0
+                }
+            }
+            return data;
+        }
+
+        //分类算法
+        function classify(inputData, dataSet, K) {
+            let labelDisObj = [];
+
+            //计算距离
+            for (let label in dataSet) {
+                dataSet[label].data.forEach((data)=>{
+                    data.dis = calcDis(inputData, data.point);
+                    labelDisObj.push({
+                        label: label,
+                        dis: data.dis
+                    });
+                });
+            }
+
+            //从小到大排序
+            labelDisObj.sort((o1, o2)=>{
+                return o1.dis - o2.dis;
+            });
+
+            //计算标签的次数
+            Array.from({length:K}, (v, i) => {
+                dataSet[labelDisObj[i].label].count++;
+            });
+
+            //筛选次数最多的一个标签
+            let maxCount = 0;
+            let classLabel = "";
+            for (let key in dataSet) {
+                let val = dataSet[key];
+                if (val.count > maxCount) {
+                    maxCount = val.count
+                    classLabel = key
+                }
+            }
+
+            return classLabel;
+        }
+
+
+        let testData = [1.1, 0.3];
+        let K = 3;
+        let label = classify(testData, getData(), K);
+        show("测试数据："+ testData + " 更接近: " + label);
+
+    }
+    </script>
+</body>
+</html>
