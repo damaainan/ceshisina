@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body{
+            background-color: black;
+        }
+        canvas{
+            background: #fff;
+        }
+    </style>
+    <title>Title</title>
+    <script>
+        window.onload = function(){
+            var oC = document.querySelector("#c");
+            var oGc = oC.getContext("2d");
+            oGc.fillRect(0,0,100,100);
+
+            var rectData = oGc.getImageData(0,0,100,100);
+            var w = rectData.width;
+            var h = rectData.height;
+
+
+            var dataC = randomData(w*h,w*h/10);
+            var newData = oGc.createImageData(w,h);
+
+            var iNum = 0;
+
+            var timer = setInterval(function () {
+                for(var j=0;j<dataC[iNum].length;j++){
+                    newData.data[4*dataC[iNum][j]]=rectData.data[4*dataC[iNum][j]];
+                    newData.data[4*dataC[iNum][j]+1]=rectData.data[4*dataC[iNum][j]+1];
+                    newData.data[4*dataC[iNum][j]+2]=rectData.data[4*dataC[iNum][j]+2];
+                    newData.data[4*dataC[iNum][j]+3]=rectData.data[4*dataC[iNum][j]+3];
+
+                }
+                oGc.putImageData(newData,w,h);
+
+                if(iNum<9){
+                    iNum++;
+                }
+                else{
+                    iNum=0;
+                    oGc.clearRect(w,h,w,h);
+                    for(var i=0;i<newData.data.length;i++){
+                        newData.data[i]=0;
+                    }
+                }
+            },200);
+
+
+            function randomData(allNum,nowNum) {
+                var dataA = [];
+                var dataB = [];
+                for(var i=0;i<allNum;i++){
+                    dataA.push(i);
+                }
+
+                for(var i=0;i<allNum/nowNum;i++){
+                    var otherData = [];
+                    for(var j=0;j<nowNum;j++){
+                        otherData.push(dataA.splice(Math.floor(Math.random()*dataA.length),1));
+                    }
+                    dataB.push(otherData);
+                }
+                return dataB;
+            }
+
+        }
+    </script>
+</head>
+<body>
+<canvas id="c" width="400" height="400"></canvas>
+</body>
+</html>
