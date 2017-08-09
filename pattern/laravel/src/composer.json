@@ -1,0 +1,9 @@
+{
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "AbstractFactory\\": "01AbstractFactory/",
+            "Builder\\": "02Builder/"
+        }
+    }
+}
