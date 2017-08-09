@@ -1,4 +1,5 @@
 #mysql中的运算符和常用函数
+
 ##运算符
 类型：算术、比较、逻辑和位运算符
 
@@ -21,14 +22,15 @@
 <=> |NULL安全的等于，可用于NULL比较
 <   |
 <=  |
->   |
->=  |
+\>   |
+\>=  |
 BETWEEN|存在于指定范围（>= and <=）
 IN  |存在于指定集合
 IS NULL |
 IS NOT NULL |
 LIKE |模糊匹配（“*”匹配一个，“%”匹配多个）
 REGEXP或RLIKE |正则匹配，用法类似于LIKE
+
 >比较运算符可比较数字、字符串和表达式。数字作浮点数比较，字符串以不区分大小写的方式比较。
 
 - 逻辑运算符
@@ -48,7 +50,7 @@ XOR | 异或
 \|  |位或
 ^ |位亦或
 ~ |位取反（~1）
->> |位右移
+\>\> |位右移
 << |位左移
 
 ##常用函数
@@ -124,6 +126,7 @@ MINUTE_SECOND|分钟和秒|mm:ss
 	
 	select now() current,date_add(now(),interval -31 day) after31days,date_add(now(),interval '-1_-2' year_month) after_oneyear_twomonth;
 	
+
 >mysql的日期函数在程序需要处理日期间隔，加减时还是很实用的。日期字符串虽然可以直接比较。
 
 - 流程函数
@@ -146,4 +149,4 @@ INET_NTOA(num)|数字代表的IP地址，比较IP地址时使用
 PASSWORD(str)|字符串str的加密版本
 MD5()|字符串str的MD5值
 
->遇到不明白的函数时记得使用*终极大招***`? func_name`**
+>遇到不明白的函数时记得使用 *终极大招*  **`? func_name`**
