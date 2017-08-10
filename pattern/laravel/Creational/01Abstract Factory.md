@@ -400,7 +400,7 @@ class AbstractFactoryTest extends \PHPUnit_Framework_TestCase
 [0]: http://laravelacademy.org/post/2471.html
 [1]: http://laravelacademy.org/post/author/nonfu
 [2]: http://laravelacademy.org/tags/%e6%8a%bd%e8%b1%a1%e5%b7%a5%e5%8e%82%e6%a8%a1%e5%bc%8f
-[3]: http://laravelacademy.org/wp-content/uploads/2015/12/78bd6487-a8c4-443c-a6c7-7f8aa13ff4c3.png
+[3]: ../img/78bd6487-a8c4-443c-a6c7-7f8aa13ff4c3.png
 [4]: http://laravelacademy.org/tags/%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f
 [5]: http://laravelacademy.org/tags/%e4%be%9d%e8%b5%96%e5%80%92%e7%bd%ae    
 [6]: http://laravelacademy.org/tags/php

@@ -3,7 +3,13 @@
     "autoload": {
         "psr-4": {
             "AbstractFactory\\": "01AbstractFactory/",
-            "Builder\\": "02Builder/"
+            "Builder\\": "02Builder/",
+            "FactoryMethod\\": "03FactoryMethod/",
+            "Pool\\": "05Object Pool/",
+            "Prototype\\": "06Prototype/",
+            "SimpleFactory\\": "07Simple Factory/",
+            "Singleton\\": "08Singleton/",
+            "StaticFactory\\": "09Static Factory/"
         }
     }
 }

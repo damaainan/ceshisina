@@ -6,6 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'StaticFactory\\' => array($baseDir . '/09Static Factory'),
+    'Singleton\\' => array($baseDir . '/08Singleton'),
+    'SimpleFactory\\' => array($baseDir . '/07Simple Factory'),
+    'Prototype\\' => array($baseDir . '/06Prototype'),
+    'Pool\\' => array($baseDir . '/05Object Pool'),
+    'FactoryMethod\\' => array($baseDir . '/03FactoryMethod'),
     'Builder\\' => array($baseDir . '/02Builder'),
     'AbstractFactory\\' => array($baseDir . '/01AbstractFactory'),
 );
