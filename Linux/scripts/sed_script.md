@@ -166,3 +166,18 @@ done
     sed -i 's@\[\!\[.*\]@@' 10.md #先去除前面部分
 
     awk '/.\/img/{print $1}' 10.md  | xargs -i} sed  -i "s@}$@\![]}@" 10.md  #再加 ![]
+
+**重点在 sed 替换**
+
+    awk -F'(' '/cnitblog/{sub(")","",$3);print $3}' 04-1.md | xargs -I} sed -i "s@^.*}.*$@!\[\]\(}\)@" 04-1.md
+
+    awk -F'(' '/images.cnitblog/{sub(")","",$2);print $2}' *.md | awk '!a[$0]++' | xargs -i[ aria2c [
+
+**`sed -i "s@^.*}.*$@!\[\]\(}\)@"`**    `^.*}.*$`  开头结尾最重要
+
+    awk -F'(' '/images.cnitblog/{sub(")","",$2);print $2}' *.md | awk '!a[$0]++' |  awk -F'/' '{print $NF}' | xargs -I} sed -i "s@^.*}.*$@!\[\]\(../img/}\)@" *.md
+
+
+###### sed：使用查找时如何将整行替换，而不仅仅替换匹配到的部分呢
+
+    sed "s/^.*do.*$/bad/" test
