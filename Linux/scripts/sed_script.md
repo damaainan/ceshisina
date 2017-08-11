@@ -181,3 +181,16 @@ done
 ###### sed：使用查找时如何将整行替换，而不仅仅替换匹配到的部分呢
 
     sed "s/^.*do.*$/bad/" test
+
+##### sed 在匹配行的上一行添加字符串    `i\str` 
+
+     sed  -i '/\?php/i\```php' *.md
+
+
+打印匹配行
+
+    sed -n '/\[\{0,1\}PHP\]\{0,1\}\[\{0,1\}[0-9]\{0,1\}\]\{0,1\}Unit_Framework_TestCase/p' *.md
+
+替换匹配内容，注意 `\`  需要用 `\\\` 实现
+
+     sed -i 's@\[\{0,1\}PHP\]\{0,1\}\[\{0,1\}[0-9]\{0,1\}\]\{0,1\}Unit_Framework_TestCase@PHPUnit\\\Framework\\\TestCase@' *.md

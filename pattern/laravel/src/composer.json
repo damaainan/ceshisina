@@ -20,7 +20,20 @@
             "FluentInterface\\" : "17Fluent Interface/",
             "Proxy\\" : "18Proxy/",
             "Registry\\" : "19Registry/",
-            "Flyweight\\" : "20Flyweight/"
+            "Flyweight\\" : "20Flyweight/",
+            "ChainOfResponsibilities\\" : "21Chain Of Responsibilities/",
+            "Command\\" : "22Command/",
+            "Iterator\\" : "23Iterator/",
+            "Mediator\\" : "24Mediator/",
+            "Memento\\" : "25Memento/",
+            "NullObject\\" : "26Null Object/",
+            "Observer\\" : "27Observer/",
+            "Specification\\" : "28Specification/",
+            "State\\" : "29State/",
+            "Strategy\\" : "30Strategy/",
+            "Template Method\\" : "31Template Method/",
+            "Visitor\\" : "32Visitor/"
         }
     }
 }
+
