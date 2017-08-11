@@ -13,21 +13,41 @@ class ComposerStaticInit26956d4b4d7fb6298e05acc86ee7f3c8
             'Singleton\\' => 10,
             'SimpleFactory\\' => 14,
         ),
+        'R' => 
+        array (
+            'Registry\\' => 9,
+        ),
         'P' => 
         array (
+            'Proxy\\' => 6,
             'Prototype\\' => 10,
             'Pool\\' => 5,
         ),
         'F' => 
         array (
+            'Flyweight\\' => 10,
+            'FluentInterface\\' => 16,
             'FactoryMethod\\' => 14,
+            'Facade\\' => 7,
+        ),
+        'D' => 
+        array (
+            'DependencyInjection\\' => 20,
+            'Decorator\\' => 10,
+            'DataMapper\\' => 11,
+        ),
+        'C' => 
+        array (
+            'Composite\\' => 10,
         ),
         'B' => 
         array (
             'Builder\\' => 8,
+            'Bridge\\' => 7,
         ),
         'A' => 
         array (
+            'Adapter\\' => 8,
             'AbstractFactory\\' => 16,
         ),
     );
@@ -45,6 +65,14 @@ class ComposerStaticInit26956d4b4d7fb6298e05acc86ee7f3c8
         array (
             0 => __DIR__ . '/../..' . '/07Simple Factory',
         ),
+        'Registry\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/19Registry',
+        ),
+        'Proxy\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/18Proxy',
+        ),
         'Prototype\\' => 
         array (
             0 => __DIR__ . '/../..' . '/06Prototype',
@@ -53,13 +81,49 @@ class ComposerStaticInit26956d4b4d7fb6298e05acc86ee7f3c8
         array (
             0 => __DIR__ . '/../..' . '/05Object Pool',
         ),
+        'Flyweight\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/20Flyweight',
+        ),
+        'FluentInterface\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/17Fluent Interface',
+        ),
         'FactoryMethod\\' => 
         array (
             0 => __DIR__ . '/../..' . '/03FactoryMethod',
         ),
+        'Facade\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/16Facade',
+        ),
+        'DependencyInjection\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/15Dependency Injection',
+        ),
+        'Decorator\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/14Decorator',
+        ),
+        'DataMapper\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/13Data Mapper',
+        ),
+        'Composite\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/12Composite',
+        ),
         'Builder\\' => 
         array (
             0 => __DIR__ . '/../..' . '/02Builder',
+        ),
+        'Bridge\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/11Bridge',
+        ),
+        'Adapter\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/10Adapter',
         ),
         'AbstractFactory\\' => 
         array (
