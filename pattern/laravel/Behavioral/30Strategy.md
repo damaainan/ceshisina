@@ -232,5 +232,5 @@
 [2]: http://laravelacademy.org/tags/%e7%ae%97%e6%b3%95
 [3]: http://laravelacademy.org/tags/%e7%ad%96%e7%95%a5%e6%a8%a1%e5%bc%8f
 [4]: http://laravelacademy.org/tags/strategy
-[5]: http://laravelacademy.org/wp-content/uploads/2016/01/Strategy-Design-Pattern-Uml.png
+[5]: ../img/Strategy-Design-Pattern-Uml.png
 [6]: http://laravelacademy.org/tags/php

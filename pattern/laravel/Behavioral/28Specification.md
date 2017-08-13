@@ -424,5 +424,5 @@
 [1]: http://laravelacademy.org/post/author/nonfu
 [2]: http://laravelacademy.org/tags/%e8%a7%84%e6%a0%bc%e6%a8%a1%e5%bc%8f
 [3]: http://laravelacademy.org/tags/%e7%bb%84%e5%90%88%e6%a8%a1%e5%bc%8f
-[4]: http://laravelacademy.org/wp-content/uploads/2016/01/Specification-Design-Pattern-Uml.png
+[4]: ../img/Specification-Design-Pattern-Uml.png
 [5]: http://laravelacademy.org/tags/php

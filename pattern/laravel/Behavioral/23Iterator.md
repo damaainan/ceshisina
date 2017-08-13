@@ -354,4 +354,4 @@
 [4]: http://laravelacademy.org/tags/%e9%81%8d%e5%8e%86
 [5]: http://laravelacademy.org/tags/php
 [6]: http://laravelacademy.org/tags/spl
-[7]: http://laravelacademy.org/wp-content/uploads/2016/01/Iterator-Design-Pattern-UML.png
+[7]: ../img/Iterator-Design-Pattern-UML.png

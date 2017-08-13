@@ -160,7 +160,7 @@
 [0]: http://laravelacademy.org/post/3006.html
 [1]: http://laravelacademy.org/post/author/nonfu
 [2]: http://laravelacademy.org/tags/%e6%a8%a1%e6%9d%bf%e6%96%b9%e6%b3%95%e6%a8%a1%e5%bc%8f
-[3]: http://laravelacademy.org/wp-content/uploads/2016/01/Template-Method-Design-Pattern-Uml.png
+[3]: ../img/Template-Method-Design-Pattern-Uml.png
 [4]: http://laravelacademy.org/tags/php
 [5]: http://laravelacademy.org/tags/%e7%bb%a7%e6%89%bf
 [6]: http://laravelacademy.org/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1

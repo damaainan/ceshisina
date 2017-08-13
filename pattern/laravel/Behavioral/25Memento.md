@@ -322,6 +322,6 @@
 [0]: http://laravelacademy.org/post/2903.html
 [1]: http://laravelacademy.org/post/author/nonfu
 [2]: http://laravelacademy.org/tags/%e5%a4%87%e5%bf%98%e5%bd%95%e6%a8%a1%e5%bc%8f
-[3]: http://laravelacademy.org/wp-content/uploads/2016/01/Memento-Design-Pattern-Uml.png
+[3]: ../img/Memento-Design-Pattern-Uml.png
 [4]: http://laravelacademy.org/tags/%e5%9b%9e%e6%bb%9a
 [5]: http://laravelacademy.org/tags/php

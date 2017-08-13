@@ -235,4 +235,4 @@
 [0]: http://laravelacademy.org/post/2971.html
 [1]: http://laravelacademy.org/post/author/nonfu
 [2]: http://laravelacademy.org/tags/%e7%8a%b6%e6%80%81%e6%a8%a1%e5%bc%8f
-[3]: http://laravelacademy.org/wp-content/uploads/2016/01/State-Design-Pattern-Uml.png
+[3]: ../img/State-Design-Pattern-Uml.png

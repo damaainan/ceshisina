@@ -228,6 +228,6 @@
 [0]: http://laravelacademy.org/post/3024.html
 [1]: http://laravelacademy.org/post/author/nonfu
 [2]: http://laravelacademy.org/tags/%e8%ae%bf%e9%97%ae%e8%80%85%e6%a8%a1%e5%bc%8f
-[3]: http://laravelacademy.org/wp-content/uploads/2016/01/Visitor-Design-Pattern-Uml.png
+[3]: ../img/Visitor-Design-Pattern-Uml.png
 [4]: http://laravelacademy.org/tags/php
 [5]: http://laravelacademy.org/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84

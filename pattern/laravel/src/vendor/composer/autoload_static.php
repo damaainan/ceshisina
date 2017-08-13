@@ -7,9 +7,20 @@ namespace Composer\Autoload;
 class ComposerStaticInit26956d4b4d7fb6298e05acc86ee7f3c8
 {
     public static $prefixLengthsPsr4 = array (
+        'V' => 
+        array (
+            'Visitor\\' => 8,
+        ),
+        'T' => 
+        array (
+            'Template Method\\' => 16,
+        ),
         'S' => 
         array (
+            'Strategy\\' => 9,
             'StaticFactory\\' => 14,
+            'State\\' => 6,
+            'Specification\\' => 14,
             'Singleton\\' => 10,
             'SimpleFactory\\' => 14,
         ),
@@ -22,6 +33,23 @@ class ComposerStaticInit26956d4b4d7fb6298e05acc86ee7f3c8
             'Proxy\\' => 6,
             'Prototype\\' => 10,
             'Pool\\' => 5,
+        ),
+        'O' => 
+        array (
+            'Observer\\' => 9,
+        ),
+        'N' => 
+        array (
+            'NullObject\\' => 11,
+        ),
+        'M' => 
+        array (
+            'Memento\\' => 8,
+            'Mediator\\' => 9,
+        ),
+        'I' => 
+        array (
+            'Iterator\\' => 9,
         ),
         'F' => 
         array (
@@ -39,6 +67,8 @@ class ComposerStaticInit26956d4b4d7fb6298e05acc86ee7f3c8
         'C' => 
         array (
             'Composite\\' => 10,
+            'Command\\' => 8,
+            'ChainOfResponsibilities\\' => 24,
         ),
         'B' => 
         array (
@@ -53,9 +83,29 @@ class ComposerStaticInit26956d4b4d7fb6298e05acc86ee7f3c8
     );
 
     public static $prefixDirsPsr4 = array (
+        'Visitor\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/32Visitor',
+        ),
+        'Template Method\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/31Template Method',
+        ),
+        'Strategy\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/30Strategy',
+        ),
         'StaticFactory\\' => 
         array (
             0 => __DIR__ . '/../..' . '/09Static Factory',
+        ),
+        'State\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/29State',
+        ),
+        'Specification\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/28Specification',
         ),
         'Singleton\\' => 
         array (
@@ -80,6 +130,26 @@ class ComposerStaticInit26956d4b4d7fb6298e05acc86ee7f3c8
         'Pool\\' => 
         array (
             0 => __DIR__ . '/../..' . '/05Object Pool',
+        ),
+        'Observer\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/27Observer',
+        ),
+        'NullObject\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/26Null Object',
+        ),
+        'Memento\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/25Memento',
+        ),
+        'Mediator\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/24Mediator',
+        ),
+        'Iterator\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/23Iterator',
         ),
         'Flyweight\\' => 
         array (
@@ -112,6 +182,14 @@ class ComposerStaticInit26956d4b4d7fb6298e05acc86ee7f3c8
         'Composite\\' => 
         array (
             0 => __DIR__ . '/../..' . '/12Composite',
+        ),
+        'Command\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/22Command',
+        ),
+        'ChainOfResponsibilities\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/21Chain Of Responsibilities',
         ),
         'Builder\\' => 
         array (

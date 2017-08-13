@@ -215,4 +215,4 @@
 [3]: http://laravelacademy.org/tags/php
 [4]: http://laravelacademy.org/tags/splsubject
 [5]: http://laravelacademy.org/tags/splobserver
-[6]: http://laravelacademy.org/wp-content/uploads/2016/01/Observer-Design-Pattern-Uml.png
+[6]: ../img/Observer-Design-Pattern-Uml.png

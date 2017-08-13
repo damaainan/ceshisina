@@ -172,5 +172,5 @@
 [3]: http://laravelacademy.org/tags/%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f
 [4]: http://laravelacademy.org/tags/%e7%a9%ba%e5%af%b9%e8%b1%a1
 [5]: http://laravelacademy.org/tags/null
-[6]: http://laravelacademy.org/wp-content/uploads/2016/01/Null-Object-Design-Pattern-Uml.png
+[6]: ../img/Null-Object-Design-Pattern-Uml.png
 [7]: http://laravelacademy.org/tags/php

@@ -12,7 +12,7 @@ Laravel 中的 [Artisan][3] 命令就使用了命令模式。
 
 ### **2、UML类图**
 
-[![Command-Design-Pattern-UML](http://laravelacademy.org/wp-content/uploads/2016/01/Command-Design-Pattern-UML.png)](http://laravelacademy.org/wp-content/uploads/2016/01/Command-Design-Pattern-UML.png)
+[![Command-Design-Pattern-UML](../img/Command-Design-Pattern-UML.png)](http://laravelacademy.org/wp-content/uploads/2016/01/Command-Design-Pattern-UML.png)
 
 ### **3、示例代码**
 

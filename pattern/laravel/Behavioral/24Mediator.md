@@ -275,5 +275,5 @@
 [0]: http://laravelacademy.org/post/2894.html
 [1]: http://laravelacademy.org/post/author/nonfu
 [2]: http://laravelacademy.org/tags/%e4%b8%ad%e4%bb%8b%e8%80%85%e6%a8%a1%e5%bc%8f
-[3]: http://laravelacademy.org/wp-content/uploads/2016/01/Mediator-Design-Pattern-UML.png
+[3]: ../img/Mediator-Design-Pattern-UML.png
 [4]: http://laravelacademy.org/tags/php
