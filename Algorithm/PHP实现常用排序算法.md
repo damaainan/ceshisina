@@ -467,6 +467,8 @@ O(n + m * n/m*log(n/m)) = O(n + nlogn – nlogm)
 
 ![][20]
 
+![][26]
+
 关于时间复杂度：
 
 (1) 平方阶 (O(n 2 ))排序   
@@ -522,3 +524,4 @@ O(n + m * n/m*log(n/m)) = O(n + nlogn – nlogm)
 [23]: https://gist.github.com/safeie/7d933af80e3980755893
 [24]: https://github.com/damonare/Sorts
 [25]: http://www.yduba.com/biancheng-5692581293.html
+[26]: ./img/1485350382367553.png
