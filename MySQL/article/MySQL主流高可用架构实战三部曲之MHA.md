@@ -1,5 +1,7 @@
 # 企业中MySQL主流高可用架构实战三部曲之MHA
 
+<font face=微软雅黑>
+
  时间 2017-07-27 17:05:27  51CTO推荐博文
 
 原文[http://sumongodb.blog.51cto.com/4979448/1951495][1]
@@ -586,6 +588,7 @@ MHA搭建演练结束
 
 企业中MySQL高可用主流架构实战三部曲的第一部曲MHA（完结）
 
+</font>
 
 [1]: http://www.tuicool.com/articles/umYZziR
 [3]: ./img/emmEz2u.png
