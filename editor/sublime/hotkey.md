@@ -74,6 +74,7 @@ Ctrl + Shift + T：|恢复刚刚关闭的标签
 屏幕（Screen）  
 F11：|切换普通全屏  
 Shift + F11：|切换无干扰全屏  
+Alt + Shift + 1：|取消分屏  
 Alt + Shift + 2：|进行左右分屏  
 Alt + Shift + 8：|进行上下分屏  
 Alt + Shift + 5：|进行上下左右分屏  分屏之后，使用Ctrl + 数字键跳转到指定屏，使用Ctrl + Shift + 数字键将当前屏移动到指定屏  
