@@ -701,11 +701,11 @@ on表连接条件
 
 3、确认需求里面是否有分组聚合的含义
 
-分组：group by
+分组：`group by`
 
 聚合：聚合函数
 
- 聚合条件过滤 ：having
+ 聚合条件过滤 ：`having`
 
 4、是否需要排序
 
@@ -719,7 +719,7 @@ order by
 
 3、常用函数要过一遍
 
-①日期时间相关的函数
+① 日期时间相关的函数
 
  CURDATE、DATEDIFF、DATE_FORMAT、DAYOFWEEK、LAST_DAY、EXTRACT、STR_TO_DATE
 
@@ -737,7 +737,7 @@ order by
 
 ⑥ 逻辑操作符help Logical operators;
 
-！、and、or，这些常用的要过一遍
+`！`、`and`、`or`，这些常用的要过一遍
 
 ⑦ 杂项函数help Miscellaneous Functions;
 
@@ -798,7 +798,7 @@ order by
 3、not in、not exists可以转换成left join
 
  
-```
+```sql
 
     select * from 学生信息 a where a.stuno not in (select stuno from 选课信息表);
     
@@ -811,7 +811,7 @@ order by
 4、in、exists可以转换成distinct join
 
  
-```
+```sql
 
     select * from 学生信息 a where a.stuno in (select stuno from 选课信息表 b);
     
@@ -984,7 +984,7 @@ union all：结果集不去重
 
 2、update分为下面的几个步骤操作
 
-①找到需要update的数据，此操作取决于where条件
+① 找到需要update的数据，此操作取决于where条件
 
 where条件可以是一个复杂的where条件，比如是一个子查询
 
@@ -994,10 +994,10 @@ where条件可以是一个复杂的where条件，比如是一个子查询
     set grade=‘优等生’
     where a.stuno in (select b.stuno from 成绩表 b group by b.stuno having avg(成绩)>=75);
 
-②set后面的列，也可以很复杂，比如是一个相对子查询
+② set后面的列，也可以很复杂，比如是一个相对子查询
 
  
-```
+```sql
 
     UPDATE players_data pd
     SET number_mat = (
@@ -1107,7 +1107,7 @@ where条件可以是一个复杂的where条件，比如是一个子查询
 示例：产生一个500万行的表(写一个存储过程实现)，对表进行增加列、删除列、修改列的名字、将列的长度变长、将列的长度变短
 
  
-```
+```sql
 
     mysql> delimiter $$
     mysql> create procedure do_big(x int)
@@ -1134,7 +1134,7 @@ where条件可以是一个复杂的where条件，比如是一个子查询
 看一下上面的这些操作，哪些操作时间长、哪些操作时间短，并对其进行初步的原理分析
 
  
-```
+```sql
 
     mysql> insert into test values(123456789);
     
@@ -1309,10 +1309,10 @@ update里面可以有new、old
 
 2、event的核心知识点
 
- ①执行一次
+ ① 执行一次
 
  
-```
+```sql
 
     CREATE EVENT myevent
     ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
@@ -1322,13 +1322,13 @@ update里面可以有new、old
     　　end
 ```
 
- ②周期性执行
+ ② 周期性执行
 
  
-```
+```sql
 
     CREATE EVENT myevent
-    ON SCHEDULE EVERY 1 DAY STARTS STR_TO_DATE(‘2017-05-01 20:00:00’,'yyyy-mm-dd hh24:mi:ss')
+    ON SCHEDULE EVERY 1 DAY STARTS STR_TO_DATE('2017-05-01 20:00:00','yyyy-mm-dd hh24:mi:ss')
     DO
     　　begin
     　　　　UPDATE t1 SET mycol = mycol + 1;
