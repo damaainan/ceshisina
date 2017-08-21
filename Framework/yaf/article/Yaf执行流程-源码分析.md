@@ -1,6 +1,8 @@
 # PHP-Yaf执行流程-源码分析
 
- 作者  [简单方式][0] 关注 2017.02.08 21:09*  字数 1439  
+作者  [简单方式][0] 关注 2017.02.08 21:09  字数 1439 
+
+<font face=微软雅黑>
 
 ### 介绍
 
@@ -15,7 +17,7 @@ Yaf框架是一个c语言编写的PHP框架，是一个以PHP扩展形式提供�
 
 ###### yaf缺点
 
-* 维护成本高，要维护PHP扩展，需要熟练C开发和Zend Api.
+* 维护成本高，要维护PHP扩展，需要熟练`C开发`和`Zend Api`.
 * 目标用户群小，现在国内很多中小型站都是使用虚拟主机，并不能随意的给PHP添加扩展.
 * 不像其他框架一样提供各种丰富功能的类库和各种优雅的写法，它只提供一个MVC的基本骨架.
 
@@ -29,7 +31,7 @@ Yaf框架是一个c语言编写的PHP框架，是一个以PHP扩展形式提供�
 
 ### 流程图说明
 
-在application目录下有个Bootstrap.php文件，这个就是图中的第一个环节，如果存在Bootstrap()就会先执行该文件，该文件包含了一系列的初始化环节，并返回一个Yaf_Application对象，紧接着调用了它的run方法，run里面包含了图中所有环节，run首先是调用路由，路由的主要目的其实就是找到controllers文件，然后执行里面的init和action方法，或者找到所有actions的地址然后加载，在去执行对应的execute方法，如果设置了autoRender在返回的时候会执行render方法，就是view自动渲染，图中有六个双横线标出的环节，就是六个插件方法，用户可以自定义实现这几个方法，然后Yaf框架会在图中相应的步骤处调用对应的HOOK方法。
+在application目录下有个`Bootstrap.php`文件，这个就是图中的第一个环节，如果存在`Bootstrap()`就会先执行该文件，该文件包含了一系列的初始化环节，并返回一个`Yaf_Application`对象，紧接着调用了它的`run方法`，run里面包含了图中所有环节，run **首先** 是`调用路由`，路由的主要目的其实就是找到 **controllers**文件，然后执行里面的`init`和`action`方法，或者找到所有`actions`的地址然后加载，在去执行对应的execute方法，如果设置了`autoRender`在返回的时候会执行`render`方法，就是`view自动渲染`，图中有六个双横线标出的环节，就是六个插件方法，用户可以自定义实现这几个方法，然后Yaf框架会在图中相应的步骤处调用对应的HOOK方法。
 
 #### Yaf框架目录结构
 
@@ -65,15 +67,16 @@ Yaf框架是一个c语言编写的PHP框架，是一个以PHP扩展形式提供�
 
 * php.ini 配置项
 
-选项名称 默认值 说明 
-yaf.environ product 环境名称, 当用INI作为Yaf的配置文件时, 这个指明了Yaf将要在INI配置中读取的节的名字 
-yaf.library NULL 全局类库的目录路径 
-yaf.cache_config 0 是否缓存配置文件(只针对INI配置文件生效), 打开此选项可在复杂配置的情况下提高性能 
-yaf.name_suffix 1 在处理Controller, Action, Plugin, Model的时候, 类名中关键信息是否是后缀式, 比如UserModel, 而在前缀模式下则是ModelUser 
-yaf.name_separator "" 在处理Controller, Action, Plugin, Model的时候, 前缀和名字之间的分隔符, 默认为空, 也就是UserPlugin, 加入设置为"_", 则判断的依据就会变成:"User_Plugin", 这个主要是为了兼容ST已有的命名规范 
-yaf.forward_limit 5 forward最大嵌套深度 
-yaf.use_namespace 0 开启的情况下, Yaf将会使用命名空间方式注册自己的类, 比如Yaf_Application将会变成Yaf\Application 
-yaf.use_spl_autoload 0 开启的情况下, Yaf在加载不成功的情况下, 会继续让PHP的自动加载函数加载, 从性能考虑, 除非特殊情况, 否则保持这个选项关闭 
+选项名称 | 默认值 | 说明 
+-|-|-
+yaf.environ | product | 环境名称, 当用INI作为Yaf的配置文件时, 这个指明了Yaf将要在INI配置中读取的节的名字 
+yaf.library | NULL | 全局类库的目录路径 
+yaf.cache_config | 0 | 是否缓存配置文件(只针对INI配置文件生效), 打开此选项可在复杂配置的情况下提高性能 
+yaf.name_suffix | 1 | 在处理Controller, Action, Plugin, Model的时候, 类名中关键信息是否是后缀式, 比如UserModel, 而在前缀模式下则是ModelUser 
+yaf.name_separator | "" | 在处理Controller, Action, Plugin, Model的时候, 前缀和名字之间的分隔符, 默认为空, 也就是UserPlugin, 加入设置为"`_`", 则判断的依据就会变成:"`User_Plugin`", 这个主要是为了兼容ST已有的命名规范 
+yaf.forward_limit | 5 | forward最大嵌套深度 
+yaf.use_namespace | 0 | 开启的情况下, Yaf将会使用命名空间方式注册自己的类, 比如`Yaf_Application`将会变成`Yaf\Application` 
+yaf.use_spl_autoload | 0 | 开启的情况下, Yaf在加载不成功的情况下, 会继续让PHP的自动加载函数加载, 从性能考虑, 除非特殊情况, 否则保持这个选项关闭 
 
     //php.ini
     [Yaf]
@@ -84,20 +87,19 @@ yaf.use_spl_autoload 0 开启的情况下, Yaf在加载不成功的情况下, �
 
 * application.ini 配置项
 
-选项名称 默认值 说明 
-application.ext php PHP脚本的扩展名 
-application.bootstrap Bootstr
-application.php Bootstrap路径(绝对路径) 
-application.library 
-application.directory + "/library" 本地(自身)类库的绝对目录地址 
-application.baseUri NULL 在路由中,需要忽略的路径前缀,一般不需要设置,Yaf会自动判断. 
-application.dispatcher.defaultModule index 默认的模块 
-application.dispatcher.throwException True 在出错的时候, 是否抛出异常 
-application.dispatcher.catchException False 是否使用默认的异常捕获Controller, 如果开启, 在有未捕获的异常的时候,控制权会交给ErrorController的errorAction方法, 可以通过$request->getException()获得此异常对象 
-application.dispatcher.defaultController index 默认的控制器 
-application.dispatcher.defaultAction index 默认的动作 
-application.view.ext phtml 视图模板扩展名 
-application.modules modules 声明存在的模块名,请注意,如果你要定义这个值,一定要定义Index Module 
+选项名称 | 默认值 | 说明 
+-|-|-
+application.ext | php | PHP脚本的扩展名 
+application.bootstrap | Bootstrapplication.php  | Bootstrap路径(绝对路径) 
+application.library | application.directory+"/library" | 本地(自身)类库的绝对目录地址 
+application.baseUri | NULL | 在路由中,需要忽略的路径前缀,一般不需要设置,Yaf会自动判断. 
+application.dispatcher.defaultModule | index | 默认的模块 
+application.dispatcher.throwException | True | 在出错的时候,是否抛出异常 
+application.dispatcher.catchException | False | 是否使用默认的异常捕获Controller,如果开启,在有未捕获的异常的时候, 控制权会交给ErrorController的errorAction方法, 可以通过$request->getException()获得此异常对象 
+application.dispatcher.defaultController | index | 默认的控制器 
+application.dispatcher.defaultAction | index | 默认的动作 
+application.view.ext | phtml | 视图模板扩展名 
+application.modules | modules | 声明存在的模块名, 请注意,如果你要定义这个值,一定要定义Index Module 
 
     //application.ini
     [mysql]
@@ -243,22 +245,24 @@ application.modules modules 声明存在的模块名,请注意,如果你要定�
 
 > Action.php 类文件
 
-```php
       Class One_Action extends Yaf_Action_Abstract{
              public function execute(){
     
              }
       }
-```
 
 > Model 类文件
 
+```php
         class Base_Model {
               public function getDataList(){
               }
         }
+```
 
-注意： Yaf并没有实现Model层，需要自己实现或者调用现成的Model库.### 扩展-核心功能模块实现
+注意： Yaf并没有实现Model层，需要自己实现或者调用现成的Model库.
+
+### 扩展-核心功能模块实现
 
 > 扩展 Yaf_Application 类注册
 
@@ -324,12 +328,11 @@ application.modules modules 声明存在的模块名,请注意,如果你要定�
         {NULL, NULL, NULL}
     };
 ```
-
 上面这个就是在扩展里面注册一个类的实现，Yaf其他的类文件在注册类的时候也几乎和上面方式一致，具体看下源码就可以了，下面将从实例化一个Yaf_Application类开始分析。
 
 > 扩展 Yaf_Application 类构造函数 __construct 实现
 
-```c++
+```c
     PHP_METHOD(yaf_application, __construct) {
         yaf_config_t          *zconfig;
         yaf_request_t          *request;
@@ -452,7 +455,6 @@ application.modules modules 声明存在的模块名,请注意,如果你要定�
 
 > PHP_METHOD(Yaf_application, bootstrap) 扩展实现 
 
-
 ```c
     PHP_METHOD(yaf_application, bootstrap) {
         char            *bootstrap_path;
@@ -535,7 +537,6 @@ application.modules modules 声明存在的模块名,请注意,如果你要定�
     }
 ```
 
-
 > PHP_METHOD(yaf_application, run) 扩展实现 
 
 ```c
@@ -573,6 +574,7 @@ yaf_dispatcher_dispatch() 方法里面主要分两部分，路由+分发，其�
 
 > 扩展中插件方法名用宏表示
 
+```c
     #define YAF_PLUGIN_HOOK_ROUTESTARTUP                "routerstartup"
     #define YAF_PLUGIN_HOOK_ROUTESHUTDOWN             "routershutdown"
     #define YAF_PLUGIN_HOOK_LOOPSTARTUP                "dispatchloopstartup"
@@ -580,6 +582,7 @@ yaf_dispatcher_dispatch() 方法里面主要分两部分，路由+分发，其�
     #define YAF_PLUGIN_HOOK_POSTDISPATCH                "postdispatch"
     #define YAF_PLUGIN_HOOK_LOOPSHUTDOWN                "dispatchloopshutdown"
     #define YAF_PLUGIN_HOOK_PRERESPONSE                "preresponse"
+```
 
 > yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher TSRMLS_DC)
 
@@ -708,6 +711,7 @@ yaf_dispatcher_dispatch() 方法里面主要分两部分，路由+分发，其�
         return 0;
     }
 ```
+
 这段代码是路由环节的入口，dispatcher初始化时会创建内置路由器，这里只涉及路由器概念，上面的自定义并不是自定义路由协议，而是你可以重新写一个路由器，我们通常在项目中自定义路由协议就可以了，没有必要自己实现一个路由器。而且框架中其实也是写死了内置路由器，没有给你set自定义路由器的接口。
 
 > yaf_router_route() 执行路由
@@ -764,7 +768,6 @@ yaf_dispatcher_dispatch() 方法里面主要分两部分，路由+分发，其�
     }
 ```
 
-
 > 内置的路由协议
 
 * [Yaf_Route_Static][2]
@@ -777,12 +780,14 @@ yaf_dispatcher_dispatch() 方法里面主要分两部分，路由+分发，其�
 
 > 上面几种路由协议源代码列表
 
+```c
     yaf_route_static.c
     yaf_route_simple.c
     yaf_route_supervar.c
     yaf_route_rewrite.c
     yaf_route_regex.c
     yaf_route_map.c
+```
 
 无路是哪个路由协议最后功能都是为了设置module，controller，action的名称
 
@@ -1061,7 +1066,6 @@ yaf_dispatcher_dispatch() 方法里面主要分两部分，路由+分发，其�
 
 > yaf_dispatcher_get_action() 获取 action 类
 
-
 ```c
     zend_class_entry * yaf_dispatcher_get_action(char *app_dir, yaf_controller_t *controller, char *module, int def_module, char *action, int len TSRMLS_DC) {
         zval **ppaction, *actions_map;
@@ -1231,8 +1235,7 @@ yaf_dispatcher_dispatch() 方法里面主要分两部分，路由+分发，其�
 
 > PHP_METHOD(yaf_loader, autoload) 自动加载器
 
-
-```
+```c
     PHP_METHOD(yaf_loader, autoload) {
         char *class_name, *origin_classname, *app_directory, *directory = NULL, *file_name = NULL;
     #ifdef YAF_HAVE_NAMESPACE
@@ -1541,13 +1544,12 @@ yaf_dispatcher_dispatch() 方法里面主要分两部分，路由+分发，其�
     }
 ```
 
-
 ### 结束
 
 上面介绍的大致就是 Yaf 框架一个运行流程，并且把框架的主要代码都分析了一遍，可以以此作为引导，在阅读分析源码的时候可以边看源码边对照 [Yaf 框架官方文档][8] 或者在用Yaf框架搭建一个环境，运行下，在对照源码分析即可。
 
 [0]: http://www.jianshu.com/u/9642a0c8db39
-[1]: http://upload-images.jianshu.io/upload_images/2416964-dfe73ae94e387775.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240
+[1]: ../img/2416964-dfe73ae94e387775.png
 [2]: http://www.laruence.com/manual/yaf.routes.static.html
 [3]: http://www.laruence.com/manual/yaf.routes.static.html#yaf.routes.simple
 [4]: http://www.laruence.com/manual/yaf.routes.static.html#yaf.routes.supervar

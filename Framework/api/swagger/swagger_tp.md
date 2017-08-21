@@ -131,6 +131,38 @@ class SimplePetsController extends Controller
 
 ```
 
+-----
+
+```
+     *     @SWG\Response(
+     *         response=200,
+     *         description="pet response",
+     *         @SWG\Schema(
+     *             type="array",
+     *             @SWG\Items(ref="#/definitions/Pet")
+     *         ),
+     *     ),
+
+```
+改为
+
+```
+     *     @SWG\Response(
+     *         response=200,
+     *         description="pet response",
+     *         @SWG\Schema(
+     *             type="array",ref="#/definitions/Pet"
+     *         ),
+     *     ),
+
+```
+
+##### `@SWG\Items(ref="#/definitions/Pet")` 改为 `ref="#/definitions/Pet"`   
+即可显示返回对象的详细内容
+
+
+----
+
 执行命令
 
     php vendor\zircote\swagger-php\bin\swagger Interface\Lib -o Public\swagger-doc\
