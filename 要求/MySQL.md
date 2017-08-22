@@ -18,6 +18,9 @@
 
 ### 架构
 1. 主从架构/读写分离
+2. MM+keepalived -- 双主配合keepalived
+3. MHA -- MasterHigh Availability Manager and Toolsfor MySQL
+4. PXC -- percona xtraDB cluster
 
 ### 中间件
 
@@ -34,7 +37,7 @@
 ##### 函数
 
 
-##### 
+##### 压力测试
 
 
 </font>

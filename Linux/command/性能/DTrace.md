@@ -16,7 +16,7 @@ I've been adding BPF-based tracing tools to the open source [bcc][1] project (th
 
 Tracing new processes:
 
-    # **execsnoop**
+    # execsnoop
     PCOMM            PID    RET ARGS
     bash             15887    0 /usr/bin/man ls
     preconv          15894    0 /usr/bin/preconv -e UTF-8
@@ -31,7 +31,7 @@ Tracing new processes:
 
 Histogram of disk I/O latency:
 
-    # **biolatency -m**
+    # biolatency -m
     Tracing block device I/O... Hit Ctrl-C to end.
     ^C
          msecs           : count     distribution
@@ -46,7 +46,7 @@ Histogram of disk I/O latency:
 
 Tracing common ext4 operations slower than 5 milliseconds:
 
-    # **ext4slower 5**
+    # ext4slower 5
     Tracing ext4 operations slower than 5 ms
     TIME     COMM           PID    T BYTES   OFF_KB   LAT(ms) FILENAME
     21:49:45 supervise      3570   W 18      0           5.48 status.new
@@ -67,7 +67,7 @@ Tracing common ext4 operations slower than 5 milliseconds:
 
 Tracing new active TCP connections (connect()):
 
-    # **tcpconnect**
+    # tcpconnect
     PID    COMM         IP SADDR            DADDR            DPORT
     1479   telnet       4  127.0.0.1        127.0.0.1        23
     1469   curl         4  10.201.219.236   54.245.105.25    80
@@ -78,7 +78,7 @@ Tracing new active TCP connections (connect()):
 
 Tracing DNS latency by tracing getaddrinfo()/gethostbyname() library calls:
 
-    # **gethostlatency**
+    # gethostlatency
     TIME      PID    COMM          LATms HOST
     06:10:24  28011  wget          90.00 www.iovisor.org
     06:10:28  28127  wget           0.00 www.iovisor.org
@@ -92,7 +92,7 @@ Tracing DNS latency by tracing getaddrinfo()/gethostbyname() library calls:
 
 Interval summaries of VFS operations by type:
 
-    # **vfsstat**
+    # vfsstat
     TIME         READ/s  WRITE/s CREATE/s   OPEN/s  FSYNC/s
     18:35:32:       231       12        4       98        0
     18:35:33:       274       13        4      106        0
@@ -102,7 +102,7 @@ Interval summaries of VFS operations by type:
 
 Tracing off-CPU time with kernel and user stack traces (summarized in kernel), for a given PID:
 
-    # **offcputime -d -p 24347**
+    # offcputime -d -p 24347
     Tracing off-CPU time (us) of PID 24347 by user + kernel stack... Hit Ctrl-C to end.
     ^C
     [...]
@@ -134,7 +134,7 @@ Tracing off-CPU time with kernel and user stack traces (summarized in kernel), f
 
 Tracing MySQL query latency (via a USDT probe):
 
-    # **mysqld_qslower `pgrep -n mysqld`**
+    # mysqld_qslower `pgrep -n mysqld`
     Tracing MySQL server queries for PID 14371 slower than 1 ms...
     TIME(s)        PID          MS QUERY
     0.000000       18608   130.751 SELECT * FROM words WHERE word REGEXP '^bre.*n$'
@@ -146,7 +146,7 @@ Tracing MySQL query latency (via a USDT probe):
 
 Using the trace multi-tool to watch login requests, by instrumenting the pam library:
 
-    # **trace 'pam:pam_start "%s: %s", arg1, arg2'**
+    # trace 'pam:pam_start "%s: %s", arg1, arg2'
     TIME     PID    COMM         FUNC             -
     17:49:45 5558   sshd         pam_start        sshd: root
     17:49:47 5662   sudo         pam_start        sudo: root
