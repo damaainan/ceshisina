@@ -10,3 +10,6 @@ $BookTitles->add(3, "Introduction to Graph Theory");
 for ($BookTitles->rewind(); $BookTitles->valid(); $BookTitles->next()) {
     echo $BookTitles->current() . "\n";
 }
+
+
+var_dump($BookTitles);

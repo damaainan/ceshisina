@@ -26,12 +26,12 @@ class LinkedList
             }
             $currentNode->next = $newNode;
         }
-        $this->_totalNode++;
+        $this->_totalNodes++;
         return true;
     }
     public function display()
     {
-        echo "Total book titles: " . $this->_totalNode . "\r\n";
+        echo "Total book titles: " . $this->_totalNodes . "\r\n";
         $currentNode = $this->_firstNode;
         while ($currentNode !== null) {
             echo $currentNode->data . "\r\n";
@@ -49,7 +49,7 @@ class LinkedList
             $this->_firstNode = &$newNode;
             $newNode->next    = $currentFirstNode;
         }
-        $this->_totalNode++;
+        $this->_totalNodes++;
         return true;
     }
 
@@ -77,7 +77,7 @@ class LinkedList
                 if ($currentNode->data === $query) {
                     $newNode->next  = $currentNode;
                     $previous->next = $newNode;
-                    $this->_totalNode++;
+                    $this->_totalNodes++;
                     break;
                 }
                 $previous    = $currentNode;
@@ -98,7 +98,7 @@ class LinkedList
                         $newNode->next = $nextNode;
                     }
                     $currentNode->next = $newNode;
-                    $this->_totalNode++;
+                    $this->_totalNodes++;
                     break;
                 }
                 $currentNode = $currentNode->next;
@@ -115,7 +115,7 @@ class LinkedList
             } else {
                 $this->_firstNode = null;
             }
-            $this->_totalNode--;
+            $this->_totalNodes--;
             return true;
         }
         return false;
@@ -134,7 +134,7 @@ class LinkedList
                     $currentNode  = $currentNode->next;
                 }
                 $previousNode->next = null;
-                $this->_totalNode--;
+                $this->_totalNodes--;
                 return true;
             }
         }
@@ -153,7 +153,7 @@ class LinkedList
                     } else {
                         $previous->next = $currentNode->next;
                     }
-                    $this->_totalNode--;
+                    $this->_totalNodes--;
                     break;
                 }
                 $previous    = $currentNode;

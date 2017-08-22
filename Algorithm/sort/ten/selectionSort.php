@@ -12,7 +12,7 @@ function selectionSort($arr)
     $count = count($arr);
     for ($i = 0; $i < $count - 1; $i++) {
         //找到最小的值
-        $min = $i;
+        $min = $i; // 假设第一个元素最小 ，和剩余其他元素比较
         for ($j = $i + 1; $j < $count; $j++) {
             //由小到大排列
             if ($arr[$min] > $arr[$j]) {
@@ -22,12 +22,12 @@ function selectionSort($arr)
             }
         }
         /*swap$array[$i]and$array[$min]即将当前内循环的最小元素放在$i位置上*/
-        if ($min != $i) {
+        if ($min != $i) { // 最小值非假设值 交换  $arr[$i] = [ $arr[$min], $arr[$min] = $arr[$i] ][0]
             $temp = $arr[$min];
             $arr[$min] = $arr[$i];
             $arr[$i] = $temp;
         }
-    }
+    } // 一直循环直到最后一个
     return $arr;
 
 }
@@ -41,3 +41,5 @@ $selection_end_time = microtime(true);
 $selection_need_time = $selection_end_time - $selection_start_time;
 
 print_r("选择排序耗时:" . $selection_need_time . "<br />");
+
+//选择排序耗时:8.803966999054 

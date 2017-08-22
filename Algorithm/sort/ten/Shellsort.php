@@ -27,14 +27,21 @@ function Shellsort($arr)
 {
     $n=count($arr); //数组长度
 
-    for($gap=floor($n/2);$gap>0;$gap=floor($gap/=2)) //
+
+    // 核心部分 三行代码
+    // 第一层 取尽 gap
+    // 第二层 
+    // 第三层 比较根据 gap 分组的每个序列 相同位置元素的大小
+
+    for($gap=floor($n/2);$gap>0;$gap=floor($gap/=2)) // gap 取 数组长度的一般，向下取整，并且大于 0
     {
-        for($i=$gap;$i<$n;++$i) //根据增量循环
+        for($i=$gap;$i<$n;++$i) //根据增量循环   从 $gap 直到最后
         {
             //以增量为步幅进行查看
-            for( $j=$i-$gap; $j>=0 && $arr[$j+$gap] < $arr[$j]; $j -= $gap)
+            for( $j=$i-$gap; $j>=0 && $arr[$j+$gap] < $arr[$j]; $j -= $gap)   // gap 分组的每个序列 相同位置元素的大小
             {
-                swap($arr[$j],$arr[$j+$gap]);
+                swap($arr[$j],$arr[$j+$gap]);  // 替换两个 相隔 $gap 的元素
+                // $arr[$j]=[ $arr[$j+$gap] , $arr[$j+$gap] = $arr[$j] ][0]
             }
         }
     }
@@ -51,3 +58,5 @@ $shellsort_end_time = microtime(true);
 $shellsort_need_time = $shellsort_end_time - $shellsort_start_time;
 
 print_r("希尔排序耗时:" . $shellsort_need_time . "<br />");
+
+//希尔排序耗时:0.6606240272522

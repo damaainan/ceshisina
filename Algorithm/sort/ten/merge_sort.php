@@ -37,12 +37,45 @@ function al_merge_sort($arr)
     return $arr;
 }
 
+
+    function mergeSort(array $numbers=array()) 
+    {
+        $count = count( $numbers );
+        if( $count <= 1 ) return $numbers;
+
+        // 将数组分成两份 $half = ceil( $count / 2 );
+        
+        $half = ceil( $count / 2 ); // 向上取整 保证 可以分为两块 array_chunk() 最后一个数组的单元数目可能会少于 size 个
+
+        // $half  = ($count >> 1) + ($count & 1);
+        
+        $arr2d = array_chunk($numbers, $half);
+
+        $left  = mergeSort($arr2d[0]); // $left $right 数组内部有序，但相对应位置无序，所以需要按对应位置取出，比较大小
+        $right = mergeSort($arr2d[1]);
+
+        while (count($left) && count($right))
+        {
+            if ($left[0] < $right[0])
+                $reg[] = array_shift($left); // 取出数组开头元素   直到其中一个数组 为空
+            else
+                $reg[] = array_shift($right);
+        }
+        return array_merge($reg, $left, $right);
+    }
+
+
+
+
 $merge_start_time = microtime(true);
 
-$merge_sort = al_merge_sort($arr);
+// $merge_sort = al_merge_sort($arr);
+$merge_sort = mergeSort($arr);
 
 $merge_end_time = microtime(true);
 
 $merge_need_time = $merge_end_time - $merge_start_time;
 
-print_r("并归排序耗时:" . $merge_need_time . "<br />");
+print_r("归并排序耗时:" . $merge_need_time . "<br />");
+
+//归并排序耗时:1.0002410411835  1s左右
