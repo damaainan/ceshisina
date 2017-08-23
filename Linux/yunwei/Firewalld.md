@@ -1,10 +1,9 @@
 # Linux防火墙设置之FirewallD
 
- 时间 2016-12-05 20:41:05  [标点符][0]
+ 时间 2016-12-05 20:41:05 
 
-_原文_[https://www.biaodianfu.com/firewalld.html][1]
+原文[https://www.biaodianfu.com/firewalld.html][1]
 
- 主题 [iptables][2][防火墙][3][Linux][4]
 
 centos从7.0 开始将原先的防火墙iptables换成了FirewallD。FirewallD支持 IPv4, IPv6 防火墙设置以及以太网桥接，并且拥有运行时配置和永久配置选项，被称作动态管理防火墙，也就是说不需要重启整个防火墙便可应用更改。centos7默认安装了firewalld，若没有安装，执行   yum  install  firewalld  firewalld  -  config   安装，其中firewalld-config是GUI工具。FirewallD与iptables关系： 
 
@@ -404,10 +403,9 @@ iptables还支持自定义规则链。自定义的链必须和某个特定的链
 
 * [https://wiki.archlinux.org/index.php/Iptables_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)][11]
 
-[0]: /sites/fQRBbe
-[1]: https://www.biaodianfu.com/firewalld.html?utm_source=tuicool&utm_medium=referral
-[2]: /topics/11100000
-[3]: /topics/11100034
+
+[1]: https://www.biaodianfu.com/firewalld.html
+
 [4]: /topics/11000069
 [5]: ../IMG/NzIJf27.png
 [6]: https://fedoraproject.org/wiki/FirewallD/zh-cn
