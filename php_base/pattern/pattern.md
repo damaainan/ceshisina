@@ -1,5 +1,7 @@
 ![Design Patterns For Humans](1b7e5938-f515-11e6-8dd3-d0d58de6bb9a.png)
 
+<font face=微软雅黑>
+
 ***
 <p align="center">
 🎉 对设计模式的极简说明！🎉
@@ -65,7 +67,9 @@
 **代码例子**
 
 首先，我们有一个门的接口和实现
+
 ```php
+<?php
 interface Door {
     public function getWidth() : float;
     public function getHeight() : float;
@@ -90,7 +94,9 @@ class WoodenDoor implements Door {
 }
 ```
 然后，我们有了工厂来制造和返回门
+
 ```php
+<?php
 class DoorFactory {
    public static function makeDoor($width, $height) : Door {
        return new WoodenDoor($width, $height);
@@ -98,7 +104,9 @@ class DoorFactory {
 }
 ```
 然后这样使用
+
 ```php
+<?php
 $door = DoorFactory::makeDoor(100, 200);
 echo 'Width: ' . $door->getWidth();
 echo 'Height: ' . $door->getHeight();
@@ -124,7 +132,9 @@ echo 'Height: ' . $door->getHeight();
  
 以上面的人事经理为例。首先我们有一个面试官接口和一些实现
 
+
 ```php
+<?php
 interface Interviewer {
     public function askQuestions();
 }
@@ -144,7 +154,9 @@ class CommunityExecutive implements Interviewer {
 
 现在我们新建我们的人事经理 `HiringManager`
 
+
 ```php
+<?php
 abstract class HiringManager {
     
     // Factory method
@@ -157,7 +169,9 @@ abstract class HiringManager {
 }
 ```
 现在任何一个都可以继承它，并且生成需要的面试官
+
 ```php
+<?php
 class DevelopmentManager extends HiringManager {
     public function makeInterviewer() : Interviewer {
         return new Developer();
@@ -172,7 +186,9 @@ class MarketingManager extends HiringManager {
 ```
 然后可以这样使用
 
+
 ```php
+<?php
 $devManager = new DevelopmentManager();
 $devManager->takeInterview(); // Output: Asking about design patterns
 
@@ -200,7 +216,9 @@ $marketingManager->takeInterview(); // Output: Asking about community building.
 
 翻译上面门的例子。首先我们有了门 `Door` 的接口和一些实现
 
+
 ```php
+<?php
 interface Door {
     public function getDescription();
 }
@@ -219,7 +237,9 @@ class IronDoor implements Door {
 ```
 然后我们有了每种门的安装专家
 
+
 ```php
+<?php
 interface DoorFittingExpert {
     public function getDescription();
 }
@@ -238,7 +258,9 @@ class Carpenter implements DoorFittingExpert {
 ```
 
 现在我们有了抽象工厂来创建全部相关的对象，即木门工厂制造木门和木门安装专家，铁门工厂制造铁门和铁门安装专家
+
 ```php
+<?php
 interface DoorFactory {
     public function makeDoor() : Door;
     public function makeFittingExpert() : DoorFittingExpert;
@@ -267,7 +289,9 @@ class IronDoorFactory implements DoorFactory {
 }
 ```
 然后可以这样使用
+
 ```php
+<?php
 $woodenFactory = new WoodenDoorFactory();
 
 $door = $woodenFactory->makeDoor();
@@ -305,7 +329,9 @@ $expert->getDescription(); // 输出: I can only fit iron doors
 
 话虽如此，让我写一点关于伸缩构造函数反面模式。在某些时候，我们都看过下面这样的构造函数
  
+
 ```php
+<?php
 public function __construct($size, $cheese = true, $pepperoni = true, $tomato = false, $lettuce = true) {
 }
 ```
@@ -316,7 +342,9 @@ public function __construct($size, $cheese = true, $pepperoni = true, $tomato = 
 
 正常的做法是使用创建者模式。首先我们有了要做的汉堡
 
+
 ```php
+<?php
 class Burger {
     protected $size;
 
@@ -337,7 +365,9 @@ class Burger {
 
 然后我们有了制作者
 
+
 ```php
+<?php
 class BurgerBuilder {
     public $size;
 
@@ -377,7 +407,9 @@ class BurgerBuilder {
 ```
 然后可以这样使用
 
+
 ```php
+<?php
 $burger = (new BurgerBuilder(14))
                     ->addPepperoni()
                     ->addLettuce()
@@ -406,7 +438,9 @@ $burger = (new BurgerBuilder(14))
 
 在 PHP 里，简单的使用 `clone` 就可以了
   
+
 ```php
+<?php
 class Sheep {
     protected $name;
     protected $category;
@@ -434,7 +468,9 @@ class Sheep {
 }
 ```
 然后它可以被这样克隆
+
 ```php
+<?php
 $original = new Sheep('Jolly');
 echo $original->getName(); // Jolly
 echo $original->getCategory(); // Mountain Sheep
@@ -468,7 +504,9 @@ echo $cloned->getCategory(); // Mountain sheep
 **代码例子**
 
 要创建一个单例，先让构造函数私有，不能克隆，不能继承，然后创造一个静态变量来保存这个实例
+
 ```php
+<?php
 final class President {
     private static $instance;
 
@@ -494,7 +532,9 @@ final class President {
 }
 ```
 然后要使用的话
+
 ```php
+<?php
 $president1 = President::getInstance();
 $president2 = President::getInstance();
 
@@ -536,7 +576,9 @@ var_dump($president1 === $president2); // true
 
 首先我们有了一个接口狮子 `Lion` 来实现所有种类的狮子
 
+
 ```php
+<?php
 interface Lion {
     public function roar();
 }
@@ -550,7 +592,9 @@ class AsianLion implements Lion {
 }
 ```
 以及猎人需要狩猎任何狮子 `Lion` 接口的实现。
+
 ```php
+<?php
 class Hunter {
     public function hunt(Lion $lion) {
     }
@@ -559,7 +603,9 @@ class Hunter {
 
 现在我们不得不在游戏里加一个野狗 `WildDog` ，猎人也能狩猎它。但是我们不能直接这么做，因为狗有不同的接口。为了兼容我们的猎人，我们不得不创建一个兼容的适配器
  
+
 ```php
+<?php
 // This needs to be added to the game
 class WildDog {
     public function bark() {}
@@ -580,7 +626,9 @@ class WildDogAdapter implements Lion {
 ```
 现在野狗 `WildDog` 可以在游戏里使用了，通过野狗适配器 `WildDogAdapter`.
 
+
 ```php
+<?php
 $wildDog = new WildDog();
 $wildDogAdapter = new WildDogAdapter($wildDog);
 
@@ -605,7 +653,9 @@ $hunter->hunt($wildDogAdapter);
 
 翻译我们上面的网页例子。这里是网页 `WebPage` 层
 
+
 ```php
+<?php
 interface WebPage {
     public function __construct(Theme $theme);
     public function getContent();
@@ -636,7 +686,9 @@ class Careers implements WebPage {
 }
 ```
 以及主题层
+
 ```php
+<?php
 interface Theme {
     public function getColor();
 }
@@ -658,7 +710,9 @@ class AquaTheme implements Theme {
 }
 ```
 两个层的互动
+
 ```php
+<?php
 $darkTheme = new DarkTheme();
 
 $about = new About($darkTheme);
@@ -684,7 +738,9 @@ echo $careers->getContent(); // "Careers page in Dark Black";
 
 拿上面的员工为例。下面是不同的员工类型
 
+
 ```php
+<?php
 
 interface Employee {
     public function __construct(string $name, float $salary);
@@ -751,7 +807,9 @@ class Designer implements Employee {
 
 下面是一个由不同类型员工组成的组织
 
+
 ```php
+<?php
 class Organization {
     
     protected $employees;
@@ -774,7 +832,9 @@ class Organization {
 
 然后可以这样使用
 
+
 ```php
+<?php
 // 准备员工
 $john = new Developer('John Doe', 12000);
 $jane = new Designer('Jane', 10000);
@@ -804,7 +864,9 @@ echo "Net salaries: " . $organization->getNetSalaries(); // Net Salaries: 22000
 
 让我们以咖啡为例。首先我们有一个咖啡接口的简单实现
 
+
 ```php
+<?php
 interface Coffee {
     public function getCost();
     public function getDescription();
@@ -822,7 +884,9 @@ class SimpleCoffee implements Coffee {
 }
 ```
 我们想要让代码可扩展，以在需要的时候改变选项。让我们增加一些扩展（装饰器）
+
 ```php
+<?php
 class MilkCoffee implements Coffee {
     
     protected $coffee;
@@ -878,7 +942,9 @@ class VanillaCoffee implements Coffee {
 
 现在让我们生成咖啡
 
+
 ```php
+<?php
 $someCoffee = new SimpleCoffee();
 echo $someCoffee->getCost(); // 10
 echo $someCoffee->getDescription(); // Simple Coffee
@@ -912,7 +978,9 @@ echo $someCoffee->getDescription(); // Simple Coffee, milk, whip, vanilla
 
 拿上面电脑为例。下面是电脑类
 
+
 ```php
+<?php
 class Computer {
 
     public function getElectricShock() {
@@ -945,7 +1013,9 @@ class Computer {
 }
 ```
 下面是门面
+
 ```php
+<?php
 class ComputerFacade
 {
     protected $computer;
@@ -969,7 +1039,9 @@ class ComputerFacade
 }
 ```
 如何使用门面
+
 ```php
+<?php
 $computer = new ComputerFacade(new Computer());
 $computer->turnOn(); // Ouch! Beep beep! Loading.. Ready to be used!
 $computer->turnOff(); // Bup bup buzzz! Haah! Zzzzz
@@ -991,7 +1063,9 @@ $computer->turnOff(); // Bup bup buzzz! Haah! Zzzzz
 
 翻译上面的茶的例子。首先我们有了茶的类型和生成器
 
+
 ```php
+<?php
 // 任何被缓存的东西都被叫做享元。 
 // 这里茶的类型就是享元。
 class KarakTea {
@@ -1013,7 +1087,9 @@ class TeaMaker {
 
 下面是我们的茶吧 `TeaShop` ，接单和提供服务
 
+
 ```php
+<?php
 class TeaShop {
     
     protected $orders;
@@ -1036,7 +1112,9 @@ class TeaShop {
 ```
 然后可以这样使用
 
+
 ```php
+<?php
 $teaMaker = new TeaMaker();
 $shop = new TeaShop($teaMaker);
 
@@ -1065,7 +1143,9 @@ $shop->serve();
 
 拿上面安全门为例。首先我们有了门的接口和实现
 
+
 ```php
+<?php
 interface Door {
     public function open();
     public function close();
@@ -1082,7 +1162,9 @@ class LabDoor implements Door {
 }
 ```
 然后下面是一个代理来安保任何我们要的门
+
 ```php
+<?php
 class Security {
     protected $door;
 
@@ -1108,7 +1190,9 @@ class Security {
 }
 ```
 然后可以这样使用
+
 ```php
+<?php
 $door = new Security(new LabDoor());
 $door->open('invalid'); // Big no! It ain't possible.
 
@@ -1153,7 +1237,9 @@ $door->close(); // Closing lab door
 
 翻译上面的账户例子。首先我们有了一个基本账户，包含把账户连接起来的逻辑。以及一些账户
 
+
 ```php
+<?php
 abstract class Account {
     protected $successor;
     protected $balance;
@@ -1205,7 +1291,9 @@ class Bitcoin extends Account {
 
 现在我们用上面定义的环节（即银行 Bank，贝宝 Paypal，比特币 Bitcoin）准备链
 
+
 ```php
+<?php
 // 我们准备下面这样的链
 //      $bank->$paypal->$bitcoin
 //
@@ -1245,7 +1333,9 @@ $bank->pay(259);
 **代码例子**
 
 首先我们有一个接收者，包含了每一个可执行的功能的实现
+
 ```php
+<?php
 // Receiver
 class Bulb {
     public function turnOn() {
@@ -1258,7 +1348,9 @@ class Bulb {
 }
 ```
 然后下面是每个命令执行的接口，之后我们就有了一个命令的集合
+
 ```php
+<?php
 interface Command {
     public function execute();
     public function undo();
@@ -1307,7 +1399,9 @@ class TurnOff implements Command {
 }
 ```
 然后我们有了一个执行器 `Invoker`，调用者可以通过它执行命令
+
 ```php
+<?php
 // Invoker
 class RemoteControl {
     
@@ -1317,7 +1411,9 @@ class RemoteControl {
 }
 ```
 最后我们看看可以如何使用
+
 ```php
+<?php
 $bulb = new Bulb();
 
 $turnOn = new TurnOn($bulb);
@@ -1346,7 +1442,9 @@ $remote->submit($turnOff); // Darkness!
 
 在 PHP 里，用 SPL (标准 PHP 库) 实现非常简单。翻译上面的广播例子。首先我们有了广播台 `RadioStation`
 
+
 ```php
+<?php
 class RadioStation {
     protected $frequency;
 
@@ -1361,7 +1459,9 @@ class RadioStation {
 ```
 下面是我们的迭代器
 
+
 ```php
+<?php
 use Countable;
 use Iterator;
 
@@ -1410,7 +1510,9 @@ class StationList implements Countable, Iterator {
 }
 ```
 然后可以这样使用
+
 ```php
+<?php
 $stationList = new StationList();
 
 $stationList->addStation(new RadioStation(89));
@@ -1443,7 +1545,9 @@ $stationList->removeStation(new Station(89)); // Will remove station 89
 
 首先，我们有一个中介，即聊天室
 
+
 ```php
+<?php
 // 中介
 class ChatRoom implements ChatRoomMediator {
     public function showMessage(User $user, string $message) {
@@ -1456,7 +1560,9 @@ class ChatRoom implements ChatRoomMediator {
 ```
 
 然后我们有用户，即同事
+
 ```php
+<?php
 class User {
     protected $name;
     protected $chatMediator;
@@ -1476,7 +1582,9 @@ class User {
 }
 ```
 然后是使用
+
 ```php
+<?php
 $mediator = new ChatRoom();
 
 $john = new User('John Doe', $mediator);
@@ -1509,7 +1617,9 @@ $jane->send('Hey!');
 
 首先下面是我们的备忘录对象，可以保存编辑器状态
 
+
 ```php
+<?php
 class EditorMemento {
     protected $content;
     
@@ -1525,7 +1635,9 @@ class EditorMemento {
 
 然后是我们的编辑器，即发起者，来使用备忘录对象
 
+
 ```php
+<?php
 class Editor {
     protected $content = '';
     
@@ -1549,7 +1661,9 @@ class Editor {
 
 然后可以这样使用
 
+
 ```php
+<?php
 $editor = new Editor();
 
 // 输入一些东西
@@ -1585,7 +1699,9 @@ $editor->getContent(); // This is the first sentence. This is second.
 **代码例子**
 
 翻译上面的例子。首先我们有需要收到工作发布提醒的求职者
+
 ```php
+<?php
 class JobPost {
     protected $title;
     
@@ -1612,7 +1728,9 @@ class JobSeeker implements Observer {
 }
 ```
 下面是求职者订阅的工作信息
+
 ```php
+<?php
 class JobPostings implements Observable {
     protected $observers = [];
     
@@ -1632,7 +1750,9 @@ class JobPostings implements Observable {
 }
 ```
 然后可以这样使用
+
 ```php
+<?php
 // 创建订阅者
 $johnDoe = new JobSeeker('John Doe');
 $janeDoe = new JobSeeker('Jane Doe');
@@ -1666,7 +1786,9 @@ $jobPostings->addJob(new JobPost('Software Engineer'));
 
 让我们以动物园模拟器为例，在里面我们有一些动物，我们必须让他们叫。让我们用访问者模式来翻译
 
+
 ```php
+<?php
 // 被访者
 interface Animal {
     public function accept(AnimalOperation $operation);
@@ -1680,7 +1802,9 @@ interface AnimalOperation {
 }
 ```
 Then we have our implementations for the animals
+
 ```php
+<?php
 class Monkey implements Animal {
     
     public function shout() {
@@ -1713,7 +1837,9 @@ class Dolphin implements Animal {
 }
 ```
 实现我们的访问者
+
 ```php
+<?php
 class Speak implements AnimalOperation {
     public function visitMonkey(Monkey $monkey) {
         $monkey->shout();
@@ -1730,7 +1856,9 @@ class Speak implements AnimalOperation {
 ```
 
 然后可以这样使用
+
 ```php
+<?php
 $monkey = new Monkey();
 $lion = new Lion();
 $dolphin = new Dolphin();
@@ -1743,7 +1871,9 @@ $dolphin->accept($speak);   // Tuut tutt tuutt!
 ```
 我们本可以简单地给动物加一个继承层来做到这点，但是这样每当我们要给动物增加新功能的时候，我们就不得不改变动物。但是现在我们不用改变他们。比如，我们要给动物增加一个跳的行为，我们可以通过简单地增加一个新的访问者
 
+
 ```php
+<?php
 class Jump implements AnimalOperation {
     public function visitMonkey(Monkey $monkey) {
         echo 'Jumped 20 feet high! on to the tree!';
@@ -1759,7 +1889,9 @@ class Jump implements AnimalOperation {
 }
 ```
 然后这样用
+
 ```php
+<?php
 $jump = new Jump();
 
 $monkey->accept($speak);   // Ooh oo aa aa!
@@ -1788,7 +1920,9 @@ $dolphin->accept($jump);   // Walked on water a little and disappeared
 
 翻译我们上面的例子。首先我们有了策略接口和不同的策略实现
 
+
 ```php
+<?php
 interface SortStrategy {
     public function sort(array $dataset) : array; 
 }
@@ -1813,7 +1947,9 @@ class QuickSortStrategy implements SortStrategy {
 ```
  
 然后是实用策略的调用者
+
 ```php
+<?php
 class Sorter {
     protected $sorter;
     
@@ -1827,7 +1963,9 @@ class Sorter {
 }
 ```
 然后可以这样使用
+
 ```php
+<?php
 $dataset = [1, 5, 4, 3, 2, 8];
 
 $sorter = new Sorter(new BubbleSortStrategy());
@@ -1855,7 +1993,9 @@ $sorter->sort($dataset); // 输出 : Sorting using quick sort
 
 首先，我们有状态接口和一些状态实现
 
+
 ```php
+<?php
 interface WritingState {
     public function write(string $words);
 }
@@ -1879,7 +2019,9 @@ class Default implements WritingState {
 }
 ```
 下面是我们的编辑器
+
 ```php
+<?php
 class TextEditor {
     protected $state;
     
@@ -1897,7 +2039,9 @@ class TextEditor {
 }
 ```
 然后可以这样使用
+
 ```php
+<?php
 $editor = new TextEditor(new Default());
 
 $editor->type('First line');
@@ -1942,7 +2086,9 @@ $editor->type('Fifth line');
 想象我们有一个构建工具帮我们测试，纠错，构建，生成构建报告（即代码报告，查错报告），然后把应用发布到测试服务器。
 
 首先是我们的基础类，它描述了构建算法的骨架
+
 ```php
+<?php
 abstract class Builder {
     
     // Template method 
@@ -1962,7 +2108,9 @@ abstract class Builder {
 
 以下是实现
 
+
 ```php
+<?php
 class AndroidBuilder extends Builder {
     public function test() {
         echo 'Running android tests';
@@ -2001,7 +2149,9 @@ class IosBuilder extends Builder {
 ```
 然后可以这样使用
 
+
 ```php
+<?php
 $androidBuilder = new AndroidBuilder();
 $androidBuilder->build();
 
@@ -2024,6 +2174,8 @@ $iosBuilder->build();
 ## 🚦 收尾了同志们
 
 终于收尾了。我会继续改进这篇文档，所以你或许需要 watch/star 这个仓库，先码后看。
+
+</font>
 
 ## 👬 Contribution
 
