@@ -22,6 +22,8 @@
 
 在这个类中完成基本二叉树定义，包括定义属性（当前节点值，左子树，右子树）和一些基本方法（先序遍历，中序遍历，后序遍历）。
 
+```php
+<?php
     //定义一个二叉树
     class BTree{
         protected $key   = null;//当前节点值
@@ -107,11 +109,14 @@
             return $arr;
         }
     }
+```
 
 #### **2.二叉排序树类**
 
 该类继承与二叉树类（BTree）,完成二叉排序树的插入节点，查找节点，删除节点。
 
+```php
+<?php
     //定义二叉排序树
     class BinarySortTree extends BTree{
         //插入一个节点到当前树中
@@ -240,9 +245,12 @@
             }
         }
     }
+```
 
 #### **3.调用**
 
+```php
+<?php
     $item = array(50, 30, 20,35,33,40,36, 100, 56, 78);
     $root = new BinarySortTree();
     foreach($item as $key){
@@ -255,6 +263,7 @@
     
     $root->deleteNode('30');
     echo '删除节点后的先序遍历:'.implode(',',$root->preOrderTraversal()).'<br>';
+```
 
 ## **结果**
 

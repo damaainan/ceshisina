@@ -13,7 +13,8 @@
 
 实现可参考：[http://www.cnblogs.com/CCBB/archive/2009/04/25/1443455.html][1]
 
-    <?php
+```php
+<?php
     /**
      * 找出最大子序列和
      */
@@ -136,10 +137,11 @@
         }
         return array($max_value,$start,$end);
     }
-
+```
 ## 三、测试
 
-    <?php
+```php
+<?php
     // 获取一个随机数列
     function getArrayData($len=0){
         $arr_data = array('4','-6','8','2','-4','7','2','-5','1');
@@ -183,6 +185,7 @@
     echo "max_value:{$max_value4}\n";
     echo "{$start4}-{$end4}";echo "\n";
     echo 'take time:'.(time()-$start_time);echo "\n";
+```
 
 ## 四、测试结果
 
@@ -199,4 +202,4 @@
 
 
 [1]: http://www.cnblogs.com/CCBB/archive/2009/04/25/1443455.html
-[2]: ../img/301894-968712ed404144d9.png.png
+[2]: ../img/301894-968712ed404144d9.png

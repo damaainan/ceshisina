@@ -19,6 +19,8 @@
 
 ## **递归实现折半查找(PHP)**
 
+```php
+<?php
     function re_binary_search($arr,$target,$height,$low=0){
         if($height < $low || $arr[$low] > $target || $arr[$height] < $target){
             return -1;
@@ -33,9 +35,12 @@
         }
         return $mid;
     }
+```
 
 ## **非递归实现折半查找（PHP）**
 
+```php
+<?php
     function binary_search($arr,$target){
         $length = count($arr);
         if($length <=0 || $arr[0] > $target || $arr[$length-1] < $target){
@@ -55,14 +60,18 @@
         }
         return -1;
     }
+```
 
 ## **调用**
 
+```php
+<?php
     var_dump(re_binary_search($item,'8',count($item)-1));
     var_dump($item[re_binary_search($item,'8',count($item)-1)]);
     
     var_dump(binary_search($item,'8'));
     var_dump($item[binary_search($item,'8')]);
+```
 
 ## **结果**
 

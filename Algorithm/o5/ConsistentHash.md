@@ -19,6 +19,8 @@
 
 ## **代码（PHP）**
 
+```php
+<?php
     class ConsistentHash {
         public $nodes = array();//实际节点
         protected $v_nodes = array();//虚节点更实际节点的对应关系
@@ -98,6 +100,7 @@
             }
         }
     }
+```
 
 
 [1]: http://blog.csdn.net/cywosp/article/details/23397179

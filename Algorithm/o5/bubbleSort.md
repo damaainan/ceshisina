@@ -49,6 +49,8 @@
 
 #### **1.冒泡排序**
 
+```php
+<?php
     //冒泡排序(O(n2))
     function bubbleSort($arr){
         $length = count($arr);
@@ -65,9 +67,12 @@
         }
         return $arr;
     }
+```
 
 #### **2.快速排序**
 
+```php
+<?php
     //快速排序
     function quickSort(&$arr,$height,$low=0){
         if($height <= $low){
@@ -89,14 +94,17 @@
         quickSort($arr,$height,$j+1);
         return $arr;
     }
+```
 
 #### **3.测试**
 
+```php
+<?php
     $item =array('2','1','4','3','8','6','5','-1','10','3','7','6','6');
     var_dump(implode(',',$item));
     var_dump(implode(',',bubbleSort($item)));
     var_dump(implode(',',quickSort($item)));
-
+```
 ## **结果**
 
 ![][7]

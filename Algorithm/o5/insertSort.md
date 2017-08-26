@@ -39,6 +39,8 @@
 
 #### **插入排序**
 
+```php
+<?php
     //简单插入排序(O(n2))
     function insertSort($arr){//升序排列
         $length = count($arr);
@@ -67,6 +69,7 @@
         }
         return $sort_arr;
     }
+```
 
 #### **调用**
 

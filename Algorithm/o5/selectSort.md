@@ -24,6 +24,8 @@
 
 #### **1.直接选择排序**
 
+```php
+<?php
     //直接选择排序
     function selectSort($arr){
         $length = count($arr);
@@ -43,6 +45,7 @@
         }
         return $arr;
     }
+```
 
 #### **2.测试**
 

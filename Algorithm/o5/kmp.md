@@ -12,6 +12,8 @@ kmp算法我觉得有两个关键点：1.计算模式字符串的部分匹配表
 
 ## **计算部分匹配表**
 
+```php
+<?php
     function kmp_next($string){
         $length = strlen($string);//获取字符串长度
         $next[0] =0;
@@ -31,9 +33,12 @@ kmp算法我觉得有两个关键点：1.计算模式字符串的部分匹配表
         }
         return $next;
     }
+```
 
 ## **kmp算法**
 
+```php
+<?php
     function kmp($text,$mode){
         $t_length = strlen($text);
         $m_length = strlen($mode);
@@ -57,6 +62,7 @@ kmp算法我觉得有两个关键点：1.计算模式字符串的部分匹配表
         }
         return -1;
     }
+```
 
 ## **调用**
 

@@ -18,6 +18,8 @@ php中，对象赋值默认是对象引用赋值，类似与c/c++中的指针。
 
 #### **1.链表节点类**
 
+```php
+<?php
     //定义链表节点
     class Node{
         public $data = null;//当前节点数据
@@ -27,9 +29,12 @@ php中，对象赋值默认是对象引用赋值，类似与c/c++中的指针。
             $this->data = $data;
         }
     }
+```
 
 #### **2.哈希表类**
 
+```php
+<?php
     //定义哈希表
     class HashTable{
         protected $arr_table = array();//哈希表
@@ -151,6 +156,7 @@ php中，对象赋值默认是对象引用赋值，类似与c/c++中的指针。
             }
         }
     }
+```
 
 #### **3.数据准备**
 
@@ -158,12 +164,15 @@ php中，对象赋值默认是对象引用赋值，类似与c/c++中的指针。
 
 #### **4.调用**
 
+```php
+<?php
     $hashTable = new HashTable(10);
     $hashTable->initHashTable($item);
     $hashTable->printHashTable();
     var_dump($hashTable->deleteNode('100'));
     var_dump($hashTable->searchNode('100'));
     //$hashTable->printHashTable();
+```
 
 ## **结果**
 
