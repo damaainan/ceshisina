@@ -1,0 +1,1 @@
+     awk -F' ' '/.png)/{print $2}' 2.md | awk -F'http' '{sub(/\)/,"",$2);print "http"$2}' | xargs -I} sed -i 's@^.*}.*$@!\[\]\(}\)@' 2.md

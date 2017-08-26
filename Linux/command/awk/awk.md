@@ -1,3 +1,5 @@
+<font face=微软雅黑>
+
 使用方法
 ```
 awk'{pattern + action}'{filenames}
@@ -12,18 +14,20 @@ awk语言的最基本功能是在文件或者字符串中基于指定规则浏�
 
 有三种方式调用awk  
 1.命令行方式   
-awk [-F field-separator] ‘commands’ input-file(s)   
+
+    awk [-F field-separator] 'commands' input-file(s)   
 其中，commands 是真正awk命令，[-F域分隔符]是可选的。 input-file(s) 是待处理的文件。 在awk中，文件的每一行中，由域分隔符分开的每一项称为一个域。通常，在不指名-F域分隔符的情况下，默认的域分隔符是空格。   
 2.shell脚本方式   
-将所有的awk命令插入一个文件，并使awk程序可执行，然后awk命令解释器作为脚本的首行，一遍通过键入脚本名称来调用。 相当于shell脚本首行的：#!/bin/sh 可以换成：#!/bin/awk  
+将所有的awk命令插入一个文件，并使awk程序可执行，然后awk命令解释器作为脚本的首行，一遍通过键入脚本名称来调用。 相当于shell脚本首行的：`#!/bin/sh` 可以换成：`#!/bin/awk ` 
 3.将所有的awk命令插入一个单独文件，然后调用：  
- awk -f awk-script-file input-file(s)  
+
+     awk -f awk-script-file input-file(s)  
   其中，-f选项加载awk-script-file中的awk脚本，input-file(s)跟上面的是一样的。   
 
 
 #### 实例
 
-awk工作流程是这样的：读入有’n’换行符分割的一条记录，然后将记录按指定的域分隔符划分域，填充域，$0则表示所有域,$1表示第一个域,$n表示第n个域。默认域分隔符是”空白键” 或 “键”
+awk工作流程是这样的：读入有'n'换行符分割的一条记录，然后将记录按指定的域分隔符划分域，填充域，$0则表示所有域,$1表示第一个域,$n表示第n个域。默认域分隔符是”空白键” 或 “键”
 
 通过-F参数设置冒号:为分隔符，并打印各个字段：
 
@@ -728,3 +732,5 @@ c. getline [var] < expression第三种形式从expression中重定向输入，�
 
     [kodango@devops awk_temp]$ awk 'BEGIN {system("uname -r");}'
     3.6.2-1-ARCH
+
+</font>
