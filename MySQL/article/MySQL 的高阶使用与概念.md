@@ -1,5 +1,7 @@
 ## 拆解 MySQL 的高阶使用与概念
 
+<font face=微软雅黑>
+
 前面我们主要分享了 MySQL 中的常见知识与使用。这里我们主要分享一下 MySQL 中的高阶使用，主要包括：函数、存储过程和存储引擎。
 
 对于 MySQL 中的基础知识，可以参见
@@ -35,21 +37,22 @@ REPLACE()   | 字符串替换
 
 `_` （下划线）：代表任意一个字符。 
 
-    # 删除前导'?'符号
+```sql
+    --# 删除前导'?'符号
     SELECT TRIM(LEADING '?' FROM '??MySQL???');
-    # 删除后续'?'符号
+    ---# 删除后续'?'符号
     SELECT TRIM(TRAILING '?' FROM '??MySQL???');
-    # 删除前后'?'符号
+    ---# 删除前后'?'符号
     SELECT TRIM(BOTH '?' FROM '??My??SQL???');
-    # 将'?'符号替换成'!'符号
+    ---# 将'?'符号替换成'!'符号
     SELECT REPLACE('??My??SQL???', '?', '!');
-    # 从中'MySQL'第1个开始，截取2个字符
+    ---# 从中'MySQL'第1个开始，截取2个字符
     SELECT SUBSTRING('MySQL', 1, 2);
-    # 从中'MySQL'截取最后1个字符
+    --# 从中'MySQL'截取最后1个字符
     SELECT SUBSTRING('MySQL', -1);
-    # 从中'MySQL'第2个开始，截取至结尾
+    --# 从中'MySQL'第2个开始，截取至结尾
     SELECT SUBSTRING('MySQL', 2);
-    
+```
 
 ## 数值运算符函数 
 
@@ -83,15 +86,17 @@ DATE_ADD()  | 日期变化
 DATEDIFF()  | 日期差值
 DATE_FORMAT()   | 日期格式化
 
-    # 时间增加1年
+```sql
+    --# 时间增加1年
     SELECT DATE_ADD('2016-05-28', INTERVAL 365 DAY);
-    # 时间减少1年
+    --# 时间减少1年
     SELECT DATE_ADD('2016-05-28', INTERVAL -365 DAY);
-    # 时间增加3周
+    --# 时间增加3周
     SELECT DATE_ADD('2016-05-28', INTERVAL 3 WEEK);
-    # 日期格式化
+    --# 日期格式化
     SELECT DATE_FORMAT('2016-05-28', '%m/%d/%Y');
-    # 更多时间格式可以前往MySQL官网查看手册
+    --# 更多时间格式可以前往MySQL官网查看手册
+```
 
 ## 信息函数 
 
@@ -146,14 +151,14 @@ PASSWORD() | 密码算法
 示例
 
 ```sql
-    # 不带参数
+    --# 不带参数
     CREATE FUNCTION f1() RETURNS VARCHAR(30) RETURN DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s');
     
-    # 带参数
+    --# 带参数
     CREATE FUNCTION f2(num1 SMALLINT UNSIGNED, num2 SMALLINT UNSIGNED) RETURNS FLOAT(10, 2) UNSIGNED RETURN (num1 + num2) / 2;
     
-    # 具有复合结构函数体
-    # 可能需要使用DELIMITER命令修改分隔符
+    --# 具有复合结构函数体
+    --# 可能需要使用DELIMITER命令修改分隔符
     CREATE FUNCTION f3(username VARCHAR(20)) RETURNS INT UNSIGNED 
     BEGIN 
     INSERT test(username) VALUES(username);
@@ -244,24 +249,24 @@ PASSWORD() | 密码算法
 示例：
 
 ```sql
-    # 创建不带参数的存储过程
+    --# 创建不带参数的存储过程
     CREATE PROCEDURE sp1() SELECT VERSION();
     
-    # 创建带有IN类型参数的存储过程(users为数据表名)
-    # 参数的名字不能和数据表中的记录名字一样
+   -- # 创建带有IN类型参数的存储过程(users为数据表名)
+    --# 参数的名字不能和数据表中的记录名字一样
     CREATE PROCEDURE removeUserById(IN p_id INT UNSIGNED)
     BEGIN
     DELETE FROM users WHERE id = p_id;
     END
     
-    # 创建带有IN和OUT类型参数的存储过程(users为数据表名)
+    --# 创建带有IN和OUT类型参数的存储过程(users为数据表名)
     CREATE PROCEDURE removeUserAndReturnUserNumsById(IN p_id INT UNSIGNED, OUT userNums INT UNSIGNED)
     BEGIN
     DELETE FROM users WHERE id = p_id;
     SELECT COUNT(id) FROM users INTO userNums;
     END
     
-    # 创建带有多个OUT类型参数的存储过程(users为数据表名)
+    --# 创建带有多个OUT类型参数的存储过程(users为数据表名)
     CREATE PROCEDURE removeUserAndReturnInfosByAge(IN p_age SMALLINT UNSIGNED, OUT delUser SMALLINT UNSIGNED,  OUT userNums SMALLINT UNSIGNED)
     BEGIN
     DELETE FROM users WHERE age = p_age;
@@ -370,6 +375,8 @@ InnoDB：适用于事务处理比较多，需要有外键支持的情况。
 
 * Navicat
 * MySQL Workbench
+
+</font>
 
 [0]: http://chars.tech/2017/05/16/mysql-study/
 [1]: ./img/MNJjemj.png

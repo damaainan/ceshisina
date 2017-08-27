@@ -4,6 +4,7 @@
 
 原文[http://chars.tech/2017/05/19/mysql-sql-study/][1]
 
+<font face=微软雅黑>
 
 结构化查询语言（英语：Structured Query Language，缩写：SQL），是一种特殊目的之编程语言，用于数据库中的标准数据查询语言，IBM公司最早使用在其开发的数据库系统中。
 
@@ -379,7 +380,9 @@ CREATE TABLE [IF NOT EXISTS] tbl_name [(create_definition, ...)] select_statemen
 
 * 通过CREATE…SELECT来创建数据表并且同时写入记录
 
+```sql
 CREATE TABLE tdb_goods_brands (brand_id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,brand_name VARCHAR(40) NOT NULL) SELECT brand_name FROM tdb_goods GROUP BY brand_name;
+```
 
 ## 子查询 
 
@@ -396,6 +399,7 @@ SELECT * FROM t1 WHERE col1=(SELECT col2 FROM t2);
 
 1.创建表 
 
+```sql
     create table tdb_goods (
         goods_id smallint unsigned primary key auto_increment,
         goods_name varchar(150) not null, 
@@ -404,10 +408,11 @@ SELECT * FROM t1 WHERE col1=(SELECT col2 FROM t2);
         goods_price decimal(15,3) unsigned default 0 not null, 
         is_show boolean default 1 not null, 
         is_saleoff boolean default 0 not null);
-    
+```
 
 2.添加数据 
 
+```sql
     INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('Mac Pro MD878CH/A 专业级台式电脑','服务器/工作站','苹果','28888',DEFAULT,DEFAULT);
      
     INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES(' HMZ-T3W 头戴显示设备','笔记本配件','索尼','6999',DEFAULT,DEFAULT);
@@ -415,25 +420,33 @@ SELECT * FROM t1 WHERE col1=(SELECT col2 FROM t2);
     INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('商务双肩背包','笔记本配件','索尼','99',DEFAULT,DEFAULT);
     
     INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('X3250 M4机架式服务器 2583i14','服务器/工作站','IBM','6888',DEFAULT,DEFAULT);
-    
+```
 
 ### 分类 
 
 #### 使用比较运算符的子查询 
 
-=、>、<、>=、<=、<>、!=、<=> ...语法结构
+`=`、`>`、`<`、`>=`、`<=`、`<>`、`!=`、`<=>` ...语法结构
 
 operand comparison_operator subquery示例：
 
 * 求所有电脑产品的平均价格,并且保留两位小数，AVG,MAX,MIN、COUNT、SUM为聚合函数
 
+```sql
 SELECT ROUND(AVG(goods_price),2) AS avg_price FROM tdb_goods;
+```
+
 * 查询所有价格大于平均价格的商品，并且按价格降序排序
 
+```sql
 SELECT goods_id,goods_name,goods_price FROM tdb_goods WHERE goods_price > 5845.10 ORDER BY goods_price DESC;
+```
+
 * 使用子查询来实现
 
+```sql
 SELECT goods_id,goods_name,goods_price FROM tdb_goods WHERE goods_price > (SELECT ROUND(AVG(goods_price),2) AS avg_price FROM tdb_goods) ORDER BY goods_price DESC;
+```
 
 #### 用ANY、SOME或ALL修饰的比较运算符 
 
@@ -447,7 +460,9 @@ operand comparison_operator ALL(subquery)ANY、SOME、ALL关键字
 
 * 查询价格大于或等于”超级本”价格的商品，并且按价格降序排列
 
+```sql
 SELECT goods_id,goods_name,goods_price FROM tdb_goods WHERE goods_price = ANY(SELECT goods_price FROM tdb_goods WHERE goods_cate = '超级本') ORDER BY goods_price DESC;
+```
 
 #### 使用[NOT]IN的子查询 
 
@@ -456,15 +471,17 @@ SELECT goods_id,goods_name,goods_price FROM tdb_goods WHERE goods_price = ANY(SE
 operand comparison_operator [NOT]IN(subquery)  
 =ANY运算符与IN等效。
 
-!=ALL或<>ALL运算符与NOT IN等效。
+`!=ALL`或`<>ALL`运算符与`NOT IN`等效。
 
 示例：
 
-* = ANY 或 = SOME 等价于 IN
+* `= ANY` 或 `= SOME` 等价于 `IN`
 
+```sql
 SELECT goods_id,goods_name,goods_price FROM tdb_goods WHERE goods_price IN (SELECT goods_price FROM tdb_goods WHERE goods_cate = '超级本') ORDER BY goods_price DESC;
+```
 
-#### 使用[NOT]EXISTS的子查询 
+#### 使用`[NOT]EXISTS`的子查询 
 
 如果子查询返回任何行，EXISTS将返回TRUE；否则为FALSE。
 
@@ -479,12 +496,14 @@ MySQL在SELECT语句、多表更新、多表删除语句中支持JOIN操作。
 
 table_references 的语法结构： 
 
-{[INNER|CROSS] JOIN | {LEFT|RIGHT} [OUTER] JOIN} table_reference ON conditional_expr#### 数据表参照 
+{[INNER|CROSS] JOIN | {LEFT|RIGHT} [OUTER] JOIN} table_reference ON conditional_expr
+
+#### 数据表参照 
 
 table_references
 
 tbl_name [[AS] alias]|table_subquery [AS] alias  
-数据表可以使用 tbl_name AS alias_name 或 tbl_name alias_name 赋予别名。 
+数据表可以使用 `tbl_name AS alias_name` 或 `tbl_name alias_name` 赋予别名。 
 
 table_subquery 可以作为子查询使用在FROM子句中，这样的子查询必须为其赋予别名。 
 
@@ -500,7 +519,9 @@ RIGHT [OUTER] JOIN，右外连接。
 
 * 通过tdb_goods_cates数据表来更新tdb_goods表
 
+```sql
 UPDATE tdb_goods INNER JOIN tdb_goods_cates ON goods_cate = cate_name SET goods_cate = cate_id ;
+```
 
 ### 多表删除 
 
@@ -543,9 +564,13 @@ A LEFT JOIN B join_condition.
 
 * 无限分类的数据表设计
 
+```sql
 CREATE TABLE tdb_goods_types( type_id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT, type_name VARCHAR(20) NOT NULL, parent_id SMALLINT UNSIGNED NOT NULL DEFAULT 0 );
+```
+
 * 插入数据
 
+```sql
     INSERT tdb_goods_types(type_name,parent_id) VALUES('家用电器',DEFAULT);
     INSERT tdb_goods_types(type_name,parent_id) VALUES('电脑、办公',DEFAULT);
     INSERT tdb_goods_types(type_name,parent_id) VALUES('大家电',1);
@@ -561,7 +586,10 @@ CREATE TABLE tdb_goods_types( type_id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREME
     INSERT tdb_goods_types(type_name,parent_id) VALUES('游戏本',9);
     INSERT tdb_goods_types(type_name,parent_id) VALUES('CPU',10);
     INSERT tdb_goods_types(type_name,parent_id) VALUES('主机',10);
+```
 
+
+</font>
 
 [1]: http://chars.tech/2017/05/19/mysql-sql-study/
 [4]: ./img/qM7FJj7.png

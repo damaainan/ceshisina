@@ -2,6 +2,8 @@
 
 **阅读目录(Content)**
 
+<font face=微软雅黑>
+
 * [1 what's binary log][1]
 * [2 Binary Logging Options and Variables][2]
     * [2.1 基础参数][3]
@@ -33,15 +35,15 @@
 
 # **1 what's binary log**
 
-Binary log 用来记录数据库中发生的修改情况，比如数据的修改、表格的创建及修改等，它既可以记录涉及修改的SQL，也可以记录数据修改的行变化记录，同时也记录了执行时间。比如，执行sql：update tabname set cola='a' where id between 1 and 5，修改了5行记录。当开启binlog记录的时候，根据设置的binlog格式，可能记录的是这一条SQL语句，也可能记录的是5行数据记录的修改情况，也可能两者都有，这部分详情可以看本博文的第3部分：binlog formats。
+`Binary log` 用来记录数据库中发生的修改情况，比如数据的修改、表格的创建及修改等，它既可以记录涉及修改的SQL，也可以记录数据修改的行变化记录，同时也记录了执行时间。比如，执行sql：update tabname set cola='a' where id between 1 and 5，修改了5行记录。当开启binlog记录的时候，根据设置的binlog格式，可能记录的是这一条SQL语句，也可能记录的是5行数据记录的修改情况，也可能两者都有，这部分详情可以看本博文的第3部分：binlog formats。
 
-这里注意跟general log区分下，binnary log是记录数据库内部的修改情况，而general log是记录所有数据库的SQL操作情况，比如像select或者show这种语句，不会发生数据修改，则不会记录到binnary log，但是属于数据库操作记录，会记录到general log。
+这里注意跟general log区分下，`binary log`是记录数据库内部的修改情况，而general log是记录所有数据库的SQL操作情况，比如像select或者show这种语句，不会发生数据修改，则不会记录到binnary log，但是属于数据库操作记录，会记录到general log。
 
 那么，开启它，有什么好处，有什么确定呢 ？
 
 首先，好处有3个：
 
-* 搭建复制架构的时候，需要binary log 来记录数据库的修改event；
+* 搭建复制架构的时候，需要`binary log` 来记录数据库的修改event；
 * 数据库宕机恢复使用；
 * 异常操作，紧急恢复数据使用；
 
@@ -53,78 +55,78 @@ Binary log 用来记录数据库中发生的修改情况，比如数据的修改
 ## **2.1 基础参数**
 
 * **文件大小**
-    * max_binlog_size 
-        * 范围4k-1G，默认为1G；这里注意下，并非设置了 max_binlog_size=1G，binlog文件最大就为1G，当事务短且小的情况下，binlog接近1G的时候，就会flush log，生成新的binlog文件，但是，但是，但是，但是同个事务是不能够跨多个binlog文件存储，一个事务只能存储在一个binlog文件。如果这个时候，有个大事务，假设单个SQL UPDATE了100w行数据，SQL产生的binlog日志记录有5G，那么当前的binlog文件则会出现大于5G的情况，该事务结束后，才会切换binlog文件。
+    * `max_binlog_size` 
+        * 范围4k-1G，默认为1G；这里注意下，并非设置了 `max_binlog_size=1G`，binlog文件最大就为1G，当事务短且小的情况下，binlog接近1G的时候，就会flush log，生成新的binlog文件，但是，但是，但是，但是同个事务是不能够跨多个binlog文件存储，一个事务只能存储在一个binlog文件。如果这个时候，有个大事务，假设单个SQL UPDATE了100w行数据，SQL产生的binlog日志记录有5G，那么当前的binlog文件则会出现大于5G的情况，该事务结束后，才会切换binlog文件。
 
 * **缓存大小**
-    * binlog_cache_size 
+    * `binlog_cache_size` 
         * binlog写缓冲区设置大小，由于是内存，写速度非常快，可以有效提高binlog的写效率，如果数据库中经常出现大事务，可以酌情提高该参数。
-        * 那么，如果观察自家DB实例的binlog_cache_size设置是否合理呢？可以通过show status like 'Binlog_cache%';查看Binlog_cache_use and Binlog_cache_disk_use的使用情况，Binlog_cache_use表示用到binlog缓冲区的次数，Binlog_cache_disk_use ，使用临时文件来存放binlog cache的次数，如果Binlog_cache_disk_use的次数过多，可以酌情提高该参数。详见下图。 
+        * 那么，如果观察自家DB实例的`binlog_cache_size`设置是否合理呢？可以通过`show status like 'Binlog_cache%';` 查看`Binlog_cache_use and Binlog_cache_disk_use`的使用情况，`Binlog_cache_use`表示用到binlog缓冲区的次数，`Binlog_cache_disk_use` ，使用临时文件来存放`binlog cache`的次数，如果`Binlog_cache_disk_use`的次数过多，可以酌情提高该参数。详见下图。 
         * ![][21]
     
-    * binlog_stmt_cache_size 
+    * `binlog_stmt_cache_size` 
         * 保留一个事务内，非事务语句文本的缓存大小。默认32k。
-        * 与binlog_cache_size一样，也可以通过show status like 'binlog_stmt_cache%'来查看是否设置合理。查看参数为：Binlog_stmt_cache_use （使用缓存区的次数），Binlog_stmt_cache_disk_use（使用临时文件的次数） 
+        * 与`binlog_cache_size`一样，也可以通过`show status like 'binlog_stmt_cache%'`来查看是否设置合理。查看参数为：`Binlog_stmt_cache_use` （使用缓存区的次数），`Binlog_stmt_cache_disk_use`（使用临时文件的次数） 
         * ![][22]
     
-    * max_binlog_cache_size 
-        * 默认为4G，如果发生大事务占用binlog cache超过设置值，则会报错 ： multi-statement transaction required more than 'max_binlog_cache_size' bytes of storage。
-        * 这时候，就有个疑问了，为啥存在了 binlog_cache_size的设置，还需要 max_binlog_cache_size呢？ 
-            * 其实是这样，当一个线程连接进来并开始执行事务的时候，数据库会按照binlog_cache_size的大小分配给它一个缓冲区域，如果使用到的空间要大于binlog_cache_size，则会使用临时文件来存储，线程结束后再删除临时文件。
-            * 而max_binlog_cache_size则是严格限制了一个多SQL事务总的使用binlog cache的大小，保留分配缓冲区域跟临时文件，总大小不能超过max_binlog_cache_size的限制值，一旦超过，则会报错multi-statement transaction required more than 'max_binlog_cache_size' bytes of storage。
+    * `max_binlog_cache_size` 
+        * 默认为4G，如果发生大事务占用`binlog cache`超过设置值，则会报错 ： multi-statement transaction required more than 'max_binlog_cache_size' bytes of storage。
+        * 这时候，就有个疑问了，为啥存在了 `binlog_cache_size`的设置，还需要 `max_binlog_cache_size`呢？ 
+            * 其实是这样，当一个线程连接进来并开始执行事务的时候，数据库会按照binlog_cache_size的大小分配给它一个缓冲区域，如果使用到的空间要大于`binlog_cache_size`，则会使用临时文件来存储，线程结束后再删除临时文件。
+            * 而`max_binlog_cache_size`则是严格限制了一个多SQL事务总的使用`binlog cache`的大小，保留分配缓冲区域跟临时文件，总大小不能超过`max_binlog_cache_size`的限制值，一旦超过，则会报错multi-statement transaction required more than 'max_binlog_cache_size' bytes of storage。
     
-    * max_binlog_stmt_cache_size 
-    * 默认4G。超过则报错。注意事项跟 max_binlog_cache_size 类似。
+    * `max_binlog_stmt_cache_size` 
+    * 默认4G。超过则报错。注意事项跟 `max_binlog_cache_size` 类似。
 
 * **binlog文件相关**
-    * log_bin_basename 
+    * `log_bin_basename` 
         * binlog文件的命名方式
-    * log_bin_index 
+    * `log_bin_index` 
         * binlog索引文件的绝对路径
-    * **expire_logs_days**
+    * **`expire_logs_days`**
         * binlog保留的有效天数，过期的会自动删除
-        * 这里有个小tips，假设当前binlog文件过多且大占用磁盘空间，可以修改小改参数，改参数只有在切换新的binlog文件时，才会删除过期文件，也就是可以等数据库把当前binlog写满后切换到新文件的时候删除，也可以手动执行flush logs，手动切换binlog，同时会触发对过期binlog文件的删除。
+        * 这里有个小tips，假设当前`binlog`文件过多且大占用磁盘空间，可以修改小改参数，改参数只有在切换新的`binlog`文件时，才会删除过期文件，也就是可以等数据库把当前`binlog`写满后切换到新文件的时候删除，也可以手动执行`flush logs`，手动切换`binlog`，同时会触发对过期binlog文件的删除。
 
 ## **2.2 重要参数（sync_binlog=0丢失数据的描述有疑问，目前查阅相关资料跟咨询业界人士中....）**
 
 * **binlog开关**
     * **log_bin** 
-        * 需要在数据库配置文件中添加或者指定--log-bin=[base-name]启动DB服务，重启后修改才生效 
+        * 需要在数据库配置文件中添加或者指定`--log-bin=[base-name]`启动DB服务，重启后修改才生效 
       * ![][23]
 
 * **日志记录内容相关**
     * **binlog_format** 
         * 多么重要的参数，以至于本文开了一节来细讲，详见 第三部分
         * 设置binlog的记录格式
-        * 5.7.6前默认statement，5.7.7后默认row，可选row，mixed，statement
+        * 5.7.6前默认`statement`，5.7.7后默认`row`，可选row，mixed，statement
     * **binlog_row_image** 
-        * 主要针对当binlog_format=row格式 下的设置，
+        * 主要针对当`binlog_format=row`格式 下的设置，
         * 默认full，可选full，minimal，noblob
     * **binlog_rows_query_log_events** 
-        * 主要针对当binlog_format=row格式 下的设置，如果基于row记录binlog日志，默认是只记录变化的行数据，不记录涉及执行的SQL语句，如果开启此参数，则会一同记录执行的SQL语句
+        * 主要针对当`binlog_format=row`格式 下的设置，如果基于row记录binlog日志，默认是只记录变化的行数据，不记录涉及执行的SQL语句，如果开启此参数，则会一同记录执行的SQL语句
         * 默认false
-    * binlog_gtid_simple_recovery 
-        * GTID复制会使用到，该参数控制 配置了的GTID复制到实例，在重启时或者清理binlog文件时，数据库只需要打开最老跟最新两个binlog文件取出gtid_purged and gtid_executed，不需要打开所有文件
+    * `binlog_gtid_simple_recovery` 
+        * GTID复制会使用到，该参数控制 配置了的GTID复制到实例，在重启时或者清理binlog文件时，数据库只需要打开最老跟最新两个`binlog`文件取出`gtid_purged and gtid_executed`，不需要打开所有文件
         * 默认为false，这个参数是社区反馈给官方添加，调整这个选项设置为True，对性能会有所提高，但是在某些环境下，由于只打开两个文件来计算，所以计算gtids值可能会出错。而保持这个选项值为false，能确保计算总是正确。
-        * 组提交（提高binary log并发提交的数据量）
-    * binlog_group_commit_sync_delay 
+        * 组提交（提高`binary log`并发提交的数据量）
+    * `binlog_group_commit_sync_delay` 
         * 默认为0
-        * 结合binlog_group_commit_sync_no_delay_count来理解，见下文
-    * binlog_group_commit_sync_no_delay_count 
+        * 结合`binlog_group_commit_sync_no_delay_count`来理解，见下文
+    * `binlog_group_commit_sync_no_delay_count` 
         * 默认为0
-        * MySQL等待binlog_group_commit_sync_delay毫秒的时间直到 binlog_group_commit_sync_no_delay_count个数时进行一次组提交，如果binlog_group_commit_sync_delay毫秒内也还没有到达指定的个数，也会提交。
-        * flush disk相关
+        * MySQL等待`binlog_group_commit_sync_delay`毫秒的时间直到 `binlog_group_commit_sync_no_delay_count`个数时进行一次组提交，如果`binlog_group_commit_sync_delay`毫秒内也还没有到达指定的个数，也会提交。
+        * `flush disk`相关
     * **sync_binlog**
         * 5.7.7前默认为0，之后默认为1，范围0-4294967295
-        * sync_binlog =0，则是依赖操作系统刷新文件的机制，MySQL不会主动同步binlog内容到磁盘文件中去，而是依赖操作系统来刷新binary log。
-        * sync_binlog =N (N>0) ，则是MySQL 在每写 N次 二进制日志binary log时，会使用fdatasync()函数将它的写二进制日志binary log同步到磁盘中去。
+        * `sync_binlog =0`，则是依赖操作系统刷新文件的机制，MySQL不会主动同步`binlog`内容到磁盘文件中去，而是依赖操作系统来刷新binary log。
+        * `sync_binlog =N (N>0)` ，则是MySQL 在每写 N次 二进制日志`binary log`时，会使用`fdatasync()`函数将它的写二进制日志`binary log`同步到磁盘中去。
         * 注: 如果启用了autocommit，那么每一个语句statement就会有一次写操作；否则每个事务对应一个写操作。
-        * 如果设置sync_binlog =0 ，发生crash事件（服务器），数据库最高丢失binlog内容为1s内写在file system buffer的内容；
-        * 如果设置sync_binlog =N ，发生crash事件（服务器），数据库最高丢失binlog内容为写在file system buffer内 N个binlog events； 
+        * 如果设置`sync_binlog =0` ，发生crash事件（服务器），数据库最高丢失binlog内容为1s内写在`file system buffer`的内容；
+        * 如果设置`sync_binlog =N` ，发生crash事件（服务器），数据库最高丢失binlog内容为写在`file system buffer`内 N个binlog events； 
         * ![][24]
-        * 这个参数经常跟innodb_flush_log_at_trx_commit结合调整，提高性能或者提高安全性（详细可查看上周博文：[http://www.cnblogs.com/xinysu/p/6555082.html][25] 中 “redo参数” 一节）， **这里提2个推荐的配置：**
-            * innodb_flush_log_at_trx_commit和sync_binlog 都为 1（俗称双一模式），在mysqld 服务崩溃或者服务器主机crash的情况下，binary log 只有可能丢失最多一个语句或者一个事务。但是有得必有舍，这个设置是最安全但也是最慢的。适合数据一致性要求较高，核心业务使用。
-            * innodb_flush_log_at_trx_commit=2 ，sync_binlog=N (N为500 或1000) **，但是但是但是，服务器一定要待用蓄电池后备电源来缓存cache**，在服务器crash后，还能支持把file system buffer中的内容写入到binlog file中，防止系统断电异常。这种适合当磁盘IO无法满足业务需求时，比如节假日或者周年活动产生的数据库IO压力，则推荐这么设置。
+        * 这个参数经常跟`innodb_flush_log_at_trx_commit`结合调整，提高性能或者提高安全性（详细可查看上周博文：[http://www.cnblogs.com/xinysu/p/6555082.html][25] 中 “redo参数” 一节）， **这里提2个推荐的配置：**
+            * `innodb_flush_log_at_trx_commit`和`sync_binlog` 都为 1（俗称双一模式），在mysqld 服务崩溃或者服务器主机crash的情况下，binary log 只有可能丢失最多一个语句或者一个事务。但是有得必有舍，这个设置是最安全但也是最慢的。适合数据一致性要求较高，核心业务使用。
+            * `innodb_flush_log_at_trx_commit=2` ，`sync_binlog=N` (N为500 或1000) **，但是但是但是，服务器一定要待用蓄电池后备电源来缓存cache**，在服务器crash后，还能支持把file system buffer中的内容写入到`binlog file`中，防止系统断电异常。这种适合当磁盘IO无法满足业务需求时，比如节假日或者周年活动产生的数据库IO压力，则推荐这么设置。
 
 
 # **3 Binary Logging Formats**
@@ -136,19 +138,19 @@ Binary log 用来记录数据库中发生的修改情况，比如数据的修改
 * **binlog_format**
     * 多么重要的参数，以至于本文开了一节来细讲，详见 第三部分
     * 设置binlog的记录格式
-    * 5.7.6前默认statement，5.7.7后默认row，可选row，mixed，statement
+    * 5.7.6前默认`statement`，5.7.7后默认`row`，可选row，mixed，statement
 
 * **binlog_row_image**
-    * 主要针对当binlog_format=row格式 下的设置，
+    * 主要针对当`binlog_format=row`格式 下的设置，
     * 默认full，可选full，minimal，noblob
 
 * **binlog_rows_query_log_events**
-    * 主要针对当binlog_format=row格式 下的设置，如果基于row记录binlog日志，默认是只记录变化的行数据，不记录涉及执行的SQL语句，如果开启此参数，则会一同记录执行的SQL语句
+    * 主要针对当`binlog_format=row`格式 下的设置，如果基于row记录binlog日志，默认是只记录变化的行数据，不记录涉及执行的SQL语句，如果开启此参数，则会一同记录执行的SQL语句
     * 默认false
 
 **实验内容：**
 
-1. 设置binlog format格式；设置隔离级别；
+1. 设置`binlog format`格式；设置隔离级别；
 1. 创建表格
 1. INSERT操作（重点查看UUID（）函数使用情况）
 1. UPDATE操作（检查自动更新时间列）
@@ -177,7 +179,7 @@ mysql> show master status;
 
 DDL跟DML模拟结束后，得到当前的binlog文件是 ，结束的position是，所以直接读取整个文件从position=154到i2216之间的操作记录，使用mysqlbinlog读取。
 
-[root@localhost ~]# /usr/local/mysql/bin/mysqlbinlog --start-position=154 --stop-position=2216
+    [root@localhost ~]# /usr/local/mysql/bin/mysqlbinlog --start-position=154 --stop-position=2216
 
 
 ```
@@ -304,7 +306,7 @@ DDL跟DML模拟结束后，得到当前的binlog文件是 ，结束的position�
     /*!50530 SET @@SESSION.PSEUDO_SLAVE_MODE=0*/;
 ```
 
- statement 格式的binlog
+ `statement` 格式的`binlog`
 
 逐个事务拆分开看如下图：
 
@@ -316,10 +318,10 @@ DDL跟DML模拟结束后，得到当前的binlog文件是 ，结束的position�
 
 小结：
 
-* 当binlog_format=statement的时候，DDL及DML都是明文按照SQL记录存储
+* 当`binlog_format=statement`的时候，DDL及DML都是明文按照SQL记录存储
 * 对复制的影响 
     * 某系统参数由于在不同时间不同服务器，执行结果不一致，这会给复制的主从带来数据不一致的严重影响
-    * LOAD_FILE()， UUID()， USER()，FOUND_ROWS()，defaults now()及用户自定义函数等
+    * `LOAD_FILE()`， `UUID()`， `USER()`，`FOUND_ROWS()`，`defaults now()`及`用户自定义函数`等
     * 同步到从库的binlog都是SQL语句，在slave端再跑一遍，假设一个update语句性能很差，但是最终只修改了一行数据，那么在从库也会同样执行这个性能差的SQL
     * 而对于 insert tb select * from tbname 这类型的SQL，则只需要同步一行SQL语句即可
 
@@ -356,15 +358,15 @@ show master status;
 
 ![][34]
 
-找到开始与结束的position点，查看这个区间的binlog日志内容：/usr/local/mysql/bin/mysqlbinlog --start-position=154 --stop-position=2196 /data/mysql/mysql3306/logs/bin_log.000017
+找到开始与结束的position点，查看这个区间的binlog日志内容：`/usr/local/mysql/bin/mysqlbinlog --start-position=154 --stop-position=2196 /data/mysql/mysql3306/logs/bin_log.000017`
 
 ![][35]
 
 ![][36]
 
-发现，在row格式下，DML是加密存储，好在mysqlbinlog提供参数-v 反解析查看，指令如下：
+发现，在row格式下，DML是加密存储，好在`mysqlbinlog`提供参数`-v` 反解析查看，指令如下：
 
-[root@localhost ~]# /usr/local/mysql/bin/mysqlbinlog --base64-output=decode-rows -v -v --start-position=154 --stop-position=2196 /data/mysql/mysql3306/logs/bin_log.000017
+    [root@localhost ~]# /usr/local/mysql/bin/mysqlbinlog --base64-output=decode-rows -v -v --start-position=154 --stop-position=2196 /data/mysql/mysql3306/logs/bin_log.000017
 
 ![][37]
 
@@ -374,15 +376,15 @@ show master status;
 
 小结：
 
-* 当binlog_format=row的时候，其他参数默认，DDL明文存储SQL脚本，DML都是加密存储且存储的是每一行的行记录修改情况
+* 当`binlog_format=row`的时候，其他参数默认，DDL明文存储SQL脚本，DML都是加密存储且存储的是每一行的行记录修改情况
 * 对复制的影响
 * 最安全的同步设置 
     * 同步到从库的binlog都是按行记录修改的SQL，所以假设一个update语句性能很差，但是最终只修改了一行数据，那么在从库不需要执行这个性能差的SQL，只需要直接执行行记录的修改结果即可（注意，使用基于row格式复制的实例，请给所有表格添加主键或者唯一索引，不然每一行记录的修改都需要全表扫，会导致从库性能非常差而且可能延时较长）
-    * 而对于 insert tb select * from tbname 这类型的SQL，statment格式的只需要同步一条sql，但是row的话，则需要同步所有行记录。
+    * 而对于 `insert tb select * from tbname` 这类型的SQL，statment格式的只需要同步一条sql，但是row的话，则需要同步所有行记录。
 
 ### **3.2.2****binlog_rows_query_log_events****设置**
 
-从上小节可以看出，当binlog_format=row的时候，只记录行修改情况，不记录执行的SQL的。 **启动这个参数，则可在row格式下查看到执行的sql语句。**
+从上小节可以看出，当`binlog_format=row`的时候，只记录行修改情况，不记录执行的SQL的。 **启动这个参数，则可在row格式下查看到执行的sql语句。**
 
 造数据中：
 
@@ -394,13 +396,13 @@ show master status;
 
 **3.2.3 binlog_row_image设置**
 
-默认 full，可选full，minimal，noblob
+默认 `full`，可选`full`，`minimal`，`noblob`
 
-* full的结果可看上文的所有截图，update的时候，set是全部列的新纪录，where是全部的旧记录；
-* noblob 
+* `full`的结果可看上文的所有截图，update的时候，set是全部列的新纪录，where是全部的旧记录；
+* `noblob` 
     * ![][42]
     * ![][43]
-* minimal  
+* `minimal`  
 
     * ![][44]
 
@@ -417,7 +419,7 @@ show master status;
 
 ## **3.3 binlog_format=mixed**
 
-理解完statement跟row模式后，mixed混合模式就好理解了。
+理解完`statement`跟`row`模式后，`mixed`混合模式就好理解了。
 
 mixed模式下，大多数情况下，是以statement格式记录binlog日志，当隔离级别为RC模式的时候，则修改为row模式记录，以下几个形式，也是以row模式记录：
 
@@ -439,30 +441,30 @@ mixed模式下，大多数情况下，是以statement格式记录binlog日志，
 
 # **4 binlog server的搭建**
 
-binlog server拿来干嘛？其实是一个实时备份binlog的配置，假设你有一台DB服务器的数据一致性及安全性非常高，你的备份策略可能是每周全备一次，每日差异备份一次，那么假设出现主从故障，需要使用备份来恢复，那么你可能丢失的数据最多可以达到一天。这个时候，其实可以搭建一个binlog server，来实时保存binlog文件在备份服务器上，它实时同步binlog文件内容，也就是当你发生宕机事故时，你可以通过备份文件+binlog server中的内容来恢复
+`binlog server`拿来干嘛？其实是一个实时备份`binlog`的配置，假设你有一台DB服务器的数据一致性及安全性非常高，你的备份策略可能是每周全备一次，每日差异备份一次，那么假设出现主从故障，需要使用备份来恢复，那么你可能丢失的数据最多可以达到一天。这个时候，其实可以搭建一个`binlog server`，来实时保存binlog文件在备份服务器上，它实时同步binlog文件内容，也就是当你发生宕机事故时，你可以通过备份文件+binlog server中的内容来恢复
 
 * 搭建binlog 
-    * 选定一台服务器，用来当做一个binlog server服务器
+    * 选定一台服务器，用来当做一个`binlog server`服务器
     * 服务器上配置同个版本mysql
     * 同一个binlog server 可以同步多台数据库实例的binlog文件
     * 建立每个实例对应的文件夹，cd 文件夹，进入文件夹
-    * /usr/local/mysql/bin/mysqlbinlog -R --raw --host=192.168.9.111 --port=3330 --user='repl' --password='replasslave' --stop-never --stop-never-slave-server-id=1113330 --start-position=14981 bin_log.000045
-    * /usr/local/mysql/bin/mysqlbinlog -R --raw --host=192.168.9.112 --port=3310 --user='repl' --password='replasslave' --stop-never --stop-never-slave-server-id=1443310 --start-position=154 bin_log.000044
+    * `/usr/local/mysql/bin/mysqlbinlog -R --raw --host=192.168.9.111 --port=3330 --user='repl' --password='replasslave' --stop-never --stop-never-slave-server-id=1113330 --start-position=14981 bin_log.000045`
+    * `/usr/local/mysql/bin/mysqlbinlog -R --raw --host=192.168.9.112 --port=3310 --user='repl' --password='replasslave' --stop-never --stop-never-slave-server-id=1443310 --start-position=154 bin_log.000044`
 
 
 # **5 Tips**
 
 ## **5.1 修改会话级别的binlog格式**
 
-一般情况下，我们不随意修改数据库级别的binlog格式，因为有可能会对程序不兼容。但是当人为导数的时候，比如insert into tb select * from .. 涉及100万行记录的时候，如果binlog_formant为row格式，那么产生的binlog文件将非常大，而且再传给从库落地为relay log也很大，这占用了一定量的IO资源，这个时候，可以在操作之前，先修改当前会话级别为 set binlog_formant='statement'; 再执行insert into tb select * from ..，那么它就仅记录这单条SQL，会话级别的binlog_format修改，不会影响整体的同步情况。
+一般情况下，我们不随意修改数据库级别的binlog格式，因为有可能会对程序不兼容。但是当人为导数的时候，比如`insert into tb select * from .. `涉及100万行记录的时候，如果`binlog_formant`为row格式，那么产生的`binlog`文件将非常大，而且再传给从库落地为`relay log`也很大，这占用了一定量的IO资源，这个时候，可以在操作之前，先修改当前会话级别为 `set binlog_formant='statement';` 再执行`insert into tb select * from ..`，那么它就仅记录这单条SQL，会话级别的`binlog_format`修改，不会影响整体的同步情况。
 
 ## **5.2 查看binlog中每个事务的开始跟结束**
 
-详细看上面的截图就会发现，都给大家把一个个事务画上了框框，细心可以发现，每个事务都会有一个last_committed，如下图。
+详细看上面的截图就会发现，都给大家把一个个事务画上了框框，细心可以发现，每个事务都会有一个`last_committed`，如下图。
 
 ![][55]
 
-则可以发现这个update事务从1285开始，1681结束，通过/usr/local/mysql/bin/mysqlbinlog --base64-output=decode-rows -v -v --start-position=1285 --stop-position=1681 /data/mysql/mysql3306/logs/bin_log.000017，可以正常读取这个事务。
+则可以发现这个update事务从1285开始，1681结束，通过`/usr/local/mysql/bin/mysqlbinlog --base64-output=decode-rows -v -v --start-position=1285 --stop-position=1681 /data/mysql/mysql3306/logs/bin_log.000017`，可以正常读取这个事务。
 
 ![][56]
 
@@ -470,7 +472,7 @@ binlog server拿来干嘛？其实是一个实时备份binlog的配置，假设�
 
 由于读出来的事务属于没有提交的事务，那么mysqlbinlog则会认为这个事务需要回滚，添加rollback语句，并提示这个rollbac是由mysqlbinlog自身添加的。
 
-/usr/local/mysql/bin/mysqlbinlog --base64-output=decode-rows -v -v --start-position=1285 --stop-position=1650 /data/mysql/mysql3306/logs/bin_log.000017
+    /usr/local/mysql/bin/mysqlbinlog --base64-output=decode-rows -v -v --start-position=1285 --stop-position=1650 /data/mysql/mysql3306/logs/bin_log.000017
 
 ![][57]
 
@@ -482,30 +484,30 @@ binlog server拿来干嘛？其实是一个实时备份binlog的配置，假设�
 
 ## **5.4 binlog文件清理（20170328修改）**
 
-* expire_logs_days+flush logs
+* `expire_logs_days+flush logs`
 
-    * 设置expire_logs_days，假设当前binlog文件过多且大占用磁盘空间，可以修改小改参数，改参数只有在切换新的binlog文件时，才会删除过期文件，也就是可以等数据库把当前binlog写满后切换到新文件的时候删除，也可以手动执行flush logs，手动切换binlog，同时会触发对过期binlog文件的删除。注意从库的同步情况来设置。
+    * 设置`expire_logs_days`，假设当前binlog文件过多且大占用磁盘空间，可以修改小改参数，改参数只有在切换新的binlog文件时，才会删除过期文件，也就是可以等数据库把当前binlog写满后切换到新文件的时候删除，也可以手动执行flush logs，手动切换binlog，同时会触发对过期binlog文件的删除。注意从库的同步情况来设置。
 
-* purge binary logs to 'xxxx' 
+* `purge binary logs to 'xxxx'` 
     * 清理 'xxxx' 之前的 binary log文件，只保留 'xxxx' 之后的binary log文件
     * 但是使用这个指令的时候，要注意主从同步情况，如果在主库执行，一定要去从库 SHOW SLAVE STATUS，看下当前同步到哪个binlog文件，防止清理报错 
     * ![][58]
 
 ## **5.5 与binlog相关的指令**
 
-查看当前binlog文件情况：show binary logs; 
+查看当前binlog文件情况：`show binary logs;` 
 
 ![][59]
 
-查看当前使用的binlog文件及position：show master status;（复制随处可见到使用）
+查看当前使用的binlog文件及position：`show master status;`（复制随处可见到使用）
 
 ![][60]
 
-查看某个文件中的binlog事件：show binlog events in 'bin_log.000003';
+查看某个文件中的binlog事件：`show binlog events in 'bin_log.000003';`
 
 ![][61]
 
-重置所有binlog文件，会删除所有binlog文件哦，谨慎使用：reset master;
+重置所有binlog文件，会删除所有binlog文件哦，谨慎使用：`reset master;`
 
 ![][62]
 
@@ -515,7 +517,7 @@ binlog server拿来干嘛？其实是一个实时备份binlog的配置，假设�
 
 如果转载，请注明博文来源： www.cnblogs.com/xinysu/ ，版权归 博客园 苏家小萝卜 所有。望各位支持！
 
-`19   21   22   23   27   47   56   57   59   60   61   62   `
+</font>
 
 [0]: http://www.cnblogs.com/xinysu/p/6607658.html
 [1]: #_label0

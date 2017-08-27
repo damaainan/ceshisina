@@ -1,5 +1,7 @@
 ## 与 MySQL 的零距离接触
 
+<font face=微软雅黑>
+
 [MySQL][0] 是一个关系型数据库管理系统，由瑞典 MySQL AB 公司开发，目前属于 Oracle 旗下产品。MySQL 是最流行的关系型数据库管理系统之一，在 WEB 应用方面，MySQL 是最好的 RDBMS (Relational Database Management System，关系数据库管理系统) 应用软件。 
 
 MySQL 是一个开源的关系型数据库管理系统，分为社区版和企业版。
@@ -142,7 +144,7 @@ MySQL 是一个开源的关系型数据库管理系统，分为社区版和企�
     * `DEFAULT` 默认约束
     * `FOREIGN KEY` 外键约束
 
-```
+```sql
     CREATE TABLE t6(id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20) NOT NULL UNIQUE KEY, sex ENUM('1', '2', '3') DEFAULT '3');
 ```
 
@@ -240,11 +242,11 @@ MySQL 配置文件
 ```sql
     create table users(id smallint unsigned primary key auto_increment, username varchar(10) not null, pid bigint, foreign key(pid) references provinces(id));
     
-    # 报错
-    # ERROR 1215 (HY000): Cannot add foreign key constraint
-    # 因为类型不匹配
+    -- # 报错
+    -- # ERROR 1215 (HY000): Cannot add foreign key constraint
+    -- # 因为类型不匹配
     
-    # 正确命令应该是：
+    -- # 正确命令应该是：
     create table users(id smallint unsigned primary key auto_increment, username varchar(10) not null, pid smallint unsigned, foreign key(pid) references provinces(id));
 ```
 
@@ -426,6 +428,8 @@ MySQL 配置文件
 ## 6 数据类型 
 
 数据类型是指列、存储过程参数、表达式和局部变量的数据特征，它决定了数据的存储格式，代表了不同信息的类型。
+
+</font>
 
 [0]: https://www.mysql.com/
 [1]: ./img/uumuUbf.png

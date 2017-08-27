@@ -2,6 +2,8 @@
 
 **阅读目录(Content)**
 
+<font face=微软雅黑>
+
 * [1 使用规范][1]
     * [1.1 实例级备份恢复][2]
     * [1.2 库、表级别备份恢复][3]
@@ -34,23 +36,23 @@
 
 #### 1.1 实例级备份恢复
 
-使用innobackupex，在业务空闲期执行，考虑到IO影响及 FLUSH TABLE WITH READ LOCAK 拷贝非INNODB文件的锁表时间。
+使用`innobackupex`，在业务空闲期执行，考虑到IO影响及 FLUSH TABLE WITH READ LOCAK 拷贝非INNODB文件的锁表时间。
 
-常规备份中，使用innobackupex在从库备份执行，在无从库的情况下，允许在业务低峰期对整个实例拷贝。
+常规备份中，使用`innobackupex`在从库备份执行，在无从库的情况下，允许在业务低峰期对整个实例拷贝。
 
 #### 1.2 库、表级别备份恢复
 
 考虑 数据量、磁盘IO情况、恢复难度问题。
 
-mysqldump锁表时间长，备份时间长，但是导入方便，适合数据量小但是表格多 的库/表级别备份。
+`mysqldump`锁表时间长，备份时间长，但是导入方便，适合数据量小但是表格多 的库/表级别备份。
 
-innobackupex锁表时间短，备份时间短，但是恢复较复杂，需要discord tablespace及 import TABLESPACE，除非允许备份文件成立单个实例，适合表数据量大但表格数量少的库/表级别备份。
+`innobackupex`锁表时间短，备份时间短，但是恢复较复杂，需要`discord tablespace`及 `import TABLESPACE`，除非允许备份文件成立单个实例，适合表数据量大但表格数量少的库/表级别备份。
 
 #### 1.3 SQL结果备份及恢复
 
-如果是单表简单查询，使用mysqldump，添加where条件，例如：mysqldump -S /tmp/mysql3330.sock -uroot -p --databases db1 --tables tb1 tb2 tb3 -d >/data/backup/3330/mysqldump_20161229.sql 。
+如果是单表简单查询，使用`mysqldump`，添加`where`条件，例如：`mysqldump -S /tmp/mysql3330.sock -uroot -p --databases db1 --tables tb1 tb2 tb3 -d >/data/backup/3330/mysqldump_20161229.sql` 。
 
-如果是复杂SQL查询结果，使用 INTO OUTFILE，如下：
+如果是复杂SQL查询结果，使用 `INTO OUTFILE`，如下：
 
  
 ```
@@ -67,18 +69,22 @@ load data infile '/tmp/pt1.txt'  into table pt FIELDS TERMINATED BY ',' OPTIONAL
 
 #### 1.4 表结构备份
 
-使用mysqldump，添加-d参数。
+使用`mysqldump`，添加`-d`参数。
 
 
 ### 2 mysqldump
 
-支持功能多且全面，但是锁表时间是个风险点，使用时注意，同时，若是5.6版本之前的，要充分考虑buffer pool的使用情况。
+支持功能多且全面，但是锁表时间是个风险点，使用时注意，同时，若是5.6版本之前的，要充分考虑`buffer pool`的使用情况。
 
 #### 2.1 原理
 
-通过general log查看mysqldump运行原理，详细流程见代码块 mysqldump。
+通过`general log`查看`mysqldump`运行原理，详细流程见代码块 `mysqldump`。
 
-mysqldump运行中，第一步，会检查数据库的配置情况，例如是否设置GTID模式及参数配置；第二步，锁所有表格，只允许读操作；第三步，逐个拷贝表格，生成创建表格上SQL（字符集为binary），再SELECT * FROM 表格 生成数据脚步（字符集为UTF8）；第4步，解锁。
+`mysqldump`运行中，  
+第一步，会检查数据库的配置情况，例如是否设置GTID模式及参数配置；  
+第二步，锁所有表格，只允许读操作；  
+第三步，逐个拷贝表格，生成创建表格上SQL（字符集为binary），再`SELECT * FROM 表格` 生成数据脚步（字符集为UTF8）；  
+第四步，解锁。
 
 当导出全实例或者大数据库时，这里有2个需要注意到问题：
 
@@ -87,15 +93,15 @@ mysqldump运行中，第一步，会检查数据库的配置情况，例如是�
     * 线上主库无法支持这么长时间的锁表操作
     * 线上从库，应考虑对复制到影响
 
-* buffer pool的影响 
-    * 由于是采用SELECT * 生成SQL语句，大量读操作，会把缓存里的数据清理出来，导致热点数据移出，对线上DML操作带来严重影响
-    * 5.6后版本,新增了young buffer pool，一秒内以这个数据被再次访问，则会进入到buffer pool 的warm区。youny区占buffer pool的3/8，剩下的5/8为warm区，可以有效保证热点数据不被清出。
+* `buffer pool`的影响 
+    * 由于是采用`SELECT *` 生成SQL语句，大量读操作，会把缓存里的数据清理出来，导致热点数据移出，对线上DML操作带来严重影响
+    * 5.6后版本,新增了`young buffer pool`，一秒内以这个数据被再次访问，则会进入到`buffer pool` 的warm区。youny区占`buffer pool`的3/8，剩下的5/8为warm区，可以有效保证热点数据不被清出。
 
+执行SQL：
+
+    mysqldump -S /tmp/mysql3330.sock -uroot -p --databases zero >/data/backup/3330/mysqldump_20161229.sql
 
 ```
-
-执行SQL：mysqldump -S /tmp/mysql3330.sock -uroot -p --databases zero >/data/backup/3330/mysqldump_20161229.sql
- 
 2016-12-27T14:38:27.782875Z     1732 Connect    root@localhost on  using Socket
 2016-12-27T14:38:27.803572Z     1732 Query    /*!40100 SET @@SQL_MODE='' */
 2016-12-27T14:38:27.804096Z     1732 Query    /*!40103 SET TIME_ZONE='+00:00' */
@@ -140,36 +146,36 @@ mysqldump运行中，第一步，会检查数据库的配置情况，例如是�
 
 以下参数在使用过程中，需要留意，根据实际情况添加：
 
-* --master-data=1 /2
+* `--master-data=1 /2`
 
-    生产change master to语句，这里注意，lock table 的时间，会提前到最开始的时候，不过相差的时间段非常小。
+    生产`change master to`语句，这里注意，`lock table` 的时间，会提前到最开始的时候，不过相差的时间段非常小。
 
-    1. 则是生产 change master to语句 不加注释符号，直接执行；
+    1. 则是生产 `change master to`语句 不加注释符号，直接执行；
 
-    2. 生成change master to语句，加注释符号
+    2. 生成`change master to`语句，加注释符号
 
-* --singe-transaction
+* `--singe-transaction`
 
     确保事物一致性，建议在GTID模式添加
 
-* --set-gtid-purged=ON / OFF
+* `--set-gtid-purged=ON / OFF`
 
-    在GTID模式下的dump语句，会自动在备份文件之前生成 
+    在`GTID`模式下的`dump`语句，会自动在备份文件之前生成 
 
-    如果打算把该脚本放在非GTID模式的数据库执行，建议添加 --set-gtid-purged=OFF ，关闭生成purge 或者是去文件中注释掉该语句
+    如果打算把该脚本放在非GTID模式的数据库执行，建议添加 `--set-gtid-purged=OFF` ，关闭生成purge 或者是去文件中注释掉该语句
 
-* -d
+* `-d`
 
     只导出表结构
 
-* --databases
+* `--databases`
 
-    不更随--tables的时候，可以指定多个db，如果指定了--tables，则默认第一个是database，其他的是table
+    不更随`--tables`的时候，可以指定多个db，如果指定了`--tables`，则默认第一个是`database`，其他的是table
 
     也就是只允许导多个DB的数据文件，或者导同个DB的多个table文件；不允许到不同DB的某些table文件
 
- mysqldump主要参数
-主要参数相见代码模 mysqldump主要参数，并非所有参数内容，这些参数较常使用。
+ `mysqldump`主要参数
+主要参数相见代码模 `mysqldump`主要参数，并非所有参数内容，这些参数较常使用。
 
 
 ```
@@ -316,11 +322,11 @@ source /data/backup/3330/mysqldump_20161229.sql
 
 ### 3 PerconaXtraBackup
 
-PerconaXtraBackup软件中，含有xtrabackup跟innobackupex，xtrabackup中不备份表结构，innobackupex调用xtrabackup子线程后再备份表结构，故常用innobackupex，xtraback不做日常使用。目前支持 Myisam,innodb，可以备份 .frm, .MRG, .MYD, .MYI, .MAD, .MAI, .TRG, .TRN, .ARM, .ARZ, .CSM, CSV, .opt, .par, innoDB data 及innobdb log 文件。
+`PerconaXtraBackup`软件中，含有`xtrabackup`跟`innobackupex`，`xtrabackup`中不备份表结构，`innobackupex`调用`xtrabackup`子线程后再备份表结构，故常用`innobackupex`，`xtraback`不做日常使用。目前支持 `Myisam`,`innodb`，可以备份 `.frm`, `.MRG`, `.MYD`, `.MYI`, `.MAD`, `.MAI`, `.TRG`, `.TRN`, `.ARM`, `.ARZ`, `.CSM`, CSV, `.opt`, `.par`, `innoDB data` 及`innobdb log` 文件。
 
 #### 3.1 innobackupex原理（全量说明）
 
-对数据库文件进行copy操作，同时建立多一个xtrabackup log 同步mysql的redo线程，copy数据文件结束时，flush table with read lock，拷贝非innodb数据文件的文件，拷贝结束后解锁。原理图见下图（图片来自知数堂）。通过general log查看mysqldump运行原理，详细流程见代码块 innobackupex。
+对数据库文件进行copy操作，同时建立多一个`xtrabackup log` 同步mysql的`redo线程`，copy数据文件结束时，`flush table with read lock`，拷贝非innodb数据文件的文件，拷贝结束后解锁。原理图见下图（图片来自知数堂）。通过general log查看mysqldump运行原理，详细流程见代码块 `innobackupex`。
 
 ![][25]
 
@@ -328,11 +334,11 @@ PerconaXtraBackup软件中，含有xtrabackup跟innobackupex，xtrabackup中不�
 
 * 锁表时间
 
-    innobackupex锁表时间是 data文件及log文件copy结束时，才锁表，锁表时长为拷贝non-InnoDB tables and files的时长，相对时间较短，对业务影响小。
+    `innobackupex`锁表时间是 data文件及log文件copy结束时，才锁表，锁表时长为拷贝non-InnoDB tables and files的时长，相对时间较短，对业务影响小。
 
 * 大事务
 
-    copy数据文件的过程中，由于是不锁表，允许数据进行DML操作，这里需要注意，如果这个时候，拷贝的过程中有大事务一直没有提交，界面显示log scanned up，持续copy binlog追上数据库的binlog文件，并且该时间点刚好所有事务已提交（这里测试的时候，如果是单条 insert ，delete，update的大事务，则是要等待单条完成才提交，但是如果是begin事务里边的，不用等待是否commit or rollback，begin里边的单条事务执行结束，则就开始提交，恢复的时候，当作是undo 事务，不会提交该事物，回滚该事务）。大事务容易导致备份时长加长，IO占用。
+    copy数据文件的过程中，由于是不锁表，允许数据进行DML操作，这里需要注意，如果这个时候，拷贝的过程中有大事务一直没有提交，界面显示`log scanned up`，持续copy binlog追上数据库的binlog文件，并且该时间点刚好所有事务已提交（这里测试的时候，如果是单条 `insert` ，`delete`，`update`的大事务，则是要等待单条完成才提交，但是如果是begin事务里边的，不用等待是否`commit or rollback`，begin里边的单条事务执行结束，则就开始提交，恢复的时候，当作是undo 事务，不会提交该事物，回滚该事务）。大事务容易导致备份时长加长，IO占用。
 
  
 ```
@@ -386,7 +392,7 @@ innobackupex [--compress] [--compress-threads=NUMBER-OF-THREADS] [--compress-chu
 
 ##### 3.2.2 准备还原参数
 
-根据 BACKUP-DIR/xtrabackup_logfile创建新的logfile，xtrabackup为子进程，不连接数据库服务.
+根据 `BACKUP-DIR/xtrabackup_logfile`创建新的`logfile`，`xtrabackup`为子进程，不连接数据库服务.
 
 ```
 innobackupex --apply-log [--use-memory=B]
@@ -401,11 +407,11 @@ innobackupex --apply-log [--use-memory=B]
 
 * 拷贝备份目录到指定目录，备份目录及拷贝目录文件均存在
 
-    innobackupex --copy-back [--defaults-file=MY.CNF] [--defaults-group=GROUP-NAME] **BACKUP-DIR**
+    `innobackupex --copy-back [--defaults-file=MY.CNF] [--defaults-group=GROUP-NAME] BACKUP-DIR`
 
 * 移动备份目录到指定目录，备份目录为空
 
-    innobackupex --move-back [--defaults-file=MY.CNF] [--defaults-group=GROUP-NAME] **BACKUP-DIR**
+    `innobackupex --move-back [--defaults-file=MY.CNF] [--defaults-group=GROUP-NAME] BACKUP-DIR`
 
 #### 3.3 使用说明
 
@@ -456,7 +462,8 @@ innobackupex --defaults-file=/data/mysql/mysql3330.cnf --databases='zero mysql' 
 #3.1 --include 使用正则表达式
  
 #3.2 --table-file 备份的完整表名写在file文件中
-vim /tmp/backupfile #每行写一个库名，或者一个表的全名（database.table），写完库名或者表名后，千万不要有空格或者其他空白符号，会导致识别不了该表格或者库名，从而导致跳过
+vim /tmp/backupfile 
+#每行写一个库名，或者一个表的全名（database.table），写完库名或者表名后，千万不要有空格或者其他空白符号，会导致识别不了该表格或者库名，从而导致跳过
 innobackupex --defaults-file=/data/mysql/mysql3330.cnf --tables-file=/tmp/backupfile --user=root --password=ycf.com --no-timestamp  /data/backup/3330/20161204
  
 #3.3 --databases 完整库名和表名写在一起，用空格隔开
@@ -470,6 +477,8 @@ ALTER TABLE S1 import TABLESPACE;
 ```
 
 如果转载，请注明博文来源： www.cnblogs.com/xinysu/ ，版权归 博客园 苏家小萝卜 所有。望各位支持！
+
+</font>
 
 [0]: http://www.cnblogs.com/xinysu/p/6229991.html
 [1]: #_label0

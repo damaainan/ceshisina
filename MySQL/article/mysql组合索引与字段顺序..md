@@ -3,7 +3,7 @@
  时间 2017-08-19 12:46:00  goody9807
 
 原文[http://www.cnblogs.com/goody9807/p/7396195.html][1]
-
+<font face=微软雅黑>
 
 很多时候，我们在mysql中创建了索引，但是某些查询还是很慢，根本就没有使用到索引！一般来说，可能是某些字段没有创建索引，或者是组合索引中字段的顺序与查询语句中字段的顺序不符。
 
@@ -13,13 +13,15 @@
 
 一共有31条数据。符合下面语句的数据有5条。执行下面的sql语句：
 
+```sql
     select product_id
     from orders
     where order_id in (123, 312, 223, 132, 224);
-    
+```
 
 这条语句要mysql去根据order_id进行搜索，然后返回匹配记录中的product_id。所以组合索引应该按照以下的顺序创建：
 
+```sql
     create index orderid_productid on orders(order_id, product_id)
     mysql> explain select product_id from orders where order_id in (123, 312, 223, 132, 224) \G
     *************************** 1. row ***************************
@@ -34,10 +36,11 @@
              rows: 5
             Extra: Using where; Using index
     1 row in set (0.00 sec)
-    
+```
 
 可以看到，这个组合索引被用到了,扫描的范围也很小，只有5行。如果把组合索引的顺序换成product_id, order_id的话，mysql就会去索引中搜索 *123 *312 *223 *132 *224，必然会有些慢了。
 
+```sql
     mysql> create index orderid_productid on orders(product_id, order_id);                                                      
     Query OK, 31 rows affected (0.01 sec)
     Records: 31  Duplicates: 0  Warnings: 0
@@ -57,10 +60,11 @@
              rows: 31
             Extra: Using where; Using index
     1 row in set (0.00 sec)
-    
+```
 
-这次索引搜索的性能显然不能和上次相比了。rows:31，我的表中一共就31条数据。索引被使用部分的长度：key_len:10，比上一次的key_len:5多了一倍。不知道是这样在索引里面查找速度快，还是直接去全表扫描更快呢？
+这次索引搜索的性能显然不能和上次相比了。rows:31，我的表中一共就31条数据。索引被使用部分的长度：`key_len:10`，比上一次的`key_len:5`多了一倍。不知道是这样在索引里面查找速度快，还是直接去全表扫描更快呢？
 
+```sql
     mysql> alter table orders add modify_a char(255) default 'aaa';
     Query OK, 31 rows affected (0.01 sec)
     Records: 31  Duplicates: 0  Warnings: 0
@@ -80,7 +84,7 @@
              rows: 31
             Extra: Using where
     1 row in set (0.00 sec)
-    
+```
 
 这样就不会用到索引了。 刚才是因为select的product_id与where中的order_id都在索引里面的。
 
@@ -103,15 +107,18 @@
 列转自： [http://hi.baidu.com/liuzhiqun/blog/item/4957bcb1aed1b5590823023c.html][3]
 
 通过实例理解单列索引、多列索引以及最左前缀原则。实例：现在我们想查出满足以下条件的用户id：   
-mysql>SELECT ｀uid｀ FROM people WHERE lname｀='Liu' AND ｀fname｀='Zhiqun' AND ｀age｀=26   
+
+    mysql>SELECT ｀uid｀ FROM people WHERE lname｀='Liu' AND ｀fname｀='Zhiqun' AND ｀age｀=26   
 因为我们不想扫描整表，故考虑用索引。   
 单列索引：   
- ALTER TABLE people ADD INDEX lname (lname);   
+
+     ALTER TABLE people ADD INDEX lname (lname);   
 将lname列建索引，这样就把范围限制在lname='Liu'的结果集1上，之后扫描结果集1，产生满足fname='Zhiqun'的结果集2，再扫描结果集2，找到 age=26的结果集3，即最终结果。   
    
 由 于建立了lname列的索引，与执行表的完全扫描相比，效率提高了很多，但我们要求扫描的记录数量仍旧远远超过了实际所需 要的。虽然我们可以删除lname列上的索引，再创建fname或者age 列的索引，但是，不论在哪个列上创建索引搜索效率仍旧相似。   
 2.多列索引：   
-ALTER TABLE people ADD INDEX lname_fname_age (lame,fname,age);   
+
+    ALTER TABLE people ADD INDEX lname_fname_age (lame,fname,age);   
  为了提高搜索效率，我们需要考虑运用多列索引,由于索引文件以B－Tree格式保存，所以我们不用扫描任何记录，即可得到最终结果。   
 注：在mysql中执行查询时，只能使用一个索引，如果我们在lname,fname,age上分别建索引,执行查询时，只能使用一个索引，mysql会选择一个最严格(获得结果集记录数最少)的索引。   
 3.最左前缀：顾名思义，就是最左优先，上例中我们创建了lname_fname_age多列索引,相当于创建了(lname)单列索引，(lname,fname)组合索引以及(lname,fname,age)组合索引。   
@@ -119,10 +126,11 @@ ALTER TABLE people ADD INDEX lname_fname_age (lame,fname,age);
 
 #### 建立索引的时机
 
-到这里我们已经学会了建立索引，那么我们需要在什么情况下建立索引呢？一般来说，在WHERE和JOIN中出现的列需要建立索引，但也不完全如此，因为MySQL只对<，<=，=，>，>=，BETWEEN，IN，以及某些时候的LIKE才会使用索引。例如：
+到这里我们已经学会了建立索引，那么我们需要在什么情况下建立索引呢？一般来说，在WHERE和JOIN中出现的列需要建立索引，但也不完全如此，因为MySQL只对`<`，`<=`，`=`，`>`，`>=`，`BETWEEN`，`IN`，以及某些时候的LIKE才会使用索引。例如：
 
+```sql
     SELECT t.Name FROM mytable t LEFT JOIN mytable m ON t.Name=m.username WHERE m.age=20 AND m.city='郑州'
-    
+```
 
 此时就需要对city和age建立索引，由于mytable表的userame也出现在了JOIN子句中，也有对它建立索引的必要。
 
@@ -167,14 +175,19 @@ MySQL查询只使用一个索引，因此如果where子句中已经使用了索�
 
 * 不要在列上进行运算
 
+```sql
 select* **from** users **where** YEAR(adddate)<2007;
+```
 
 将在每个行上进行运算，这将导致索引失效而进行全表扫描，因此我们可以改成
 
+```sql
 select* **from** users **where**adddate<‘2007-01-01’;
+```
 
 * 不使用NOT IN和<>操作
 
+</font>
 
 [1]: http://www.cnblogs.com/goody9807/p/7396195.html
 

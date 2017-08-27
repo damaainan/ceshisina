@@ -19,22 +19,22 @@ MHA高可用架构是基于主从复制原理而部署的，是最常见，最�
 
 MHA简介：
 
-MHA，即MasterHigh Availability Manager and Toolsfor MySQL，是日本的一位MySQL专家采用Perl语言编写的一个脚本管理工具，该工具仅适用于MySQLReplication 环境，目的在于维持Master主库的高可用性。
+MHA，即`MasterHigh Availability Manager and Toolsfor MySQL`，是日本的一位MySQL专家采用Perl语言编写的一个脚本管理工具，该工具仅适用于`MySQLReplication` 环境，目的在于维持Master主库的高可用性。
 
-MHA(Master High Availability)是自动的master故障转移和Slave提升的软件包.它是基于标准的MySQL复制(异步/半同步).
+MHA(`Master High Availability`)是自动的master故障转移和Slave提升的软件包.它是基于标准的MySQL复制(异步/半同步).
 
 MHA组成部分：
 
 MHA由两部分组成： 
 
-1. MHA Manager(管理节点)
-1. MHA Node(数据节点)
+1. `MHA Manager`(管理节点)
+1. `MHA Node`(数据节点)
 
 MHA部署解读：
 
-MHA Manager可以单独部署在一台独立机器上管理多个master-slave集群,也可以部署在一台slave上.MHA Manager探测集群的node节点,当发现master出现故障的时候,它可以自动将具有最新数据的slave提升为新的master,然后将所有其它的slave导向新的master上.整个故障转移过程对应用程序是透明的。
+`MHA Manager`可以单独部署在一台独立机器上管理多个master-slave集群,也可以部署在一台slave上.MHA Manager探测集群的node节点,当发现master出现故障的时候,它可以自动将具有最新数据的slave提升为新的master,然后将所有其它的slave导向新的master上.整个故障转移过程对应用程序是透明的。
 
-MHA node运行在每台MySQL服务器上(master/slave/manager),它通过监控具备解析和清理logs功能的脚本来加快故障转移的。
+MHA node运行在每台MySQL服务器上(`master/slave/manager`),它通过监控具备解析和清理logs功能的脚本来加快故障转移的。
 
 MHA优缺点介绍：
 
@@ -207,7 +207,7 @@ MHA工具包功能介绍：
 
 下面来进行管理节点MHA配置：
 
-创建mha家目录，编辑启动配置文件 
+创建`mha`家目录，编辑启动配置文件 
 
     mkdir -p /usr/local/mha
     mkdir -p /etc/mhacd /etc/mha/
@@ -248,13 +248,15 @@ MHA工具包功能介绍：
     no_master=1
     port=3306
 
- 创建  failover，online  脚本的目录
+ 创建  `failover`，`online`  脚本的目录
 
     mkdir -p /usr/local/scripts
 
-编辑failover切换脚本：
+编辑`failover`切换脚本：
 
     vim master_ip_failover
+
+```perl
     #!/usr/bin/env perl  
       
     use strict;  
@@ -339,12 +341,15 @@ MHA工具包功能介绍：
         "Usage: master_ip_failover --command=start|stop|stopssh|status --orig_master_host=host --orig_master_ip=ip   
                 --orig_master_port=port --new_master_host=host --new_master_ip=ip --new_master_port=port\n";  
     }
+```
 
-编辑online_change的脚本：
+编辑`online_change`的脚本：
 
-cd /usr/local/scripts/
+    cd /usr/local/scripts/
 
     vim master_ip_online_change 
+
+```perl
     #!/usr/bin/env perl  
     use strict;  
     use warnings FATAL =>'all';  
@@ -454,6 +459,7 @@ cd /usr/local/scripts/
     rt �Cnew_master_host=host �Cnew_master_ip=ip �Cnew_master_port=port\n";  
      
     }
+```
 
 #### 创建完两个脚本，记得赋予执行权限
 

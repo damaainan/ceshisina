@@ -2,6 +2,8 @@
 
 **阅读目录(Content)**
 
+<font face=微软雅黑>
+
 * [1 什么是MVCC][1]
 * [2 Innodb的MVCC][2]
 * [3 Two Phase Locking][3]
@@ -20,16 +22,12 @@
 
 - - -
 
-- - -
-
 如果转载，请注明博文来源： [www.cnblogs.com/xinysu/][15] ，版权归 博客园 苏家小萝卜 所有。望各位支持！
 
 - - -
 
-- - -
 
-
-# **1 什么是MVCC**
+## **1 什么是MVCC**
 
 MVCC全称是： **Multiversion concurrency control**，多版本并发控制，提供并发访问数据库时，对事务内读取的到的内存做处理，用来避免写操作堵塞读操作的并发问题。
 
@@ -48,19 +46,19 @@ MVCC有两种实现方式，第一种实现方式是将数据记录的多个版�
 
 # **2 Innodb的MVCC**
 
-在Innodb db中，无论是聚簇索引，还是二级索引，每一行记录都包含一个 DELETE bit，用于表示该记录是否被删除， 同时，聚簇索引还有两个隐藏值：DATA_TRX_ID，DATA_ROLL_PTR。DATA _TRX_ID表示产生当前记录项的事务ID，这个ID随着事务的创建不断增长；DATA _ROLL_PTR指向当前记录项的undo信息。
+在Innodb db中，无论是聚簇索引，还是二级索引，每一行记录都包含一个 `DELETE bit`，用于表示该记录是否被删除， 同时，聚簇索引还有两个隐藏值：`DATA_TRX_ID`，`DATA_ROLL_PTR`。`DATA _TRX_ID`表示产生当前记录项的事务ID，这个ID随着事务的创建不断增长；`DATA _ROLL_PTR`指向当前记录项的`undo`信息。
 
-1. 无论是聚簇索引，还是二级索引，只要其键值更新，就会产生新版本。将老版本数据deleted bti设置为1；同时插入新版本。
+1. 无论是聚簇索引，还是二级索引，只要其键值更新，就会产生新版本。将老版本数据`deleted bti`设置为1；同时插入新版本。
 1. 对于聚簇索引，如果更新操作没有更新primary key，那么更新不会产生新版本，而是在原有版本上进行更新，老版本进入undo表空间，通过记录上的undo指针进行回滚。
 1. 对于二级索引，如果更新操作没有更新其键值，那么二级索引记录保持不变。
 1. 对于二级索引，更新操作无论更新primary key，或者是二级索引键值，都会导致二级索引产生新版本数据。
-1. 聚簇索引设置记录deleted bit时，会同时更新DATA_TRX_ID列。老版本DATA_TRX_ID进入undo表空间；二级索引设置deleted bit时，不写入undo。
+1. 聚簇索引设置记录`deleted bit`时，会同时更新`DATA_TRX_ID`列。老版本`DATA_TRX_ID`进入undo表空间；二级索引设置`deleted bit`时，不写入undo。
 
 **MVCC只工作在REPEATABLE READ和READ COMMITED隔离级别下。READ UNCOMMITED不是MVCC兼容的，因为查询不能找到适合他们事务版本的行版本；它们每次都只能读到最新的版本。SERIABLABLE也不与MVCC兼容，因为读操作会锁定他们返回的每一行数据 。**
 
 在MVCC中，读操作分为两类：当前读跟快照读，当前读返回最新记录，会加锁，保证该记录不会被其他事务修改；快照读，读取的是记录的某个版本（有可能是最新版本也有可能是旧版本），不加锁。
 
-快照读：RU,RC,RR隔离级别下，select * from tbname where ....
+快照读：RU,RC,RR隔离级别下，`select * from tbname where ....`
 
 当前读：
 
@@ -92,13 +90,13 @@ UNLOCK B
 COMMIT
 ```
 
-两阶段锁还有几种特殊情况：conservative（保守）、strict（严格）、strong strict（强严格），这三种类型在加锁和释放锁的处理有些不一样。
+两阶段锁还有几种特殊情况：`conservative`（保守）、`strict`（严格）、`strong strict`（强严格），这三种类型在加锁和释放锁的处理有些不一样。
 
-1. conservative 
-    * 在事务开始的时候，获取需要的记录的锁，避免在操作期间逐个申请锁可能造成的锁等待，conservative 2PL 可以避免死锁
-1. strict 
-    * 仅在事务结束的时候（commit or rollback），才释放所有 write lock，read lock 则正常释放
-1. strong strict 
+1. `conservative` 
+    * 在事务开始的时候，获取需要的记录的锁，避免在操作期间逐个申请锁可能造成的锁等待，`conservative 2PL` 可以避免死锁
+1. `strict` 
+    * 仅在事务结束的时候（commit or rollback），才释放所有 `write lock`，`read lock` 则正常释放
+1. `strong strict` 
     * 仅在事务结束的时候（commit or rollback），才释放所有锁，包括write lock 跟 read lock 都是结束后才释放。
 
 这部分可以查看维基百科：[https://en.wikipedia.org/wiki/Two-phase_locking][20]，
@@ -151,26 +149,26 @@ COMMIT
 
 ## **5.1 隔离级别介绍**
 
-1. Read Uncommited 
-    * 简称 RU，读未提交记录，始终是读最新记录
+1. `Read Uncommited` 
+    * 简称 **`RU`**，读未提交记录，始终是读最新记录
     * 不支持快照读，都是当前读
     * 可能存在脏读、不可重复读、幻读等问题；
 
-1. Read Commited 
-    * 简称 RC ，读已提交记录
+1. `Read Commited` 
+    * 简称 **`RC`** ，读已提交记录
     * 支持快照读，读取版本有可能不是最新版本
     * 支持当前读，读取到的记录添加锁
     * * 不存在脏读、不可重复读
         * 存在幻读问题；
 
-1. Read Repeatable 
-    * 简称 RR ，可重复读记录
+1. `Read Repeatable` 
+    * 简称 **`RR`** ，可重复读记录
     * 支持快照读，读取版本有可能不是最新版本
     * 支持当前读，读取到的记录添加锁，并且对读取的范围枷锁，保证满足查询条件的记录不能够被insert进来
     * 不存在脏读、不可重复读及幻读情况；
 
-1. Read Serializable 
-    * 简称 RS，序列化读记录
+1. `Read Serializable` 
+    * 简称 **`RS`**，序列化读记录
     * 不支持快照读，都是当前读
     * select数据添加S锁，update\insert\delete数据添加X锁
     * 并发度最差，除非明确业务需求及性能影响，才使用，一般不建议在innodb中应用
@@ -225,7 +223,7 @@ COMMIT
 
 **所有事务隔离级别设置： set session transaction isolation level read committed ;**
 
-由于该隔离级别支持快照读，不添加for update跟lock in share mode的select 查询语句，使用的是快照读，读取已提交记录，不添加锁。所以测试使用当前读的模式测试，添加lock in share mode，添加S锁。
+由于该隔离级别支持快照读，不添加`for update`跟`lock in share mode`的select 查询语句，使用的是快照读，读取已提交记录，不添加锁。所以测试使用当前读的模式测试，添加`lock in share mode`，添加S锁。
 
 测试1：update数据不提交，另起查询
 
@@ -251,13 +249,12 @@ COMMIT
 
 **所有事务隔离级别设置： set session transaction isolation level repeatable****read ;**
 
-由于该隔离级别支持快照读，不添加for update跟lock in share mode的select 查询语句，使用的是快照读，不添加锁。所以测试使用当前读的模式测试，添加lock in share mode，添加S锁。
+由于该隔离级别支持快照读，不添加for update跟`lock in share mode`的select 查询语句，使用的是快照读，不添加锁。所以测试使用当前读的模式测试，添加`lock in share mode`，添加S锁。
 
 测试1：update数据不提交，另起查询
 
 测试结果：由于当前读持有S锁，导致update申请X锁处于等待情况，无法更新，同个事务内的多次查询结果一致，无脏读及不可重复读情况。
 
-![][32]
 
 ![][33]
 
@@ -291,17 +288,10 @@ COMMIT
 
 - - -
 
-- - -
+以为没了，not，还有一个概念这里没有提交，这里补充介绍下：`semi-consistent read`
 
 - - -
 
-以为没了，not，还有一个概念这里没有提交，这里补充介绍下：semi-consistent read
-
-- - -
-
-- - -
-
-- - -
 
 
 # **PS： semi-consistent read**
@@ -334,7 +324,6 @@ insert into tblock(name) select 'xin';
 
 测试结果：当前读被堵塞，无法正常加X锁
 
-![][38]
 
 ![][39]
 
@@ -348,19 +337,21 @@ _semi consistent read：_
 
 _A type of read operation used for UPDATE statements, that is a combination of read committed and consistent read. When an UPDATE statement examines a row that is already locked, InnoDB returns the latest committed version to MySQL so that MySQL can determine whether the row matches the WHERE condition of the UPDATE. If the row matches (must be updated), MySQL reads the row again, and this time InnoDB either locks it or waits for a lock on it. This type of read operation can only happen when the transaction has the read committed isolation level, or when the innodb_locks_unsafe_for_binlog option is enabled._
 
-semi-consistent read是update语句在读数据的一种操作， 是read committed与consistent read两者的结合。update语句A在没有提交时，另外一个update语句B读到一行已经被A加锁的记录，但是这行记录不在A的where条件内，此时InnoDB返回记录最近提交的版本给B，由MySQL上层判断此版本是否满足B的update的where条件。若满足(需要更新)，则MySQL会重新发起一次读操作，此时会读取行的最新版本(并加锁)。semi-consistent read只会发生在read committed及**read uncommitted**隔离级别，或者是参数innodb_locks_unsafe_for_binlog被设置为true。 对update起作用，对select insert delete 不起作用。这就导致了update 不堵塞，但是当前读的select则被堵塞的现象。
+`semi-consistent read`是update语句在读数据的一种操作， 是`read committed`与`consistent read`两者的结合。update语句A在没有提交时，另外一个update语句B读到一行已经被A加锁的记录，但是这行记录不在A的where条件内，此时InnoDB返回记录最近提交的版本给B，由MySQL上层判断此版本是否满足B的update的where条件。若满足(需要更新)，则MySQL会重新发起一次读操作，此时会读取行的最新版本(并加锁)。`semi-consistent read`只会发生在`read committed`及 **read uncommitted**隔离级别，或者是参数`innodb_locks_unsafe_for_binlog`被设置为true。 对update起作用，对`select insert delete` 不起作用。这就导致了`update` 不堵塞，但是当前读的`select`则被堵塞的现象。
 
-发生 semi consitent read的条件：
+发生 `semi consitent read`的条件：
 
-1. update语句
-1. 执行计划时scan，range scan or table scan，不能时unique scan
+1. `update`语句
+1. 执行计划时`scan`，`range scan or table scan`，不能时`unique scan`
 1. 表格为聚集索引
 
 总结如下：
 
 ![][40]
 
-如果转载，请注明博文来源： www.cnblogs.com/xinysu/ ，版权归 博客园 苏家小萝卜 所有。望各位支持！
+如果转载，请注明博文来源： www.cnblogs.com/xinysu/ ，权归 博客园 苏家小萝卜 所有。望各位支持！
+
+</font>
 
 [0]: http://www.cnblogs.com/xinysu/p/7260227.html
 [1]: #_label0
@@ -394,12 +385,12 @@ semi-consistent read是update语句在读数据的一种操作， 是read commit
 [29]: ./img/1956428903.png
 [30]: ./img/715439220.png
 [31]: ./img/388510668.png
-[32]: file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(12).png
+
 [33]: ./img/966427933.png
 [34]: ./img/1265517150.png
 [35]: ./img/1609844308.png
 [36]: ./img/1203268621.png
 [37]: ./img/1781256531.png
-[38]: file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(17).png
+
 [39]: ./img/1685388309.png
 [40]: ./img/65460081.png
