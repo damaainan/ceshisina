@@ -1,9 +1,9 @@
 # [深入MySQL索引][0]
 
-* [mysql][1]
 
 [**chenjiayao**][2] 2016年12月16日发布 
 
+<font face=微软雅黑>
 
 
 > MySQL索引作为数据库优化的常用手段之一在项目优化中经常会被用到, 但是如何建立高效索引,有效的使用索引以及索引优化的背后到底是什么原理?这次我们深入数据库索引,从索引的数据结构开始说起.
@@ -292,6 +292,8 @@ InnoDB中每个节点的数据类似:
 ```
 
 这个时候在extra字段多了`Using filesort`,说明MySQL查询到所需要的字段之后还要进行排序,因为这个SQL语句B是范围查询,所以C是无序的.
+
+</font>
 
 [0]: https://segmentfault.com/a/1190000007828502
 [1]: https://segmentfault.com/t/mysql/blogs

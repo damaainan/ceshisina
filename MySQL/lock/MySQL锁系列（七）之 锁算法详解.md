@@ -1117,7 +1117,7 @@ RR 隔离级别
 
 [1]: http://keithlan.github.io/2017/06/21/innodb_locks_algorithms/
 
-[4]: ./2IrIFvE.jpg
-[5]: ./FzQn6vB.jpg
-[6]: ./aaM3aa3.jpg
-[7]: ./FVnuem3.jpg
+[4]: ./img/2IrIFvE.jpg
+[5]: ./img/FzQn6vB.jpg
+[6]: ./img/aaM3aa3.jpg
+[7]: ./img/FVnuem3.jpg

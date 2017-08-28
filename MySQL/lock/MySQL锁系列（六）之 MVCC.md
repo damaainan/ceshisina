@@ -87,10 +87,10 @@
 
 ![][6]
 
-[0]: /sites/jMVrIr3
+
 [1]: http://keithlan.github.io/2017/06/16/innodb_locks_MVCC/
-[2]: /topics/11030000
-[3]: http://img0.tuicool.com/VnUniir.jpg
-[4]: http://img1.tuicool.com/QBnQRj2.jpg
-[5]: http://img1.tuicool.com/BrAzUzu.jpg
-[6]: http://img2.tuicool.com/Yb2UN3y.jpg
+
+[3]: ./img/VnUniir.jpg
+[4]: ./img/QBnQRj2.jpg
+[5]: ./img/BrAzUzu.jpg
+[6]: ./img/Yb2UN3y.jpg
