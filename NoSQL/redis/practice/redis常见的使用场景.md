@@ -1,3 +1,4 @@
+<font face=微软雅黑>
 
 > 排行榜top100
 
@@ -308,3 +309,4 @@ Redis使用的是常驻内存的缓存，速度非常快。LPUSH用来插入一�
 
 Redis缓存使用的方式与memcache相同。
 
+</font>
