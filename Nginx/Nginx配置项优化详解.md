@@ -2,6 +2,9 @@
 
 [TOC]
 
+
+<font face=微软雅黑>
+
 ###（1）nginx运行工作进程个数，一般设置cpu的核心或者核心数x2
 
 如果不了解cpu的核数，可以top命令之后按1看出来，也可以查看/proc/cpuinfo文件 
@@ -46,11 +49,11 @@ Nginx最多可以打开文件数
 
     worker_rlimit_nofile 65535;
 
-这个指令是指当一个nginx进程打开的最多文件描述符数目，理论值应该是最多打开文件数（ulimit -n）与nginx进程数相除，但是nginx分配请求并不是那么均匀，所以最好与ulimit -n的值保持一致。
+这个指令是指当一个nginx进程打开的最多文件描述符数目，理论值应该是最多打开文件数（`ulimit -n`）与nginx进程数相除，但是nginx分配请求并不是那么均匀，所以最好与`ulimit -n`的值保持一致。
 
 注：
 
-文件资源限制的配置可以在 /etc/security/limits.conf 设置，针对root/user等各个用户或者*代表所有用户来设置。
+文件资源限制的配置可以在 `/etc/security/limits.conf` 设置，针对root/user等各个用户或者*代表所有用户来设置。
 
 *  soft  nofile  65535
 
@@ -120,27 +123,31 @@ tcp_nopush on； 必须在sendfile开启模式才有效，防止网路阻塞，�
     send_timeout 15;  
     server_tokens off;  
     client_max_body_size 10m;  
-keepalived_timeout 客户端连接保持会话超时时间，超过这个时间，服务器断开这个链接
 
-tcp_nodelay ；也是防止网络阻塞，不过要包涵在keepalived参数才有效
+`keepalived_timeout` 客户端连接保持会话超时时间，超过这个时间，服务器断开这个链接
 
-client_header_buffer_size 4k;   
+`tcp_nodelay` ；也是防止网络阻塞，不过要包涵在keepalived参数才有效
+
+`client_header_buffer_size 4k`;   
 客户端请求头部的缓冲区大小，这个可以根据你的系统分页大小来设置，一般一个请求头的大小不会超过 1k，不过由于一般系统分页都要大于1k，所以这里设置为分页大小。分页大小可以用命令getconf PAGESIZE取得。  
-open_file_cache max=102400 inactive=20s; 这个将为打开文件指定缓存，默认是没有启用的，max指定缓存数量，建议和打开文件  
+
+`open_file_cache max=102400 inactive=20s`; 这个将为打开文件指定缓存，默认是没有启用的，max指定缓存数量，建议和打开文件  
 数一致，inactive 是指经过多长时间文件没被请求后删除缓存。  
-open_file_cache_valid 30s; 这个是指多长时间检查一次缓存的有效信息。  
-open_file_cache_min_uses 1; open_file_cache指令中的inactive 参数时间内文件的最少使用次数，如果超过这个数字，文  
+
+`open_file_cache_valid 30s`; 这个是指多长时间检查一次缓存的有效信息。  
+
+`open_file_cache_min_uses 1;` open_file_cache指令中的inactive 参数时间内文件的最少使用次数，如果超过这个数字，文  
 件描述符一直是在缓存中打开的，如上例，如果有一个文件在inactive 时间内一次没被使用，它将被移除。
 
-client_header_timeout 设置请求头的超时时间。我们也可以把这个设置低些 ，如果超过这个时间没有发送任何数据，nginx将返回request time out的错误
+`client_header_timeout` 设置请求头的超时时间。我们也可以把这个设置低些 ，如果超过这个时间没有发送任何数据，nginx将返回request time out的错误
 
-client_body_timeout 设置请求体的超时时间。我们也可以把这个设置低些 ，超过这个时间没有发送任何数据，和上面一样的错误提示
+`client_body_timeout` 设置请求体的超时时间。我们也可以把这个设置低些 ，超过这个时间没有发送任何数据，和上面一样的错误提示
 
-**reset_timeout_connection****** 告诉nginx关闭不响应的客户端连接。这将会释放那个客户端所占有的内存空间。
+`reset_timeout_connection` 告诉nginx关闭不响应的客户端连接。这将会释放那个客户端所占有的内存空间。
 
-send_timeout 响应客户端超时时间，这个超时时间仅限于两个活动之间的时间，如果超过这个时间，客 户端没有任何活动，nginx关闭连接
+`send_timeout` 响应客户端超时时间，这个超时时间仅限于两个活动之间的时间，如果超过这个时间，客 户端没有任何活动，nginx关闭连接
 
-**server_tokens****** 并不会让nginx执行的速度更快，但它可以关闭在错误页面中的nginx版本数字，这样对于安全性是有好处的。
+server_tokens 并不会让nginx执行的速度更快，但它可以关闭在错误页面中的nginx版本数字，这样对于安全性是有好处的。
 
     client_max_body_size上传文件大小限制
 
@@ -165,6 +172,7 @@ fastcgi_temp_path/usr/local/nginx1.10/nginx_tmp;
 fastcgi_intercept_errors on;
 
 fastcgi_cache_path/usr/local/nginx1.10/fastcgi_cache levels=1:2 keys_zone=cache_fastcgi:128minactive=1d max_size=10g;
+```
 
 fastcgi_connect_timeout 600; #指定连接到后端FastCGI的超时时间。
 
@@ -210,7 +218,7 @@ proxy_cache的作用是缓存后端服务器的内容，可能是任何内容，
 fastcgi_cache的作用是缓存fastcgi生成的内容，很多情况是php生成的动态的内容。  
 proxy_cache缓存减少了nginx与后端通信的次数，节省了传输时间和后端宽带。  
 fastcgi_cache缓存减少了nginx与php的通信的次数，更减轻了php和数据库(mysql)的压力。
-```
+
 ###（6）gzip调优
 
 使用gzip压缩功能，可能为我们节约带宽，加快传输速度，有更好的体验，也为我们节约成本，所以说这是一个重点。
@@ -218,7 +226,7 @@ fastcgi_cache缓存减少了nginx与php的通信的次数，更减轻了php和�
 Nginx启用压缩功能需要你来ngx_http_gzip_module模块，apache使用的是mod_deflate
 
 一般我们需要压缩的内容有：文本，js，html，css，对于图片，视频，flash什么的不压缩，同时也要注意，我们使用gzip的功能是需要消耗CPU的！
-
+```
 gzip on;
 
 gzip_min_length 2k;
@@ -234,7 +242,7 @@ gzip_typestext/plain text/css text/javascriptapplication/json application/javasc
 gzip_vary on;
 
 gzip_proxied any;
-
+```
 gzip on; #开启压缩功能
 
 gzip_min_length 1k; #设置允许压缩的页面最小字节数，页面字节数从header头的Content-Length中获取，默认值是0，不管页面多大都进行压缩，建议设置成大于1K，如果小与1K可能会越压越大。
@@ -261,65 +269,58 @@ gzip_vary on; #varyheader支持，改选项可以让前端的缓存服务器缓�
 
 ```nginx
     location ~* \.(ico|jpe?g|gif|png|bmp|swf|flv)$ {
-    
-    expires 30d;
-    
-    #log_not_found off;
-    
-    access_log off;
-    
+        expires 30d;  
+        #log_not_found off;  
+        access_log off;
     }
     
     location ~* \.(js|css)$ {
-    
-    expires 7d;
-    
-    log_not_found off;
-    
-    access_log off;
-    
+        expires 7d; 
+        log_not_found off; 
+        access_log off;
     }
 ```
 注：log_not_found off;是否在error_log中记录不存在的错误。默认是。
 
 总结：
 
-**expire****功能优点** （1）expires可以降低网站购买的带宽，节约成本（2）同时提升用户访问体验（3）减轻服务的压力，节约服务器成本，是web服务非常重要的功能。 expire功能缺点：被缓存的页面或数据更新了，用户看到的可能还是旧的内容，反而影响用户体验。解决办法：第一个缩短缓存时间，例如：1天，但不彻底，除非更新频率大于1天；第二个对缓存的对象改名。
+**expire 功能优点**   
+（1）expires可以降低网站购买的带宽，节约成本  
+（2）同时提升用户访问体验  
+（3）减轻服务的压力，节约服务器成本，是web服务非常重要的功能。  
+
+ expire功能缺点：被缓存的页面或数据更新了，用户看到的可能还是旧的内容，反而影响用户体验。  
+ 解决办法：第一个缩短缓存时间，例如：1天，但不彻底，除非更新频率大于1天；第二个对缓存的对象改名。
 
 网站不希望被缓存的内容 1）网站流量统计工具2）更新频繁的文件（google的logo）
 
 ###（8）防盗链
 
-防止别人直接从你网站引用图片等链接，消耗了你的资源和网络流量，那么我们的解决办法由几种： 1：水印，品牌宣传，你的带宽，服务器足够 2：防火墙，直接控制，前提是你知道IP来源 3：防盗链策略下面的方法是直接给予404的错误提示
+防止别人直接从你网站引用图片等链接，消耗了你的资源和网络流量，那么我们的解决办法由几种： 1：水印，品牌宣传，你的带宽，服务器足够   
+2：防火墙，直接控制，前提是你知道IP来源   
+3：防盗链策略下面的方法是直接给予404的错误提示
 
 ```nginx
     location ~*^.+\.(jpg|gif|png|swf|flv|wma|wmv|asf|mp3|mmf|zip|rar)$ {
     
-    valid_referers noneblocked www.benet.com benet.com;
-    
-    if($invalid_referer) {
-    
-    #return 302 http://www.benet.com/img/nolink.jpg;
-    
-    return 404;
-    
-    break;
-    
-    }
-    
-    access_log off;
-    
+        valid_referers none blocked www.benet.com benet.com;
+        if($invalid_referer) {
+            #return 302 http://www.benet.com/img/nolink.jpg;
+            return 404;
+            break;
+        }
+        access_log off;
     }
 ```
 
 参数可以使如下形式：  
-none 意思是不存在的Referer头(表示空的，也就是直接访问，**比如直接在浏览器打开一个图片**)  
-blocked 意为根据防火墙伪装Referer头，如：“Referer:XXXXXXX”。  
-server_names 为一个或多个服务器的列表，0.5.33版本以后可以在名称中**使用“*”通配符**。
+`none` 意思是不存在的Referer头(表示空的，也就是直接访问，**比如直接在浏览器打开一个图片**)  
+`blocked` 意为根据防火墙伪装Referer头，如：“Referer:XXXXXXX”。  
+`server_names` 为一个或多个服务器的列表，0.5.33版本以后可以在名称中 **使用 `*` 通配符**。
 
 ### （9）内核参数优化
 
-**fs.file-max = 999999****：这个参数表示进程（比如一个worker进程）可以同时打开的最大句柄数，这个参数直线限制最大并发连接数，需根据实际情况配置。**
+fs.file-max = 999999：这个参数表示进程（比如一个worker进程）可以同时打开的最大句柄数，这个参数直线限制最大并发连接数，需根据实际情况配置。
 
 net.ipv4.tcp_max_tw_buckets = 6000 #这个参数表示[操作系统][0]允许TIME_WAIT套接字数量的最大值，如果超过这个数字，TIME_WAIT套接字将立刻被清除并打印警告信息。该参数默认为180000，过多的TIME_WAIT套接字会使Web服务器变慢。
 
@@ -460,7 +461,7 @@ linux 默认值 open files为1024
 
 
 
-
+</font>
 
 
 [0]: http://lib.csdn.net/base/operatingsystem
