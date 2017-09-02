@@ -1,10 +1,9 @@
 # 使用zephir开发php扩展
 
- 时间 2017-03-18 21:21:41  [海诺博客][0]  [相似文章][1] (_1_)
+ 时间 2017-03-18 21:21:41 
 
-_原文_[https://blog.dmic.studio/posts/create-php-extent-with-zephir/][2]
+原文[https://blog.dmic.studio/posts/create-php-extent-with-zephir/][2]
 
- 主题 [PHP][3]
 
 最近在微信上看到 eechen 推广 淘宝沧龙（ [信海龙][4] ）的小课 [《零基础学习PHP扩展开发》][5] ，今天忽然想起来之前 phalcon 发布 3.0 时同时发布的 zephir 语言，于是心血来潮，按照官方示例写了一个扩展。如此简单。 
 
@@ -17,8 +16,9 @@ Zephir提供了一种类似php的高级语言语法的方式，来自动生成�
 ## zephir 安装 
 
 1. composer 安装 【推荐】
-
+```
     composer global require phalcon/zephir
+```
 1. git clone 编译安装
 ```
     git clone https://github.com/phalcon/zephir
@@ -189,10 +189,8 @@ ps：根据官方手册，如果是linux下可能需要安装依赖库
 
 什么你问我怎么在windows下，抱歉 我还真不知道。应该跟上面没啥区别。官方手册或许会有，去啃一下英文文档吧 [zephir-lang\ document][6]
 
-[0]: http://www.tuicool.com/sites/NBRbA33
-[1]: http://www.tuicool.com/articles/dup?id=VR3AfqY
-[2]: https://blog.dmic.studio/posts/create-php-extent-with-zephir/?utm_source=tuicool&utm_medium=referral
-[3]: /topics/11120000
+
+[2]: https://blog.dmic.studio/posts/create-php-extent-with-zephir/
 [4]: http://www.bo56.com
 [5]: http://zhijia.io/circle/102336
 [6]: https://docs.zephir-lang.com/en/latest/index.html
