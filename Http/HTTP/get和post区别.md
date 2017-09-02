@@ -1,6 +1,10 @@
 转自网络 [地址](http://mp.weixin.qq.com/s?__biz=MzI3NzIzMzg3Mw==&mid=100000054&idx=1&sn=71f6c214f3833d9ca20b9f7dcd9d33e4#rd)
 
+<font face=微软雅黑>
+
  一个“标准答案”：
+
+<font face=楷体>
 
 * GET在浏览器回退时是无害的，而POST会再次提交请求。
 * GET产生的URL地址可以被Bookmark，而POST不可以。
@@ -13,10 +17,10 @@
 * GET参数通过URL传递，POST放在Request body中。
 
 （本标准答案参考自w3schools）
+</font>
 
 
-
- GET和POST本质上没有区别 
+### GET和POST本质上没有区别 
 
  GET和POST是什么？**HTTP协议中的两种发送请求的方法。**
 
@@ -46,3 +50,6 @@
 1. GET与POST都有自己的语义，不能随便混用。  
 2. 据研究，在网络环境好的情况下，发一次包的时间和发两次包的时间差别基本可以无视。而在网络环境差的情况下，两次包的TCP在验证数据包完整性上，有非常大的优点。  
 3. 并不是所有浏览器都会在POST中发送两次包，Firefox就只发送一次。  
+
+
+</font>

@@ -29,9 +29,29 @@ nginx采用`epoll`事件模型，处理效率高
 
 ###（8）防盗链
 
+### （9）内核参数优化
+
 ###（10）关于系统连接数的优化：
+linux 默认值 open files为1024
 
+    ulimit -n
+    1024
 
+说明server只允许同时打开1024个文件
 
+使用`ulimit -a` 可以查看当前系统的所有限制值，使用`ulimit -n` 可以查看当前的最大打开文件数。
+
+新装的linux 默认只有1024 ，当作负载较大的服务器时，很容易遇到`error: too many open files`。因此，需要将其改大
+
+在`/etc/security/limits.conf`最后增加：
+
+    * soft nofile 65535
+    * hard nofile 65535
+    * soft noproc 65535
+    * hard noproc 65535
+
+`*` 代表任何用户 ubuntu上需要指定用户 `root` 等
+
+需要 **重启**
 
 </font>

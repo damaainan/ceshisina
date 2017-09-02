@@ -444,15 +444,14 @@ linux 默认值 open files为1024
 
 在/etc/security/limits.conf最后增加：
 
-* soft nofile 65535
+    * soft nofile 65535
+    * hard nofile 65535
+    * soft noproc 65535
+    * hard noproc 65535
 
-* hard nofile 65535
+`*` 代表任何用户 ubuntu上需要指定用户 `root` 等
 
-* soft noproc 65535
-
-* hard noproc 65535
-
-
+需要重启
 
 
 
