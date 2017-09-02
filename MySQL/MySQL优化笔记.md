@@ -1,4 +1,5 @@
 # [MySQL优化笔记][0]
+<font face=微软雅黑>
 
 可以从这些方面进行优化：
 
@@ -6,6 +7,8 @@
 * SQL语句优化
 * 数据库配置优化
 * 系统层、硬件层优化
+
+查询优化、索引优化、库表结构优化
 
 ## 数据库设计
 
@@ -654,6 +657,8 @@ record_buffer_size，read_rnd_buffer_size，sort_buffer_size，join_buffer_size�
 [http://blog.csdn.net/lxpbs8851/article/details/7834836][11]
 
 **作者：飞鸿影~**
+
+</font>
 
 **出处：**http://52fhy.cnblogs.com/
 

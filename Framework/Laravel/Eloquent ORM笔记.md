@@ -11,7 +11,8 @@
     
 
 使用模型的 Create 方法
-
+```php
+<?php
     class User extends Model {
         protected $guarded = ['id', 'account_id'];//黑名单，不会被更新
     }
@@ -24,25 +25,32 @@
     
     // 以属性找用户，若没有则建立新的实例...
     $user = User::firstOrNew(['name' => 'John']);
+```
 
 ### 删除
-
+```php
+<?php
     $this->where($where)->delete();
     
     或者
     $user = User::find(1);
     $user->delete();
+```
 
 ### 更新
-
+```php
+<?php
     return $this->where($where)->update($data);
     
     或者
     $user = User::find(1);
     $user->update($data);
+```
 
 ### 查找
 
+```php
+<?php
     //取出所有记录,all()得出的是对象集合，可以遍历
     $this->all()->toArray();
     
@@ -71,6 +79,7 @@
     
     //等同于
     $this->where('id', '>', '0')->orderBy($order[0], $order[1])->offset($offset)->limit($limit);
+```
 
 更多：
 

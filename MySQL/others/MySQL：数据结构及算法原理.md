@@ -1,10 +1,10 @@
 # MySQL：数据结构及算法原理
 
- 时间 2017-05-11 11:59:52  [51CTO][0]
+ 时间 2017-05-11 11:59:52 
 
-_原文_[http://database.51cto.com/art/201705/539372.htm][1]
+原文[http://database.51cto.com/art/201705/539372.htm][1]
 
- 主题 [MySQL][2][数据结构][3][算法][4]
+<font face=微软雅黑>
 
 ![][5]
 
@@ -442,11 +442,10 @@ title的选择性不足0.0001(精确值为0.00001579)，所以实在没有什么
 
 另外，MySQL索引及其优化涵盖范围非常广，本文只是涉及到其中一部分。如与排序(ORDER BY)相关的索引优化及覆盖索引(Covering index)的话题本文并未涉及，同时除B-Tree索引外MySQL还根据不同引擎支持的哈希索引、全文索引等等本文也并未涉及。
 
-[0]: /sites/rMjaeyJ
-[1]: http://database.51cto.com/art/201705/539372.htm?utm_source=tuicool&utm_medium=referral
-[2]: /topics/11030000
-[3]: /topics/11000082
-[4]: /topics/11000083
+</font>
+
+[1]: http://database.51cto.com/art/201705/539372.htm
+
 [5]: ./img/QF3UF3E.jpg
 [6]: ./img/j6vIBz2.png
 [7]: ./img/zqeIV3y.png
