@@ -14,6 +14,8 @@
 * [8 基数排序][10]
 * [总结][11]
 
+<font face=微软雅黑>
+
 作为phper，一般接触算法的编程不多。
 
 但基本的排序算法还是应该掌握。
@@ -45,6 +47,7 @@
 PHP代码实现：
 
 ```php
+<?php
     function quickSort($arr) {
         // 先设定结束条件，判断是否需要继续进行
         if(count($arr) <= 1) {
@@ -101,6 +104,7 @@ PHP代码实现：
 PHP代码实现：
 
 ```php
+<?php
     function bubbleSort($arr)
     {
         $len = count($arr);
@@ -143,6 +147,7 @@ PHP代码实现：
 PHP代码实现：
 
 ```php
+<?php
     function insertSort($arr)
     {
         $len = count($arr);
@@ -178,6 +183,7 @@ PHP代码实现：
 PHP代码实现：
 
 ```php
+<?php
     function selectSort($arr)
     {
         $len = count($arr);
@@ -223,6 +229,7 @@ PHP代码实现：
 PHP实现代码：
 
 ```php
+<?php
     /**
      * 归并排序
      *
@@ -281,6 +288,7 @@ PHP实现代码：
 PHP实现代码：
 
 ```php
+<?php
     /**
      * 堆排序
      *
@@ -357,6 +365,7 @@ PHP实现代码：
 PHP实现代码：
 
 ```php
+<?php
     /**
      * 希尔排序 标准
      *
@@ -431,6 +440,7 @@ O(n + m * n/m*log(n/m)) = O(n + nlogn – nlogm)
 2）其次待排序的元素都要在一定的范围内等等。
 
 ```php
+<?php
 
     /**
      * 基数排序
@@ -490,6 +500,7 @@ O(n + m * n/m*log(n/m)) = O(n + nlogn – nlogm)
 
 不是稳定的排序算法：选择排序、快速排序、希尔排序、堆排序
 
+</font>
 **参考地址：**
 
 1. [8大排序算法图文讲解][21]

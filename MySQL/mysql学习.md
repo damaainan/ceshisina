@@ -4115,6 +4115,7 @@ replcae(str,substr,newstr)
 
 #### 获取当前时间 
 
+```sql
     mysql> select curtime() curtime方式,current_time current_time方式;
     +---------------+--------------------+
     | curtime方式   | current_time方式   |
@@ -4122,10 +4123,11 @@ replcae(str,substr,newstr)
     | 15:14:48      | 15:14:48           |
     +---------------+--------------------+
     1 row in set (0.00 sec)
-    
+```
 
 #### 通过UNIX方式显示日期和时间 
 
+```sql
     mysql> SELECT NOW() 当前时间,UNIX_TIMESTAMP(NOW()) unix方式,FROM_UNIXTIME(UNIX_TIMESTAMP(NOW())) 普通方式;
     +---------------------+------------+---------------------+
     | 当前时间            | unix方式   | 普通方式            |
@@ -4133,10 +4135,11 @@ replcae(str,substr,newstr)
     | 2017-02-17 15:17:53 | 1487315873 | 2017-02-17 15:17:53 |
     +---------------------+------------+---------------------+
     1 row in set (0.00 sec)
-    
+```
 
 UNIX_TIMESTAMP(),UNIX_TIMESTAMP(NOW()) 
 
+```sql
     mysql> SELECT NOW(),UNIX_TIMESTAMP(),UNIX_TIMESTAMP(NOW());
     +---------------------+------------------+-----------------------+
     | NOW()               | UNIX_TIMESTAMP() | UNIX_TIMESTAMP(NOW()) |
@@ -4144,12 +4147,13 @@ UNIX_TIMESTAMP(),UNIX_TIMESTAMP(NOW())
     | 2017-02-17 15:19:17 |       1487315957 |            1487315957 |
     +---------------------+------------------+-----------------------+
     1 row in set (0.00 sec)
-    
+```
 
 UNIX_TIMESTAMP(),UNIX_TIMESTAMP(NOW())返回相同的时间戳
 
 #### 通过UTC的方式显示日期和时间 
 
+```sql
     mysql> SELECT NOW(),UTC_DATE(),UTC_TIME();
     +---------------------+------------+------------+
     | NOW()               | UTC_DATE() | UTC_TIME() |
@@ -4157,20 +4161,22 @@ UNIX_TIMESTAMP(),UNIX_TIMESTAMP(NOW())返回相同的时间戳
     | 2017-02-17 15:20:42 | 2017-02-17 | 07:20:42   |
     +---------------------+------------+------------+
     1 row in set (0.00 sec)
-    
+```
 
 #### 获取日期和时间各部分的值 
 
+```sql
     mysql> SELECT NOW() 当前时间,YEAR(NOW()) 年,MONTH(NOW()) 月,DAY(NOW())日,QUARTER(NOW()) 季度,WEEK(NOW()) 星期,DAYOFMONTH(NOW())月中天,HOUR(NOW())时,MINUTE(NOW())分,SECOND(NOW())秒;
     +---------------------+------+------+------+--------+--------+-----------+------+------+------+
     | 当前时间            | 年   | 月   | 日   | 季度   | 星期   | 月中天    | 时   | 分   | 秒   |
     +---------------------+------+------+------+--------+--------+-----------+------+------+------+
     | 2017-02-17 15:24:32 | 2017 |    2 |   17 |      1 |      7 |        17 |   15 |   24 |   32 |
     +---------------------+------+------+------+--------+--------+-----------+------+------+------+
-    
+```
 
 #### 月的函数 
 
+```sql
     mysql> select now(), month(now()),monthname(now());
     +---------------------+--------------+------------------+
     | now()               | month(now()) | monthname(now()) |
@@ -4178,7 +4184,7 @@ UNIX_TIMESTAMP(),UNIX_TIMESTAMP(NOW())返回相同的时间戳
     | 2017-02-17 15:26:04 |            2 | February         |
     +---------------------+--------------+------------------+
     1 row in set (0.01 sec)
-    
+```
 
 #### 星期 
 
@@ -4186,7 +4192,8 @@ UNIX_TIMESTAMP(),UNIX_TIMESTAMP(NOW())返回相同的时间戳
 * DAYNAME()返回日期和时间中星期的英文名
 * DAYOFWEEK()返回星期几1-7
 * WEEKDAY()返回星期几0-6
-```
+
+```sql
     mysql> SELECT NOW()当前时间,WEEK(NOW()),WEEKOFYEAR(NOW()),DAYNAME(NOW()),DAYOFWEEK(NOW()),WEEKDAY(NOW());
     +---------------------+-------------+-------------------+----------------+------------------+----------------+
     | 当前时间            | WEEK(NOW()) | WEEKOFYEAR(NOW()) | DAYNAME(NOW()) | DAYOFWEEK(NOW()) | WEEKDAY(NOW()) |
@@ -4201,7 +4208,8 @@ UNIX_TIMESTAMP(),UNIX_TIMESTAMP(NOW())返回相同的时间戳
 * DAYOFMONTH()日期属于当前月的第几天
 * DAY()日期属于当前月的第几天
 * DAYOFYEAR（） 本年的第几天
-```
+
+```sql
     mysql> SELECT NOW()当前时间,DAY(NOW()),DAYOFMONTH(NOW()),DAYOFYEAR(NOW());
     +---------------------+------------+-------------------+------------------+
     | 当前时间            | DAY(NOW()) | DAYOFMONTH(NOW()) | DAYOFYEAR(NOW()) |
@@ -4230,7 +4238,8 @@ extract(type from date);
 
 * TO_DAYS(DATE) 计算日期参数与默认日期0000年1月1日）之间的天数
 * FROM_DAYS(NUMBER) 计算从默认昌和时间0000年1月1日）开始经历NUMBER天数后的日期和时间
-```
+
+```sql
     mysql> SELECT NOW() ,TO_DAYS(NOW()),FROM_DAYS(TO_DAYS(NOW()));
     +---------------------+----------------+---------------------------+
     | NOW()               | TO_DAYS(NOW()) | FROM_DAYS(TO_DAYS(NOW())) |
@@ -4243,7 +4252,8 @@ extract(type from date);
 #### DATEDIFF(date1,date2) 
 
 返回date1与date2之间的天数
-```
+
+```sql
     mysql> SELECT NOW(),DATEDIFF(NOW(),'2015-02-24');
     +---------------------+------------------------------+
     | NOW()               | DATEDIFF(NOW(),'2015-02-24') |
@@ -4257,7 +4267,8 @@ extract(type from date);
 
 * ADDDATE(DATE,N),计算日期加上N天后的日期
 * SUBDATE(DATE,N),计算日期减去N天后的日期
-```
+
+```sql
     mysql> SELECT NOW(),ADDDATE(CURDATE(),5),SUBDATE(CURDATE(),5);
     +---------------------+----------------------+----------------------+
     | NOW()               | ADDDATE(CURDATE(),5) | SUBDATE(CURDATE(),5) |
@@ -4284,7 +4295,8 @@ extract(type from date);
 * HOUR_MINUTE 小时和分钟 hh和mm之间用任意符号隔开
 * HOUR_SECOND 小时和秒 hh和ss之间用任意符号隔开
 * MINUTE_SECOND 分钟和秒 mm和ss之间用任意符号隔开
-```
+
+```sql
     mysql> select adddate(curdate(),interval '1,2' year_month),subdate(curdate(),interval 1 year);
     +----------------------------------------------+------------------------------------+
     | adddate(curdate(),interval '1,2' year_month) | subdate(curdate(),interval 1 year) |
@@ -4320,7 +4332,8 @@ extract(type from date);
 * DATABASE() 返回当前数据库名
 * USER() 返回当前用户
 * LAST_INSERT_ID() 返回最近生成的AUTO_INCREMENT值
-```
+
+```sql
     mysql> select version(),database(),user();
     +------------+------------+----------------+
     | version()  | database() | user()         |
@@ -4332,6 +4345,7 @@ extract(type from date);
 
 #### 获取AUTO_INCREMENT约束的最后ID值 
 
+```sql
     CREATE TABLE IF NOT EXISTS t_autoincrement(
     id INT(11) PRIMARY KEY AUTO_INCREMENT 
     );
@@ -4342,8 +4356,9 @@ extract(type from date);
     INSERT INTO t_autoincrement VALUES(NULL);
     INSERT INTO t_autoincrement VALUES(NULL);
     INSERT INTO t_autoincrement VALUES(NULL);
-    
+```
 
+```sql
     SELECT LAST_INSERT_ID();
     mysql> select last_insert_id();
     +------------------+
@@ -4352,4 +4367,5 @@ extract(type from date);
     |               6 |
     +------------------+
     1 row in set (0.00 sec)\
+```
 
