@@ -194,3 +194,19 @@ done
 替换匹配内容，注意 `\`  需要用 `\\\` 实现
 
      sed -i 's@\[\{0,1\}PHP\]\{0,1\}\[\{0,1\}[0-9]\{0,1\}\]\{0,1\}Unit_Framework_TestCase@PHPUnit\\\Framework\\\TestCase@' *.md
+
+
+
+#### 二进制转换
+
+加 64 ，使得中间空位 0 得以保存
+
+    seq 64 127 | xargs -i[ echo "obase=2;[" | bc
+
+截取除第一位之后的数字 
+
+    seq 64 127 | xargs -i[ echo "obase=2;[" | bc |  awk '{print substr($0,2)}'
+
+拼接下载
+
+    seq 64 127 | xargs -i[ echo "obase=2;[" | bc |  awk '{print substr($0,2)}' | awk '{system("aria2c -o ./img/"$0".jpg http://www.chinazwds.org/chinazw/ASPX/mingli/64gua/zxt"$0".jpg")}'

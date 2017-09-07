@@ -369,7 +369,7 @@ ${parameter:-word} 如果变量状态为unset或值为空，返回word的结果�
     [root@centos7 ~]# 
 ```
 
-${parameter:=word} 如果变量状态为unset或值为空，word的结果会赋值给变量，然后返回变量值。特殊变量($n$$$$@$# 等)不能用这种方式进行赋值。
+${parameter:=word} 如果变量状态为unset或值为空，word的结果会赋值给变量，然后返回变量值。特殊变量(`$n$$$$@$#` 等)不能用这种方式进行赋值。
 
 ```
     [root@centos7 ~]# echo ${var_4}
@@ -483,7 +483,7 @@ ${parameter#word}和${parameter##word} 表示删除前缀。word扩展后的结�
     /root/bin
 ```
 
-${parameter%word}和${parameter%%word} 表示删除后缀。
+`${parameter%word}`和`${parameter%%word}` 表示删除后缀。
 
 ```
     [root@centos7 tmp]# path=$PWD #赋值语句中等号右边部分也会经过 波浪号扩展、变量扩展、命令替换和数学扩展
