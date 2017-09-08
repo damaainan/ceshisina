@@ -4,6 +4,8 @@
 
 原文[http://lizhenliang.blog.51cto.com/7876557/1889195][1]
 
+<font face=微软雅黑>
+
 ## sed
 
 流编辑器，过滤和替换文本。
@@ -764,5 +766,6 @@ sed读取第一行1，N命令读取下一行2，此时模式空间是1\n2$，执
 
     # seq 10 |sed -n '$='
 
+</font>
 
 [1]: http://lizhenliang.blog.51cto.com/7876557/1889195
