@@ -1,9 +1,0 @@
-The awk utility shall execute programs written in the awk programming language,
-which is specialized for textual data manipulation. An awk program is a sequence
-of patterns and corresponding actions.  When  input  is  read  that matches a
-pattern, the action associated with that pattern is carried out.
-
-Input shall be interpreted as a sequence of records. By default, a record is a line,
-less its terminating <newline>, but this can be changed by using the RS built-in
-variable. Each record of input shall be matched in turn against each pattern in the
-program. For each pattern matched, the associated action shall be executed.
