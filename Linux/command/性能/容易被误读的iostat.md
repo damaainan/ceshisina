@@ -1,8 +1,9 @@
 # 容易被误读的iostat
 
  [2016/11/22][0]  [vmunix][1]
+<font face=微软雅黑>
 
-iostat(1)是在Linux系统上查看I/O性能最基本的工具，然而对于那些熟悉其它UNIX系统的人来说它是很容易被误读的。_比如在HP-UX上 avserv（相当于Linux上的 svctm）是最重要的I/O指标，反映了硬盘设备的性能，它是指I/O请求从SCSI层发出、到I/O完成之后返回SCSI层所消耗的时间，不包括在SCSI队列中的等待时间，所以avserv体现了硬盘设备处理I/O的速度，又被称为disk service time，如果avserv很大，那么肯定是硬件出问题了。_然而Linux上svctm的含义截然不同，事实上在iostat(1)和sar(1)的man page上都说了不要相信svctm，该指标将被废弃：  
+iostat(1)是在Linux系统上查看I/O性能最基本的工具，然而对于那些熟悉其它UNIX系统的人来说它是很容易被误读的。比如在HP-UX上 avserv（相当于Linux上的 svctm）是最重要的I/O指标，反映了硬盘设备的性能，它是指I/O请求从SCSI层发出、到I/O完成之后返回SCSI层所消耗的时间，不包括在SCSI队列中的等待时间，所以avserv体现了硬盘设备处理I/O的速度，又被称为disk service time，如果avserv很大，那么肯定是硬件出问题了。然而Linux上svctm的含义截然不同，事实上在iostat(1)和sar(1)的man page上都说了不要相信svctm，该指标将被废弃：  
 “Warning! Do not trust this field any more. This field will be removed in a future sysstat version.”
 
 在Linux上，每个I/O的平均耗时是用await表示的，但它不能反映硬盘设备的性能，因为await不仅包括硬盘设备处理I/O的时间，还包括了在队列中等待的时间。I/O请求在队列中的时候尚未发送给硬盘设备，即队列中的等待时间不是硬盘设备消耗的，所以说await体现不了硬盘设备的速度，内核的问题比如I/O调度器什么的也有可能导致await变大。那么有没有哪个指标可以衡量硬盘设备的性能呢？非常遗憾的是，iostat(1)和sar(1)都没有，这是因为它们所依赖的/proc/diskstats不提供这项数据。要真正理解iostat的输出结果，应该从理解/proc/diskstats开始。
@@ -98,6 +99,8 @@ await是单个I/O所消耗的时间，包括硬盘设备处理I/O的时间和I/O
  sdg  0.00  0.00  133.00  0.00  2128.00  0.00  16.00  1.00  7.50  7.49  99.60
 ```
 对磁盘阵列来说，因为有硬件缓存，写操作不等落盘就算完成，所以写操作的service time大大加快了，如果磁盘阵列的写操作不在一两个毫秒以内就算慢的了；读操作则未必，不在缓存中的数据仍然需要读取物理硬盘，单个小数据块的读取速度跟单盘差不多。
+
+</font>
 
 [0]: http://linuxperf.com/?p=156
 [1]: http://linuxperf.com/?author=1

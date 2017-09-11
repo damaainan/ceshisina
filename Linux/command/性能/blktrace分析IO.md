@@ -1,7 +1,8 @@
 # blktrace分析IO
 
  [首页][0]  [分类][1]  [标签][2]  [留言][3]  [关于][4]  [订阅][5]  2017-07-06 | 分类 [linux][6] | 标签 [linux][7] # 前言
-
+ 
+<font face=微软雅黑>
 上篇博客介绍了iostat的一些输出，这篇介绍blktrace这个神器。上一节介绍iostat的时候，我们心心念念希望得到块设备处理io的service time，而不是service time + wait time，因为对于评估一个磁盘或者云磁盘而言，service time才是衡量磁盘性能的核心指标和直接指标。很不幸iostat无法提供这个指标，但是blktrace可以。
 
 blktrace是一柄神器，很多工具都是基于该神器的：ioprof，seekwatcher，iowatcher，这个工具基本可以满足我们的对块设备请求的所有了解。
@@ -350,6 +351,7 @@ D2C 平均在0.000779355 秒，即0.7毫秒 Q2C 平均在0.002522832 秒，即2.
 
 ![][19]
 
+</font>
 
 
 [0]: http://bean-li.github.io/
