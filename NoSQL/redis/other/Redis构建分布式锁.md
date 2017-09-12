@@ -1,5 +1,8 @@
 # [Redis构建分布式锁][0]
 
+
+<font face=微软雅黑>
+
 **阅读目录**
 
 * [1、前言][1]
@@ -50,20 +53,20 @@ Linux下网络IO使用socket套接字来通讯，普通IO模型只能监听一�
 测试步骤：
 
 1、建立test.php文件
-
  
-
-     1 <?php
-     2 $redis=new Redis();
-     3 $redis->connect('192.168.95.11','6379');
-     4 for ($i=0; $i < 100000; $i++) 
-     5 { 
-     6   $count=$redis->get('count');
-     7   $count=$count+1;
-     8   $redis->set('count',$count);  
-     9 }
-    10 echo "this OK";
-    11 ?>
+```php
+<?php
+$redis=new Redis();
+$redis->connect('192.168.95.11','6379');
+for ($i=0; $i < 100000; $i++) 
+{ 
+  $count=$redis->get('count');
+  $count=$count+1;
+  $redis->set('count',$count);  
+}
+echo "this OK";
+?>
+```
 
 2、分别在两个浏览器中访问test.php文件
 
@@ -95,27 +98,26 @@ Linux下网络IO使用socket套接字来通讯，普通IO模型只能监听一�
 
 更改后的test.php文件
 
- 
+```php
+<?php
+header("content-type: text/html;charset=utf8;");
+$start=time();
+$redis=new Redis();
+$redis->connect('192.168.95.11','6379');
 
-     1 <?php
-     2 header("content-type: text/html;charset=utf8;");
-     3 $start=time();
-     4 $redis=new Redis();
-     5 $redis->connect('192.168.95.11','6379');
-     6 
-     7 for ($i=0; $i < 100000; $i++) 
-     8 { 
-     9   $redis->multi();
-    10   $count=$redis->get('count');
-    11   $count=$count+1;
-    12   $redis->set('count',$count);
-    13   $redis->exec();
-    14 }
-    15 $end=time();
-    16 echo "this OK<br/>";
-    17 echo "执行时间为：".($end-$start);
-    18 ?>
-
+for ($i=0; $i < 100000; $i++) 
+{ 
+  $redis->multi();
+  $count=$redis->get('count');
+  $count=$count+1;
+  $redis->set('count',$count);
+  $redis->exec();
+}
+$end=time();
+echo "this OK<br/>";
+echo "执行时间为：".($end-$start);
+?>
+```
 执行结果失败，表名使用事务不能够解决此问题。
 
 ![][11]
@@ -141,21 +143,21 @@ Linux下网络IO使用socket套接字来通讯，普通IO模型只能监听一�
 
 #更新test.php文件
 
- 
-
-     1 <?php
-     2 header("content-type: text/html;charset=utf8;");
-     3 $start=time();
-     4 $redis=new Redis();
-     5 $redis->connect('192.168.95.11','6379');
-     6 for ($i=0; $i < 100000; $i++) 
-     7 { 
-     8   $count=$redis->incr('count');
-     9 }
-    10 $end=time();
-    11 echo "this OK<br/>";
-    12 echo "执行时间为：".($end-$start);
-    13 ?>
+```php
+<?php
+header("content-type: text/html;charset=utf8;");
+$start=time();
+$redis=new Redis();
+$redis->connect('192.168.95.11','6379');
+for ($i=0; $i < 100000; $i++) 
+{ 
+  $count=$redis->incr('count');
+}
+$end=time();
+echo "this OK<br/>";
+echo "执行时间为：".($end-$start);
+?>
+```
 
 两个浏览器同时执行，耗时14、15秒，count=200000，可以解决此问题。
 
@@ -180,108 +182,108 @@ Linux下网络IO使用socket套接字来通讯，普通IO模型只能监听一�
 
 #建立Lock.class,php文件
 
- 
+```php
+<?php
+#分布式锁
+class Lock
+{
+    private $redis='';  #存储redis对象
+    /**
+    * @desc 构造函数
+    * 
+    * @param $host string | redis主机
+    * @param $port int    | 端口
+    */
+    public function __construct($host,$port=6379)
+    {
+        $this->redis=new Redis();
+        $this->redis->connect($host,$port);
+    } 
 
-      1 <?php
-      2 #分布式锁
-      3 class Lock
-      4 {
-      5     private $redis='';  #存储redis对象
-      6     /**
-      7     * @desc 构造函数
-      8     * 
-      9     * @param $host string | redis主机
-     10     * @param $port int    | 端口
-     11     */
-     12     public function __construct($host,$port=6379)
-     13     {
-     14         $this->redis=new Redis();
-     15         $this->redis->connect($host,$port);
-     16     } 
-     17 
-     18     /**
-     19     * @desc 加锁方法
-     20     *
-     21     * @param $lockName string | 锁的名字
-     22     * @param $timeout int | 锁的过期时间
-     23     *
-     24     * @return 成功返回identifier/失败返回false
-     25     */
-     26     public function getLock($lockName, $timeout=2)
-     27     {
-     28         $identifier=uniqid();       #获取唯一标识符
-     29         $timeout=ceil($timeout);    #确保是整数
-     30         $end=time()+$timeout;
-     31         while(time()<$end)          #循环获取锁
-     32         {
-     33             if($this->redis->setnx($lockName, $identifier))    #查看$lockName是否被上锁
-     34             {
-     35                 $this->redis->expire($lockName, $timeout);     #为$lockName设置过期时间，防止死锁
-     36                 return $identifier;                             #返回一维标识符
-     37             }
-     38             elseif ($this->redis->ttl($lockName)===-1) 
-     39             {　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 　
-     40                 $this->redis->expire($lockName, $timeout);     #检测是否有设置过期时间，没有则加上（假设，客户端A上一步没能设置时间就进程奔溃了，客户端B就可检测出来，并设置时间）
-     41             }
-     42             usleep(0.001);         #停止0.001ms
-     43         }
-     44         return false;
-     45     }
-     46 
-     47     /**
-     48     * @desc 释放锁
-     49     *
-     50     * @param $lockName string   | 锁名
-     51     * @param $identifier string | 锁的唯一值
-     52     *
-     53     * @param bool
-     54     */
-     55     public function releaseLock($lockName,$identifier)
-     56     {
-     57         if($this->redis->get($lockName)==$identifier)   #判断是锁有没有被其他客户端修改
-     58         { 
-     59             $this->redis->multi();
-     60             $this->redis->del($lockName);   #释放锁
-     61             $this->redis->exec();
-     62             return true;
-     63         }
-     64         else
-     65         {
-     66             return false;   #其他客户端修改了锁，不能删除别人的锁
-     67         }
-     68     }
-     69 
-     70     /**
-     71     * @desc 测试
-     72     * 
-     73     * @param $lockName string | 锁名
-     74     */
-     75     public function test($lockName)
-     76     {
-     77         $start=time();
-     78         for ($i=0; $i < 10000; $i++) 
-     79         { 
-     80             $identifier=$this->getLock($lockName);
-     81             if($identifier)
-     82             {
-     83               $count=$this->redis->get('count');
-     84               $count=$count+1;
-     85               $this->redis->set('count',$count);
-     86               $this->releaseLock($lockName,$identifier);
-     87             } 
-     88         }
-     89         $end=time();
-     90         echo "this OK<br/>";
-     91         echo "执行时间为：".($end-$start);
-     92     }
-     93 
-     94 }
-     95 
-     96 header("content-type: text/html;charset=utf8;");
-     97 $obj=new Lock('192.168.95.11');
-     98 $obj->test('lock_count');
-     99 
-    100 ?>
+    /**
+    * @desc 加锁方法
+    *
+    * @param $lockName string | 锁的名字
+    * @param $timeout int | 锁的过期时间
+    *
+    * @return 成功返回identifier/失败返回false
+    */
+    public function getLock($lockName, $timeout=2)
+    {
+        $identifier=uniqid();       #获取唯一标识符
+        $timeout=ceil($timeout);    #确保是整数
+        $end=time()+$timeout;
+        while(time()<$end)          #循环获取锁
+        {
+            if($this->redis->setnx($lockName, $identifier))    #查看$lockName是否被上锁
+            {
+                $this->redis->expire($lockName, $timeout);     #为$lockName设置过期时间，防止死锁
+                return $identifier;                             #返回一维标识符
+            }
+            elseif ($this->redis->ttl($lockName)===-1) 
+            {　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 　
+                $this->redis->expire($lockName, $timeout);     #检测是否有设置过期时间，没有则加上（假设，客户端A上一步没能设置时间就进程奔溃了，客户端B就可检测出来，并设置时间）
+            }
+            usleep(0.001);         #停止0.001ms
+        }
+        return false;
+    }
+
+    /**
+    * @desc 释放锁
+    *
+    * @param $lockName string   | 锁名
+    * @param $identifier string | 锁的唯一值
+    *
+    * @param bool
+    */
+    public function releaseLock($lockName,$identifier)
+    {
+        if($this->redis->get($lockName)==$identifier)   #判断是锁有没有被其他客户端修改
+        { 
+            $this->redis->multi();
+            $this->redis->del($lockName);   #释放锁
+            $this->redis->exec();
+            return true;
+        }
+        else
+        {
+            return false;   #其他客户端修改了锁，不能删除别人的锁
+        }
+    }
+
+    /**
+    * @desc 测试
+    * 
+    * @param $lockName string | 锁名
+    */
+    public function test($lockName)
+    {
+        $start=time();
+        for ($i=0; $i < 10000; $i++) 
+        { 
+            $identifier=$this->getLock($lockName);
+            if($identifier)
+            {
+              $count=$this->redis->get('count');
+              $count=$count+1;
+              $this->redis->set('count',$count);
+              $this->releaseLock($lockName,$identifier);
+            } 
+        }
+        $end=time();
+        echo "this OK<br/>";
+        echo "执行时间为：".($end-$start);
+    }
+
+}
+
+header("content-type: text/html;charset=utf8;");
+$obj=new Lock('192.168.95.11');
+$obj->test('lock_count');
+
+?>
+```
 
 测试结果：
 
@@ -292,6 +294,8 @@ Linux下网络IO使用socket套接字来通讯，普通IO模型只能监听一�
 （以上是自己的一些见解，若有不足或者错误的地方请各位指出）
 
 作者：[那一叶随风][15]
+
+</font>
 
 声明：本博客文章为原创，只代表本人在工作学习中某一时间内总结的观点或结论。转载时请在文章页面明显位置给出原文链接
 

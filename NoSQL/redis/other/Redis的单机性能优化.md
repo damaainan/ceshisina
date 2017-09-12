@@ -2,6 +2,8 @@
 
 发表于 2017-06-30    |    分类于  [Redis][0]    |    阅读次数:  76
 
+<font face=微软雅黑>
+
 在《[Redis拾遗][1]》中提到查询本地redis的延迟通常低于1毫秒，而查询同一个数据中心的redis的延迟通常低于5毫秒。也就是说，网络传输的损耗为实际操作用时的5倍。
 
 使用Pipeline或Lua脚本可以在一次请求中发送多条命令，通过分摊一次请求的网络及系统延迟，从而可以极大的提高性能。
@@ -161,7 +163,7 @@ mem_allocator:libc                      # 内存分配器
 Redis支持三种内存分配器：tcmalloc，jemalloc和libc(ptmalloc)。在大量小数据的使用场景下，使用jemalloc与tcmalloc可以显著的降低内存的碎片率。根据[这里][2]的评测，保存200个列表，每个列表有100万的数字，使用jemalloc的碎片率为3%，共使用12.1GB内存，而使用libc时，碎片率为33%，使用了17.7GB内存。但是保存大对象时libc分配器要稍有优势，例如保存3000个列表，每个列表里保存800个大小为2.5k的条目，jemalloc的碎片率为3%，占用8.4G，而libc为1%，占用8GB。
 
 Redis内存对象的数据结构为：
-```
+```c
 typedef struct redisObject {
 
     unsigned type:4;             /* 类型，比如hash, list等 */
@@ -184,15 +186,22 @@ typedef struct redisObject {
 
 Redis的字符串值有三种编码方式：SDS（Simple Dynamic Strings），embstr与int。借用一下《Redis 设计与实现》中的图：
 
-[![graphviz-c0ba08ec03934562687cc3cb79580e76edef81e3.png](http://liangshuang.name/2017/06/30/redis-optimization/graphviz-c0ba08ec03934562687cc3cb79580e76edef81e3.png)](http://liangshuang.name/2017/06/30/redis-optimization/graphviz-c0ba08ec03934562687cc3cb79580e76edef81e3.png)当字符串内容是整数，并且不超过long类型的最大值，会使用int编码，最省内存。
+![](../img/graphviz-c0ba08ec03934562687cc3cb79580e76edef81e3.png)
 
-[![graphviz-9512800b17c43f60ef9568c6b0b4921c90f7f862.png](http://liangshuang.name/2017/06/30/redis-optimization/graphviz-9512800b17c43f60ef9568c6b0b4921c90f7f862.png)](http://liangshuang.name/2017/06/30/redis-optimization/graphviz-9512800b17c43f60ef9568c6b0b4921c90f7f862.png)当字符串的长度不大于39字节时，会使用embstr，内嵌SDS结构的字符串，节省一个指针的空间与一次内存IO时间。但对其内容进行修改的时候，会被转成raw编码。
+当字符串内容是整数，并且不超过long类型的最大值，会使用int编码，最省内存。
 
-[![graphviz-8731210637d0567af28d3a9d4089d5f864d29950.png](http://liangshuang.name/2017/06/30/redis-optimization/graphviz-8731210637d0567af28d3a9d4089d5f864d29950.png)](http://liangshuang.name/2017/06/30/redis-optimization/graphviz-8731210637d0567af28d3a9d4089d5f864d29950.png)其他情况会使用指针指向SDS。
+![](../img/graphviz-9512800b17c43f60ef9568c6b0b4921c90f7f862.png)
+
+当字符串的长度不大于39字节时，会使用embstr，内嵌SDS结构的字符串，节省一个指针的空间与一次内存IO时间。但对其内容进行修改的时候，会被转成raw编码。
+
+![](../img/graphviz-8731210637d0567af28d3a9d4089d5f864d29950.png)
+
+其他情况会使用指针指向SDS。
 
 可以使用STRLEN命令查看占用空间，OBJECT ENCODING查看编码格式。
 
 SDS结构的定义为：
+
 ```
 struct sdshdr {
 
@@ -283,7 +292,7 @@ Twitter给这种扩展的数据结构起名为Hybrid List，很可惜的是Twitt
 
 下边是quicklist结构的定义：
 
-```
+```c
 /* quicklistNode is a 32 byte struct describing a ziplist for a quicklist.
 
  * We use bit fields keep the quicklistNode at 32 bytes.
@@ -352,7 +361,9 @@ typedef struct quicklist {
 
 } quicklist;
 ```
+
 #### 配置
+
 ```
 下边是Redis配置文件中关于短结构的相关配置：
 
@@ -396,6 +407,7 @@ zset-max-ziplist-entries 128
 
 zset-max-ziplist-value 64
 ```
+
 只要将短结构的数量限制在500～2000个以内，单个元素的长度限制在128个字节以内，其性能一般都会处于合理的范围之内。《Redis in Action》中推荐的配置为：数量限制为1024个，长度限制为64字节，这样可以同时兼顾低内存占用与高性能。
 
 ### 数据分片
@@ -407,6 +419,7 @@ zset-max-ziplist-value 64
 Redis最常被用到的就是其基本的键-值存储功能。然而Redis对一级的存储编码并没有优化，这个时候，将普通的键-值通过分片，存储到hash下边，就可以利用ziplist编码达到优化内存适用的目的。
 
 例如，要使用Redis记录用户的最后请求时间（数值型），系统有100万的用户，用户的ID是一个自增的连续数字，使用传统的方式，可以存储为：
+
 ```
 user:1 -> 1499256798295
 
@@ -471,6 +484,8 @@ def shard_key(base, key, total_elements, shard_size):
     return "%s:%s"%(base, shard_id)
 ```
 上边代码中的total_elements与shard_size的一致性很重要，改变其中的任何一个，都需要对全部数据做重新分片。因此在设计之初，需要留出一定的余量。
+
+</font>
 
 ## 参考
 
