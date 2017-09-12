@@ -1,6 +1,7 @@
 # SystemTap 定位 Memory Leak
 
  [首页][0]  [分类][1]  [标签][2]  [留言][3]  [关于][4]  [订阅][5]  2017-01-12 | 分类 [linux][6] | 标签 [linux][7] # 前言
+<font face=微软雅黑>
 
 C/C++程序，Memory Leak是非常讨厌也是非常具有挑战的topic。简单的程序，靠code review就可以搞定，但是复杂的体系庞大的程序，很难通过code review找到对应的点，通过手段缩小范围是十分必要的。
 
@@ -360,6 +361,8 @@ C/C++程序，Memory Leak是非常讨厌也是非常具有挑战的topic。简�
 * 卸载已有的SystemTap，源码安装SystemTap-3.0，下载地址如下： [源码下载地址][10]
 
 安装步骤为： configure / make / make install 三部曲。
+
+</font>
 
 [0]: http://bean-li.github.io/
 [1]: http://bean-li.github.io/categories/

@@ -8,11 +8,13 @@
 * [服务运维][4]
 * [读书笔记][5]
 
+<font face=微软雅黑>
+
 虽说SystemTap是DTrace在Linux平台上的一个山寨货，但Linux远比Solaris流行使得SystemTap已然成为一个**功能调试**和**性能分析**的常见利器了，而且一般普通的程序员和普通运维人员基本都用不上他，也只有对Linux内核和整个系统有比较全面的了解和掌握的高阶程序员才能驾驭使用，所以看上去这货也是逼格满满啊！这次把SystemTap的文档过了一遍，但是总算有个大致的了解了，毕竟这是个Begin文档，离深入还有很遥远，即使之前自己也在gdb tracepoint使用中的静态观测点使用中早已涉及到这个东西了。
 
 
 
-# 一、SystemTap简介
+### 一、SystemTap简介
 
 和DTrace的D语言一样，SystemTap也是通过一种类似的SystemTap script脚本语言来实现线上数据的采集和跟踪。在原理上，SystemTap会根据用户写的script，使用stap工具将脚本代码转换成C代码，并将其编译生成对应的内核模块，接下来将其加载到正在运行的内核中去，就可以直接从内核中提取相关数据，正因为需要最终转换成C并编译，所以即使SystemTap script作为脚本存在，运行时对语法的检查还是比较严格的。SystemTap设计的主要思想就是events-handlers，当运行SystemTap script的时候，SystemTap会监测对应的事件(比如函数的进入和退出、定时器超时、会话结束等)，而当事件一旦发生被捕获到了，那么对应的handler将会被作为一个子例程被内核快速执行(这个子例程通常是在当前上下文中提取感兴趣的数据，并将他们保存到内部变量中，通常还会执行打印显示操作)，接下来执行流程恢复正常。在运行stap的时候需要特殊权限才可以，如果不使用root权限执行，则可以将运行用户添加到stapdev|stapusr用户组中，使其具有对应的执行权限。
 
@@ -30,7 +32,7 @@
 该模式下脚本的输出将会保存在文件中，通过-o参数指明输出文件名，通过-S参数可以指明每个输出文件的尺寸大小和保留的最新文件的个数。运行这个命令会将SystemTap进程号打印出来，此后任何时刻可以通过向该进程发送SIGTERM信号结束搜集过程。  
 一旦SystemTap会话结束，相应的probe会被禁用，同时对应的内核模块也会被自动卸载，整个过程中没有涉及到代码的修改、重编译和重运行，完全达到了向特定位置插入调试打印语句相同的效果，而且整个过程对线上业务的侵入是很小的。
 
-# 二、SystemTap script语法介绍
+### 二、SystemTap script语法介绍
 
 SystemTap的核心是SystemTap script的编写，通常使用.stp结尾，该语言有着同C和awk语言极为类似的语法，其基本格式为：
 
@@ -42,7 +44,7 @@ SystemTap的核心是SystemTap script的编写，通常使用.stp结尾，该语
 
 每一个probe可以有多个event，他们之间使用逗号连接，而当该列表中任意一个event被触发的时候，对应的handler都会被执行。为了提供代码复用，SystemTap script还允许编写函数，该函数可以在statements中随意地被调用。
 
-## 2.1 SystemTap Event事件
+#### 2.1 SystemTap Event事件
 
 SystemTap的事件可以分为_同步_和_异步_两类事件，前者通常是和特定代码位置相关的，所以同步事件具有丰富的上下文信息；异步事件通常不跟特定的代码或者特定指令相关联，比如常见的定时器机制就属于异步事件了。  
 **a. 同步事件**  
@@ -67,7 +69,7 @@ SystemTap的事件可以分为_同步_和_异步_两类事件，前者通常是�
 
     probe timer.s(4) { printf("hello world\n") }
 
-## 2.2 SystemTap Handler/Body
+#### 2.2 SystemTap Handler/Body
 
 Handler是使用花括号包围的语句块，默认情况下SystemTap脚本会一直执行，直到遇到exit()调用，或者手动Ctrl-C退出为止。打印函数printf要数最常用的函数了，其支持和C库中printf类似的格式化输出方式，比如
     
@@ -97,7 +99,7 @@ target() stap可以使用-x pid或-c command来和特定的进程相关联，当
     
     f (pid() == target()) ...
 
-## 2.3 SystemTap Handler结构元素介绍
+#### 2.3 SystemTap Handler结构元素介绍
 
 **a. 普通变量**  
 SystemTap脚本中的变量和通常的脚本语言一样，直接在需要使用的时候使用函数或者表达式对其进行赋值操作，而不需要事先定义/声明这个变量，而变量的类型也会根据其赋值的函数返回或表达式求值类型自动判断为字符串还是整形。  
@@ -199,7 +201,7 @@ user_char/short/int/long(addr)、user_string(addr)、user_string_n(addr, n)
 
     vars: file=0xffff88002d2bb000 buf=0x7ffd50543d00 count=0x2004 pos=0xffff88002ead7f48 ret=?%
 
-## 2.4 关联数组
+#### 2.4 关联数组
 
 关联数组就是通常所谓的字典数据类型，其键值要求必须唯一，其内部采用hash table实现的。使用关联数组的时候必须要求其被声明为global的(而不管其是否只会被一个probe使用)，在global声明的时候可以指定预留大小以提高效能global reads[400}。在使用的时候貌似约定其所有键的类型必须一致、其所有值的类型必须一致，不允许数字和字符串混用，对于已经存在的键再次赋值会用新值替换之前的旧值：
 
@@ -254,15 +256,15 @@ user_char/short/int/long(addr)、user_string(addr)、user_string_n(addr, n)
     
     } '
 
-## 2.5 Tapsets
+#### 2.5 Tapsets
 
 Tapsets是随着系统分发的预定义的SystemTap script library，其一般位于/usr/share/systemtap/tapset/目录下并以.stp结尾。这些脚本通常不是用来直接执行的，而是提供一些预定义的probes和function定义为用户编写脚本服务的。用户编写脚本调用到的probes和handlers，工具会首先在tapsets中寻求其定义，然后再进行后续的脚本转化、编译等步骤。
 
-# 三、用户态跟踪
+### 三、用户态跟踪
 
 虽然SystemTap最初是为内核服务的，但是其提供的跟踪特性对于user-space问题跟踪也颇具帮助，所以当前SystemTap开发完善的热点在于对用户态程序跟踪的支持。目前SystemTap支持用户态程序函数的调用和返回、预定义静态marker和用户程序进程事件等信息。
 
-## 3.1 用户态Events
+#### 3.1 用户态Events
 
 用户态事件跟内核态事件比较相像，所有用户态跟踪事件都以process开头。在指定用户态事件时候，既可以通过PATH制定可执行程序名，这样跟踪的事件就限制在指定的可执行程序范围上。下面带有PATH参数的是在使用的时候必须指定的，而不带PATH参数的事件，其PATH是可选的限定参数。  
 **process(“PATH”).function(“function”)**和**process(“PATH”).function(“function”).return**  
@@ -281,7 +283,7 @@ Tapsets是随着系统分发的预定义的SystemTap script library，其一般�
 **process.syscall**  
 跟踪用户态进程的系统调用事件，系统调用号保留在 $ syscall中，可以通过 $ arg1、…… $ arg6访问系统调用参数，使用.return可以捕获系统调用返回事件，通过 $ return访问系统调用的返回值。可以使用PATH和process ID进行限定。
 
-## 3.2 用户态Stack Backtraces
+#### 3.2 用户态Stack Backtraces
 
 通过-d executable/object可以指定可执行程序或者目标文件的跟踪，而使用-ldd可以指定对用户态引用的共享库的跟踪。手册中说到很多时候编译器为了优化性能会省略stack frame pointers，而使用编译的调试信息，SystemTap可以使用这些调试信息重建调用栈信息。
 
@@ -308,7 +310,9 @@ Tapsets是随着系统分发的预定义的SystemTap script library，其一般�
 
 本文完！
 
-# 参考
+</font>
+
+### 参考
 
 * [SystemTap Beginners Guide][7]
 * [Systemtap tutorial][8]
