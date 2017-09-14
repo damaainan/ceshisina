@@ -1,0 +1,128 @@
+## PHP-7.1 源代码学习：字节码生成 之 "$a = 1"
+
+### 前言
+
+本文通过分析 "$a=1" 这个 PHP 语句的编译和执行来窥探 `php-cli` 解释执行逻辑
+
+### 准备
+
+* 参考之前的系列文章，在 ubuntu 环境下下载，编译 PHP 源代码
+* 将代码导入 idea clion IDE 中
+* 编辑运行选项，增加运行参数：`-f test.php`
+* 设置断点开始调试
+
+test.php 是一个测试脚本，放在 `sapi/cli/` 目录下，test.php 中只包含一条简单的赋值语句：
+
+    <?php
+    $a = 1
+    ?>
+    
+
+### 调用堆栈
+
+参考之前的系列文章来了解 `php-cli` 启动过程以及语法分析和字节码生成的基本概念，这里直接给出调用堆栈：
+
+![][0]
+
+我们尝试从 `zend_compile_expr` 函数说起
+
+#### zend_compile_expr
+
+赋值语句 is-a 表达式，`zend_compile_expr` 函数根据 `ast` 类型选择调用 `zend_compile_assign`：
+
+```c
+    // zend_compile.c
+    
+    void zend_compile_expr(znode *result, zend_ast *ast) {
+        ...
+        switch (ast->kind) {
+            ...
+            case ZEND_AST_ASSIGN:
+                zend_compile_assign(result, ast);
+                break;
+        }
+    }
+```
+
+#### zend_compile_assign
+
+赋值语句的 `ast` 包含两个 `child ast`，即 `left hand side var（ast->child[0]）` 和 `right hand side expr（ast->child[1]）`，`var_node` 和 `expr_node` 两个 `znode` 类型的变量是生成字节码过程使用的中间变量
+
+```c
+    // zend_compile.c
+    
+    void zend_compile_assign(znode *result, zend_ast *ast) /* {{{ */
+    {
+        zend_ast *var_ast = ast->child[0];
+        zend_ast *expr_ast = ast->child[1];
+    
+        znode var_node, expr_node;
+        zend_op *opline;
+        uint32_t offset;
+    
+        if (is_this_fetch(var_ast)) {
+            zend_error_noreturn(E_COMPILE_ERROR, "Cannot re-assign $this");
+        }
+    
+        zend_ensure_writable_variable(var_ast);
+
+    }
+```
+
+然后我们来看看 `switch case` 语句
+
+```c
+    // zend_compile.c
+    
+    switch (var_ast->kind) {
+        case ZEND_AST_VAR:
+        case ZEND_AST_STATIC_PROP:
+            offset = zend_delayed_compile_begin();
+            zend_delayed_compile_var(&var_node, var_ast, BP_VAR_W);
+            zend_compile_expr(&expr_node, expr_ast);
+            zend_delayed_compile_end(offset);
+            zend_emit_op(result, ZEND_ASSIGN, &var_node, &expr_node);
+            return;
+    }
+```
+
+刚看到这段代码可能会觉得挺绕的：zend_delayed_xxx 函数是干啥的？最终生成的字节码又保存在哪呢？
+
+##### zend_emit_op
+
+`emit` 有 "发射，散播"的意思，所以 `zend_emit_op` 可能和字节码保存相关：
+
+```c
+    // zend_compile.c
+    
+    static zend_op *zend_emit_op(znode *result, zend_uchar opcode,   
+    znode *op1, znode *op2) /* {{{ */
+    {
+        zend_op *opline = get_next_op(CG(active_op_array));
+        opline->opcode = opcode;
+    
+        if (op1 == NULL) {
+            SET_UNUSED(opline->op1);
+        } else {
+            SET_NODE(opline->op1, op1);
+        }
+    
+        if (op2 == NULL) {
+            SET_UNUSED(opline->op2);
+        } else {
+            SET_NODE(opline->op2, op2);
+        }
+    
+        zend_check_live_ranges(opline);
+        if (result) {
+            zend_make_var_result(result, opline);
+        }
+        return opline;
+    }
+```
+
+这里我们又遇到了全局变量 CG（compile globals），z`end_emit_op` 先调用 `get_next_op` 获取可用的 `zend_op`（虚拟机指令），然后设置 `op1`, `op2` 为 `opline` 的两个操作数 
+
+现在我们知道生成的字节码保存在 CG 的 `active_op_array` 数组里
+
+[0]: https://segmentfault.com/img/bVIS8l?w=441&h=449

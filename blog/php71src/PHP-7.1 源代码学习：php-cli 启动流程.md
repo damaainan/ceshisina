@@ -1,0 +1,139 @@
+## PHP-7.1 源代码学习：php-cli 启动流程
+
+### 前言
+
+### php cli main 函数
+
+`configure & make` 默认构建目标为 `php-cli`，相关代码在 `sapi/cli` 目录下，`php_cli.c` 文件中能够找到 main（入口）函数，大概流程如下：
+
+* 命令行参数处理
+* `cli_sapi_module` 初始化
+* `sapi_module->startup`
+* `do_cli or do_cli_server`
+* 清理工作
+
+### sapi_module_struct
+
+C 语言系统编程常用手法，通过 `struct` 中声明 `函数指针` 类型的字段来实现类似面向对象中抽象类的概念，在 `main/SAPI.h` 文件中可以找到该结构体的定义，这里只列出部分字段（下同）：
+
+```c
+    struct _sapi_module_struct {
+        char *name;
+        char *pretty_name;
+    
+        int (*startup)(struct _sapi_module_struct *sapi_module);
+        int (*shutdown)(struct _sapi_module_struct *sapi_module);
+        ...
+        char *ini_entries;
+        const zend_function_entry *additional_functions;
+        unsigned int (*input_filter_init)(void);
+    }
+```
+
+#### cli_sapi_module
+
+`cli_sapi_module` 是一个静态全局变量，定义在 `php_cli.c` 中，你可以将它理解成是 `sapi_module_struct` "类" 的一个 "实例"，结构体中 "挂载" 了 `cli` 特定的实现函数：
+
+```c
+    /* {{{ sapi_module_struct cli_sapi_module
+     */
+    static sapi_module_struct cli_sapi_module = {
+        "cli",                            /* name */
+        "Command Line Interface",        /* pretty name */
+    
+        ...
+        php_cli_startup,                /* startup */
+        php_module_shutdown_wrapper,    /* shutdown */
+        ...
+    
+        STANDARD_SAPI_MODULE_PROPERTIES
+    };
+```
+
+### do_cli
+
+`do_cli` 函数定义在 `php_cli.c` 文件中，大致流程如下：
+
+* 根据命令行选项 确定 `behavior`（解释器行为）
+* 根据 `behavior` 执行相应的动作
+
+通过执行 `sapi/cli/php --help` 可以查看所有的 `php-cli` 命令行选项，我们通过几个简单的选项来分析解释器执行流程
+
+#### PHP_MODE_CLI_DIRECT
+
+该模式下，`php-cli` 会执行解释执行通过命令行参数传递的 `code`
+
+```c
+    case PHP_MODE_CLI_DIRECT:
+        cli_register_file_handles();
+        if (zend_eval_string_ex(exec_direct, NULL,   
+            "Command line code", 1) == FAILURE) {
+                    exit_status=254;
+        }
+        break;
+```
+
+追踪 `zend_eval_string_ex` 的函数调用，定位到 `zend_execute_API.c` 文件中 `zend_eval_stringl` 函数，代码逻辑已经很清楚了：先调用 `zend_compile_string` 函数编译代码生成字节码 `new_op_array`，再调用 `zend_execute` 函数执行生成的字节码
+
+```c
+    ZEND_API int zend_eval_stringl(char *str, size_t str_len, zval *retval_ptr,   
+    char *string_name) {
+        ...
+        original_compiler_options = CG(compiler_options);
+        CG(compiler_options) = ZEND_COMPILE_DEFAULT_FOR_EVAL;
+        new_op_array = zend_compile_string(&pv, string_name);
+        CG(compiler_options) = original_compiler_options;
+    
+        if (new_op_array) {
+            zend_try {
+                ZVAL_UNDEF(&local_retval);
+                zend_execute(new_op_array, &local_retval);
+            } zend_catch {
+                destroy_op_array(new_op_array);
+                efree_size(new_op_array, sizeof(zend_op_array));
+                zend_bailout();
+            } zend_end_try();
+            ...
+        } else {
+            retval = FAILURE;
+        }
+        zval_dtor(&pv);
+        return retval;
+    }
+```
+
+`zend_compile_string` 属于语法分析内容，参考 [PHP-7.1 源代码学习: 语法分析][0]，这里做个简要介绍
+
+##### compile_string
+
+通过搜索源代码可以发现 `zend_compile_string` 最终调用 `compile_string`
+
+```c
+    zend_op_array *compile_string(zval *source_string, char *filename)
+    {
+        zend_lex_state original_lex_state;
+        zend_op_array *op_array = NULL;
+        zval tmp;
+    
+        if (Z_STRLEN_P(source_string)==0) {
+            return NULL;
+        }
+    
+        ZVAL_DUP(&tmp, source_string);
+        convert_to_string(&tmp);
+        source_string = &tmp;
+    
+        zend_save_lexical_state(&original_lex_state);
+        if (zend_prepare_string_for_scanning(source_string, filename) == SUCCESS) {
+            BEGIN(ST_IN_SCRIPTING);
+            op_array = zend_compile(ZEND_EVAL_CODE);
+        }
+    
+        zend_restore_lexical_state(&original_lex_state);
+        zval_dtor(&tmp);
+    
+        return op_array;
+    }
+```
+
+[0]: https://segmentfault.com/a/1190000008221706

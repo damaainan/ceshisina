@@ -1,0 +1,83 @@
+## PHP-7.1 源代码学习：字节码在 Zend 虚拟机中的解释执行 之 概述
+
+
+### 前言
+
+本文简要介绍 `zend` 虚拟机解释执行字节码的基本逻辑以及相关的数据结构，关于 PHP 源代码的下载，编译，调试可以参考之前的系列文章
+
+### execute_ex
+
+我们来看看执行一个简单的脚本 test.php 的调用栈
+
+```
+    execute_ex @ zend_vm_execute.h : 411
+    zend_execute @ zend_vm_execute.h : 474
+    php_execute_script @ zend.c : 1474
+    do_cli @ php_cli.c : 993
+    main @ php_cli.c : 1381 
+```
+
+由于是执行脚本文件，所以 `do_cli` 调用了 `php_execute_script` 函数，最终调用 `execute_ex` 函数：
+
+```c
+    ZEND_API void execute_ex(zend_execute_data *ex)
+    {
+        DCL_OPLINE
+    
+    #ifdef ZEND_VM_IP_GLOBAL_REG
+        const zend_op *orig_opline = opline;
+    #endif
+    #ifdef ZEND_VM_FP_GLOBAL_REG
+        zend_execute_data *orig_execute_data = execute_data;
+        execute_data = ex;
+    #else
+        zend_execute_data *execute_data = ex;
+    #endif
+    
+    
+        LOAD_OPLINE();
+        ZEND_VM_LOOP_INTERRUPT_CHECK();
+    
+        while (1) {
+    #if !defined(ZEND_VM_FP_GLOBAL_REG) || !defined(ZEND_VM_IP_GLOBAL_REG)
+                int ret;
+    #endif
+    #if defined(ZEND_VM_FP_GLOBAL_REG) && defined(ZEND_VM_IP_GLOBAL_REG)
+            ((opcode_handler_t)OPLINE->handler)(ZEND_OPCODE_HANDLER_ARGS_PASSTHRU);
+            if (UNEXPECTED(!OPLINE)) {
+    #else
+            if (UNEXPECTED((ret = ((opcode_handler_t)OPLINE->handler)(ZEND_OPCODE_HANDLER_ARGS_PASSTHRU)) != 0)) {
+    #endif
+    #ifdef ZEND_VM_FP_GLOBAL_REG
+                execute_data = orig_execute_data;
+    # ifdef ZEND_VM_IP_GLOBAL_REG
+                opline = orig_opline;
+    # endif
+                return;
+    #else
+                if (EXPECTED(ret > 0)) {
+                    execute_data = EG(current_execute_data);
+                    ZEND_VM_LOOP_INTERRUPT_CHECK();
+                } else {
+    # ifdef ZEND_VM_IP_GLOBAL_REG
+                    opline = orig_opline;
+    # endif
+                    return;
+                }
+    #endif
+            }
+    
+        }
+        zend_error_noreturn(E_CORE_ERROR, "Arrived at end of main loop which shouldn't happen");
+    }
+```
+
+和其它 C 语言编写的系统软件类似，函数中使用了大量的宏定义，通过宏定义的名字还是能大概看出其用途
+
+* `DCL_OPLINE`，变量声明
+* `LOAD_OPLINE()`，加载指令字节码
+* `ZEND_VM_LOOP_INTERRUPT_CHECK()`，`interrupt` 检测
+* while (1) 循环，调用指令的处理函数 `OPLINE->handler`
+
+#### op_code_handler
+

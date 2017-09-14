@@ -1,0 +1,58 @@
+## PHP-7.1 源代码学习：词法分析
+
+### 前言
+
+### yylex
+
+`bison` 语法分析器调用 `yylex` 获取词法单元，对于复杂的语言实现一般都会自定义 `yylex`，搜索 `yylex` 的宏定义
+
+    # grep -rin --color --include=*.h "#define yylex"
+    Zend/zend_language_parser.c:64:#define yylex zendlex
+
+搜索 `zendlex` 函数的定义
+
+    # grep -rin --color --include=*.c zendlex
+    Zend/zend_language_parser.c:1689:int zendlex(zend_parser_stack_elem *elem)
+
+打开 `zend_language_parser.c` 文件查看 `zendlex` 函数定义
+
+```c
+    int zendlex(zend_parser_stack_elem *elem) {
+        zval zv;
+        int retail;
+    
+        ...
+    
+    again:
+        ZVAL_UNDEF(&zv);
+        retval = lex_scan(&zv);
+        if (EG(Exception)) {
+            return T_ERROR;
+        }
+    
+        switch (retval) {
+            ...
+        }
+    
+        return retval;
+    }
+```
+
+这里出现了两个新的数据类型 `zval`，`zend_parser_stack_elem`，从命名推测 `zend_parser_stack_elem` 是语法分析栈元素（语法分析树节点），搜索代码里面哪些地方引用了 `zend_parser_stack_elem`
+
+    grep --color -rinw --include=*.c --include=*.h zend_parser_stack_elem
+    Zend/zend_compile.h:130:} zend_parser_stack_elem;
+    Zend/zend_language_parser.c:108:#define YYSTYPE zend_parser_stack_elem
+
+打开 `zend.compile.h` 文件 130 行，`zend_parser_stack_elem` 是一个联合体的 `typedef`
+
+```c
+    typedef union _zend_parser_stack_elem {
+        zend_ast *ast;
+        zend_string *str;
+        zend_ulong num;
+    } zend_parser_stack_elem;
+```
+
+`zend_language_parser.c` 文件的 108 行表明 `zend_parser_stack_elem` 是 词法分析模块 传递给 语法分析模块的 `token value`
+

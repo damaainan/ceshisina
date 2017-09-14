@@ -1,0 +1,201 @@
+## PHP-7.1 源代码学习：代码生成 之 函数定义
+
+
+### 前言
+
+本文从函数定义的语法规则开始，简要介绍 PHP 解释器如何 "编译" 函数定义
+
+### 函数对应的 AST 节点
+
+为了看起来清楚一些，我们将 语法规则定义 与 语法动作分开：
+
+```c
+    // zend_language_parser.y
+    
+    top_statement: function_declaration_statement
+    function_declaration_statement:
+        function returns_ref T_STRING backup_doc_comment '(' parameter_list ')' return_type
+        backup_fn_flags '{' inner_statement_list '}' backup_fn_flags
+    
+            { $$ = zend_ast_create_decl(ZEND_AST_FUNC_DECL, $2 | $13, $1, $4,
+                  zend_ast_get_str($3), $6, NULL, $11, $8); CG(extra_fn_flags) = $9; }
+```
+
+根据语法动作，这条函数定义规则会创建一个 `ZEND_AST_FUNC_DECL` 类型的 `AST` 结点，我们来看看 `zend_ast_create_create_decl` 方法：
+
+```c
+    // zend_ast.c
+    
+    ZEND_API zend_ast *zend_ast_create_decl(
+        zend_ast_kind kind,
+        uint32_t flags,
+        uint32_t start_lineno,
+        zend_string *doc_comment,
+        zend_string *name,
+        zend_ast *child0,
+        zend_ast *child1,
+        zend_ast *child2,
+        zend_ast *child3) {
+        zend_ast_decl *ast;
+    
+        ast = zend_ast_alloc(sizeof(zend_ast_decl));
+        ast->kind = kind;
+        ast->attr = 0;
+        ast->start_lineno = start_lineno;
+        ast->end_lineno = CG(zend_lineno);
+        ast->flags = flags;
+        ast->lex_pos = LANG_SCNG(yy_text);
+        ast->doc_comment = doc_comment;
+        ast->name = name;
+        ast->child[0] = child0;
+        ast->child[1] = child1;
+        ast->child[2] = child2;
+        ast->child[3] = child3;
+    
+        return (zend_ast *) ast;
+    }
+```
+
+* `zend_ast_create_decl` 是一个通用的方法，通过 kind 参数区分不同类型的定义
+* 同理，参数 child0, child1 .etc 的命名也是很 "范化" 的
+
+### 编译 AST
+
+`zend_compile_func_decl` 用于编译函数定义 `AST` ，由于函数代码相对比较长，我们分块开分析
+
+```c
+    // zend_compile.c
+    
+    void zend_compile_func_decl(znode *result, zend_ast *ast) {
+        // 获取 AST 子节点
+        zend_ast_decl *decl = (zend_ast_decl *) ast;
+        zend_ast *params_ast = decl->child[0];
+        zend_ast *uses_ast = decl->child[1];
+        zend_ast *stmt_ast = decl->child[2];
+        zend_ast *return_type_ast = decl->child[3];
+        zend_bool is_method = decl->kind == ZEND_AST_METHOD;
+    
+        // 将 CG 的 active_op_array（字节码数组） 保存在 orig_op_array 中，因为每个函数会有自己的 op_array
+        zend_op_array *orig_op_array = CG(active_op_array);
+        // 新建 op_array
+        zend_op_array *op_array = zend_arena_alloc(&CG(arena), sizeof(zend_op_array));
+        zend_oparray_context orig_oparray_context;
+        // 初始化新建的 op_array
+        init_op_array(op_array, ZEND_USER_FUNCTION, INITIAL_OP_ARRAY_SIZE);
+        op_array->fn_flags |= (orig_op_array->fn_flags & ZEND_ACC_STRICT_TYPES);
+        op_array->fn_flags |= decl->flags;
+        op_array->line_start = decl->start_lineno;
+        op_array->line_end = decl->end_lineno;
+        if (decl->doc_comment) {
+            op_array->doc_comment = zend_string_copy(decl->doc_comment);
+        }
+        if (decl->kind == ZEND_AST_CLOSURE) {
+            op_array->fn_flags |= ZEND_ACC_CLOSURE;
+        }
+    }
+```
+
+这里有几个地方比较有意思：
+
+* 函数参数 `ast` 的类型是 `zend_ast` ，但是被强制转换成了 `zend_ast_decl` ，这个 `zend_ast_decl` 结构体和 `zend_ast` 结构体在内存布局上有者相同的 "头部"，C 语言经常使用这种技巧类实现类似 面向对象里面 `继承` 的概念
+* 这里又遇到了 CG，参考之前的系列文章，CG 是解释器在 编译代码 过程中用于保存编译上下文的一个 "对象"，当遇到函数定义时，解释器会把当前已经生成的 `active_op_array` 保存起来，为函数定义新建一个 `op_array` ，至于这个新建的 `op_array` 保存在哪？请见下文分解
+
+我们接着看源代码：
+
+```c
+    // zend_compile_func_decl @ zend_compile.c
+    
+    if (is_method) {
+        zend_bool has_body = stmt_ast != NULL;
+        zend_begin_method_decl(op_array, decl->name, has_body);
+    } else {
+        zend_begin_func_decl(result, op_array, decl);
+        if (uses_ast) {
+            zend_compile_closure_binding(result, uses_ast);
+        }
+    }
+    
+    CG(active_op_array) = op_array;
+    
+    zend_oparray_context_begin(&orig_oparray_context);
+```
+
+* 函数定义有两种，全局函数以及类里面的"方法"， `is_method` 标志区分这两种情况，如果是方法定义就调用 `zend_begin_method_decl` ，这里先略过不表
+* `zend_begin_func_decl` 函数用于在编译之前做一些准备工作，注意到这里传入了新建的 `op_array`
+
+下面是 `zend_begin_func_decl` 函数的实现，我们只保留和函数 `op_array` 相关的代码
+
+```c
+    static void zend_begin_func_decl(...) {
+        ...
+    
+        key = zend_build_runtime_definition_key(lcname, decl->lex_pos);
+        // 将 函数 key，op_array 存储在 CG 的 function_table 中 ！！！
+        zend_hash_update_ptr(CG(function_table), key, op_array);
+    
+        if (op_array->fn_flags & ZEND_ACC_CLOSURE) {
+            ...
+        } else {
+            // 在当前 active_op_array 中生成一条函数定义指令 ！！！
+            opline = get_next_op(CG(active_op_array));
+            opline->opcode = ZEND_DECLARE_FUNCTION;
+            opline->op1_type = IS_CONST;
+            ...
+        }
+    }
+```
+
+现在明白了，原来函数的 `op_array` 是保存在 CG 的 `function_table` 中，这里还有一个有意思的地方，php 生成了一条函数定义指令，这一点正是 动态脚本 语言和 静态类型语言（Java）非常不同的地方！静态类型的语言不需要执行代码来添加函数 or 方法，因为它们在代码编译阶段就已经确定了，当然也就缺少了一点灵活性
+
+我们回归主线，接着看 `zend_compile_func_decl` 代码
+
+```c
+    // 上面已经将 CG(active_op_array)暂存起来了，所以这里将 CG(active_op_array) 设置成 函数的 op_array
+    // 函数内部的语句的字节码都会保存在 CG(active_op_array) 中 ！！！
+    CG(active_op_array) = op_array;
+    
+    zend_oparray_context_begin(&orig_oparray_context);
+    
+    if (CG(compiler_options) & ZEND_COMPILE_EXTENDED_INFO) {
+        zend_op *opline_ext = zend_emit_op(NULL, ZEND_EXT_NOP, NULL, NULL);
+        opline_ext->lineno = decl->start_lineno;
+    }
+    
+    {
+        /* Push a separator to the loop variable stack */
+        zend_loop_var dummy_var;
+        dummy_var.opcode = ZEND_RETURN;
+    
+        zend_stack_push(&CG(loop_var_stack), (void *) &dummy_var);
+    }
+    // 编译参数
+    zend_compile_params(params_ast, return_type_ast);
+    if (CG(active_op_array)->fn_flags & ZEND_ACC_GENERATOR) {
+        zend_mark_function_as_generator();
+        zend_emit_op(NULL, ZEND_GENERATOR_CREATE, NULL, NULL);
+    }
+    if (uses_ast) {
+        zend_compile_closure_uses(uses_ast);
+    }
+    // 编译函数内部语句
+    zend_compile_stmt(stmt_ast);
+    
+    if (is_method) {
+        zend_check_magic_method_implementation(
+            CG(active_class_entry), (zend_function *) op_array, E_COMPILE_ERROR);
+    }
+    
+    /* put the implicit return on the really last line */
+    CG(zend_lineno) = decl->end_lineno;
+    
+    zend_do_extended_info();
+    zend_emit_final_return(0);
+    
+    pass_two(CG(active_op_array));
+    zend_oparray_context_end(&orig_oparray_context);
+    
+    /* Pop the loop variable stack separator */
+    zend_stack_del_top(&CG(loop_var_stack));
+    
+    CG(active_op_array) = orig_op_array;
+```
