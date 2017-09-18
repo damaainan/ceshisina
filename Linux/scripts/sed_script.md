@@ -214,3 +214,9 @@ done
 拼接下载
 
     seq 64 127 | xargs -i[ echo "obase=2;[" | bc |  awk '{print substr($0,2)}' | awk '{system("aria2c -o ./img/"$0".jpg http://www.chinazwds.org/chinazw/ASPX/mingli/64gua/zxt"$0".jpg")}'
+
+
+
+#### awk 计数
+
+    awk 'BEGIN{sum=0}{sum++;if(sum<10)print "0"sum$1;else print sum$1}' read.md
