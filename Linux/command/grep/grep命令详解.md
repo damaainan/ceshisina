@@ -39,7 +39,7 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
     1:root:x:0:0:root:/root:/bin/bash
     30:operator:x:11:0:operator:/root:/sbin/nologin
 
-在关键字的显示方面，grep 可以使用 --color=auto 来将关键字部分使用颜色显示。 这可是个很不错的功能啊！但是如果每次使用 grep 都得要自行加上 --color=auto 又显的很麻烦～ 此时那个好用的 alias 就得来处理一下啦！你可以在 ~/.bashrc 内加上这行：『alias grep='grep --color=auto'』再以『 source ~/.bashrc 』来立即生效即可喔！ 这样每次运行 grep 他都会自动帮你加上颜色显示啦
+在关键字的显示方面，grep 可以使用 `--color=auto` 来将关键字部分使用颜色显示。 这可是个很不错的功能啊！但是如果每次使用 grep 都得要自行加上 `--color=auto` 又显的很麻烦～ 此时那个好用的 alias 就得来处理一下啦！你可以在 ~/.bashrc 内加上这行：『`alias grep='grep --color=auto'`』再以『 source ~/.bashrc 』来立即生效即可喔！ 这样每次运行 grep 他都会自动帮你加上颜色显示啦
 
 将/etc/passwd，将没有出现 root 的行取出来
 
@@ -62,7 +62,6 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
     305:eth0: no IPv6 routers present
     # 你会发现除了 eth 会有特殊颜色来表示之外，最前面还有行号喔！
 
-在关键字的显示方面，grep 可以使用 --color=auto 来将关键字部分使用颜色显示。 这可是个很不错的功能啊！但是如果每次使用 grep 都得要自行加上 --color=auto 又显的很麻烦～ 此时那个好用的 alias 就得来处理一下啦！你可以在 ~/.bashrc 内加上这行：『alias grep='grep --color=auto'』再以『 source ~/.bashrc 』来立即生效即可喔！ 这样每次运行 grep 他都会自动帮你加上颜色显示啦
 
 用 dmesg 列出核心信息，再以 grep 找出内含 eth 那行,在关键字所在行的前两行与后三行也一起捉出来显示
 
@@ -95,9 +94,9 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
     8:I can't finish the test.
     9:Oh! The soup taste good.
 
-其实 [] 里面不论有几个字节，他都谨代表某『一个』字节， 所以，上面的例子说明了，我需要的字串是『tast』或『test』两个字串而已！ 
+其实 `[]` 里面不论有几个字节，他都谨代表某『一个』字节， 所以，上面的例子说明了，我需要的字串是『tast』或『test』两个字串而已！ 
 
-字符类的反向选择 [^] ：如果想要搜索到有 oo 的行，但不想要 oo 前面有 g，如下
+字符类的反向选择 `[^]` ：如果想要搜索到有 oo 的行，但不想要 oo 前面有 `g`，如下
 
     [root@www ~]# grep -n '[^g]oo' regular_express.txt
     2:apple is my favorite food.
@@ -111,12 +110,12 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
 
 至於第 19 行，同样的，因为 goooooogle 里面的 oo 前面可能是 o ，例如： go(ooo)oogle ，所以，这一行也是符合需求的！
 
-字符类的连续：再来，假设我 oo 前面不想要有小写字节，所以，我可以这样写 [^abcd....z]oo ， 但是这样似乎不怎么方便，由於小写字节的 ASCII 上编码的顺序是连续的， 因此，我们可以将之简化为底下这样：
+字符类的连续：再来，假设我 oo 前面不想要有小写字节，所以，我可以这样写 `[^abcd....z]oo` ， 但是这样似乎不怎么方便，由於小写字节的 ASCII 上编码的顺序是连续的， 因此，我们可以将之简化为底下这样：
 
     [root@www ~]# grep -n '[^a-z]oo' regular_express.txt
     3:Football game is not use feet only.
 
-也就是说，当我们在一组集合字节中，如果该字节组是连续的，例如大写英文/小写英文/数字等等， 就可以使用[a-z],[A-Z],[0-9]等方式来书写，那么如果我们的要求字串是数字与英文呢？ 呵呵！就将他全部写在一起，变成：[a-zA-Z0-9]。
+也就是说，当我们在一组集合字节中，如果该字节组是连续的，例如大写英文/小写英文/数字等等， 就可以使用`[a-z]`,`[A-Z]`,`[0-9]`等方式来书写，那么如果我们的要求字串是数字与英文呢？ 呵呵！就将他全部写在一起，变成：`[a-zA-Z0-9]`。
 
 我们要取得有数字的那一行，就这样：
 
@@ -124,7 +123,7 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
     5:However, this dress is about $ 3183 dollars.
     15:You are the best is mean you are the no. 1.
 
-行首与行尾字节 ^ $ 
+#### 行首与行尾字节 `^` `$` 
 
 行首字符：如果我想要让 the 只在行首列出呢？ 这个时候就得要使用定位字节了！我们可以这样做：
 
@@ -148,9 +147,9 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
     1:"Open Source" is a good mechanism to develop programs.
     21:# I am VBird
 
-^ 符号，在字符类符号(括号[])之内与之外是不同的！ 在 [] 内代表『反向选择』，在 [] 之外则代表定位在行首的意义！
+`^` 符号，在字符类符号(括号`[]`)之内与之外是不同的！ 在 `[]` 内代表『反向选择』，在 `[]` 之外则代表定位在行首的意义！
 
-那如果我想要找出来，行尾结束为小数点 (.) 的那一行：
+那如果我想要找出来，行尾结束为小数点 (`.`) 的那一行：
 
     [root@www ~]# grep -n '\.$' regular_express.txt
     1:"Open Source" is a good mechanism to develop programs.
@@ -166,16 +165,16 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
     18:google is the best tools for search keyword.
     20:go! go! Let's go.
 
-特别注意到，因为小数点具有其他意义(底下会介绍)，所以必须要使用转义字符(\)来加以解除其特殊意义！ 
+特别注意到，因为小数点具有其他意义(底下会介绍)，所以必须要使用转义字符(`\`)来加以解除其特殊意义！ 
 
 找出空白行：
 
     [root@www ~]# grep -n '^$' regular_express.txt
     22:
 
-因为只有行首跟行尾 (^$)，所以，这样就可以找出空白行啦！
+因为只有行首跟行尾 (`^$`)，所以，这样就可以找出空白行啦！
 
-任意一个字节 . 与重复字节 * 
+#### 任意一个字节 `.` 与重复字节 `*` 
 
 这两个符号在正则表达式的意义如下：
 
@@ -193,7 +192,7 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
 
 如果我想要列出有 oo, ooo, oooo 等等的数据， 也就是说，至少要有两个(含) o 以上，该如何是好？
 
-因为 * 代表的是『重复 0 个或多个前面的 RE 字符』的意义， 因此，『o*』代表的是：『拥有空字节或一个 o 以上的字节』，因此，『 grep -n 'o*' regular_express.txt 』将会把所有的数据都列印出来终端上！
+因为 `*` 代表的是『重复 0 个或多个前面的 RE 字符』的意义， 因此，『o*』代表的是：『拥有空字节或一个 o 以上的字节』，因此，『 grep -n 'o*' regular_express.txt 』将会把所有的数据都列印出来终端上！
 
 当我们需要『至少两个 o 以上的字串』时，就需要 ooo* ，亦即是：
 
@@ -220,7 +219,7 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
     19:goooooogle yes!
     20:go! go! Let's go.
 
-因为是代表 g 开头与 g 结尾，中间任意字节均可接受，所以，第 1, 14, 20 行是可接受的喔！ 这个 .* 的 RE 表示任意字符是很常见的. 
+因为是代表 g 开头与 g 结尾，中间任意字节均可接受，所以，第 1, 14, 20 行是可接受的喔！ 这个 `.*` 的 RE 表示任意字符是很常见的. 
 
 如果我想要找出『任意数字』的行？因为仅有数字，所以就成为：
 
@@ -228,11 +227,11 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
     5:However, this dress is about $ 3183 dollars.
     15:You are the best is mean you are the no. 1.
 
-限定连续 RE 字符范围 {} 
+#### 限定连续 RE 字符范围 `{}` 
 
-我们可以利用 . 与 RE 字符及 * 来配置 0 个到无限多个重复字节， 那如果我想要限制一个范围区间内的重复字节数呢？
+我们可以利用 `.` 与 RE 字符及 `*` 来配置 0 个到无限多个重复字节， 那如果我想要限制一个范围区间内的重复字节数呢？
 
-举例来说，我想要找出两个到五个 o 的连续字串，该如何作？这时候就得要使用到限定范围的字符 {} 了。 但因为 { 与 } 的符号在 shell 是有特殊意义的，因此， 我们必须要使用字符 \ 来让他失去特殊意义才行。 至於 {} 的语法是这样的，假设我要找到两个 o 的字串，可以是：
+举例来说，我想要找出两个到五个 o 的连续字串，该如何作？这时候就得要使用到限定范围的字符 `{}` 了。 但因为 `{` 与 `}` 的符号在 shell 是有特殊意义的，因此， 我们必须要使用字符 `\` 来让他失去特殊意义才行。 至於 `{}` 的语法是这样的，假设我要找到两个 o 的字串，可以是：
 
     [root@www ~]# grep -n 'o\{2\}' regular_express.txt
     1:"Open Source" is a good mechanism to develop programs.
@@ -253,7 +252,7 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
     18:google is the best tools for search keyword.
     19:goooooogle yes!
 
-扩展grep(grep -E 或者 egrep)： 
+#### 扩展grep(grep -E 或者 egrep)： 
 
 使用扩展grep的主要好处是增加了额外的正则表达式元字符集。
 
@@ -263,7 +262,7 @@ Unix的grep家族包括grep、egrep和fgrep。egrep和fgrep的命令只跟grep�
         northwest       NW      Charles Main        3.0     .98     3       34
         eastern         EA      TB Savage           4.4     .84     5       20
 
-对于标准grep，如果在扩展元字符前面加\，grep会自动启用扩展选项-E。
+对于标准grep，如果在扩展元字符前面加`\`，grep会自动启用扩展选项`-E`。
 
     #grep 'NW\|EA' testfile
     northwest       NW      Charles Main        3.0     .98     3       34

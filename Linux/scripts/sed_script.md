@@ -220,3 +220,18 @@ done
 #### awk 计数
 
     awk 'BEGIN{sum=0}{sum++;if(sum<10)print "0"sum$1;else print sum$1}' read.md
+
+#### shell脚本 正则替换 空格
+
+    cat word.txt | sed 's/[ ][ ]*/,/g'
+
+脚本说明：
+
+1. `s`代表替换指令；
+1. 每个`[ ]`都包含有一个空格；
+1. `*`号代表0个或多个；
+1. `g`代表替换每行的所有匹配；
+
+> 还有一种方式，但该方式在mac下替换失败：   
+> cat word.txt | sed 's/\s\+/,/g' 其中 \s 代表空格， + 代表出现一次或多次。
+
