@@ -17,3 +17,7 @@
 
     ls -lR | grep "^-" | grep 'md$' | awk '{sum += $5}; END{print sum}' | awk '{sum = $1/1024/1024};END{print sum}'
 
+
+#### 生成html 相册
+
+    find . -iname '*.jpg' | sed 's/.*/<img src="&">/' > gallery.html 
