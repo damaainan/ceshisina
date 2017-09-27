@@ -235,3 +235,6 @@ done
 > 还有一种方式，但该方式在mac下替换失败：   
 > cat word.txt | sed 's/\s\+/,/g' 其中 \s 代表空格， + 代表出现一次或多次。
 
+
+
+    awk '/start_pattern/,/stop_pattern/' file.txt 显示一个块内的内容 
