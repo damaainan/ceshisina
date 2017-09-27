@@ -2,7 +2,7 @@
 
  时间 2016-12-30 22:30:01  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/30/TheAnnotatedRedisSourceRdb/][1]
+原文[http://zcheng.ren/2016/12/30/TheAnnotatedRedisSourceRdb/][1]
 
 
 
@@ -12,6 +12,7 @@ _原文_[http://zcheng.ren/2016/12/30/TheAnnotatedRedisSourceRdb/][1]
 
 看过我系列博客的应该知道我分析源码的方式是，先学会使用它，再来一步一步的深入它。我先演示一个小例子来感受一下RDB持久化。
 
+```
     /* 开启一个redis-cli，执行添加数据操作如下 */
     127.0.0.1:6379> flushdb
     OK
@@ -19,15 +20,17 @@ _原文_[http://zcheng.ren/2016/12/30/TheAnnotatedRedisSourceRdb/][1]
     OK
     127.0.0.1:6379> SAVE
     OK
-    
+```
 
 如下，我开启了一个Redis客户端，先清空了里面的数据，然后依次添加了一个键值对到数据库，最后通过SAVE文件将数据库中的数据保存到rdb文件中，实现数据的持久化。运行完SAVE命令之后，服务器会显示数据已经存放在磁盘文件上。
 
+```
     78415:M 30 Dec 10:58:11.445 * DB saved on disk
-    
+```
 
 接着，我们来看看这个文件中存放着什么数据，保存到磁盘的文件名为 dump.rdb ，利用od命令就能查看里面的数据。 
 
+```
     ~ od -c dump.rdb
     0000000    R   E   D   I   S   0   0   0   7 372  \t   r   e   d   i   s
     0000020    -   v   e   r 005   3   .   2   .   3 372  \n   r   e   d   i
@@ -35,7 +38,7 @@ _原文_[http://zcheng.ren/2016/12/30/TheAnnotatedRedisSourceRdb/][1]
     0000060    t 317   e   X 372  \b   u   s   e   d   -   m   e   m 302    
     0000100    _ 017  \0 376  \0 373 001  \0  \0 005   h   e   l   l   o 005
     0000120    w   o   r   l   d 377   l 320   E   e  \b   E  \a   @
-    
+```
 
 看二进制文档实在有点费力，不过大致可以看到里面有如下信息：
 
@@ -52,19 +55,21 @@ _原文_[http://zcheng.ren/2016/12/30/TheAnnotatedRedisSourceRdb/][1]
 
 上面打印出来的二进制文件只能看出部分信息，Redis的RDB文件中具体包含了哪些信息，我们需要从源码中挖掘出来，不然在理解上可能会出问题，下面我画了一个表格来表示RDB的文件结构。
 
+```
     ————————————————————————————————————————————
     | 文件标识 | 辅助信息 | 数据库 | 结束符 | 校验和 | 
     ————————————————————————————————————————————
-    
+```
 
 ## 文件标识 
 
 Redis在每一个RDB文件的首部都写入了如下字符，用来标识这是一个Redis的RDB文件。
 
+```
     —————————————————————
     | REDIS  | 文件版本号 |
     —————————————————————
-    
+```
 
 例如：示例中的文件以『REDIS0007』开头，0007代表RDB文件的版本号。
 
@@ -72,10 +77,11 @@ Redis在每一个RDB文件的首部都写入了如下字符，用来标识这是
 
 Redis在新的RDB文件版本上加入了辅助信息，其格式如下：
 
+```
     ————————————————————————————————————————————
     | redis版本 | 系统位数 | 系统时间 | 已使用的内存 |
     ————————————————————————————————————————————
-    
+```
 
 例如：在上述的示例中，这些信息对应着：
 
@@ -91,18 +97,20 @@ Redis在新的RDB文件版本上加入了辅助信息，其格式如下：
 
 示例中每一个信息的都是以372开头，表示这是一个辅助信息。其中，该类信息的宏定义如下：
 
+```c
     // 辅助信息标识量为250+信息长度，底层二进制就为372
-    #defineRDB_OPCODE_AUX 250
-    
+    #define RDB_OPCODE_AUX 250
+```
 
 ## 数据库 
 
 Redis服务器默认有16个数据库，每个数据的信息是一次写入rdb文件中，每个数据库的信息的存放格式如下：
 
+```
     ————————————————————————————————————————————————————
     | select | dbnum | db_size | expires_size | 键值数据 |
     ————————————————————————————————————————————————————
-    
+```
 
 其中，select标识当前进行切换数据库操作，后面的dnum表示当前存放的是第dbnum号数据库的数据。示例中的二进制码对应的信息如下：
 
@@ -112,37 +120,41 @@ Redis服务器默认有16个数据库，每个数据的信息是一次写入rdb�
 
 其中，切换，数据库大小，过期键个数这些都属于一个操作信息，Redis用宏定义来表示这些数据。
 
+```c
     // 初始化数据库字典的大小
-    #defineRDB_OPCODE_RESIZEDB 251
+    #define RDB_OPCODE_RESIZEDB 251
     // 选择数据库
-    #defineRDB_OPCODE_SELECTDB 254
-    
+    #define RDB_OPCODE_SELECTDB 254
+```
 
 ### 键值数据 
 
 键值数据的存放格式如下：
 
+```
     ———————————————————————————————————————————————————————
     | 过期键标识 | 时间戳 | 键值对类型 | 键长度 | 键 | 值长度 | 值 |
     ———————————————————————————————————————————————————————
-    
+```
 
 其中，过期键标识和时间戳是可选项，如果该键设置了过期时间就需要在数据前面加上这些信息。过期键标识由以下两个宏定义给出：
 
+```c
     /* 以ms为单位的过期时间 */
-    #defineRDB_OPCODE_EXPIRETIME_MS 252
+    #define RDB_OPCODE_EXPIRETIME_MS 252
     /* 以s为单位的过期时间 */
-    #defineRDB_OPCODE_EXPIRETIME 253
-    
+    #define RDB_OPCODE_EXPIRETIME 253
+```
 
 键值对类型为Redis的五个数据类型，其宏定义如下：
 
-    #defineRDB_TYPE_STRING 0// 字符串标识
-    #defineRDB_TYPE_LIST 1// 链表标识
-    #defineRDB_TYPE_SET 2// 集合标识
-    #defineRDB_TYPE_ZSET 3// 有序集合标识
-    #defineRDB_TYPE_HASH 4// 哈希标识
-    
+```c
+    #define RDB_TYPE_STRING 0// 字符串标识
+    #define RDB_TYPE_LIST 1// 链表标识
+    #define RDB_TYPE_SET 2// 集合标识
+    #define RDB_TYPE_ZSET 3// 有序集合标识
+    #define RDB_TYPE_HASH 4// 哈希标识
+```
 
 在示例中，各二进制位代表的含义如下：
 
@@ -158,13 +170,15 @@ Redis服务器默认有16个数据库，每个数据的信息是一次写入rdb�
 
 其宏定义如下：
 
-    #defineRDB_OPCODE_EOF 255
-    
+```c
+    #define RDB_OPCODE_EOF 255
+```
 
 ## 校验和 
 
 Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进制中最后一串乱码标识的就是校验和，如果我们用 od -cx dump.rdb 就可以更直观的看到检验和为多少。 
 
+```
     ~ od -cx dump.rdb 
     0000000    R   E   D   I   S   0   0   0   7 372  \t   r   e   d   i   s
                  4552    4944    3053    3030    fa37    7209    6465    7369
@@ -178,7 +192,7 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
                  0f5f    fe00    fb00    0001    0500    6568    6c6c    056f
     0000120    w   o   r   l   d 377   l 320   E   e  \b   E  \a   @        
                  6f77    6c72    ff64    d06c    6545    4508    4007
-    
+```
 
 最后的 0x 4007 4508 6545 d06c 就代表的是该RDB文件的校验和（校验和以小端模式存储）。 
 
@@ -190,24 +204,27 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
 
 在之前的压缩列表和整数集合中就多次见识到Redis为了节省内存做的各种措施，由于C语言中对于指针指向的内存无法计算长度，所以必须将该段内存的大小标识出来。在Redis中，有很多长度信息需要保存，如字符串的长度，链表的长度，数据库的大小等，针对不同大小的长度数据，Redis会使用不同的编码格式来节省内存。我们先来看看这些宏定义。
 
-    #defineRDB_6BITLEN 0// 6位长度，最大表示的长度为64
-    #defineRDB_14BITLEN 1// 14位长度
-    #defineRDB_32BITLEN 2// 32位长度
-    #defineRDB_ENCVAL 3// 特殊编码
-    
+```c
+    #define RDB_6BITLEN 0// 6位长度，最大表示的长度为64
+    #define RDB_14BITLEN 1// 14位长度
+    #define RDB_32BITLEN 2// 32位长度
+    #define RDB_ENCVAL 3// 特殊编码
+```
 
 其具体的编码格式如下：
 
+```
     00|000000 // 6位长度值
     01|000000 00000000 // 14位长度值
     10|000000 [32位]  // 后续32位表示一个32位的长度值，所以其需要5个字节来表示
     11|000000 表示一个特殊编码
-    
+```
 
 该编码方式对应的源代码函数如下，各位可以对着代码理解以下：
 
+```c
     // 长度编码
-    intrdbSaveLen(rio *rdb,uint32_tlen){
+    int rdbSaveLen(rio *rdb,uint32_t len){
         unsigned char buf[2];
         size_t nwritten;
     
@@ -232,32 +249,35 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
         }
         return nwritten;
     }
-    
+```
 
 ## 特殊编码 
 
 特殊编码主要是将一些用字符串表示的小整数转换成整数编码，以节省内存，比如”12”，”-1”等。Redis对于这些小整数类型的字符串有以下几种不同的编码格式，用宏定义指出。
 
-    #defineRDB_ENC_INT8 0/* 8 bit signed integer */
-    #defineRDB_ENC_INT16 1/* 16 bit signed integer */
-    #defineRDB_ENC_INT32 2/* 32 bit signed integer */
-    #defineRDB_ENC_LZF 3/* string compressed with FASTLZ */
-    
+```c
+    #define RDB_ENC_INT8 0/* 8 bit signed integer */
+    #define RDB_ENC_INT16 1/* 16 bit signed integer */
+    #define RDB_ENC_INT32 2/* 32 bit signed integer */
+    #define RDB_ENC_LZF 3/* string compressed with FASTLZ */
+```
 
 因此，其编码对应的内存布局如下：
 
+```
     11|0000|00 00000000  // 后面八字节表示该整数
     11|0000|01 00000000 00000000 // 后面16字节表示该整数
     11|0000|10 [32 bits]  // 后面32位表示该整数
     11|0000|11 // 表示LZF压缩后的数据
-    
+```
 
 所以，存储一个能用八字节表示字符串有符整数需要2位；存储一个能用16字节表示的有符整数需要3字节；存储一个能用32字节表示的有符整数需要5个字节。
 
 特殊编码的实现由rdbTryIntegerEncoding和rdbEncodeInteger函数完成。
 
+```c
     /* 判断能不能编码成小有符整数 */
-    intrdbTryIntegerEncoding(char*s,size_tlen,unsignedchar*enc){
+    int rdbTryIntegerEncoding(char *s,size_t len,unsigned char *enc){
         long long value;
         char *endptr, buf[32];
       
@@ -274,7 +294,7 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
         return rdbEncodeInteger(value,enc);
     }
     /* 小整数编码底层实现 */
-    intrdbEncodeInteger(longlongvalue,unsignedchar*enc){
+    int rdbEncodeInteger(long long value,unsigned char *enc){
         if (value >= -(1<<7) && value <= (1<<7)-1) {
             enc[0] = (RDB_ENCVAL<<6)|RDB_ENC_INT8;
             enc[1] = value&0xFF;
@@ -295,17 +315,19 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
             return 0;
         }
     }
-    
+```
 
 ## LZF编码 
 
 当Redis开启了字符串压缩功能且字符串长度大于20bytes时，会采用LZF编码对其进行压缩，开启字符串压缩功能的变量为：
 
+```
     rdbcompression yes  // redis.conf中设定的，默认为开启状态
-    
+```
 
 当字符串写入RDB文件时，判断上述条件成立与否，进而选择编码格式，其源码片段如下：
 
+```c
     // 在rdbSaveRawString函数内，判断是否开启字符串压缩功能，且字符串长度大于20bytes
     if (server.rdb_compression && len > 20) {
       n = rdbSaveLzfStringObject(rdb,s,len);
@@ -313,10 +335,11 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
       if (n > 0) return n;
       /* Return value of 0 means data can't be compressed, save the old way */
     }
-    
+```
 
 真正执行编码操作的函数是rdbSaveLzfStringObject，其按照上述的编码格式对数据进行压缩。
 
+```c
     /* 将字符串进行lzf压缩 */
     ssize_t rdbSaveLzfStringObject(rio *rdb, unsigned char *s, size_t len) {
         size_t comprlen, outlen;
@@ -365,19 +388,21 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
     writeerr:
         return -1;
     }
-    
+```
 
 从源码中可以看出，经过LZF算法压缩的字符串在内存中的布局如下：
 
+```
     ——————————————————————————————————————————————————————
     | LZF标识(11000011) | 压缩后的长度 | 原长度 | 压缩后的数据 |
     ——————————————————————————————————————————————————————
-    
+```
 
 ## String对象编码 
 
 前面在 [Redis源码剖析–字符串t_string][4] 一文中，有介绍到string对象的底层编码有三种，分别是 OBJ_ENCODING_INT 、 OBJ_ENCODING_RAW 和 OBJ_ENCODING_EMBSTR ，这三种编码的不同之处各位可以跳转复习一下。在写入RDB文件时，会判断String对象的编码类型，从而选择以何种编码方式写入到RDB文件中。字符串是按照如下三种格式存放在RDB文件中的。 
 
+```
     /* 按照字符串编码的形式 */
     ————————————————
     |  len  | data |
@@ -390,12 +415,13 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
     ————————————————————————————————————————————
     | LZF标识 | 压缩后的长度 | 原长度 | 压缩后的数据 |
     ————————————————————————————————————————————
-    
+```
 
 其实现源码如下：
 
+```c
     /* String对象编码 */
-    intrdbSaveStringObject(rio *rdb, robj *obj){
+    int rdbSaveStringObject(rio *rdb, robj *obj){
         /* Avoid to decode the object, then encode it again, if the
          * object is already integer encoded. */
         if (obj->encoding == OBJ_ENCODING_INT) {
@@ -458,19 +484,21 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
         }
         return nwritten;
     }
-    
+```
 
 ## List对象编码 
 
 在 [Redis源码剖析–列表t_list][5] 一文中，解释到List的底层编码只有quicklist。其存放格式如下： 
 
+```
     ————————————————————————————————————————————————————————————————————————
     | listLength | len1| data1 | len2 | CompressLength| OriginLength | data2 |
     ————————————————————————————————————————————————————————————————————————
-    
+```
 
 其中，第一个节点直接按照字符串的形式存放；第二个节点采用LZF压缩后存放，其源码如下：
 
+```c
     /* 存储对象 */
     ssize_t rdbSaveObject(rio *rdb, robj *o) {
         ssize_t n = 0, nwritten = 0;
@@ -508,12 +536,13 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
         }
         // ....
     }
-    
+```
 
 ## Set对象编码 
 
 在 [Redis源码剖析–集合t_set][6] 一文中讲到Set的实现原理和数据存储形式，set的底层采用字典或者整数集合的编码形式。Set对象在RDB文件中的存储形式为： 
 
+```
     —————————————————————————————————————————
     | setSize | elem1 | elem2 | ... | elemN |
     —————————————————————————————————————————
@@ -521,10 +550,11 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
     ————————————————————————————————————————————
     | 3 | 3 | "zee" | 5 | "coder" | 5 | "cheng" |
     ————————————————————————————————————————————
-    
+```
 
 集合中的每一个值都按照其值选取不同的编码存放，如字符串就按字符串，LZF压缩就压缩存储，小整数就按照小整数存储…..
 
+```c
     /* 存储对象 */
     ssize_t rdbSaveObject(rio *rdb, robj *o) {
         ssize_t n = 0, nwritten = 0;
@@ -558,19 +588,21 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
             }
         }
     }
-    
+```
 
 ## Zset对象编码 
 
 在 [Redis源码剖析–有序集合t_zset][7] 一文中提到，zset采用zskiplist或者ziplist编码，不过这两种编码不影响它在RDB文件中的存放格式。 
 
+```
     ———————————————————————————————————————————————————————————————————————
     | zset_length | elem1 | score1 | elem2 | score2 | ... | elem3 | score3 |
     ———————————————————————————————————————————————————————————————————————
-    
+```
 
 其源码实现如下，没什么特别的，不懂的看注释吧。
 
+```c
     /* 存储对象 */
     ssize_t rdbSaveObject(rio *rdb, robj *o) {
         ssize_t n = 0, nwritten = 0;
@@ -607,19 +639,21 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
             }
         }
     }
-    
+```
 
 ## Hash对象编码 
 
 在 [Redis源码剖析–哈希t_hash][8] 一文中，hash底层的数据结构有两种，ziplist和字典，同样在写入RDB文件的时候，需要判断编码类型，然后采用不同的形式存放。 
 
+```
     —————————————————————————————————————————————————
     | hashSize | key1 | value1| .... | key2 | value2 |
     —————————————————————————————————————————————————
-    
+```
 
 其源码实现如下：
 
+```c
     /* 存储对象 */
     ssize_t rdbSaveObject(rio *rdb, robj *o) {
         ssize_t n = 0, nwritten = 0;
@@ -658,7 +692,7 @@ Redis在每一个RDB文件的末尾加上了采用CRC校验的校验和，二进
     
         } 
     }
-    
+```
 
 ## RDB命令 
 
@@ -668,8 +702,9 @@ RDB有两种命令，一种是SAVE，另一种是BGSAVE。我们一起来看看�
 
 按照Redis的命令定义，可以知道SAVE命令的底层代码实现是由saveCommand实现，于是去源码中找到了它。
 
+```c
     /* SAVE命令的底层实现代码 */
-    voidsaveCommand(client *c){
+    void saveCommand(client *c){
         if (server.rdb_child_pid != -1) {
             // 检查BGSAVE命令正在执行(BGSAVE是开一个进程来指定存储命令)
             addReplyError(c,"Background save already in progress");
@@ -682,12 +717,13 @@ RDB有两种命令，一种是SAVE，另一种是BGSAVE。我们一起来看看�
             addReply(c,shared.err);
         }
     }
-    
+```
 
 上述代码中，真正进行写rdb文件的函数是rdbSave函数，于是我们进一步跟踪到了它。
 
+```c
     /* 在磁盘上保存rdb文件，如果出错返回C_ERR，反之C_OK */
-    intrdbSave(char*filename){
+    int rdbSave(char *filename){
         char tmpfile[256];
         char cwd[MAXPATHLEN]; // 当前工作目录
         FILE *fp;
@@ -752,12 +788,13 @@ RDB有两种命令，一种是SAVE，另一种是BGSAVE。我们一起来看看�
         // 返回错误
         return C_ERR;
     }
-    
+```
 
 到这一步，还是没有看出来rdb的结构。不过可以知道在写RDB文件时，是先创建一个临时文件，向临时文件中写入数据，如果成功则改名，反之则删除。我们注意到调用了底层函数rdbSaveRio来执行的写操作。接着我们继续吧。
 
+```c
     /* 利用RIO进行写数据操作 */
-    intrdbSaveRio(rio *rdb,int*error){
+    int rdbSaveRio(rio *rdb,int *error){
         dictIterator *di = NULL;
         dictEntry *de;
         char magic[10];
@@ -832,7 +869,7 @@ RDB有两种命令，一种是SAVE，另一种是BGSAVE。我们一起来看看�
         if (di) dictReleaseIterator(di);
         return C_ERR;
     }
-    
+```
 
 ## BGSAVE命令 
 
@@ -843,8 +880,9 @@ BGSAVE命令是开一个进程，然后存储RDB文件在该进程中执行，�
 
 其源码如下：
 
+```c
     /* 后台SAVE命令实现 */
-    voidbgsaveCommand(client *c){
+    void bgsaveCommand(client *c){
         int schedule = 0;
     
         // schedule参数是为了避免服务器在执行AOF持久化的时候影响RDB持久化
@@ -880,7 +918,7 @@ BGSAVE命令是开一个进程，然后存储RDB文件在该进程中执行，�
         }
     }
     /* 真正执行BGSAVE的代码 */
-    intrdbSaveBackground(char*filename){
+    int rdbSaveBackground(char *filename){
         pid_t childpid;
         long long start;
         // 检查后台是否在执行AOF或RDB持久化操作
@@ -932,7 +970,7 @@ BGSAVE命令是开一个进程，然后存储RDB文件在该进程中执行，�
         }
         return C_OK; /* unreached */
     }
-    
+```
 
 以上代码中需要注意的是，fork的特性，在子进程中childPid为0，在父进程中childPid为父进程的ID号，所以子进程在执行SAVE操作，父进程在检查操作是否执行成功并存储相关变量。
 
@@ -940,10 +978,11 @@ BGSAVE命令是开一个进程，然后存储RDB文件在该进程中执行，�
 
 在Redis.conf文件中，可以配置服务器定期执行SAVE命令，该参数如下：
 
+```
     save 900 1
     save 300 10
     save 60 10000
-    
+```
 
 其含义依次如下：
 
@@ -953,33 +992,37 @@ BGSAVE命令是开一个进程，然后存储RDB文件在该进程中执行，�
 
 所以，服务器只要满足这三个条件之一，就会自动执行SAVE操作。那么这一功能是如何实现的呢？我们先来看一个数据结构，在server.h文件夹中。
 
+```c
     struct saveparam {
         time_t seconds;  // 保存配置文件中的秒数要求
         int changes;  // 保存配置文件中的修改次数要求
     }
-    
+```
 
 另外，在redisServer结构体中有如下参数，用来记录上述要求。
 
+```c
     struct redisServer {
         // ...
         struct saveparam * saveparam ;
         // ...
     }
-    
+```
 
 有了配置文件中的参数，那么服务器中对数据的修改次数和事件存放在哪呢？其实，之前的源码分析中都见到过，每次修改数据的时候，都需要将系统的脏数据个数加1，而且还要保存修改时间，没错就是它俩。
 
+```c
     struct redisServer {
         // ...
         long long dirty; // 服务器的脏数据，表示没有进行持久化的数据
         time_t lastsave; // 上一次执行保存的时间
         // ...
     }
-    
+```
 
 了解了这些参数和结构体在哪之后，就可以通过判断自动保存的条件是否符合来执行BGSAVE命令了，其源码如下：
 
+```c
     /* serverCron函数中的代码片段 */
     // 判断后台没有执行rdb或者aof持久化操作
     if (server.rdb_child_pid != -1 || server.aof_child_pid != -1 ||
@@ -1009,7 +1052,7 @@ BGSAVE命令是开一个进程，然后存储RDB文件在该进程中执行，�
       }
       // ...
     }
-    
+```
 
 ## RDB小结 
 
@@ -1018,7 +1061,7 @@ BGSAVE命令是开一个进程，然后存储RDB文件在该进程中执行，�
 欢迎转载本篇博客，不过请注明博客原地址： [http://zcheng.ren/2016/12/29/TheAnnotatedRedisSourcePubsub][9]
 
 
-[1]: http://zcheng.ren/2016/12/30/TheAnnotatedRedisSourceRdb/?utm_source=tuicool&utm_medium=referral
+[1]: http://zcheng.ren/2016/12/30/TheAnnotatedRedisSourceRdb/
 
 [4]: http://zcheng.ren/2016/12/16/TheAnnotatedRedisSourcetstring/
 [5]: http://zcheng.ren/2016/12/19/TheAnnotatedRedisSourcet-list/

@@ -2,7 +2,7 @@
 
  时间 2016-12-20 22:49:37  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/19/TheAnnotatedRedisSourcet-list/][1]
+原文[http://zcheng.ren/2016/12/19/TheAnnotatedRedisSourcet-list/][1]
 
 
 上一篇博客 [Redis源码剖析–快速列表][4] 带大家一起剖析了quicklist这个底层数据结构的实现原理。Redis对外开放的列表list结构就是采用quicklist作为底层实现（在新版本的Redis源码中，不再采用ziplist和sdlist两种结构，而是统一采用quicklist）。有关列表键的实现源码在t_list.c文件中，大家可以边看源码边看这篇博客，一起来理解。 
@@ -15,6 +15,7 @@ _原文_[http://zcheng.ren/2016/12/19/TheAnnotatedRedisSourcet-list/][1]
 
 Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本上做了一层封装。
 
+```c
     typedef struct {
         robj *subject;  // 迭代器指向的对象
         unsigned char encoding;  // 编码类型
@@ -26,41 +27,43 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
         listTypeIterator *li;  // list迭代器指针
         quicklistEntry entry; // quicklist的数据项节点结构
     } listTypeEntry;
-    
+```
 
 ## List主要接口 
 
 列表定义了基本的接口函数，包括push，pop，insert，find等等，基本上都是在quicklist上做了一次封装。我们先来看看主要有哪些接口。
 
+```c
     // list的push操作
-    voidlistTypePush(robj *subject, robj *value,intwhere);
+    void listTypePush(robj *subject, robj *value,int where);
     // list的pop操作
-    robj *listTypePop(robj *subject,intwhere);
+    robj *listTypePop(robj *subject,int where);
     // 返回list的数据项个数总和
-    unsignedlonglistTypeLength(robj *subject);
+    unsigned long listTypeLength(robj *subject);
     // 初始化一个list迭代器
-    listTypeIterator *listTypeInitIterator(robj *subject,longindex,
+    listTypeIterator *listTypeInitIterator(robj *subject,long index,
                                            unsigned char direction);
     // 释放一个list迭代器
-    voidlistTypeReleaseIterator(listTypeIterator *li);
+    void listTypeReleaseIterator(listTypeIterator *li);
     // 指向下一个数据项的list迭代器
-    intlistTypeNext(listTypeIterator *li, listTypeEntry *entry);
+    int listTypeNext(listTypeIterator *li, listTypeEntry *entry);
     // 返回entry指向的list中的数据项的值
     robj *listTypeGet(listTypeEntry *entry);
     // 在entry指向的list数据项前面或者后面插入value
-    voidlistTypeInsert(listTypeEntry *entry, robj *value,intwhere);
+    void listTypeInsert(listTypeEntry *entry, robj *value,int where);
     // 比较entry指向的list中的数据项与o的大小
-    intlistTypeEqual(listTypeEntry *entry, robj *o);
+    int listTypeEqual(listTypeEntry *entry, robj *o);
     // 删除entry指向的list中的数据项
-    voidlistTypeDelete(listTypeIterator *iter, listTypeEntry *entry);
+    void listTypeDelete(listTypeIterator *iter, listTypeEntry *entry);
     // 将OBJ_ENCODING_ZIPLIST类型编码的列表转换成OBJ_ENCODING_QUICKLIST编码的列表
-    voidlistTypeConvert(robj *subject,intenc);
-    
+    void listTypeConvert(robj *subject,int enc);
+```
 
 其中，我们以push和pop操作来简要看看这些函数的实现源码。
 
+```c
     // 向list中压入数据
-    voidlistTypePush(robj *subject, robj *value,intwhere){
+    void listTypePush(robj *subject, robj *value,int where){
         // 仅仅当编码类型为OBJ_ENCODING_QUICKLIST时才进行操作
         if (subject->encoding == OBJ_ENCODING_QUICKLIST) {
             // 判断压入位置
@@ -78,7 +81,7 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
         }
     }
     // 向list中弹出数据
-    robj *listTypePop(robj *subject,intwhere){
+    robj *listTypePop(robj *subject,int where){
         long long vlong;
         robj *value = NULL;
         // 判断弹出位置
@@ -98,7 +101,7 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
         // 返回string类型编码的数据项对象
         return value;
     }
-    
+```
 
 其他的一些接口函数均是调用quicklist提供的底层接口函数来实现，大家有空可以对照源码来看看。
 
@@ -110,18 +113,19 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
 
 同样，博主仅仅贴出部分源码来供大家理解这些命令的简要实现过程，我们来看看LPUSH和RPUSH命令的实现。
 
+```c
     // lpush操作
-    voidlpushCommand(client *c){
+    void lpushCommand(client *c){
         c->argv[2] = tryObjectEncoding(c->argv[2]);
         pushxGenericCommand(c,NULL,c->argv[2],LIST_HEAD);
     }
     // rpush操作
-    voidrpushCommand(client *c){
+    void rpushCommand(client *c){
         c->argv[2] = tryObjectEncoding(c->argv[2]);
         pushxGenericCommand(c,NULL,c->argv[2],LIST_TAIL);
     }
     // 真正的push操作函数，where指定位置
-    voidpushGenericCommand(client *c,intwhere){
+    void pushGenericCommand(client *c,int where){
         int j, waiting = 0, pushed = 0;
         // 在数据库中查找是否存在该键，如果存在则返回该键，反之返回NULL
         robj *lobj = lookupKeyWrite(c->db,c->argv[1]);
@@ -162,7 +166,7 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
         // 服务器的脏数据个数增加
         server.dirty += pushed;
     }
-    
+```
 
 这些命令的源码实现基本上大同小异，不过相对于其他数据类型，list提供了带有阻塞的命令，包括BLPOP，BRPOP，BLPOPRPUSH，这些命令可能会造成客户端被阻塞。这属于list的一大特色，也是需要着重理解的地方。
 
@@ -170,16 +174,17 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
 
 前面提到，list为用户提供了三个带有阻塞模式的命令，分别是BLPOP，BRPOP，BLPOPRPUSH。那么，到底这些命令是如何执行，如何进行阻塞和解阻塞的呢？首先，我们来看看BLPOP，BRPOP的源码。
 
+```c
     // BLPOP命令
-    voidblpopCommand(client *c){
+    void blpopCommand(client *c){
         blockingPopGenericCommand(c,LIST_HEAD);
     }
     // BRPOP命令
-    voidbrpopCommand(client *c){
+    void brpopCommand(client *c){
         blockingPopGenericCommand(c,LIST_TAIL);
     }
     // 带有阻塞的pop命令实现函数
-    voidblockingPopGenericCommand(client *c,intwhere){
+    void blockingPopGenericCommand(client *c,int where){
         robj *o;
         mstime_t timeout;
         int j;
@@ -241,7 +246,7 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
         // 执行阻塞
         blockForKeys(c, c->argv + 1, c->argc - 2, timeout, NULL);
     }
-    
+```
 
 从这段代码中，我们可以看出，当执行带有阻塞的pop命令时，有如下两种情况。
 
@@ -250,9 +255,10 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
 
 那么阻塞的过程是如下进行的呢？别急，我们去查看以下blockForKeys函数，看看它干了些什么。
 
+```c
     // 设置客户端对指定键的阻塞状态
     // 参数keys可以指定任意数量的键，timeout指定超时时间，target代表目标listType对象
-    voidblockForKeys(client *c, robj **keys,intnumkeys,mstime_ttimeout, robj *target){
+    void blockForKeys(client *c, robj **keys,int numkeys,mstime_t timeout, robj *target){
         dictEntry *de;
         list *l;
         int j;
@@ -291,10 +297,11 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
         // 阻塞该客户端
         blockClient(c,BLOCKED_LIST);
     }
-    
+```
 
 在上述代码中，设计到server.c中的一些数据结构。这里我简要的罗列一下。
 
+```c
     typedef struct client {
         redisDb *db;   // 指向当前数据库
         blockingState bpop;  // 记录阻塞状态
@@ -315,7 +322,7 @@ Redis为列表提供了迭代器结构，本质就是quicklist迭代器的基本
         dict *blocking_keys;        // 记录所有造成阻塞的键，及其相应的客户端
         // ...其他参数省略
     } redisDb;
-    
+```
 
 Redis采用了一个字典结构blocking_keys，其将所有造成阻塞的键，以及阻塞于该键的所有客户端的信息存放起来。执行完这些以后，就调用blockClient函数，真正的对该客户端进行阻塞。
 
@@ -326,9 +333,10 @@ Redis采用了一个字典结构blocking_keys，其将所有造成阻塞的键�
 
 有了这些推测之后，我们就去push命令中找关于解阻塞的操作，一番查找之后，锁定了signalListAsReady函数，该函数在dbadd函数中执行。于是，跳转到signalListAsReady函数的源码。
 
+```c
     // 如果有客户端因为等待给定key 被push阻塞，那么将此key加入到server.ready_keys中
     // 这个列表最终会被 handleClientsBlockedOnLists() 函数处理。
-    voidsignalListAsReady(redisDb *db, robj *key){
+    void signalListAsReady(redisDb *db, robj *key){
         readyList *rl;
     
         // 如果在所有造成客户端阻塞的键中找不到此键，则不作处理
@@ -350,10 +358,11 @@ Redis采用了一个字典结构blocking_keys，其将所有造成阻塞的键�
         incrRefCount(key);
         serverAssert(dictAdd(db->ready_keys,key,NULL) == DICT_OK);
     }
-    
+```
 
 此代码中有一点小小的疑惑， db->ready_keys 和 server.ready_keys 这不重复了吗？为什么要设计这两个同样的结构。于是我们来查看以下它们的定义。 
 
+```c
     typedef struct redisDb {
         dict *ready_keys;           // 存放push操作添加的造成阻塞的键，字典结构
         // 省略了其他参数
@@ -368,16 +377,17 @@ Redis采用了一个字典结构blocking_keys，其将所有造成阻塞的键�
         redisDb *db;  // key所在的数据库
         robj *key;  //造成阻塞的键
     } readyList;
-    
+```
 
 Redis采用了一个链表和一个字典结构存放同一个key，想了想，这似乎也有道理。假设我们往一个key中添加多个新值时，Redis只需要在 server.ready_keys 中为该key保存一个readyList节点即可，这样可以避免在一个事务或者脚本中将同一个key一次又一次的添加到 server.ready_keys 中，为了避免不重复添加，Redis又采用一个链表结构 db->ready_keys 来快速判断 server.ready_keys 中是否存在该键。这样一来，既保证了不重复添加，又保证了哈希结构带来的查找效率。 
 
 好了，理解了这一点，我们继续往下剖析，在push操作的时候，只是回收了push进来的造成阻塞的键，如何利用这些信息对已经阻塞的客户端进行解阻塞呢？Redis在运行的过程中，会一直查看 server.ready_keys 里是否有值，如果有则需要对存放的值对应的客户端进行接阻塞，此操作由handleClientsBlockedOnLists函数执行。 
 
+```c
     // 遍历server.ready_keys中所有已经准备好的key，同时在c->db->blocking_keys中
     // 遍历所有由此键造成阻塞的客户端，如果key不为空的话，就从key中弹出一个元素返回给客户端并
     // 接触该客户端的阻塞状态，直到server.ready_keys为空，或没有因该key而阻塞的客户端为止
-    voidhandleClientsBlockedOnLists(void){
+    void handleClientsBlockedOnLists(void){
         while(listLength(server.ready_keys) != 0) {
             list *l;
     
@@ -467,7 +477,7 @@ Redis采用了一个链表和一个字典结构存放同一个key，想了想，
             listRelease(l); /* We have the new list on place at this point. */
         }
     }
-    
+```
 
 剖析到此，整个阻塞操作的流程就都清晰明了了。如有疑惑，可以在留言区留言，咋们继续讨论。
 
@@ -475,5 +485,5 @@ Redis采用了一个链表和一个字典结构存放同一个key，想了想，
 
 本篇博客剖析list的主要接口，以及所有命令的实现，值得大家注意的是带阻塞的pop命令，这个在上文中有详细的实现过程，分析源码的过程就向探索迷宫一样，一步一步的把它藏在深处的秘密挖出来，坚持下去总会有收获。keep moving！明天继续按照预定的步骤分析！
 
-[1]: http://zcheng.ren/2016/12/19/TheAnnotatedRedisSourcet-list/?utm_source=tuicool&utm_medium=referral
+[1]: http://zcheng.ren/2016/12/19/TheAnnotatedRedisSourcet-list/
 [4]: http://zcheng.ren/2016/12/19/TheAnnotatedRedisSourceQuicklist/

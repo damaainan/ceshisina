@@ -9,7 +9,7 @@ Dec 22, 2016 | [Redis][0] | 91 Hits
 1. [3. 编码转换][3]
 1. [4. Set基本接口][4]
 1. [5. Set命令][5]
-  1. [5.1. 集合运算][6]
+    1. [5.1. 集合运算][6]
 1. [6. Set小结][7]
 
 今天来看看Redis的另一个数据类型—集合set。在[RedisObject][8]一篇中，有介绍到集合对象的底层有两种编码形式，分别是OBJ_ENCODING_INTSET（底层数据结构为整数集合）和OBJ_ENCODING_HT（底层数据结构为字典），如果对[整数集合Intset][9]和[字典dict][10]不熟悉的，可以点击跳转去复习一下。下面，就一起去剖析一下set的实现源码吧。
@@ -18,7 +18,7 @@ Dec 22, 2016 | [Redis][0] | 91 Hits
 
 关于集合set的源码在server.h和t_set.c文件中，与前面分析字符串和列表一样，先来看看它的一些定义。Redis采用RedisObject数据结构来表示它的所有对外开放的数据类型。
    
-```
+```c
 typedef struct redisObject {
     unsigned type:4;  // 此字段为OBJ_SET
     unsigned encoding:4;  // 如果是set结构，编码为OBJ_ENCODING_INTSET或OBJ_ENCODING_HT
@@ -34,7 +34,7 @@ typedef struct redisObject {
 每个数据类型都拥有其迭代器结构，用来遍历集合中的每一个元素，set的迭代器结构定义如下：
 
     
-```
+```c
 typedef struct {
     robj *subject;  // 指向的set对象
     int encoding;  // 编码类型
@@ -44,7 +44,7 @@ typedef struct {
 ```
 有了迭代器结构之后，Redis为它提供了一些操作函数，用于迭代操作。
  
-```
+```c
 // 初始化迭代器
 setTypeIterator *setTypeInitIterator(robj *subject) {
     setTypeIterator *si = zmalloc(sizeof(setTypeIterator));
@@ -92,7 +92,7 @@ int setTypeNext(setTypeIterator *si, robj **objele, int64_t *llele) {
 
 编码转换的功能由setTypeConvert函数实现，其利用set类型迭代器遍历intset中的每一个元素，然后添加到字典dict结构中。
   
-```
+```c
 // 将set类型的intset编码转换成ht编码
 void setTypeConvert(robj *setobj, int enc) {
     setTypeIterator *si;
@@ -129,7 +129,7 @@ void setTypeConvert(robj *setobj, int enc) {
 
 set作为Redis的一个数据结构，必然会提供丰富的接口函数，其实现相对简单，和string，list一样，都是调用底层数据结构的接口来实现。下面罗列出所有的接口函数。
    
-```
+```c
 // 创建set类型的Redis对象
 robj *setTypeCreate(robj *value);
 // 往set集合中添加数据
@@ -145,7 +145,7 @@ unsigned long setTypeSize(robj *subject);
 ```
 以setTypeAdd为例，来分析一下它的源码实现（其他接口函数的源码可以去t_set查看，这里就不再赘述，实现都比较简单）。
    
-```
+```c
 // 添加数据到集合set中
 // 如果底层编码是intset需要考虑元素个数是否超过了set_max_intset_entries
 int setTypeAdd(robj *subject, robj *value) {
@@ -201,7 +201,7 @@ int setTypeAdd(robj *subject, robj *value) {
 知道SADD指令怎么使用之后，就要深入到源码中来了解它的具体实现。SADD命令的实现由saddCommand函数实现。
 
 
-```
+```c
 // 往集合键中添加元素，如果该元素存在，则不做任何处理；反之则添加
 void saddCommand(client *c) {
     robj *set;
@@ -284,7 +284,7 @@ SUNIONSTORE destination key [key …] | 将集合的并集插入新集合
 ```
 这两个命令分别由底层函数sdiffCommand和sunionCommand实现，源码如下：
     
-```
+```c
 // 并集运算
 void sunionCommand(client *c) {
     sunionDiffGenericCommand(c,c->argv+1,c->argc-1,NULL,SET_OP_UNION);
@@ -296,7 +296,7 @@ void sdiffCommand(client *c) {
 ```
 从源码中我们可以看到，并集和差集运算都调用了同一个底层函数，也就是并集差集的泛型运算函数。
     
-```
+```c
 #define SET_OP_UNION 0  // 并集运算
 #define SET_OP_DIFF 1  // 差集运算
 // 并集差集运算的泛型实现

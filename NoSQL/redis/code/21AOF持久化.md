@@ -2,7 +2,7 @@
 
  时间 2017-01-01 22:36:24  ZeeCoder
 
-_原文_[http://zcheng.ren/2017/01/02/TheAnnotatedRedisSourceAof/][1]
+原文[http://zcheng.ren/2017/01/02/TheAnnotatedRedisSourceAof/][1]
 
 
 在前一篇博客 [Redis源码剖析–RDB持久化][4] 中，我们分析了RDB持久化就是按照特定的格式将服务器中数据库里面的数据写入到RDB文件中，在服务器下一次开启的时候，再按照该格式读取上来，从而保证了数据的持久化。今天，我们来看看另一种持久化操作—-AOF持久化。 
@@ -11,26 +11,29 @@ _原文_[http://zcheng.ren/2017/01/02/TheAnnotatedRedisSourceAof/][1]
 
 AOF，其英文全称是Append Only File，就是只进行追加操作的文件。那么写进AOF文件中的到底是键值对数据还是什么呢？我先从客户端命令测试一下，Redis提供了 BGREWRITEAOF 命令用于执行AOF操作，接下来开启服务器和客户端，写几个数据进去看看效果。 
 
+```
     ~ redis-cli 
     127.0.0.1:6379> set hello world
     OK
     127.0.0.1:6379> BGREWRITEAOF 
     Background append only file rewriting started
-    
+```
 
 客户端执行完上述的命令之后，生成了一个 appendonly.aof 文件，我们用od命令打开。 
 
+```
     od -c appendonly.aof
     0000000    *   2  \r  \n   $   6  \r  \n   S   E   L   E   C   T  \r  \n
     0000020    $   1  \r  \n   0  \r  \n   *   3  \r  \n   $   3  \r  \n   S
     0000040    E   T  \r  \n   $   5  \r  \n   h   e   l   l   o  \r  \n   $
     0000060    5  \r  \n   w   o   r   l   d  \r  \n
-    
+```
 
 读取出来的文件看起来可能不那么直观，大致有 SELECT 、 SET 、 hello 和 world 这几个词，这么一来，感觉AOF文件中存放的是客户端操作数据的命令。没错，AOF文件中的确存放的是客户端对数据库执行了写操作命令，因为读操作不会修改到数据库，存下来也没有什么意义。 
 
 有了上述简单的认识之后，我们在来一一分析一下AOF文件中的这些信息到底是什么。这次我们直接用文本编辑器打开，就能很直观的看到了。
 
+```
     *2      // *代表一个操作命令，2代表这个命令由两个参数
     $6      // $代表后续命令或者数据的长度
     SELECT  // 操作名称，长度为6
@@ -43,7 +46,7 @@ AOF，其英文全称是Append Only File，就是只进行追加操作的文件�
     hello   // 键
     $5      // 长度为5
     world   // 值
-    
+```
 
 到这一步，大家基本上都能懂AOF持久化到底是存放什么了吧？接下来，我们深入到源码中去了解一下AOF持久化的具体执行过程。
 
@@ -59,23 +62,26 @@ AOF持久化功能的实现可以分为以下三个步骤：命令追加、文�
 
 在 redis.conf 文件中，有一个参数 appendonly 是用来控制服务器是否开启AOF持久化功能的。当AOF持久化处于开启状态时，服务器每执行一个写命令之后，都会按照协议格式将被执行的写命令追加到服务器状态的 aof_buf 缓冲区的末尾。其中 aof_buf 定义如下： 
 
+```c
     /* 在server.h文件中的redisServer结构体中 */
     struct redisServer { 
       // ...
       sds aof_buf;  // aof缓冲区
       // ....
     }
-    
+```
 
 例如，在上例中，我们运行 SET hello world 命令的时候，其就往这个缓冲区中写入一下数据： 
 
+```
     *3\r\n$3\r\nSET\r\n$5\r\nhello\r\n$5\r\nworld\r\n
-    
+```
 
 命令追加的函数由 feedAppendOnlyFile 函数执行，其源码如下： 
 
+```c
     /* 追加命令到aof_buf缓冲区 */
-    voidfeedAppendOnlyFile(structredisCommand *cmd,intdictid, robj **argv,intargc){
+    void feedAppendOnlyFile(struct redisCommand *cmd,int dictid, robj **argv,int argc){
         sds buf = sdsempty();
         robj *tmpargv[3];
     
@@ -117,12 +123,13 @@ AOF持久化功能的实现可以分为以下三个步骤：命令追加、文�
             aofRewriteBufferAppend((unsigned char*)buf,sdslen(buf));
         sdsfree(buf);
     }
-    
+```
 
 追加格式化命令的底层实现由 catAppendOnlyGenericCommand 函数实现，其按照之前概述中的格式化要求将命令写入缓冲区。 
 
+```c
     /* 通用格式化命令并写入到AOF缓冲区函数 */
-    sds catAppendOnlyGenericCommand(sds dst,intargc, robj **argv){
+    sds catAppendOnlyGenericCommand(sds dst,int argc, robj **argv){
         char buf[32];
         int len, j;
         robj *o;
@@ -146,14 +153,15 @@ AOF持久化功能的实现可以分为以下三个步骤：命令追加、文�
         }
         return dst;
     }
-    
+```
 
 ## 文件写入 
 
 Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然后将这些命令写入到AOF文件中，写入文件的操作由 flushAppendOnlyFile 函数完成，这里简要的列出其源码： 
 
+```c
     /* 将缓冲区的数据写入AOF文件中 */
-    voidflushAppendOnlyFile(intforce){
+    void flushAppendOnlyFile(int force){
         ssize_t nwritten;
         int sync_in_progress = 0;
         mstime_t latency;
@@ -263,7 +271,7 @@ Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然
         // ②...
         // 后续为同步方面的代码，我们下一小节来分析
     }
-    
+```
 
 ## 文件同步 
 
@@ -273,8 +281,9 @@ Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然
 * AOF_FSYNC_EVERSEC 每个事件循环都要将aof_buf缓冲区的所有内容都写入AOF文件，并且每隔1秒就要在子进程中对AOF文件进行一次同步
 * AOF_FSYNC_NO 每个事件循环都要将aof_buf缓冲区的所有内容都写入AOF文件，至于何时对AOF文件进行同步，则由操作系统控制。
 
+```c
     /* 将缓冲区的数据写入AOF文件中 */
-    voidflushAppendOnlyFile(intforce){
+    void flushAppendOnlyFile(int force){
         // ...文件写入中已分析
         // 从标记为①开始
         if (server.aof_fsync == AOF_FSYNC_EVERYSEC)
@@ -323,7 +332,7 @@ Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然
             server.aof_last_fsync = server.unixtime;  // 更新上一次同步时间
         }
     }
-    
+```
 
 从源码中，可以看出根据设定的同步策略，Redis都做了相应的处理， aof_fsync 函数用来强制将缓冲区的数据写入到磁盘文件。分析这三种同步方式，其中， 
 
@@ -335,8 +344,9 @@ Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然
 
 当数据存储在AOF文件中后，服务器在下一次重启需要载入数据，AOF数据载入比较有意思，其会开一个伪Redis客户端，然后模仿客户端对服务器执行命令的过程，将AOF中存储的命令一一执行，执行完毕后服务器数据库中的数据就和上次一样了。这里我简要的用伪码来表示一下整个过程。
 
+```c
     # AOF数据载入 
-    defloadAppendOnlyFile(char *filename):
+    def loadAppendOnlyFile(char *filename):
       fakeClient = createRedisCli() # 创建伪客户端
          while True:
       command = getFromAof()  # 从AOF文件中取出命令
@@ -344,15 +354,16 @@ Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然
       if finish():  # 如果命令执行完，就退出
          return E_OK
       # 没有就继续执行
-    
+```
 
 ## AOF重写 
 
 现在我们来分析一种情况，假设服务器执行了以下两个命令：
 
+```
     SET key value
     DEL key
-    
+```
 
 如果上述两个命令都执行成功了，AOF中必然会增加两条命令字符串，然而这对数据库根本没什么影响，如果服务器执行了大量这样的命令对，AOF是只能追加不能删除的，所以其文件体积会无限增大。考虑周全的Redis为客户提供了重写操作，用来重写AOF文件，剔除掉里面的无效命令对。
 
@@ -360,8 +371,9 @@ Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然
 
 有了这个思路，我们就去源码中看看，AOF重写的功能由 rewriteAppendOnlyFile 函数实现。 
 
+```c
     /* AOF重写功能实现 */
-    intrewriteAppendOnlyFile(char*filename){
+    int rewriteAppendOnlyFile(char *filename){
         dictIterator *di = NULL;
         dictEntry *de;
         rio aof;
@@ -524,12 +536,13 @@ Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然
         if (di) dictReleaseIterator(di);
         return C_ERR;
     }
-    
+```
 
 上述，具体到每一个键对应的值对象重写时，可能没有想象的那么简单，因为可能该值里面存放的数据较多，如果还是在一条命令中执行的话会造成缓冲区溢出。于是，Redis提供了如下参数：
 
+```
     REDIS_AOF_REWRITE_ITEMS_PER_CMD  64
-    
+```
 
 如果这些值对象中的数据超过64个（默认值），系统会将其拆分成多个命令来执行，即每个命令最多能操作64个元素。
 
@@ -541,13 +554,14 @@ Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然
 
 但是，子进程在执行AOF重写的时候，服务器当前还在发生数据变化，为此，Redis提供了一个AOF后台重写缓冲区，用来存放子进程在执行AOF重写过程中插入的新数据。
 
-    #defineAOF_RW_BUF_BLOCK_SIZE (1024*1024*10)// 每个块最多10M
+```c
+    #define AOF_RW_BUF_BLOCK_SIZE (1024*1024*10)// 每个块最多10M
     // 之所以规定每个块的大小是因为不知道新加入的字符串命令的个数
     typedef struct aofrwblock {
         unsigned long used, free;  // 已使用和空闲的
         char buf[AOF_RW_BUF_BLOCK_SIZE];  // 字符串命令
     } aofrwblock;
-    
+```
 
 这样一来，在子进程执行AOF命令的时候，服务器如果有新数据到来，其字符串命令会添加到两个缓冲区，
 
@@ -562,14 +576,16 @@ Redis将格式化的命令存入缓冲区之后，等待服务器的指示，然
 
 AOF后台重写操作由如下两个函数完成，这里就不列出源码了。代码太多了而且都差不多。
 
+```c
     // 后台执行AOF重写操作
-    intrewriteAppendOnlyFileBackground(void);
+    int rewriteAppendOnlyFileBackground(void);
     // 执行AOF后台重写缓冲区内数据的重写和更名操作，完成整个AOF后台重写功能
-    voidbackgroundRewriteDoneHandler(intexitcode,intbysignal);
-    
+    void backgroundRewriteDoneHandler(int exitcode,int bysignal);
+```
 
 最后，只剩下最后一个问题了，除了显示运行命令执行，Redis还在什么时候执行后台重写操作，我一路追溯到这段代码：
 
+```c
     /* 此段代码截取自server.c文件中的serverCron函数中 */
     // 如果后台没有执行rdb，aof，以及aof重写操作，而且aof文件的大于执行BGREWRITEAOF所需的最小大小
     if (server.rdb_child_pid == -1 &&
@@ -612,7 +628,7 @@ AOF后台重写操作由如下两个函数完成，这里就不列出源码了�
       }
       updateDictResizePolicy();
     }
-    
+```
 
 如源代码中显示的，先判断当前aof文件的大小是否大于执行BGREWRITEAOF所需的最小大小，如果大于，再判断其增长系数是否超过了规定，如超过，就执行AOF后台重写操作。并在服务器定期事件中判断AOF后台重写是否完成，如完成，将AOF后台重写缓冲区的数据写入临时AOF文件，最后覆盖原来的AOF文件，完美的完成替换操作！Over！
 
@@ -626,6 +642,6 @@ AOF后台重写操作由如下两个函数完成，这里就不列出源码了�
 
 欢迎转载本篇博客，不过请注明博客原地址： [http://zcheng.ren/2016/12/31/TheAnnotatedRedisSourceAof/][5]
 
-[1]: http://zcheng.ren/2017/01/02/TheAnnotatedRedisSourceAof/?utm_source=tuicool&utm_medium=referral
+[1]: http://zcheng.ren/2017/01/02/TheAnnotatedRedisSourceAof/
 [4]: http://zcheng.ren/2016/12/30/TheAnnotatedRedisSourceRdb/
 [5]: http://zcheng.ren/2016/12/31/TheAnnotatedRedisSourceAof/

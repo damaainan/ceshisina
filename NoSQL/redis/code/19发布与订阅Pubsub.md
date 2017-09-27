@@ -2,7 +2,7 @@
 
  时间 2016-12-29 17:59:59  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/29/TheAnnotatedRedisSourcePubsub/][1]
+原文[http://zcheng.ren/2016/12/29/TheAnnotatedRedisSourcePubsub/][1]
 
 
 
@@ -37,12 +37,13 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
 
 阅读源码最好是从数据结构开始，这样能尽可能的理解功能函数。Redis服务器结构体中定义了如下数据结构用来记录某个频道有哪些客户端订阅。
 
+```c
     struct redisServer {
       // ...
       dict *pubsub_channels;  // 字典结构，用来记录频道和客户端的对应关系
       // ...
     }
-    
+```
 
 例如，上一节中的简单示例里面，其服务器的dict结构布局如下：
 
@@ -52,12 +53,13 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
 
 同样，在客户端结构体也用一个字典结构记录了该客户端订阅了哪些频道。
 
+```c
     struct client {
       // ...
       dict *pubsub_channels; // 记录了该客户端订阅了哪些频道
       // ...
     }
-    
+```
 
 在上一届的示例中，2号客户端的 pubsub_channels 字典结构的结构布局如下： 
 
@@ -67,11 +69,13 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
 
 另外，Redis还支持订阅特定模式的频道，其命令是PSUBSCRIBE，例如运行如下命令，就代表我可以订阅所有以chann开头的频道。
 
+```
     PSUBSCRIBE chann*
-    
+```
 
 关于订阅指定模式的频道，Redis定义了 pubsub_patterns 链表结构，在服务器结构体重，该链表的每一个节点都是一个 pubsubPattern 结构，具体定义如下： 
 
+```c
     /* 服务器结构 */
     struct redisServer {
       // ...
@@ -92,7 +96,7 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
       list *pubsub_patterns; // 记录了该客户端订阅了哪些模式串
       // ...
     }
-    
+```
 
 假设客户端订阅了某个模式串，其会向上述两个链表中添加相关信息，之后发布消息的时候，会检查模式串是否符合要求，如符合就向客户端发送消息。
 
@@ -107,8 +111,9 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
 
 上述两个步骤由subscribeCommand函数完成，其源码如下：
 
+```c
     /* 订阅频道命令的实现 */
-    voidsubscribeCommand(client *c){
+    void subscribeCommand(client *c){
         int j;
         // 遍历指令中的所有频道
         for (j = 1; j < c->argc; j++)
@@ -116,7 +121,7 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
         c->flags |= CLIENT_PUBSUB;
     }
     /* 订阅频道的底层实现代码 */
-    intpubsubSubscribeChannel(client *c, robj *channel){
+    int pubsubSubscribeChannel(client *c, robj *channel){
         dictEntry *de;
         list *clients = NULL;
         int retval = 0;
@@ -147,14 +152,15 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
         addReplyLongLong(c,clientSubscriptionsCount(c));
         return retval;
     }
-    
+```
 
 ## 订阅模式 
 
 当客户端执行订阅模式的指令时，同样需要对服务器和客户端的pubsub_patterns链表进行操作。其源码如下：
 
+```c
     /* 订阅模式命令的实现 */
-    voidpsubscribeCommand(client *c){
+    void psubscribeCommand(client *c){
         int j;
         // 遍历模式串
         for (j = 1; j < c->argc; j++)
@@ -162,7 +168,7 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
         c->flags |= CLIENT_PUBSUB;
     }
     /* 订阅模式的底层实现 */
-    intpubsubSubscribePattern(client *c, robj *pattern){
+    int pubsubSubscribePattern(client *c, robj *pattern){
         int retval = 0;
         // 查看链表中该模式是否存在，如存在不做处理，反之则添加
         if (listSearchKey(c->pubsub_patterns,pattern) == NULL) {
@@ -185,14 +191,15 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
         addReplyLongLong(c,clientSubscriptionsCount(c));
         return retval;
     }
-    
+```
 
 ## 退订 
 
 退订的操作就放在一节里面讲了，无非就是从结构体中删除一些节点，事实就是如此，以退订频道为例：
 
+```c
     /* 退订频道的命令实现 */
-    voidunsubscribeCommand(client *c){
+    void unsubscribeCommand(client *c){
         if (c->argc == 1) {
             // 退订所有频道
             pubsubUnsubscribeAllChannels(c,1);
@@ -206,7 +213,7 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
         if (clientSubscriptionsCount(c) == 0) c->flags &= ~CLIENT_PUBSUB;
     }
     /* 退订频道的底层实现 */
-    intpubsubUnsubscribeChannel(client *c, robj *channel,intnotify){
+    int pubsubUnsubscribeChannel(client *c, robj *channel,int notify){
         dictEntry *de;
         list *clients;
         listNode *ln;
@@ -241,10 +248,11 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
         decrRefCount(channel);
         return retval;
     }
-    
+```
 
 其他的退订操作也是如此，下面仅罗列出它们的函数声明和功能，有兴趣的可以去源码中查看。
 
+```c
     /* 退订所有频道 */
     pubsubUnsubscribeAllChannels(client *c, int notify);
     /* 退订所有模式 */
@@ -257,7 +265,7 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
     punsubscribeCommand(client *c);
     /* 退订频道的命令实现 */
     subscribeCommand(client *c);
-    
+```
 
 ## 发布消息 
 
@@ -268,8 +276,9 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
 
 发布消息的命令由publishCommand函数实现，其源码如下：
 
+```c
     /* 发布消息命令的实现 */
-    voidpublishCommand(client *c){
+    void publishCommand(client *c){
         int receivers = pubsubPublishMessage(c->argv[1],c->argv[2]);
         // 如果开启了集群，需要向集群中的客户端发送消息
         // 现阶段不讨论集群
@@ -280,7 +289,7 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
         addReplyLongLong(c,receivers);
     }
     /* 发布消息的底层实现 */
-    intpubsubPublishMessage(robj *channel, robj *message){
+    int pubsubPublishMessage(robj *channel, robj *message){
         int receivers = 0;
         dictEntry *de;
         listNode *ln;
@@ -335,22 +344,24 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
         // 返回收到消息的客户端个数
         return receivers;
     }
-    
+```
 
 本来感觉到此就没有什么功能了，没想到还有一个函数给漏掉了。那就是PUBSUB命令的实现函数，一开始不怎么理解它，于是查看了一下源码。有意思，这是个含有子命令的命令。
 
+```
     /* 后面的参数是模式串，子命令channels的功能是返回所有符合该模式串的频道 */
     PUBSUB CHANNELS [<pattern1>]
     /* 后面的参数是频道，子命令NUMSUB的功能是返回收听该频道的客户端个数 */
     PUBSUB NUMSUB [channel1 ... channeln]
     /* 子命令NUMPAT的功能是返回服务器中所有模式串频道的个数，即pubsub_patterns链表的长度*/
     PUBSUB NUMPAT
-    
+```
 
 其源码实现也很简单，这里列出来大家一起看看。
 
+```c
     /* PUBSUB命令源码实现 */
-    voidpubsubCommand(client *c){
+    void pubsubCommand(client *c){
         if (!strcasecmp(c->argv[1]->ptr,"channels") &&
             (c->argc == 2 || c->argc ==3))
         {
@@ -398,7 +409,7 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
                 (char*)c->argv[1]->ptr);
         }
     }
-    
+```
 
 ## Pubsub小结 
 
@@ -407,11 +418,11 @@ Redis的发布和订阅功能由PUBLISH、SUBSCRIBE和PSUBSCRIBE等命令组成�
 欢迎转载本篇博客，不过请注明博客原地址： [http://zcheng.ren/2016/12/29/TheAnnotatedRedisSourcePubsub][10]
 
 
-[1]: http://zcheng.ren/2016/12/29/TheAnnotatedRedisSourcePubsub/?utm_source=tuicool&utm_medium=referral
+[1]: http://zcheng.ren/2016/12/29/TheAnnotatedRedisSourcePubsub/
 
-[5]: http://img0.tuicool.com/A3Mr2mJ.png!web
-[6]: http://img1.tuicool.com/riQFVjr.jpg!web
-[7]: http://img0.tuicool.com/M3q2yyi.jpg!web
-[8]: http://img2.tuicool.com/fuqqEjA.png!web
-[9]: http://img1.tuicool.com/j2AVNnu.png!web
+[5]: ../img/A3Mr2mJ.png
+[6]: ../img/riQFVjr.jpg
+[7]: ../img/M3q2yyi.jpg
+[8]: ../img/fuqqEjA.png
+[9]: ../img/j2AVNnu.png
 [10]: http://zcheng.ren/2016/12/29/TheAnnotatedRedisSourcePubsub

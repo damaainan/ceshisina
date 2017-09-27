@@ -2,7 +2,7 @@
 
  时间 2017-01-02 18:27:35  ZeeCoder
 
-_原文_[http://zcheng.ren/2017/01/02/TheAnnotatedRedisSourceMulti/][1]
+原文[http://zcheng.ren/2017/01/02/TheAnnotatedRedisSourceMulti/][1]
 
 
 数据库事务，是指作为单个逻辑工作单元执行的一系列操作，这些操作要么全部执行，要么全部不执行。事务处理可以确保除非事务性单元内的所有操作都成功完成，否则不会永久更新面向数据的资源，这样可以简化错误恢复并使应用程序更加可靠。事务包括ACID特性，分别是Atomic（原子性）、Consistency（一致性）、Isolation（隔离性）和Durablity（持久性）。Redis作为一个key-value数据库，当然也必须拥有事务处理功能，下面就一起去看看它是怎么实现的吧？
@@ -23,6 +23,7 @@ UNWATCH | 取消WATCH命令对所有键的监视
 
 为了更好的分析Redis事务功能，我们先来实验感受一下如何使用事务功能及它的功效！
 
+```
     ~ redis-cli 
     127.0.0.1:6379> MULTI     // 开启一个事务
     OK
@@ -33,7 +34,7 @@ UNWATCH | 取消WATCH命令对所有键的监视
     127.0.0.1:6379> EXEC  // 执行事务
     1) OK
     2) (integer) 1
-    
+```
 
 如上，我们先开启了一个事务，然后添加了两条命令，最后执行此事务，两条命令全部执行并收到了回复。我们就从这个简单的事务处理过程，来一步一步分析Redis事务的具体实现过程。
 
@@ -45,13 +46,15 @@ UNWATCH | 取消WATCH命令对所有键的监视
 
 当我们发送 MULTI 命令是，表示客户端需要执行一个事务。客户端定义了几个参数，来标记事务是否开始。 
 
+```c
     int flags; // 客户端当前事件标记
-    #defineCLIENT_MULTI (1<<3) // 客户端事务标记
-    
+    #define CLIENT_MULTI (1<<3) // 客户端事务标记
+```
 
 客户端通过 flags |= CLIENT_MULTI 语句来标记事务开启与否，然后服务器在执行命令的时候只需要检查flags参数，就能知道事务是否开启。下面是 MULTI 命令的源码实现： 
 
-    voidmultiCommand(client *c){
+```c
+    void multiCommand(client *c){
         if (c->flags & CLIENT_MULTI) {  // 检查是否开启了事务
             addReplyError(c,"MULTI calls can not be nested");
             return;
@@ -59,12 +62,13 @@ UNWATCH | 取消WATCH命令对所有键的监视
         c->flags |= CLIENT_MULTI;  // 标记事务已经开启
         addReply(c,shared.ok);  // 回复客户端
     }
-    
+```
 
 ## 事务队列 
 
 既然事务中包含了一系列的操作，这些操作不能立即被执行，Redis必然会找个位置来存放这些命令。于是Redis定义了下面的结构体：
 
+```c
     /* 客户端结构体 */
     struct client {
         // ....
@@ -84,12 +88,13 @@ UNWATCH | 取消WATCH命令对所有键的监视
         int argc; // 参数个数
         struct redisCommand *cmd; // 命令指针
     } multiCmd;
-    
+```
 
 其中，所有在事务期间的命令都存放在事务队列中，也就是 commands 指针内。Redis在 processCommand 执行命令的函数里面判断此时是否开启了一个事务，如开启，则将命令压入命令队列，等待事务来处理。 
 
+```c
     /* Redis的命令处理函数 */
-    intprocessCommand(client *c){
+    int processCommand(client *c){
         // ...
         // 检查此时是否开启的事务，检查当前执行的命令不是EXEC、DISCARD、MULTI和WATCH
         if (c->flags & CLIENT_MULTI &&
@@ -102,12 +107,13 @@ UNWATCH | 取消WATCH命令对所有键的监视
         }
         // ...
     }
-    
+```
 
 事务命令入队的功能由 queueMultiCommand 函数执行，其源码如下： 
 
+```c
     /* 添加命令到事务队列 */
-    voidqueueMultiCommand(client *c){
+    void queueMultiCommand(client *c){
         multiCmd *mc;
         int j;
         // 重新申请内存
@@ -124,13 +130,14 @@ UNWATCH | 取消WATCH命令对所有键的监视
             incrRefCount(mc->argv[j]);
         c->mstate.count++;  // 命令个数加1
     }
-    
+```
 
 ## 事务执行 
 
 前面事务开始后的命令都存放在命令队列中，当客户端执行 EXEC 命令时，服务器会将事务队列中存放的命令以『先进先出』的方式一一执行，然后回复给客户端。 
 
-    voidexecCommand(client *c){
+```c
+    void execCommand(client *c){
         int j;
         robj **orig_argv;
         int orig_argc;
@@ -198,7 +205,7 @@ UNWATCH | 取消WATCH命令对所有键的监视
         if (listLength(server.monitors) && !server.loading)
             replicationFeedMonitors(c,server.monitors,c->db->id,c->argv,c->argc);
     }
-    
+```
 
 ## 事务取消 
 
@@ -211,8 +218,9 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
 
 它的实现很简单，源码如下：
 
+```c
     /* 取消事务 */
-    voiddiscardCommand(client *c){
+    void discardCommand(client *c){
         // 如果当前不处在事务状态，则报错
         if (!(c->flags & CLIENT_MULTI)) {
             addReplyError(c,"DISCARD without MULTI");
@@ -222,7 +230,7 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
         addReply(c,shared.ok);
     }
     /* 取消事务的底层实现 */
-    voiddiscardTransaction(client *c){
+    void discardTransaction(client *c){
         freeClientMultiState(c); // 释放事务队列
         initClientMultiState(c);  // 初始化事务队列
         // 取消所有有关事务的标记
@@ -230,12 +238,13 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
         // 取消所有被监视的键
         unwatchAllKeys(c);
     }
-    
+```
 
 ## WATCH实现 
 
 事务功能中还提供了监视键的功能，当我们对某个键执行了监视之后，如果事务执行期间该键被修改，则不执行该事务。同样，先看个小例子来试试 WATCH 的功能。 
 
+```
     /* 客户端一，执行监视和事务*/
     ~ redis-cli
     127.0.0.1:6379> WATCH key1  // 监视key1
@@ -248,16 +257,18 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
     ~ redis-cli
     127.0.0.1:6379> SET key1 value2
     OK
-    
+```
 
 当客户端一执行 EXEC 时，其返回结果如下： 
 
+```
     127.0.0.1:6379> EXEC
     (nil)
-    
+```
 
 表示该事务没有被执行，进一步验证了 WATCH 的功能。接下来，就去源码里真正理解它是如何工作的吧。为了实现 WATCH/UNWATCH 功能，Redis在服务器的数据库结构中定义了一个字典结构用来存放被监听的键及其相应的客户端。 
 
+```c
     /* redisDB数据库结构体 
      * | key1 | —— | client1 | -> | client2 |-> | client3 |
      * | key2 | —— | client4 |
@@ -269,10 +280,11 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
         dict *watched_keys;      // 保存所有被监视的键及相应客户端
         // ...
     } redisDb;
-    
+```
 
 另外，在客户端结构中，也定义了一个链表结构，用来保存该客户端所有监视的键，该链表的每一个接待都是一个 watchedKey 结构。 
 
+```c
     /* 客户端结构 */
     typedef struct client {
         // ...
@@ -284,12 +296,13 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
         robj *key;  // 保存键
         redisDb *db;  // 保存键所在的数据库
     } watchedKey;
-    
+```
 
 这么做的原因是，当客户端添加监视键的时候，能快速判断该键是否已经被监视；而且，当客户端取消所有被监视键的时候，可以快速找到该键所在的数据库，从而在 redisDb->watched_keys 删除该被监视的键。下面来看看添加监视键和取消监视键的源码实现。 
 
+```c
     /* 监视一个或多个键 */
-    voidwatchForKey(client *c, robj *key){
+    void watchForKey(client *c, robj *key){
         list *clients = NULL;
         listIter li;
         listNode *ln;
@@ -318,7 +331,7 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
         listAddNodeTail(c->watched_keys,wk);
     }
     /* 取消对所有键的监视 */
-    voidunwatchAllKeys(client *c){
+    void unwatchAllKeys(client *c){
         listIter li;
         listNode *ln;
         // 当前没有监视的键，直接返回
@@ -343,12 +356,13 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
             zfree(wk);
         }
     }
-    
+```
 
 以上源码就是对字典结构和链表结构的添加和删除操作，很好理解。那么服务器运行过程中，在哪里判断该键有没有被修改呢？我们找到了 touchWatchedKey 函数。 
 
+```c
     /* 标记被监视的键已被修改 */
-    voidtouchWatchedKey(redisDb *db, robj *key){
+    void touchWatchedKey(redisDb *db, robj *key){
         list *clients;
         listIter li;
         listNode *ln;
@@ -366,15 +380,16 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
             c->flags |= CLIENT_DIRTY_CAS;
         }
     }
-    
+```
 
 当然，这只是对所有被修改键的客户端进行标记，还是没有弄清楚在什么时候标记这些客户端。于是，继续追溯，发现这个函数通常被 signalModifyKey() 函数进行封装，这下又见到了我们的『老朋友』了，这个总是在键被修改的函数里调用的函数。 
 
+```c
     /* 标记被修改的键 */
-    voidsignalModifiedKey(redisDb *db, robj *key){
+    void signalModifiedKey(redisDb *db, robj *key){
         touchWatchedKey(db,key);
     }
-    
+```
 
 这么一来算是理清了 WATCH 命令的整个实现流程。 
 
@@ -383,4 +398,4 @@ Redis提供了 DISCARD 函数来取消当前客户端的事务状态，其主要
 本篇博客分析了事务MULTI/EXEC命令的实现以及WATCH监视命令的实现，从源码的角度剖析了其整个工作流程，涉及到multi.c、server.c和db.c文件，大家阅读的时候记得一定要理清整个流程。Redis的事务是具有ACID性质的，即原子性、一致性、隔离性和持久性，这个可以在源码中体现出来。另外，Redis的WATCH命令采用乐观锁的设计，只要被监视的键被修改，该事务就不执行。短短300多行代码就实现了这个实用强大的功能！值得学习！
 
 
-[1]: http://zcheng.ren/2017/01/02/TheAnnotatedRedisSourceMulti/?utm_source=tuicool&utm_medium=referral
+[1]: http://zcheng.ren/2017/01/02/TheAnnotatedRedisSourceMulti/

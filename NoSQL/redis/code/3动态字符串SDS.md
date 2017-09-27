@@ -2,7 +2,7 @@
 
  时间 2016-12-02 19:12:52  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/02/TheAnnotatedRedisSouceSDS/][1]
+原文[http://zcheng.ren/2016/12/02/TheAnnotatedRedisSouceSDS/][1]
 
 
 
@@ -12,11 +12,13 @@ Redis没有使用C语言的字符串结构，而是自己设计了一个简单�
 
 在sds.h文件中，我们可以找到sds的数据结构定义如下： 
 
+```c
     typedef char *sds;
-    
+```
 
 看到这里可能大家都疑惑了，这不就是char*嘛？的确，Redis采用一整段连续的内存来存储sds结构，char*类型正好可以和传统的C语言字符串类型兼容。但是，sds和char*并不等同，sds是二进制安全的，它可以存储任意二进制数据，不能像C语言字符串那样以‘\0’来标识字符串结束，因此它必然存在一个长度字段，那么这个字段在哪呢？请看下面的代码： 
 
+```c
     /* Note: sdshdr5 is never used, we just access the flags byte directly.
      * However is here to document the layout of type 5 SDS strings. */
     struct __attribute__ ((__packed__)) sdshdr5 {
@@ -47,7 +49,7 @@ Redis没有使用C语言的字符串结构，而是自己设计了一个简单�
         unsigned char flags; /* 3 lsb of type, 5 unused bits */
         char buf[];
     };
-    
+```
 
 sds结构一共有五种Header定义，其目的是为了满足不同长度的字符串可以使用不同大小的Header，从而节省内存。
 
@@ -57,12 +59,14 @@ Header部分主要包含以下几个部分：
 * alloc：表示字符串的最大容量，不包含Header和最后的空终止字符
 * flags：表示header的类型 
 
+```c
     // 五种header类型，flags取值为0~4
-    #defineSDS_TYPE_5 0
-    #defineSDS_TYPE_8 1
-    #defineSDS_TYPE_16 2
-    #defineSDS_TYPE_32 3
-    #defineSDS_TYPE_64 4
+    #define SDS_TYPE_5 0
+    #define SDS_TYPE_8 1
+    #define SDS_TYPE_16 2
+    #define SDS_TYPE_32 3
+    #define SDS_TYPE_64 4
+```
 
 由于sds是采用一段连续的内存空间来存储动态字符串，那么，我们进一步来分析一下sds在内存中的布局。下图是字符串”redis”在内存的布局示例图，
 
@@ -74,12 +78,13 @@ Header部分主要包含以下几个部分：
 
 获取了header的类型之后，我们就可以依照每个类型header的定义来获取sds的长度，最大容量等属性了。Redis定义了如下几个宏定义来操作header
 
-    #defineSDS_TYPE_MASK 7// 类型掩码
-    #defineSDS_TYPE_BITS 3
-    #defineSDS_HDR_VAR(T,s) struct sdshdr##T *sh = (void*)((s)-(sizeof(struct sdshdr##T)));// 获取header头指针
-    #defineSDS_HDR(T,s) ((struct sdshdr##T *)((s)-(sizeof(struct sdshdr##T))))// 获取header头指针
-    #defineSDS_TYPE_5_LEN(f) ((f)>>SDS_TYPE_BITS)// 获取sdshdr5的长度
-    
+```c
+    #define SDS_TYPE_MASK 7// 类型掩码
+    #define SDS_TYPE_BITS 3
+    #define SDS_HDR_VAR(T,s) struct sdshdr##T *sh = (void*)((s)-(sizeof(struct sdshdr##T)));// 获取header头指针
+    #define SDS_HDR(T,s) ((struct sdshdr##T *)((s)-(sizeof(struct sdshdr##T))))// 获取header头指针
+    #define SDS_TYPE_5_LEN(f) ((f)>>SDS_TYPE_BITS)// 获取sdshdr5的长度
+```
 
 这里需要注意宏定义中的##是将两个符号连接成一个，如sdshdr和8（T为8）合成sdshdr8
 
@@ -93,7 +98,8 @@ Header部分主要包含以下几个部分：
 
 Redis在创建sds时，会为其申请一段连续的内存空间，其中包含sds的header和数据部分buf[]。其创建函数如下： 
 
-    sds sdsnewlen(constvoid*init,size_tinitlen){
+```c
+    sds sdsnewlen(const void *init,size_t initlen){
         void *sh;
         sds s;
         char type = sdsReqType(initlen);
@@ -150,25 +156,27 @@ Redis在创建sds时，会为其申请一段连续的内存空间，其中包含
         s[initlen] = '\0'; // 与C字符串兼容
         return s; // 返回创建的sds字符串指针
     }
-    
+```
 
 ## sds释放函数 
 
 sds的释放采用zfree来释放内存。其实现代码如下： 
 
-    voidsdsfree(sds s){
+```c
+    void sdsfree(sds s){
         if (s == NULL) return; 
         // 得到内存的真正其实位置，然后释放内存
         s_free((char*)s-sdsHdrSize(s[-1]));
     }
-    
+```
 
 ## sds动态调整函数 
 
 sds最重要的性能就是动态调整，Redis提供了扩展sds容量的函数。 
 
+```c
     // 在原有的字符串中取得更大的空间，并返回扩展空间后的字符串
-    sds sdsMakeRoomFor(sds s,size_taddlen){
+    sds sdsMakeRoomFor(sds s,size_t addlen){
         void *sh, *newsh;
         size_t avail = sdsavail(s); // 获取sds的剩余空间
         size_t len, newlen;
@@ -214,10 +222,11 @@ sds最重要的性能就是动态调整，Redis提供了扩展sds容量的函数
         sdssetalloc(s, newlen); // 更新sds的容量
         return s;
     }
-    
+```
 
 另外，Redis还提供了回收sds空余空间的函数。 
 
+```c
     // 用来回收sds空余空间，压缩内存，函数调用后，s会无效
     // 实际上，就是重新分配一块内存，将原有数据拷贝到新内存上，并释放原有空间
     // 新内存的大小比原来小了alloc-len大小
@@ -246,13 +255,14 @@ sds最重要的性能就是动态调整，Redis提供了扩展sds容量的函数
         sdssetalloc(s, len);
         return s;
     }
-    
+```
 
 ## sds连接操作函数 
 
 sds提供了字符串的连接函数，用来连接两个字符串 
 
-    sds sdscatlen(sds s,constvoid*t,size_tlen){
+```c
+    sds sdscatlen(sds s,const void *t,size_t len){
         size_t curlen = sdslen(s); // 获取当前字符串的长度
     
         s = sdsMakeRoomFor(s,len); // 扩展空间
@@ -262,26 +272,27 @@ sds提供了字符串的连接函数，用来连接两个字符串
         s[curlen+len] = '\0'; 
         return s;
     }
-    
+```
 
 ## sds其他操作函数 
 
 sds还提供了一系列的操作函数，这里就不列出源码，只说明其用途。 
 
+```c
     sds sdsempty(void); // 清空sds
-    sds sdsdup(constsds s); // 复制字符串
-    sds sdsgrowzero(sds s,size_tlen); // 扩展字符串到指定长度
-    sds sdscpylen(sds s,constchar*t,size_tlen); // 字符串的复制
-    sds sdscpy(sds s,constchar*t); // 字符串的复制
-    sds sdscatfmt(sds s,charconst*fmt, ...);   //字符串格式化输出
-    sds sdstrim(sds s,constchar*cset);       //字符串缩减
-    voidsdsrange(sds s,intstart,intend);   //字符串截取函数
-    voidsdsupdatelen(sds s);   //更新字符串最新的长度
-    voidsdsclear(sds s);   //字符串清空操作
-    voidsdstolower(sds s);    //sds字符转小写表示
-    voidsdstoupper(sds s);    //sds字符统一转大写
-    sds sdsjoin(char**argv,intargc,char*sep);   //以分隔符连接字符串子数组构成新的字符串
-    
+    sds sdsdup(const sds s); // 复制字符串
+    sds sdsgrowzero(sds s,size_t len); // 扩展字符串到指定长度
+    sds sdscpylen(sds s,const char *t,size_t len); // 字符串的复制
+    sds sdscpy(sds s,const char *t); // 字符串的复制
+    sds sdscatfmt(sds s,char const *fmt, ...);   //字符串格式化输出
+    sds sdstrim(sds s,const char *cset);       //字符串缩减
+    void sdsrange(sds s,int start,int end);   //字符串截取函数
+    void sdsupdatelen(sds s);   //更新字符串最新的长度
+    void sdsclear(sds s);   //字符串清空操作
+    void sdstolower(sds s);    //sds字符转小写表示
+    void sdstoupper(sds s);    //sds字符统一转大写
+    sds sdsjoin(char **argv,int argc,char *sep);   //以分隔符连接字符串子数组构成新的字符串
+```
 
 ## sds小结 
 
@@ -289,5 +300,5 @@ sds是Redis中最基本的数据结构，使用一整段连续的内存来存储
 
 另外，sds还提供了很多操作函数，使其在拥有原生字符串的特性外，还能动态扩展内存和符合二进制安全等。
 
-[1]: http://zcheng.ren/2016/12/02/TheAnnotatedRedisSouceSDS/?utm_source=tuicool&utm_medium=referral
-[4]: http://img2.tuicool.com/6Fzuyq2.png!web
+[1]: http://zcheng.ren/2016/12/02/TheAnnotatedRedisSouceSDS/
+[4]: ../img/6Fzuyq2.png

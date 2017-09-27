@@ -16,7 +16,7 @@ Dec 16, 2016 | [Redis][0] | 212 Hits
 
 字符串是Redis中最为常见的数据存储类型，其底层实现是[简单动态字符串sds][6]，因此，该字符串类型是二进制安全的，这就意味着它可以接受任何格式的数据。另外，Redis规定，字符串类型最多可以容纳的数据长度为512M。Redis提供了下列函数，来检测字符串键的大小。
    
-```
+```c
 static int checkStringLength(client *c, long long size) {
 
     // 超出了512M，就直接报错
@@ -36,7 +36,7 @@ static int checkStringLength(client *c, long long size) {
 # 字符串结构
 
 在[RedisObject][7]中提到，Redis的底层编码类型有三种：OBJ_ENCODING_RAW，OBJ_ENCODING_INT和OBJ_ENCODING_EMBSTR，分别对应的底层数据结构为sds，int，sds。字符串的数据结构如下：
-```
+```c
 typedef struct redisObject {
 
     unsigned type:4;  // 为OBJ_STRING
@@ -66,19 +66,31 @@ typedef struct redisObject {
 ```
 当然，embstr只适合常见长度较小的字符串时才显得效率高。如果长度过长，申请大内存段比较费力。因此，Redis规定了小于规定字节才采用embstr编码。
 
+```c
     /* 当长度小于44字节时，采用embstr编码 */
     
     #define OBJ_ENCODING_EMBSTR_SIZE_LIMIT 44
-
+```
 # 字符串命令
 
 Redis为string提供了一系列的命令，用来操作和管理字符串，主要包括以下几个命令。
 
-命令 命令描述 SET key value [ex 秒数][px 毫秒数][nx/xx] 设置指定key的值 GET key 获取指定key的值 APPEND key value 将value追加到指定key的值末尾 INCRBY key increment 将指定key的值加上增量increment DECRBY key decrement 将指定key的值减去增量decrement STRLEN key 返回指定key的值长度 SETRANGE key offset value 将value覆写到指定key的值上，从offset位开始 GETRANGE key start end 获取指定key中字符串的子串[start,end] MSET key value [key value …] 一次设定多个key的值 MGET key1 [key2..] 一次获取多个key的值 
+命令 | 命令描述 
+-|-
+SET key value [ex 秒数][px 毫秒数][nx/xx] |设置指定key的值 
+GET key |获取指定key的值 
+APPEND key value |将value追加到指定key的值末尾 
+INCRBY key increment |将指定key的值加上增量increment 
+DECRBY key decrement |将指定key的值减去增量decrement 
+STRLEN key |返回指定key的值长度 
+SETRANGE key offset value |将value覆写到指定key的值上，从offset位开始 
+GETRANGE key start end |获取指定key中字符串的子串[start,end] 
+MSET key value [key value …] |一次设定多个key的值 
+MGET key1 [key2..] |一次获取多个key的值 
 
 上述命令均为常用的字符串命令，其实现在t_string.c文件中，我们进而来查看一下它们的实现源码。
    
-```
+```c
 void setCommand(client *c); // SET命令，设定键值对
 void setnxCommand(client *c); // SETNX命令，key不存在时才设置值
 void setexCommand(client *c); // SETEX命令，key存在时才设置值，到期时间为秒
@@ -122,7 +134,7 @@ set命令用于设置指定的值，其具体命令格式如下：
 
 SET 命令的源码由setcommod函数实现，调用set命令需要传入一个client的指针，client类型里面包含了很多Redis对于交互命令的处理参数，我们没必要去管一些目前还用不上的参数，先来看看set命令需要用到的参数。
    
-```
+```c
 typedef struct client {
     redisDb *db;            // 当前数据库
     robj **argv;            // 命令参数
@@ -130,7 +142,7 @@ typedef struct client {
 } client;
 ```
 很显然，db指向一个我们当前需要操作的数据库，argv指向待传入的命令参数。当我们执行set zee 100 ex 1000 nx命令时，argv中就包含六个RedisObject结构，其对应如下：
-```
+```c
 argv[0] -- set
 argv[1] -- zee
 argv[3] -- 100
@@ -140,7 +152,7 @@ argv[6] -- nx
 ```
 我们规定了到期时间为1000秒，且只有在zee键不存在的时候才设定该键的值。Redis为SET命令的操作设定了下列三个宏定义，用来标记SET的操作类型。
    
-```
+```c
 // 关于set命令的操作有三种宏定义
 
 #define OBJ_SET_NO_FLAGS 0    // 没有设定参数
@@ -155,7 +167,7 @@ argv[6] -- nx
 ```
 有了上述的理解之后，我们可以进入setCommand函数了。
   
-```
+```c
 /* set命令实现函数 */
 void setCommand(client *c) {
     int j;
@@ -241,7 +253,7 @@ void setGenericCommand(client *c, int flags, robj *key, robj *val, robj *expire,
 ```
 从SET命令中，衍生除了SETNX，SETEX，PSETEX等命令，其底层均是调用setGenericCommand来实现。
    
-```
+```c
 // key不存在时，才设定值，flag为REDIS_SET_NX；如果key存在则不做处理
 // 命令形式为：setnx key value
 void setnxCommand(client *c) {

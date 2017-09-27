@@ -2,7 +2,7 @@
 
  时间 2016-12-15 11:55:40  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/14/TheAnnotatedRedisSourceObject/][1]
+原文[http://zcheng.ren/2016/12/14/TheAnnotatedRedisSourceObject/][1]
 
 
 
@@ -14,6 +14,7 @@ Redis在这些数据结构的基础上构建了对用户可见的五种类型，
 
 在server.h文件中，给出了RedisObject的结构体定义，我们一起来看看。 
 
+```c
     typedef struct redisObject {
         unsigned type:4;
         unsigned encoding:4;
@@ -21,7 +22,7 @@ Redis在这些数据结构的基础上构建了对用户可见的五种类型，
         int refcount;
         void *ptr;
     } robj;
-    
+```
 
 其中，ptr指向对象中实际存放的值，这里不需要过多解释，针对其他四个结构体参数，作如下说明：
 
@@ -29,28 +30,30 @@ Redis在这些数据结构的基础上构建了对用户可见的五种类型，
 
 Redis的对象有五种类型，分别是string、hash、list、set和zset，type属性就是用来标识着五种数据类型。type占用4个bit位，其取值和类型对应如下： 
 
-    #defineOBJ_STRING 0
-    #defineOBJ_LIST 1
-    #defineOBJ_SET 2
-    #defineOBJ_ZSET 3
-    #defineOBJ_HASH 4
-    
+```c
+    #define OBJ_STRING 0
+    #define OBJ_LIST 1
+    #define OBJ_SET 2
+    #define OBJ_ZSET 3
+    #define OBJ_HASH 4
+```
 
 ## 编码类型encoding 
 
 Redis对象的编码方式由encoding参数指定，也就是表示ptr指向的数据以何种数据结构作为底层实现。该字段也占用4个bit位。其取值和对应类型对应如下： 
 
-    #defineOBJ_ENCODING_RAW 0/* Raw representation */
-    #defineOBJ_ENCODING_INT 1/* Encoded as integer */
-    #defineOBJ_ENCODING_HT 2/* Encoded as hash table */
-    #defineOBJ_ENCODING_ZIPMAP 3/* Encoded as zipmap */
-    #defineOBJ_ENCODING_LINKEDLIST 4/* Encoded as regular linked list */
-    #defineOBJ_ENCODING_ZIPLIST 5/* Encoded as ziplist */
-    #defineOBJ_ENCODING_INTSET 6/* Encoded as intset */
-    #defineOBJ_ENCODING_SKIPLIST 7/* Encoded as skiplist */
-    #defineOBJ_ENCODING_EMBSTR 8/* Embedded sds string encoding */
-    #defineOBJ_ENCODING_QUICKLIST 9/* Encoded as linked list of ziplists */
-    
+```c
+    #define OBJ_ENCODING_RAW 0/* Raw representation */
+    #define OBJ_ENCODING_INT 1/* Encoded as integer */
+    #define OBJ_ENCODING_HT 2/* Encoded as hash table */
+    #define OBJ_ENCODING_ZIPMAP 3/* Encoded as zipmap */
+    #define OBJ_ENCODING_LINKEDLIST 4/* Encoded as regular linked list */
+    #define OBJ_ENCODING_ZIPLIST 5/* Encoded as ziplist */
+    #define OBJ_ENCODING_INTSET 6/* Encoded as intset */
+    #define OBJ_ENCODING_SKIPLIST 7/* Encoded as skiplist */
+    #define OBJ_ENCODING_EMBSTR 8/* Embedded sds string encoding */
+    #define OBJ_ENCODING_QUICKLIST 9/* Encoded as linked list of ziplists */
+```
 
 在Redis3.2.5版本中，zipmap已不再使用，此处也不再讨论。
 
@@ -99,12 +102,13 @@ Redis关于对象的操作函数主要在server.h和object.c文件中。
 
 redis提供以下函数用于创建不同类型的对象。 
 
-    robj *createObject(inttype,void*ptr); // 创建对象，设定其参数
-    robj *createStringObject(constchar*ptr,size_tlen); // 创建字符串对象
-    robj *createRawStringObject(constchar*ptr,size_tlen); // 创建简单动态字符串编码的字符串对象
-    robj *createEmbeddedStringObject(constchar*ptr,size_tlen); // 创建EMBSTR编码的字符串对象
-    robj *createStringObjectFromLongLong(longlongvalue); // 根据传入的longlong整型值，创建一个字符串对象
-    robj *createStringObjectFromLongDouble(longdoublevalue,inthumanfriendly); // 根据传入的long double类型值，创建一个字符串对象
+```c
+    robj *createObject(int type,void *ptr); // 创建对象，设定其参数
+    robj *createStringObject(const char *ptr,size_t len); // 创建字符串对象
+    robj *createRawStringObject(const char *ptr,size_t len); // 创建简单动态字符串编码的字符串对象
+    robj *createEmbeddedStringObject(const char *ptr,size_t len); // 创建EMBSTR编码的字符串对象
+    robj *createStringObjectFromLongLong(long long value); // 根据传入的longlong整型值，创建一个字符串对象
+    robj *createStringObjectFromLongDouble(long double value,int humanfriendly); // 根据传入的long double类型值，创建一个字符串对象
     robj *createQuicklistObject(void); // 创建快速链表编码的列表对象
     robj *createZiplistObject(void); // 创建压缩列表编码的列表对象
     robj *createSetObject(void); // 创建集合对象
@@ -112,13 +116,14 @@ redis提供以下函数用于创建不同类型的对象。
     robj *createHashObject(void); // 创建hash对象
     robj *createZsetObject(void); // 创建zset对象
     robj *createZsetZiplistObject(void); //创建压缩列表编码的zset对象
-    
+```
 
 以创建字符串对象为例，来说明整个redisobject的创建过程。 
 
+```c
     /*********************************创建字符串对象************************************/
-    #defineOBJ_ENCODING_EMBSTR_SIZE_LIMIT 44
-    robj *createStringObject(constchar*ptr,size_tlen){
+    #define OBJ_ENCODING_EMBSTR_SIZE_LIMIT 44
+    robj *createStringObject(const char *ptr,size_t len){
         if (len <= OBJ_ENCODING_EMBSTR_SIZE_LIMIT)
             // 短字符采用特殊的EMBSTR编码
             return createEmbeddedStringObject(ptr,len);
@@ -129,12 +134,12 @@ redis提供以下函数用于创建不同类型的对象。
     /******************************创建RAW编码的字符串对象********************************/
     // RAW编码需要调用两次内存分配函数
     // 一是为redisObject分内内存，二是为sds字符串分配内存
-    robj *createRawStringObject(constchar*ptr,size_tlen){
+    robj *createRawStringObject(const char *ptr,size_t len){
         // sdsnewlen函数用于创建一个长度为len的sds字符串
         return createObject(OBJ_STRING,sdsnewlen(ptr,len));
     }
     // 通用创建redis对象的函数，采用raw编码方式
-    robj *createObject(inttype,void*ptr){
+    robj *createObject(int type,void *ptr){
         robj *o = zmalloc(sizeof(*o));
         o->type = type;
         o->encoding = OBJ_ENCODING_RAW;
@@ -148,7 +153,7 @@ redis提供以下函数用于创建不同类型的对象。
     /***************************创建EMBSTR编码的字符串对象********************************/
     // EMRSTR编码只需要调用一次内存分配函数
     // 它的redisobject和sds是放在一段连续的内存空间上
-    robj *createEmbeddedStringObject(constchar*ptr,size_tlen){
+    robj *createEmbeddedStringObject(const char *ptr,size_t len){
         robj *o = zmalloc(sizeof(robj)+sizeof(struct sdshdr8)+len+1);
         // sds的起始地址sh
         struct sdshdr8 *sh = (void*)(o+1);
@@ -170,34 +175,37 @@ redis提供以下函数用于创建不同类型的对象。
         }
         return o;
     }
-    
+```
 
 ## 对象释放 
 
 Redis不提供释放整个redis对象的函数。每一个redis对象都有一个引用计数，在引用计数变为0的时候对其整体进行释放，下面五个函数分别用来释放对象中存放的数据，其释放过程中需要判断数据的编码类型，根据不同的编码类型调用不同的底层函数。 
 
-    voidfreeStringObject(robj *o); // 释放字符串对象
-    voidfreeListObject(robj *o); // 释放链表对象
-    voidfreeSetObject(robj *o); // 释放集合对象
-    voidfreeZsetObject(robj *o); // 释放有序集合对象
-    voidfreeHashObject(robj *o); // 释放哈希对象
-    
+```c
+    void freeStringObject(robj *o); // 释放字符串对象
+    void freeListObject(robj *o); // 释放链表对象
+    void freeSetObject(robj *o); // 释放集合对象
+    void freeZsetObject(robj *o); // 释放有序集合对象
+    void freeHashObject(robj *o); // 释放哈希对象
+```
 
 我们还是以字符串对象为例，来看看对象的释放过程。 
 
+```c
     // 释放字符串对象
     // 无论是embstr编码还是raw编码，其内存上存放的都是sds字符串
     // 所以只用调用sdsfree就可以对其进行释放
-    voidfreeStringObject(robj *o){
+    void freeStringObject(robj *o){
         if (o->encoding == OBJ_ENCODING_RAW) {
             sdsfree(o->ptr);
         }
     }
-    
+```
 
 字符串对象的释放可能看不出来需要根据编码方式来选择不同的底层释放函数，下面来看看集合的释放函数。 
 
-    voidfreeSetObject(robj *o){
+```c
+    void freeSetObject(robj *o){
         switch (o->encoding) {
         case OBJ_ENCODING_HT:  // 如果编码方式为哈希
             dictRelease((dict*) o->ptr);
@@ -209,12 +217,13 @@ Redis不提供释放整个redis对象的函数。每一个redis对象都有一�
             serverPanic("Unknown set encoding type");
         }
     }
-    
+```
 
 那么，什么时候释放整个Redis对象呢？答案在下面函数。 
 
+```c
     // 引用计数减1
-    voiddecrRefCount(robj *o){
+    void decrRefCount(robj *o){
         // 引用计数为小于等于0，报错
         if (o->refcount <= 0) serverPanic("decrRefCount against refcount <= 0");
         // 引用计数等于1，减1后为0
@@ -236,24 +245,26 @@ Redis不提供释放整个redis对象的函数。每一个redis对象都有一�
             o->refcount--;
         }
     }
-    
+```
 
 同样，关于引用计数，redis还提供了增加引用计数的函数，这里也一并说了。 
 
+```c
     // 增加对象的引用计数+1
-    voidincrRefCount(robj *o){
+    void incrRefCount(robj *o){
         o->refcount++; // 引用计数加1
     }
-    
+```
 
 ## 其他操作函数 
 
 redis在object.c文件中还提供了很多API接口函数。下面只罗列出函数名和功能，具体实现也比较简单，这里就不赘述。 
 
+```c
     // 复制一个字符串对象
     robj *dupStringObject(robj *o);
     // 判断一个对象是否能够用longlong型整数表示
-    intisObjectRepresentableAsLongLong(robj *o,longlong*llongval);
+    int isObjectRepresentableAsLongLong(robj *o,long long *llongval);
     // 尝试对一个对象进行压缩以节省内存，如果无法压缩则增加引用计数后返回
     robj *tryObjectEncoding(robj *o);
     // 对一个对象进行解码，如果不能解码则增加其引用计数并返回，反则返回一个新对象
@@ -261,42 +272,43 @@ redis在object.c文件中还提供了很多API接口函数。下面只罗列出�
     // 获取字符串对象的长度
     size_t stringObjectLen(robj *o);
     // getLongLongFromObject函数的封装，如果发生错误可以发回指定响应消息
-    intgetLongFromObjectOrReply(client *c, robj *o,long*target,constchar*msg);
+    int getLongFromObjectOrReply(client *c, robj *o,long *target,const char *msg);
     // 检查o的类型是否与type一致
-    intcheckType(client *c, robj *o,inttype);
+    int checkType(client *c, robj *o,int type);
     // getLongLongFromObject的封装，如果发生错误则可以发出指定的错误消息
-    intgetLongLongFromObjectOrReply(client *c, robj *o,longlong*target,constchar*msg);
+    int getLongLongFromObjectOrReply(client *c, robj *o,long long *target,const char *msg);
     // 从字符串对象中解码出一个double类型的整数
-    intgetDoubleFromObjectOrReply(client *c, robj *o,double*target,constchar*msg);
+    int getDoubleFromObjectOrReply(client *c, robj *o,double *target,const char *msg);
     // 从字符串对象中解码出一个long long类型的整数
-    intgetLongLongFromObject(robj *o,longlong*target);
+    int getLongLongFromObject(robj *o,long long *target);
     // 从字符串对象中解码出一个long double类型的整数
-    intgetLongDoubleFromObject(robj *o,longdouble*target);
+    int getLongDoubleFromObject(robj *o,long double *target);
     // getLongDoubleFromObject的封装，如果发生错误则可以发出指定的错误消息
-    intgetLongDoubleFromObjectOrReply(client *c, robj *o,longdouble*target,constchar*msg);
+    int getLongDoubleFromObjectOrReply(client *c, robj *o,long double *target,const char *msg);
     // 返回编码的字符串表示，如OBJ_ENCODING_RAW编码就返回raw
-    char*strEncoding(intencoding);
+    char *strEncoding(int encoding);
     // 以二进制方式比较两个字符串对象
-    intcompareStringObjects(robj *a, robj *b);
+    int compareStringObjects(robj *a, robj *b);
     // 以本地指定的文字排列次序coll方式比较两个字符串
-    intcollateStringObjects(robj *a, robj *b);
+    int collateStringObjects(robj *a, robj *b);
     // 比较两个字符串对象是否相同
-    intequalStringObjects(robj *a, robj *b);
+    int equalStringObjects(robj *a, robj *b);
     // 计算给定对象的闲置时长，使用近似LRU算法
-    unsignedlonglongestimateObjectIdleTime(robj *o);
-    
+    unsigned long long estimateObjectIdleTime(robj *o);
+```
 
 ## Object交互指令 
 
 Redis提供了三个命令用于获取对象的一些参数。其命令形式如下：
 
-* object refcount <key> 返回key所指的对象的引用计数
-* object encoding <key> 返回key所指的对象中存放的数据的编码方式
-* object idletime <key> 返回key所指的对象的空转时长
+* `object refcount <key>` 返回key所指的对象的引用计数
+* `object encoding <key>` 返回key所指的对象中存放的数据的编码方式
+* `object idletime <key>` 返回key所指的对象的空转时长
 
 这些交互指令的实现由如下函数完成。 
 
-    voidobjectCommand(client *c){
+```c
+    void objectCommand(client *c){
         robj *o;
         // 返回key所指的对象的引用计数
         if (!strcasecmp(c->argv[1]->ptr,"refcount") && c->argc == 3) {
@@ -318,14 +330,14 @@ Redis提供了三个命令用于获取对象的一些参数。其命令形式如
             addReplyError(c,"Syntax error. Try OBJECT (refcount|encoding|idletime)");
         }
     }
-    
+```
 
 ## redisObject小结 
 
 Redis为用户提供了五种数据结构，分别是string，hash，list，set和zset，每种数据结构的内部都至少有两种编码方式，不同的编码方式适用于不同的使用场景。Redis的对象带有引用计数功能，当一个对象不再被使用时（即引用计数为0），对象所占的内存就会被自动释放。同时，Redis还会对每一个对象记录其最近被使用的时间，从而计算对象的空转时长，便于程序在适当的时候释放内存。
 
 
-[1]: http://zcheng.ren/2016/12/14/TheAnnotatedRedisSourceObject/?utm_source=tuicool&utm_medium=referral
+[1]: http://zcheng.ren/2016/12/14/TheAnnotatedRedisSourceObject/
 
 [4]: http://zcheng.ren/2016/12/03/TheAnnotatedRedisSourceSdlist/
 [5]: http://zcheng.ren/2016/12/04/TheAnnotatedRedisSourceDict/

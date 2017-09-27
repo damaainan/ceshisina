@@ -2,7 +2,7 @@
 
  时间 2016-12-08 21:53:50  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/08/TheAnnotatedRedisSourceHyperloglog/][2]
+原文[http://zcheng.ren/2016/12/08/TheAnnotatedRedisSourceHyperloglog/][2]
 
 
 
@@ -68,6 +68,7 @@ P ( x ≥ k ) = ( 1 − 1 / 2 k − 1 ) n P(x≥k)=(1−1/2k−1)n
 
 每个hyperloglog键由一下结构体组成： 
 
+```c
     struct hllhdr {
         char magic[4];      // 固定‘HYLL’，用于标识hyperloglog键
         uint8_t encoding;   // 编码模式，有密集标识Dence和稀疏模式sparse
@@ -75,7 +76,7 @@ P ( x ≥ k ) = ( 1 − 1 / 2 k − 1 ) n P(x≥k)=(1−1/2k−1)n
         uint8_t card[8];    // 基数缓存，存储上一次计算的基数
         uint8_t registers[]; // 存放访客数据
     };
-    
+```
 
 hyperloglog关于数据存放模式部分，本博客不对其进行剖析，因为博主也看不懂。有看的懂的大神在下面留言给我讲讲。
 
@@ -83,12 +84,14 @@ hyperloglog关于数据存放模式部分，本博客不对其进行剖析，因
 
 Redis提供一下命令来向hyperloglog键中添加数据。 
 
+```
     PFADD key element [element ...]
-    
+```
 
 其源码实现如下： 
 
-    voidpfaddCommand(client *c){
+```c
+    void pfaddCommand(client *c){
         robj *o = lookupKeyWrite(c->db,c->argv[1]);
         struct hllhdr *hdr;
         int updated = 0, j;
@@ -126,11 +129,12 @@ Redis提供一下命令来向hyperloglog键中添加数据。
         // 客户端交互部分，此处可以放着以后理解
         addReply(c, updated ? shared.cone : shared.czero);
     }
-    
+```
 
 上述代码包含了很多与客户端交互的部分，此处可以先不看，添加元素主要由hllAdd函数实现。 
 
-    inthllAdd(robj *o,unsignedchar*ele,size_telesize){
+```c
+    int hllAdd(robj *o,unsigned char *ele,size_t elesize){
         struct hllhdr *hdr = o->ptr;
         switch(hdr->encoding) {
         case HLL_DENSE: return hllDenseAdd(hdr->registers,ele,elesize);  // 密集模式添加元素
@@ -138,12 +142,13 @@ Redis提供一下命令来向hyperloglog键中添加数据。
         default: return -1; // 非法模式
         }
     }
-    
+```
 
 以hllDenseAdd为例，此函数计算添加元素哈希后第一个出现1的bit位置，然后添加到hll结构的registers部分。此处才是整个代码实现关于基数统计的关键地方。 
 
+```c
     // 密集模式添加元素
-    inthllDenseAdd(uint8_t*registers,unsignedchar*ele,size_telesize){
+    int hllDenseAdd(uint8_t *registers,unsigned char *ele,size_t elesize){
         uint8_t oldcount, count;
         long index;
     
@@ -161,7 +166,7 @@ Redis提供一下命令来向hyperloglog键中添加数据。
         }
     }
     // 用于计算hash后的值中，第一个出现1的位置
-    inthllPatLen(unsignedchar*ele,size_telesize,long*regp){
+    int hllPatLen(unsigned char *ele,size_t elesize,long *regp){
         uint64_t hash, bit, index;
         int count;
         // 利用MurmurHash64A哈希函数来计算该元素的hash值
@@ -179,14 +184,15 @@ Redis提供一下命令来向hyperloglog键中添加数据。
         *regp = (int) index;
         return count;
     }
-    
+```
 
 ## 计算基数 
 
 Redis提供了下面的命令来计算数据集的基数。 
 
+```
     PFCOUNT key [key ...]
-    
+```
 
 如果只有一个key则计算其基数即可；如果存在多个键，则需要合并所有的键（求并集），然后计算其基数。
 
@@ -196,7 +202,9 @@ Redis提供了下面的命令来计算数据集的基数。
 
 Redis提供了下面的命令来合并多个hyperloglog键。（源码部分就省略了） 
 
+```
     PFMERGE destkey sourcekey [sourcekey ...]
+```
 
 
-[2]: http://zcheng.ren/2016/12/08/TheAnnotatedRedisSourceHyperloglog/?utm_source=tuicool&utm_medium=referral
+[2]: http://zcheng.ren/2016/12/08/TheAnnotatedRedisSourceHyperloglog/

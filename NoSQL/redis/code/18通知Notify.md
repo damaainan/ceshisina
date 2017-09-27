@@ -2,7 +2,7 @@
 
  时间 2016-12-27 20:33:51  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/27/TheAnnotatedRedisSourceNotify/][1]
+原文[http://zcheng.ren/2016/12/27/TheAnnotatedRedisSourceNotify/][1]
 
 
 
@@ -14,18 +14,21 @@ Redis在2.8版本以后，增加了键空间（Keyspace Notifications future）�
 
 我们有两种方式开启键空间事件通知功能，或者只接受特定类型的通知，一是修改redis.conf中的指定参数，如下：
 
+```
     /* 默认为空，表示不开启键空间事件通知功能 */
     notify-keyspace-events ""
-    
+```
 
 第二种方法是通过CONFIG SET命令来设定notify-keyspace-events参数，其命令形式如下：
 
+```c
     /* xx代表订阅的事件类型，后面会讲到 */
     CONFIG SET notify-keyspace-events KE
-    
+```
 
 当服务器开启键空间事件通知功能时，需要指定事件的类型，即开启哪些特定类型的通知。Redis设定了一系列的宏定义，用来标识事件的类型。
 
+```c
     #define NOTIFY_KEYSPACE (1<<0)    /* K */
     #define NOTIFY_KEYEVENT (1<<1)    /* E */
     #define NOTIFY_GENERIC (1<<2)     /* g */
@@ -37,7 +40,7 @@ Redis在2.8版本以后，增加了键空间（Keyspace Notifications future）�
     #define NOTIFY_EXPIRED (1<<8)     /* x */
     #define NOTIFY_EVICTED (1<<9)     /* e */
     #define NOTIFY_ALL (NOTIFY_GENERIC | NOTIFY_STRING | NOTIFY_LIST | NOTIFY_SET | NOTIFY_HASH | NOTIFY_ZSET | NOTIFY_EXPIRED | NOTIFY_EVICTED) /* A */
-    
+```
 
 其中，每一个宏定义代表的事件类型如下表：
 
@@ -57,6 +60,7 @@ A | 参数g$lshzxe的别名，代表全部上述全部命令
 
 关于notify-keyspace-events的设定，输入参数必须至少要有一个K或者E，用来标识该通知是键空间还是键事件；如果不包含，不管其余参数为什么，都将不会有任何通知被分发。例如：
 
+```
     ~ redis-cli
     /* 开启所有的事件 */
     127.0.0.1:6379> CONFIG SET notify-keyspace-events KEA
@@ -67,23 +71,25 @@ A | 参数g$lshzxe的别名，代表全部上述全部命令
     /* 开启列表命令的键事件通知 */
     127.0.0.1:6379> CONFIG SET notify-keyspace-events El
     OK
-    
+```
 
 ## Notify源码实现 
 
 Notify的功能由三个函数实现，没错，就是三个，这充分体现了Redis模块划分明确的优点，使得代码的重用性很强。下面来看一下这三个函数吧。
 
+```c
     /* 将Notify设置参数由字符串转换成标识量flag */
-    intkeyspaceEventsStringToFlags(char*classes);
+    int keyspaceEventsStringToFlags(char *classes);
     /* 将Notify设置参数由标识量flags转换成字符串 */
-    sds keyspaceEventsFlagsToString(intflags);
+    sds keyspaceEventsFlagsToString(int flags);
     /* 通知功能的实现 */
-    voidnotifyKeyspaceEvent(inttype,char*event, robj *key,intdbid);
-    
+    void notifyKeyspaceEvent(int type,char *event, robj *key,int dbid);
+```
 
 首先来看看第一个函数，其功能是将Notify设置参数由字符串转换成标识量flag
 
-    intkeyspaceEventsStringToFlags(char*classes){
+```c
+    int keyspaceEventsStringToFlags(char *classes){
         char *p = classes;
         int c, flags = 0;
         // 遍历每一个字符
@@ -105,11 +111,12 @@ Notify的功能由三个函数实现，没错，就是三个，这充分体现�
         }
         return flags;
     }
-    
+```
 
 再来看看其逆向函数，如下：
 
-    sds keyspaceEventsFlagsToString(intflags){
+```c
+    sds keyspaceEventsFlagsToString(int flags){
         sds res;
     
         res = sdsempty();
@@ -132,11 +139,12 @@ Notify的功能由三个函数实现，没错，就是三个，这充分体现�
         if (flags & NOTIFY_KEYEVENT) res = sdscatlen(res,"E",1);
         return res;
     }
-    
+```
 
 接下来，主角登场了，利用Redis的订阅和发布功能来发送键空间事件通知。
 
-    voidnotifyKeyspaceEvent(inttype,char*event, robj *key,intdbid){
+```c
+    void notify KeyspaceEvent(int type,char *event, robj *key,int dbid){
         sds chan;
         robj *chanobj, *eventobj;
         int len = -1;
@@ -172,7 +180,7 @@ Notify的功能由三个函数实现，没错，就是三个，这充分体现�
         }
         decrRefCount(eventobj);
     }
-    
+```
 
 整个通知的实现就是这么简单，通过pub/sub功能来发送事件通知，使得客户端能收到键空间事件。
 
@@ -180,6 +188,7 @@ Notify的功能由三个函数实现，没错，就是三个，这充分体现�
 
 为了验证上述的通知，是否按照预想发送了，我们可以做一个小的实验来验证一下。首先开启两个redis-cli客户端，每个客户端运行下述命令。
 
+```
     /* 0号客户端 */
     127.0.0.1:6379> PSUBSCRIBE __keyevent*
     Reading messages... (press Ctrl-C to quit)
@@ -191,10 +200,11 @@ Notify的功能由三个函数实现，没错，就是三个，这充分体现�
     OK
     127.0.0.1:6379> set str value
     OK
-    
+```
 
 0号客户端运行了PSUBSCRIBE命令后，就开始订阅了符合模式串__keyevent*的事件，1号客户端首先设置服务器开启键空间事件通知功能，然后运行SET命令，这个时间0号客户端就可以接收到这个事件，如下：
 
+```
     /* 0号客户端 */
     127.0.0.1:6379> PSUBSCRIBE __key*
     Reading messages... (press Ctrl-C to quit)
@@ -211,7 +221,7 @@ Notify的功能由三个函数实现，没错，就是三个，这充分体现�
     2) "__key*"
     3) "__keyevent@0__:set"
     4) "str"
-    
+```
 
 ## Notify小结 
 
@@ -219,4 +229,4 @@ Notify的功能由三个函数实现，没错，就是三个，这充分体现�
 
 —-end—-
 
-[1]: http://zcheng.ren/2016/12/27/TheAnnotatedRedisSourceNotify/?utm_source=tuicool&utm_medium=referral
+[1]: http://zcheng.ren/2016/12/27/TheAnnotatedRedisSourceNotify/

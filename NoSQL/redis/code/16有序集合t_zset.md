@@ -18,7 +18,7 @@ Dec 24, 2016 | [Redis][0] | 65 Hits
 
 有序集合zset是由[RedisObject][9]来管理，当Object结构中的type字段为OBJ_ZSET，且编码字段为OBJ_ENCODING_ZIPLIST或OBJ_ENCODING_SKIPLIST。这样才能被称为是一个有序集合对象。
 
-```
+```c
 /* RedisObject结构 */
 
 typedef struct redisObject {
@@ -37,9 +37,11 @@ typedef struct redisObject {
 ```
 通常涉及到两种编码结构时，都会在特定情况下，对底层数据结构进行转换，以达到效率和内存占用的平衡。zset规定了两个阈值如下：
 
+```c
     #define OBJ_ZSET_MAX_ZIPLIST_ENTRIES 128  // ziplist中最多存放的节点数
     
     #define OBJ_ZSET_MAX_ZIPLIST_VALUE 64  // ziplist中最大存放的数据长度
+```
 
 当数据量很小且数据长度很小时，zset采用ziplist编码；一旦数据量超过规定的阈值（128）或者添加的元素长度大于规定的阈值（64）时，会将底层的数据结构转换为skiplist，从而提高效率。
 
@@ -47,7 +49,7 @@ typedef struct redisObject {
 
 zset的迭代器用于范围性操作命令中遍历zset，Redis对于zset的迭代器的设计比较巧妙，采用union来设计。
     
-```
+```c
 /* zset中的迭代器结构涉及，采用union可以节省内存 */
 union _iterzset {
     // 编码为ziplist时的迭代器结构
@@ -72,7 +74,7 @@ union _iterzset {
 
 其中，每一个元素与其对应的分值都是成对出现的。如果对ziplist数据结构不熟悉的可以参考[Redis数据结构ziplist][10]。我们继续，Redis没有向其他结构那样通过encoding字段来控制其接口函数，而是为ziplist和skiplist编码的zset各自提供了一套接口函数。关于ziplist编码的zset有如下接口函数：
   
-```
+```c
 /* 获取zset对象中sptr指向的分值score */
 double zzlGetScore(unsigned char *sptr);
 /* 获取zset对象中sptr指向的元素，返回一个新的Redis string对象，该对象存放元素值*/
@@ -123,7 +125,7 @@ unsigned char *zzlDeleteRangeByRank(unsigned char *zl, unsigned int start, unsig
 ```
 看到这么多的接口函数，都傻眼了。挑个比较重要的来分析一下吧，其他的各位有兴趣的可以找源码看看。
 
-```
+```c
 /* 在指定位置插入一个元素及其分值(element,score)
  * 假定该元素不存在于该ziplist中，其中元素按分值大小排序
  * 如果分值相同，则按字典序排序
@@ -167,7 +169,7 @@ unsigned char *zzlInsert(unsigned char *zl, robj *ele, double score) {
 
 当zset对象的encoding字段为OBJ_ENCODING_SKIPLIST时，其底层的数据结构为skiplist。如果对跳跃表skiplist不熟悉的话可以跳转到[Redis源码分析—跳跃表skiplist][8]。Redis为skiplist编码的有序列表提供了下面的结构体定义。
     
-```
+```c
 typedef struct zset {
 
     dict *dict;  // 字典结构
@@ -180,7 +182,7 @@ typedef struct zset {
 
 底层数据结构为跳跃表的zset相关操作函数均在skiplist中分析过，这里简单罗列一下：
    
-```
+```c
 /* 向skiplist插入给定的(element,score)对 */
 zskiplistNode *zslInsert(zskiplist *zsl, double score, robj *obj);
 /* 删除sjiplist中的给定的(element,score)对 */
@@ -212,7 +214,7 @@ zskiplistNode *zslLastInLexRange(zskiplist *zsl, zlexrangespec *range);
 
 前面提到，当数据量超过规定的阈值或者添加的数据长度超过规定阈值的话，就需要改变zset的底层数据结构。那么，转换的操作怎么实现的呢？我们找到了zsetConvert函数，下面一起看看源代码吧。
    
-```
+```c
 void zsetConvert(robj *zobj, int encoding) {
     zset *zs;
     zskiplistNode *node, *next;
@@ -297,7 +299,7 @@ void zsetConvert(robj *zobj, int encoding) {
 ```
 另外，Redis提供了一个函数，用来在需要的时候将skiplist转换成ziplist编码。
     
-```
+```c
 /* 在需要的时候讲skiplist转换成ziplist编码，用来节省内存*/
 void zsetConvertToZiplistIfNeeded(robj *zobj, size_t maxelelen) {
     if (zobj->encoding == OBJ_ENCODING_ZIPLIST) return;
@@ -328,7 +330,7 @@ Redis为客户端提供了丰富的命令，用来操作zset对象，我们首�
 * INCR：当ZADD指定这个选项时，成员的操作就等同ZINCRBY命令，对成员的分数进行递增操作
 
 接下来，理解了上述参数的意义之后，就可以好好的看代码了。Redis定义了下面几个宏定义，用来标记上述的命令类型。
-```
+```c
 #define ZADD_NONE 0
 #define ZADD_INCR (1<<0)    /* Increment the score instead of setting it. */
 #define ZADD_NX (1<<1)      /* Don't touch elements not already existing. */
@@ -336,7 +338,7 @@ Redis为客户端提供了丰富的命令，用来操作zset对象，我们首�
 #define ZADD_CH (1<<3)      /* Return num of elements added or updated. */
 ```
 ZADD命令由zaddCommand函数实现，其调用了zaddGenericCommand这个泛型函数来完成添加操作。
-```
+```c
 /* ZADD命令的实现 */
 void zaddCommand(client *c) {
     zaddGenericCommand(c,ZADD_NONE);

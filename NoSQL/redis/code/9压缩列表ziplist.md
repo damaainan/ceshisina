@@ -2,7 +2,7 @@
 
  时间 2016-12-13 17:30:03  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/13/TheAnnotatedRedisSourceZiplist/][1]
+原文[http://zcheng.ren/2016/12/13/TheAnnotatedRedisSourceZiplist/][1]
 
 
 压缩列表（ziplist）是由 一系列特殊编码的内存块构成的列表，其是Redis的列表建和哈希键的底层实现之一。和整数集合一样，二者都是为Redis节省内存而开发的数据结构。
@@ -25,9 +25,10 @@ ziplist的头部包含如下三个信息：
 
 ziplist尾部的zlend则表示压缩列表结束，其值固定为0xFF。Redis提供了一个宏定义来表示ziplist header的大小。 
 
+```c
     // 总共10个字节
-    #defineZIPLIST_HEADER_SIZE (sizeof(uint32_t)*2+sizeof(uint16_t))
-    
+    #define ZIPLIST_HEADER_SIZE (sizeof(uint32_t)*2+sizeof(uint16_t))
+```
 
 ## 节点结构 
 
@@ -56,7 +57,7 @@ ziplist的节点可以保存字符串值和整数值，二者的编码属性下�
 -|-|-
 <= 63 bytes | 1 bytes | 00bbbbbb 
 <= 16383 bytes | 2 bytes | 01bbbbbb xxxxxxxx 
-<= 4294967295 bytes | 5 bytes | 10 **____** aaaaaaaa bbbbbbbb cccccccc dddddddd 
+<= 4294967295 bytes | 5 bytes | 10 ____ aaaaaaaa bbbbbbbb cccccccc dddddddd 
 
 * **（二）节点保存整数值**
 
@@ -75,6 +76,7 @@ int64_t | （8 bytes）| 1 11100000
 
 Redis提供了如下的宏定义用于定义不同的encoding和计算encoding类型。
 
+```c
     // 定义不同的encoding
     // 字符串
     #define ZIP_STR_06B (0 << 6)
@@ -88,26 +90,28 @@ Redis提供了如下的宏定义用于定义不同的encoding和计算encoding�
     // 计算encoding类型，true或者false
     #define ZIP_IS_STR(enc) (((enc) & 0xc0) < 0xc0) //'&'按位与，1&1=1，1&0=0
     #define ZIP_IS_INT(enc) (!ZIP_IS_STR(enc) && ((enc) & 0x30) < 0x30)
-    
+```
 
 ## 编码和解码 
 
 在ziplist中，节点的数据结构定义如下： 
 
-    typedef struct zlentry {
+```c
+    typedef struct zlentry{
         unsigned int prevrawlensize, prevrawlen; // 前置节点长度和编码所需长度
         unsigned int lensize, len; // 当前节点长度和编码所需长度
         unsigned int headersize; // 头的大小
         unsigned char encoding; // 编码类型
         unsigned char *p; // 数据部分
     } zlentry;
-    
+```
 
 很显然，内存上不能直接存放结构体，于是，Redis提供了一系列的编码和解码操作函数。这里以编码前置节点长度和解码前置节点长度的源码为例来讲解这一过程： 
 
+```c
     /****************************** 编码前置节点长度信息 *******************************/
     // 将长度信息len写入起止地址为p的内存
-    staticunsignedintzipPrevEncodeLength(unsignedchar*p,unsignedintlen){
+    static unsigned int zipPrevEncodeLength(unsigned char *p,unsigned int len){
         if (p == NULL) {
             return (len < ZIP_BIGLEN) ? 1 : sizeof(len)+1;
         } else {
@@ -129,7 +133,7 @@ Redis提供了如下的宏定义用于定义不同的encoding和计算encoding�
     }
     /****************************** 解码前置节点长度信息 ******************************/
     // 解压prevlensize编码所需长度
-    #defineZIP_DECODE_PREVLENSIZE(ptr, prevlensize) do { \
+    #define ZIP_DECODE_PREVLENSIZE(ptr, prevlensize) do { \
         // 如果第一个字节的值小于254字节
         if ((ptr)[0] < ZIP_BIGLEN) {                                               \
             (prevlensize) = 1;                                                     \
@@ -138,7 +142,7 @@ Redis提供了如下的宏定义用于定义不同的encoding和计算encoding�
         }                                                                          \
     } while(0);
     // 解码前置节点长度信息
-    #defineZIP_DECODE_PREVLEN(ptr, prevlensize, prevlen) do { \
+    #define ZIP_DECODE_PREVLEN(ptr, prevlensize, prevlen) do { \
         // 先判断编码类型，1字节或者5字节
         ZIP_DECODE_PREVLENSIZE(ptr, prevlensize);                                  \
         // 1字节的话直接读取长度值
@@ -151,7 +155,7 @@ Redis提供了如下的宏定义用于定义不同的encoding和计算encoding�
             memrev32ifbe(&prevlen);                                                \
         }                                                                          \
     } while(0);
-    
+```
 
 在编码解码当前节点的长度，ziplist提供了zipEncodeLength和ZIP_DECODE_LENGTH这两个配套函数来完成。这里就不加赘述了。
 
@@ -159,8 +163,9 @@ Redis提供了如下的宏定义用于定义不同的encoding和计算encoding�
 
 ## 创建空ziplist 
 
+```c
     // 创建一个空的ziplist
-    unsignedchar*ziplistNew(void){
+    unsigned char *ziplistNew(void){
         // 空ziplist的大小为11个字节，头部10字节，尾部1字节
         unsigned int bytes = ZIPLIST_HEADER_SIZE+1;
         // 分配内存
@@ -173,26 +178,28 @@ Redis提供了如下的宏定义用于定义不同的encoding和计算encoding�
         zl[bytes-1] = ZIP_END;
         return zl;
     }
-    
+```
 
 ## 插入节点 
 
 ziplist中插入节点操作由ziplistPush函数完成。 
 
+```c
     // ziplist插入节点只能往头或者尾部插入
     // zl: 待插入的ziplist
     // s，slen: 待插入节点和其长度
     // where: 带插入的位置，0代表头部插入，1代表尾部插入
-    unsignedchar*ziplistPush(unsignedchar*zl,unsignedchar*s,unsignedintslen,intwhere){
+    unsigned char *ziplistPush(unsigned char *zl,unsigned char *s,unsigned int slen,int where){
         unsigned char *p;
         // 获取待插入位置的指针
         p = (where == ZIPLIST_HEAD) ? ZIPLIST_ENTRY_HEAD(zl) : ZIPLIST_ENTRY_END(zl);
         return __ziplistInsert(zl,p,s,slen);
     }
-    
+```
 
 真正的插入操作由__ziplistInsert完成。 
 
+```c
     static unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char *s, unsigned int slen) {
         size_t curlen = intrev32ifbe(ZIPLIST_BYTES(zl)), reqlen; // 当前长度和插入节点后需要的长度
         unsigned int prevlensize, prevlen = 0; // 前置节点长度和编码该长度值所需的长度
@@ -291,7 +298,7 @@ ziplist中插入节点操作由ziplistPush函数完成。
         ZIPLIST_INCR_LENGTH(zl,1);
         return zl;
     }
-    
+```
 
 * 什么是连锁更新？
 
@@ -299,6 +306,7 @@ ziplist中插入节点操作由ziplistPush函数完成。
 
 连锁更新的实现由如下函数完成。 
 
+```c
     // 检查并修复后续节点的空间问题
     static unsigned char *__ziplistCascadeUpdate(unsigned char *zl, unsigned char *p) {
         size_t curlen = intrev32ifbe(ZIPLIST_BYTES(zl)), rawlen, rawlensize;
@@ -370,12 +378,13 @@ ziplist中插入节点操作由ziplistPush函数完成。
         }
         return zl;
     }
-    
+```
 
 ## 获取指定索引上的节点 
 
+```c
     // 根据index的值，获取压缩列表第index个节点
-    unsignedchar*ziplistIndex(unsignedchar*zl,intindex){
+    unsigned char *ziplistIndex(unsigned char *zl,int index){
         unsigned char *p;
         unsigned int prevlensize, prevlen = 0;
         // index为负，从尾部开始遍历
@@ -401,12 +410,13 @@ ziplist中插入节点操作由ziplistPush函数完成。
         }
         return (p[0] == ZIP_END || index > 0) ? NULL : p;
     }
-    
+```
 
 ## 删除给定节点 
 
+```c
     // 删除给定节点，输入压缩列表zl和指向删除节点的指针p
-    unsignedchar*ziplistDelete(unsignedchar*zl,unsignedchar**p){
+    unsigned char *ziplistDelete(unsigned char *zl,unsigned char **p){
         size_t offset = *p-zl;
         // 调用底层函数__ziplistDelete进行删除操作
         zl = __ziplistDelete(zl,*p,1);
@@ -415,10 +425,11 @@ ziplist中插入节点操作由ziplistPush函数完成。
         *p = zl+offset;
         return zl;
     }
-    
+```
 
 删除操作的底层实现由__ziplistDelete函数实现。 
 
+```c
     // 删除压缩列表zl中以p起始的num个节点
     static unsigned char *__ziplistDelete(unsigned char *zl, unsigned char *p, unsigned int num) {
         unsigned int i, totlen, deleted = 0;
@@ -477,7 +488,7 @@ ziplist中插入节点操作由ziplistPush函数完成。
         }
         return zl;
     }
-    
+```
 
 ## ziplist小结 
 
@@ -486,6 +497,6 @@ ziplist实际上就可以理解为一个双向列表，其每一个节点都包�
 到此，Redis的基本数据结构已经全部分析完了，按照预先指定的计划，下一阶段主要剖析Redis各种键的实现，这一部分和Redis的交互相关。
 
 
-[1]: http://zcheng.ren/2016/12/13/TheAnnotatedRedisSourceZiplist/?utm_source=tuicool&utm_medium=referral
+[1]: http://zcheng.ren/2016/12/13/TheAnnotatedRedisSourceZiplist/
 
-[4]: http://img1.tuicool.com/RRZVfaB.png!web
+[4]: ../img/RRZVfaB.png

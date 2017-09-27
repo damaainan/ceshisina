@@ -2,7 +2,7 @@
 
  时间 2016-12-06 21:33:16  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/06/TheAnnotatedRedisSourceZskiplist/][2]
+原文[http://zcheng.ren/2016/12/06/TheAnnotatedRedisSourceZskiplist/][2]
 
 
 
@@ -14,6 +14,7 @@ _原文_[http://zcheng.ren/2016/12/06/TheAnnotatedRedisSourceZskiplist/][2]
 
 跳跃表的结构体定义在server.h文件中。其中包括跳跃表节点zskiplistNode和跳跃表zskiplist两个结构体。 
 
+```c
     typedef struct zskiplistNode {
         robj *obj; // 成员对象
         double score;  // 分值
@@ -33,7 +34,7 @@ _原文_[http://zcheng.ren/2016/12/06/TheAnnotatedRedisSourceZskiplist/][2]
         // 表中层数最大的节点层数
         int level;
     } zskiplist;
-    
+```
 
 对于跳跃表节点来说：
 
@@ -58,6 +59,7 @@ Redis在创建一个跳跃表的时候完成以下操作：
 * 设定其level为1，长度length为0
 * 初始化一个表头结点，其层数为32层，每一层均指向NULL
 
+```c
     // 创建跳跃表
     zskiplist *zslCreate(void){
         int j;
@@ -80,7 +82,7 @@ Redis在创建一个跳跃表的时候完成以下操作：
         return zsl;
     }
     // 创建一个跳跃表节点
-    zskiplistNode *zslCreateNode(intlevel,doublescore, robj *obj){
+    zskiplistNode *zslCreateNode(int level,double score, robj *obj){
         // 申请内存
         zskiplistNode *zn = zmalloc(sizeof(*zn)+level*sizeof(struct zskiplistLevel));
         // 设定分值
@@ -89,7 +91,7 @@ Redis在创建一个跳跃表的时候完成以下操作：
         zn->obj = obj;
         return zn;
     }
-    
+```
 
 ## 插入节点 
 
@@ -97,7 +99,8 @@ Redis在创建一个跳跃表的时候完成以下操作：
 
 插入节点的关键在找到在何处插入该节点，跳跃表是按照score分值进行排序的，其查找步骤大致是：从当前最高的level开始，向前查找，如果当前节点的score小于插入节点的score，继续向前；反之，则降低一层继续查找，直到第一层为止。此时，插入点就位于找到的节点之后。
 
-    zskiplistNode *zslInsert(zskiplist *zsl,doublescore, robj *obj){
+```c
+    zskiplistNode *zslInsert(zskiplist *zsl,double score, robj *obj){
         // updata[]数组记录每一层位于插入节点的前一个节点
         zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
         // rank[]记录每一层位于插入节点的前一个节点的排名
@@ -163,7 +166,7 @@ Redis在创建一个跳跃表的时候完成以下操作：
         zsl->length++;
         return x;
     }
-    
+```
 
 ## 跳跃表删除 
 
@@ -175,7 +178,8 @@ Redis提供了三种跳跃表节点删除操作。分别如下：
 
 上述三种操作的删除节点部分都由zslDeleteNode函数完成。zslDeleteNode函数用于删除某个节点，需要给定当前节点和每一层下当前节点的前一个节点。 
 
-    voidzslDeleteNode(zskiplist *zsl, zskiplistNode *x, zskiplistNode **update){
+```c
+    void zslDeleteNode(zskiplist *zsl, zskiplistNode *x, zskiplistNode **update){
         int i;
         for (i = 0; i < zsl->level; i++) {
             if (update[i]->level[i].forward == x) {
@@ -198,11 +202,12 @@ Redis提供了三种跳跃表节点删除操作。分别如下：
             zsl->level--;
         zsl->length--;
     }
-    
+```
 
 以zslDelete为例，根据节点的分值和成员来删除该节点，其他两个操作无非是在查找节点上有区别。 
 
-    intzslDelete(zskiplist *zsl,doublescore, robj *obj){
+```c
+    int zslDelete(zskiplist *zsl,double score, robj *obj){
         zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
         int i;
     
@@ -228,13 +233,14 @@ Redis提供了三种跳跃表节点删除操作。分别如下：
         // 没有删除成功
         return 0; 
     }
-    
+```
 
 ## 获取给定分值和成员的节点的排名 
 
 开篇提到博主在腾讯一面中被问的问题，需要获取每个玩家的排名，跳跃表获取排名的平均复杂度为O（logN），最坏为O（n）。其实现如下： 
 
-    unsignedlongzslGetRank(zskiplist *zsl,doublescore, robj *o){
+```c
+    unsigned long zslGetRank(zskiplist *zsl,double score, robj *o){
         zskiplistNode *x;
         unsigned long rank = 0;
         int i;
@@ -258,7 +264,7 @@ Redis提供了三种跳跃表节点删除操作。分别如下：
         }
         return 0;
     }
-    
+```
 
 这里粗略的画了一张图来说明查找过程，红线代表查找的路线。
 
@@ -268,6 +274,7 @@ Redis提供了三种跳跃表节点删除操作。分别如下：
 
 Redis提供了一些区间操作，用于获取某段区间上的节点或者删除某段区间上的所有节点等操作，这些操作大大提高了Redis的易用性。
 
+```c
     // 获取某个区间上第一个符合范围的节点。
     zskiplistNode *zslFirstInRange(zskiplist *zsl, zrangespec *range){
         zskiplistNode *x;
@@ -317,7 +324,7 @@ Redis提供了一些区间操作，用于获取某段区间上的节点或者删
         return x;
     }
     // 删除给定分值范围内的所有元素
-    unsignedlongzslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dict){
+    unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dict){
         zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
         unsigned long removed = 0;
         int i;
@@ -355,7 +362,7 @@ Redis提供了一些区间操作，用于获取某段区间上的节点或者删
         return removed;
     }
     // 删除给定排名区间内的所有节点
-    unsignedlongzslDeleteRangeByRank(zskiplist *zsl,unsignedintstart,unsignedintend, dict *dict){
+    unsigned long zslDeleteRangeByRank(zskiplist *zsl,unsigned int start,unsigned int end, dict *dict){
         zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
         unsigned long traversed = 0, removed = 0;
         int i;
@@ -391,14 +398,14 @@ Redis提供了一些区间操作，用于获取某段区间上的节点或者删
         // 返回删除的节点个数
         return removed;
     }
-    
+```
 
 ## 跳跃表小结 
 
 跳跃表是有序集合的底层实现之一。在同一个跳跃表中，多个节点可以包含相同的分值，但每个节点的成员对象必须是唯一的。跳跃表的节点是按照分值进行排序的，当分值相同时，节点按照成员对象的大小进行排序。
 
 
-[2]: http://zcheng.ren/2016/12/06/TheAnnotatedRedisSourceZskiplist/?utm_source=tuicool&utm_medium=referral
+[2]: http://zcheng.ren/2016/12/06/TheAnnotatedRedisSourceZskiplist/
 
-[5]: http://img0.tuicool.com/qQjeeiN.png!web
-[6]: http://img2.tuicool.com/Fvm2UzA.jpg!web
+[5]: ../img/qQjeeiN.png
+[6]: ../img/Fvm2UzA.jpg

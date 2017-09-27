@@ -2,7 +2,7 @@
 
  时间 2016-12-09 17:26:37  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/09/TheAnnotatedRedisSourceIntset/][2]
+原文[http://zcheng.ren/2016/12/09/TheAnnotatedRedisSourceIntset/][2]
 
 
 本系列博客文章已经分析了Redis的大部分数据结构，包括动态字符串，双端链表，字典，跳跃表等，这些数据结构都非常强大实用，但是在内存消耗方面也非常“巨大”。Redis的数据都是存放在内存上面的，所以对内存的使用要求及其苛刻，Redis会想方设法的来节省内存。
@@ -13,23 +13,25 @@ _原文_[http://zcheng.ren/2016/12/09/TheAnnotatedRedisSourceIntset/][2]
 
 Intset是集合键的底层实现之一，如果一个集合满足只保存整数元素和元素数量不多这两个条件，那么Redis就会采用intset来保存这个数据集。intset的数据结构如下： 
 
+```c
     typedef struct intset {
         uint32_t encoding; // 编码模式
         uint32_t length;  // 长度
         int8_t contents[];  // 数据部分
     } intset;
-    
+```
 
 其中，encoding字段表示该整数集合的编码模式，Redis提供三种模式的宏定义如下： 
 
+```c
     // 可以看出，虽然contents部分指明的类型是int8_t，但是数据并不以这个类型存放
     // 数据以int16_t类型存放，每个占2个字节，能存放-32768~32767范围内的整数
-    #defineINTSET_ENC_INT16 (sizeof(int16_t))
+    #define INTSET_ENC_INT16 (sizeof(int16_t))
     // 数据以int32_t类型存放，每个占4个字节，能存放-2^32-1~2^32范围内的整数
-    #defineINTSET_ENC_INT32 (sizeof(int32_t))
+    #define INTSET_ENC_INT32 (sizeof(int32_t))
     // 数据以int64_t类型存放，每个占8个字节，能存放-2^64-1~2^64范围内的整数
-    #defineINTSET_ENC_INT64 (sizeof(int64_t))
-    
+    #define INTSET_ENC_INT64 (sizeof(int64_t))
+```
 
 length字段用来保存集合中元素的个数。
 
@@ -45,8 +47,9 @@ Redis提供intsetUpgradeAndAdd函数来对整数集合进行升级然后添加�
 
 其源代码如下：
 
+```c
     // 升级整数集合并添加元素
-    staticintset *intsetUpgradeAndAdd(intset *is,int64_tvalue){
+    static intset *intsetUpgradeAndAdd(intset *is,int64_t value){
         // 获取当前编码格式
         uint8_t curenc = intrev32ifbe(is->encoding);
         // 获取需要升级到的编码格式
@@ -122,7 +125,7 @@ Redis提供intsetUpgradeAndAdd函数来对整数集合进行升级然后添加�
             return v16;
         }
     }
-    
+```
 
 Redis不提供降级操作，所以一旦对数组进行了升级，编码就会一直保持升级后的状态。
 
@@ -132,20 +135,22 @@ Redis不提供降级操作，所以一旦对数组进行了升级，编码就会
 
 Redis在创建intset集合时，默认采用int16_t编码格式。 
 
+```c
     intset *intsetNew(void){
         intset *is = zmalloc(sizeof(intset));
         is->encoding = intrev32ifbe(INTSET_ENC_INT16);
         is->length = 0;
         return is;
     }
-    
+```
 
 ## 添加元素 
 
 intset在添加元素时需要判断新数据的大小，如果超出原编码格式能表示的范围，则调用上面的intsetUpgradeAndAdd函数进行添加，如果没有超出，则直接添加到指定位置。 
 
+```c
     // 向整数集合中添加元素
-    intset *intsetAdd(intset *is,int64_tvalue,uint8_t*success){
+    intset *intsetAdd(intset *is,int64_t value,uint8_t *success){
         uint8_t valenc = _intsetValueEncoding(value);
         uint32_t pos;
         if (success) *success = 1;
@@ -174,7 +179,7 @@ intset在添加元素时需要判断新数据的大小，如果超出原编码�
     // 查找value在整数集is中该添加到的位置
     // 如果整数集中不存在value值，则返回0，并将插入位置存放在pos变量中
     // 反之，返回1，表示value已存在
-    staticuint8_tintsetSearch(intset *is,int64_tvalue,uint32_t*pos){
+    static uint8_t intsetSearch(intset *is,int64_t value,uint32_t *pos){
         int min = 0, max = intrev32ifbe(is->length)-1, mid = -1;
         int64_t cur = -1;
     
@@ -216,7 +221,7 @@ intset在添加元素时需要判断新数据的大小，如果超出原编码�
         }
     }
     // 将整数集的from为开始的数据全部移动到to位以后
-    staticvoidintsetMoveTail(intset *is,uint32_tfrom,uint32_tto){
+    static void intsetMoveTail(intset *is,uint32_t from,uint32_t to){
         void *src, *dst;
         uint32_t bytes = intrev32ifbe(is->length)-from;
         uint32_t encoding = intrev32ifbe(is->encoding);
@@ -239,12 +244,13 @@ intset在添加元素时需要判断新数据的大小，如果超出原编码�
         }
         memmove(dst,src,bytes);
     }
-    
+```
 
 ## 移除数据 
 
+```c
     // 将整数集合中值为value的整数移除
-    intset *intsetRemove(intset *is,int64_tvalue,int*success){
+    intset *intsetRemove(intset *is,int64_t value,int *success){
         uint8_t valenc = _intsetValueEncoding(value);
         uint32_t pos;
         if (success) *success = 0;
@@ -266,7 +272,7 @@ intset在添加元素时需要判断新数据的大小，如果超出原编码�
         }
         return is;
     }
-    
+```
 
 ## 其他操作函数 
 
@@ -280,5 +286,5 @@ intset在添加元素时需要判断新数据的大小，如果超出原编码�
 
 整数集合intset的底层实现为数组，该数组中的元素有序、无重复的存放，为了更好的节省内存，intset提供了升级操作，但是不支持降级操作。intset的源码实现比较简单，但功能上很实用。
 
-[2]: http://zcheng.ren/2016/12/09/TheAnnotatedRedisSourceIntset/?utm_source=tuicool&utm_medium=referral
-[5]: http://img1.tuicool.com/FRNVVj3.png!web
+[2]: http://zcheng.ren/2016/12/09/TheAnnotatedRedisSourceIntset/
+[5]: ../img/FRNVVj3.png

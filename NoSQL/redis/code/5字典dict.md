@@ -2,7 +2,7 @@
 
  时间 2016-12-05 18:19:00  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/04/TheAnnotatedRedisSourceDict/][2]
+原文[http://zcheng.ren/2016/12/04/TheAnnotatedRedisSourceDict/][2]
 
 
 
@@ -18,6 +18,7 @@ Redis定义了dictEntry，dictType，dictht和dict四个结构体来实现字典
 
 字典中每一对键值都以dictEntry节点的形式存放，其结构体实现如下： 
 
+```c
     typedef struct dictEntry {
         void *key;  // 键
         union {   
@@ -29,20 +30,22 @@ Redis定义了dictEntry，dictType，dictht和dict四个结构体来实现字典
         struct dictEntry *next;  // 指向下一个哈希表节点
         // 此处可以看出字典采用了开链法才解决哈希冲突
     } dictEntry;
-    
+```
 
 ## 哈希表dictht 
 
+```c
     typedef struct dictht {
         dictEntry **table; // 哈希表数组
         unsigned long size;  // 哈希表大小
         unsigned long sizemask; // 哈希表大小掩码，用于计算索引值
         unsigned long used;  // 该哈希表中已有节点的数量
     } dictht;
-    
+```
 
 ## 字典dict 
 
+```c
     typedef struct dict {
         dictType *type; // 字典类型，保存一些用于操作特定类型键值对的函数
         void *privdata; // 私有数据，保存需要传给那些类型特定函数的可选数据
@@ -50,13 +53,14 @@ Redis定义了dictEntry，dictType，dictht和dict四个结构体来实现字典
         long rehashidx; // rehash索引，不进行rehash时其值为-1
         int iterators; // 当前正在使用的迭代器数量
     } dict;
-    
+```
 
 ## 字典类型函数dictType 
 
+```c
     typedef struct dictType {
         // 计算哈希值的函数
-        unsignedint(*hashFunction)(constvoid*key);
+        unsigned int (*hashFunction)(const void *key);
         // 复制键的函数
         void *(*keyDup)(void *privdata, const void *key);
         // 复制值的函数
@@ -68,7 +72,7 @@ Redis定义了dictEntry，dictType，dictht和dict四个结构体来实现字典
         // 销毁值的函数
         void (*valDestructor)(void *privdata, void *obj);
     } dictType;
-    
+```
 
 看完这四个结构的源码之后，脑海中应该有字典的一个模糊结构了。下面用一张图来帮助大家弄清楚Redis字典的结构。
 
@@ -78,11 +82,12 @@ Redis定义了dictEntry，dictType，dictht和dict四个结构体来实现字典
 
 当往字典中添加键值对时，需要根据键的大小计算出哈希值和索引值，然后再根据索引值，将包含新键值对的哈希表节点放到哈希表数组的指定索引上面。
 
+```c
     // 计算哈希值
     h = dictHashKey(d, key);
     // 调用哈希算法计算哈希值
-    #definedictHashKey(d, key) (d)->type->hashFunction(key)
-    
+    #defined ictHashKey(d, key) (d)->type->hashFunction(key)
+```
 
 Redis提供了三种计算哈希值的函数，其分别是：
 
@@ -94,11 +99,12 @@ Redis提供了三种计算哈希值的函数，其分别是：
 
 计算出哈希值之后，需要计算其索引。Redis采用下列算式来计算索引值。 
 
+```c
     // 举例：h为5，哈希表的大小初始化为4，sizemask则为size-1，
     // 于是h&sizemask = 2，
     // 所以该键值对就存放在索引为2的位置
     idx = h & d->ht[table].sizemask;
-    
+```
 
 ## rehash算法 
 
@@ -112,9 +118,10 @@ rehash是Redis字典实现的一个重要操作。dict采用链地址法来处�
 
 rehash算法的源码如下： 
 
+```c
     // 执行N步渐进式的rehash操作，如果仍存在旧表中的数据迁移到新表，则返回1，反之返回0
     // 每一步操作移动一个索引值下的键值对到新表
-    intdictRehash(dict *d,intn){
+    int dictRehash(dict *d,int n){
         int empty_visits = n*10; // 最大允许访问的空桶值，也就是该索引下没有键值对
         if (!dictIsRehashing(d)) return 0;
     
@@ -162,29 +169,31 @@ rehash算法的源码如下：
         // 如果没有完成则返回1
         return 1;
     }
-    
+```
 
 Redis中rehash的操作不是一次完成，而是渐进式完成，每次只移动若干个索引下的键值对链表到新表（在ht[0]中采用rehashidx参数来记录当前需要rehash的索引值）。为此，Redis提供了两种渐进式的操作来进行rehash。
 
 一种是按按索引值，每次只移动一个索引值下的键值对数据到新哈希表里。 
 
+```c
     // 在执行查询和更新操作时，如果符合rehash条件就会触发一次rehash操作，每次执行一步
     static void _dictRehashStep(dict *d) {
         if (d->iterators == 0) dictRehash(d,1);
     }
-    
+```
 
 另一种是按照时间，每次执行一段固定的时间。 
 
+```c
     // 获取当前的时间戳（一毫秒为单位）
-    longlongtimeInMilliseconds(void){
+    long long timeInMilliseconds(void){
         struct timeval tv;
     
         gettimeofday(&tv,NULL);
         return (((long long)tv.tv_sec)*1000)+(tv.tv_usec/1000);
     }
     // rehash操作每次执行ms时间就退出
-    intdictRehashMilliseconds(dict *d,intms){
+    int dictRehashMilliseconds(dict *d,int ms){
         long long start = timeInMilliseconds();
         int rehashes = 0;
     
@@ -194,13 +203,14 @@ Redis中rehash的操作不是一次完成，而是渐进式完成，每次只移
         }
         return rehashes;
     }
-    
+```
 
 分析到这里，可能最想弄清楚的就是什么时候需要rehash，Redis定义了一个负载因子dict_force_resize_ratio，该因子的初始值为5，如果满足一下条件，则需要进行rehash操作。 
 
+```c
     // 哈希表中键值对的数量与哈希表的大小的比大于负载因子
     d->ht[0].used/d->ht[0].size > dict_force_resize_ratio
-    
+```
 
 到此，Redis的整个rehash操作基本上理清楚了。
 
@@ -210,6 +220,7 @@ Redis中rehash的操作不是一次完成，而是渐进式完成，每次只移
 
 Redis调用dictCreate来创建一个空字典 
 
+```c
     dict *dictCreate(dictType *type,
             void *privDataPtr)
     {
@@ -230,7 +241,7 @@ Redis调用dictCreate来创建一个空字典
         d->iterators = 0; // 正在使用的迭代器数量
         return DICT_OK;
     }
-    
+```
 
 ## 添加键值对 
 
@@ -241,7 +252,8 @@ Redis调用dictCreate来创建一个空字典
 
 添加键值对的功能由dictAdd函数来实现，其源码如下： 
 
-    intdictAdd(dict *d,void*key,void*val)
+```c
+    int dictAdd(dict *d,void *key,void *val)
     {
         // 往字典中添加一个只有key的键值对
         dictEntry *entry = dictAddRaw(d,key);
@@ -253,7 +265,7 @@ Redis调用dictCreate来创建一个空字典
         return DICT_OK;
     }
     // 添加只有key的键值对，如果成功则返回该键值对，反之则返回空
-    dictEntry *dictAddRaw(dict *d,void*key)
+    dictEntry *dictAddRaw(dict *d,void *key)
     {
         int index;
         dictEntry *entry;
@@ -279,11 +291,12 @@ Redis调用dictCreate来创建一个空字典
         dictSetKey(d, entry, key);
         return entry;
     }
-    
+```
 
 上述添加方式在，在存在该key的时候，直接返回NULL，Redis还提供了另一种添加键值对的函数，它在处理存在相同key的情况时，直接用新键值对来替换旧键值对。其实现如下： 
 
-    intdictReplace(dict *d,void*key,void*val)
+```c
+    int dictReplace(dict *d,void *key,void *val)
     {
         dictEntry *entry, auxentry;
     
@@ -298,13 +311,14 @@ Redis调用dictCreate来创建一个空字典
         dictFreeVal(d, &auxentry);
         return 0;
     }
-    
+```
 
 ## 查找键值对 
 
 根据键值对的键大小在字典中查找对应的键值对。 
 
-    dictEntry *dictFind(dict *d,constvoid*key)
+```c
+    dictEntry *dictFind(dict *d,const void *key)
     {
         dictEntry *he;
         unsigned int h, idx, table;
@@ -332,21 +346,23 @@ Redis调用dictCreate来创建一个空字典
         }
         return NULL;
     }
-    
+```
 
 Redis还定义了dictFetchValue函数，用来返回给定键的值，底层实现还是调用dictFind函数。 
 
-    void*dictFetchValue(dict *d,constvoid*key){
+```c
+    void *dictFetchValue(dict *d,const void *key){
         dictEntry *he;
         // 获取该键值对
         he = dictFind(d,key);
         // 返回该key对应的value
         return he ? dictGetVal(he) : NULL;
     }
-    
+```
 
 此外，对于字典的查找，Redis还定义了一个函数，用于从字典中随机返回一个键值对。 
 
+```c
     dictEntry *dictGetRandomKey(dict *d)
     {
         dictEntry *he, *orighe;
@@ -387,26 +403,28 @@ Redis还定义了dictFetchValue函数，用来返回给定键的值，底层实�
         while(listele--) he = he->next;
         return he;
     }
-    
+```
 
 ## 删除键值对 
 
 dictDelete函数用于从字典中删除给定键所对应的键值对，其有两种形式： 
 
+```c
     // 删除该键值对，并释放键和值
-    intdictDelete(dict *ht,constvoid*key){
+    int dictDelete(dict *ht,const void *key){
         return dictGenericDelete(ht,key,0);
     }
     // 删除该键值对，不释放键和值
-    intdictDeleteNoFree(dict *ht,constvoid*key){
+    int dictDeleteNoFree(dict *ht,const void *key){
         return dictGenericDelete(ht,key,1);
     }
-    
+```
 
 这两个函数的底层实现均由dictGenericDelete函数来实现： 
 
+```c
     // 查找并删除指定键对应的键值对
-    staticintdictGenericDelete(dict *d,constvoid*key,intnofree)
+    static int dictGenericDelete(dict *d,const void *key,int nofree)
     {
         unsigned int h, idx;
         dictEntry *he, *prevHe;
@@ -448,22 +466,24 @@ dictDelete函数用于从字典中删除给定键所对应的键值对，其有�
         }
         return DICT_ERR; /* not found */
     }
-    
+```
 
 ## 字典删除 
 
 dictRelease函数用于删除和释放整个字典结构。 
 
-    voiddictRelease(dict *d)
+```c
+    void dictRelease(dict *d)
     {
         _dictClear(d,&d->ht[0],NULL); // 清除哈希表ht[0]
         _dictClear(d,&d->ht[1],NULL); // 清除哈希表ht[1]
         zfree(d); // 释放字典
     }
-    
+```
 
 其中，释放哈希表的操作由_dictClear底层函数实现。 
 
+```c
     int _dictClear(dict *d, dictht *ht, void(callback)(void *)) {
         unsigned long i;
     
@@ -489,12 +509,12 @@ dictRelease函数用于删除和释放整个字典结构。
         _dictReset(ht);
         return DICT_OK; /* never fails */
     }
-    
+```
 
 ## dict小结 
 
 Redis字典结构采用哈希表作为底层实现，每个字典包括两个哈希表，一个用来平常使用，另一个在rehash的时候使用。Redis提供了三种哈希算法，对整数，字符串等类型的键都能较好的处理。Redis的哈希表采用了链地址法来解决哈希冲突。最有特点的是，Redis在对字典进行扩容和收缩时，需要对哈希表中的所有键值对rehash到新哈希表里面，这个rehash操作不是一次性完成的，而是采用渐进式完成，这一措施使得rehash过程不会影响Redis对字典进行增删查改操作的效率。
 
 
-[2]: http://zcheng.ren/2016/12/04/TheAnnotatedRedisSourceDict/?utm_source=tuicool&utm_medium=referral
-[5]: http://img1.tuicool.com/FJVbaiE.png!web
+[2]: http://zcheng.ren/2016/12/04/TheAnnotatedRedisSourceDict/
+[5]: ../img/FJVbaiE.png

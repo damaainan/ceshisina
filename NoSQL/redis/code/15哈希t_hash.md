@@ -2,7 +2,7 @@
 
  时间 2016-12-23 16:19:53  ZeeCoder
 
-_原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
+原文[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
 
 
 
@@ -12,6 +12,7 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
 
 前面我们提到，Redis对于其五个对用户公开的数据类型统一采用RedisObject管理。Hash类型只需要修改encoding字段就能表示该对象为一个哈希对象。为了便于大家理解，我还是不厌其烦的先罗列出RedisObject的结构体定义。 
 
+```c
     typedef struct redisObject {
         unsigned type:4; // hash类型
         unsigned encoding:4;  // hash结构，此字段为OBJ_ENCODING_ZIPLIST或OBJ_ENCODING_HT
@@ -19,36 +20,40 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
         int refcount; // 引用计数，便于内存管理
         void *ptr;  // 指向底层的数据结构
     } robj;
-    
+```
 
 如果底层编码是ziplist的话，hash键按照如下方式排列，每一个key或value都作为ziplist的一个节点。
 
+```c
     |ziplistHeader|   entry1  |  entry2  |   entry3  |   entry4  | end |
                         ↓          ↓           ↓           ↓    
                   |    key1   |  value1  |    key2   |   value2  |
-    
+```
 
 创建一个hash对象的时候，为了节省内存，会默认采用OBJ_ENCODING_ZIPLIST编码，其接口函数如下：
 
+```c
     robj *createHashObject(void){
         unsigned char *zl = ziplistNew();
         robj *o = createObject(OBJ_HASH, zl);  // 创建一个hash对象
         o->encoding = OBJ_ENCODING_ZIPLIST;  // 默认采用hash编码
         return o;
     }
-    
+```
 
 一旦存放的整数或字符串长度超过一个阈值，或者ziplist的节点个数超过规定的阈值，就会将底层编码结构转换成OBJ_ENCODING_HT，此阈值在配置文件redis.conf中设定。Redis对于hash对象没有实现编码类型的反向转换功能，即一旦转换成OBJ_ENCODING_HT就不能转回去了。
 
+```c
     /* redis.conf文件中设定阈值 */
     hash-max-ziplist-value 64 // ziplist中最大能存放的值长度
     hash-max-ziplist-entries 512 // ziplist中最多能存放的节点数量
-    
+```
 
 ## Hash迭代器 
 
 迭代器是每个数据类型都应该具备的数据结构，便于对该数据类型的每一个数据进行遍历操作，Hash的迭代器结构定义如下：
 
+```c
     typedef struct {
         robj *subject;  // 指向的hash对象
         int encoding;  // 编码类型
@@ -58,10 +63,11 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
         dictIterator *di; // 字典迭代器
         dictEntry *de;  // 指向当前迭代字典节点的指针
     } hashTypeIterator;
-    
+```
 
 迭代器提供了一系列的相关操作函数，初始化，指向下一个迭代器，以及释放迭代器，这些源码一并分析了。
 
+```c
     /* 初始化一个迭代器 */
     hashTypeIterator *hashTypeInitIterator(robj *subject){
         hashTypeIterator *hi = zmalloc(sizeof(hashTypeIterator));
@@ -81,14 +87,14 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
         return hi;
     }
     /* 释放一个迭代器 */
-    voidhashTypeReleaseIterator(hashTypeIterator *hi){
+    void hashTypeReleaseIterator(hashTypeIterator *hi){
         if (hi->encoding == OBJ_ENCODING_HT) {
             dictReleaseIterator(hi->di);
         }
         zfree(hi);
     }
     /* 迭代到下一个节点 */ 
-    inthashTypeNext(hashTypeIterator *hi){
+    int hashTypeNext(hashTypeIterator *hi){
         if (hi->encoding == OBJ_ENCODING_ZIPLIST) {
             unsigned char *zl;
             unsigned char *fptr, *vptr;
@@ -123,21 +129,22 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
         }
         return C_OK;
     }
-    
+```
 
 ## Hash基本接口 
 
 和其他数据类型一样，Redis为hash数据类型提供了丰富的接口函数。为了方便学习，我把函数声明罗列出来如下。
 
+```c
     /* 检查ziplist存放的数长度是否超过，如超过，则将编码类型转换成字典编码*/
-    voidhashTypeTryConversion(robj *o, robj **argv,intstart,intend);
+    void hashTypeTryConversion(robj *o, robj **argv,int start,int end);
     /* 当hash采用OBJ_ENCODING_HT编码的时候，需要将键值对转换成字符串编码 */
-    voidhashTypeTryObjectEncoding(robj *subject, robj **o1, robj **o2);
+    void hashTypeTryObjectEncoding(robj *subject, robj **o1, robj **o2);
     /* 当hash采用OBJ_ENCODING_ZIPLIST编码的时候，根据域field获取值*/
-    inthashTypeGetFromZiplist(robj *o, robj *field,unsignedchar**vstr,
+    int hashTypeGetFromZiplist(robj *o, robj *field,unsigned char **vstr,
                                unsigned int *vlen, long long *vll);
     /* 当hash采用OBJ_ENCODING_HT编码的时候，根据域field获取它的值*/
-    inthashTypeGetFromHashTable(robj *o, robj *field, robj **value);
+    int hashTypeGetFromHashTable(robj *o, robj *field, robj **value);
     /* 根据键获取值得泛型实现 
      * 当底层编码为OBJ_ENCODING_HT时，调用上述hashTypeGetFromHashTable函数
      * 当底层编码为OBJ_ENCODING_ZIPLIST时，调用上述hashTypeGetFromZiplist函数
@@ -146,40 +153,40 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
     /* 获取hash对象中域field所指向值的长度*/
     size_t hashTypeGetValueLength(robj *o, robj *field);
     /* 判断域field是否存在于hash对象中*/
-    inthashTypeExists(robj *o, robj *field);
+    int hashTypeExists(robj *o, robj *field);
     /* 向hash对象中添加键值对数据
      * 如果该键存在，则更新它的值；反之则添加新键值对
      */
-    inthashTypeSet(robj *o, robj *field, robj *value);
+    int hashTypeSet(robj *o, robj *field, robj *value);
     /* 删除hash对象中域field及其对应的值*/
-    inthashTypeDelete(robj *o, robj *field);
+    int hashTypeDelete(robj *o, robj *field);
     /* 返回hash对象中所有数据项的数量*/
-    unsignedlonghashTypeLength(robj *o);
+    unsigned long hashTypeLength(robj *o);
     /* 根据当前迭代器指向的位置，获取ziplist结构中当前位置的key或value
      * 至于是key或者value，由what参数执行，其取值为OBJ_HASH_KEY或OBJ_HASH_VALUE
      */
-    voidhashTypeCurrentFromZiplist(hashTypeIterator *hi,intwhat,
+    void hashTypeCurrentFromZiplist(hashTypeIterator *hi,intwhat,
                                     unsigned char **vstr,
                                     unsigned int *vlen,
                                     long long *vll);
     /* 同上，根据当前迭代器指向的位置，获取字典结构中当前位置上的key或者value*/
-    voidhashTypeCurrentFromHashTable(hashTypeIterator *hi,intwhat, robj **dst);
+    void hashTypeCurrentFromHashTable(hashTypeIterator *hi,intwhat, robj **dst);
     /* 获取迭代器当前位置上的key或value的泛型实现*/
     robj *hashTypeCurrentObject(hashTypeIterator *hi,intwhat);
     /* 在当前数据库中查找指定key是否存在，如果不存在就创建*/
     robj *hashTypeLookupWriteOrCreate(client *c, robj *key);
     /* 将当前hash对象的编码类型由OBJ_ENCODING_HT转换成OBJ_ENCODING_ZIPLIST*/
-    voidhashTypeConvertZiplist(robj *o,intenc);
+    void hashTypeConvertZiplist(robj *o,intenc);
     /* hash对象的底层编码转换的泛型实现*/
-    voidhashTypeConvert(robj *o,intenc);
-    
+    void hashTypeConvert(robj *o,intenc);
+```
 
 还是以最重要的添加元素函数hashTypeSet为例，来剖析一下它的源码。添加元素的操作需要注意一下几点。
 
 * 如果当前键field存在，则更新它的值；反之不存在就添加该键值对
 * 当ziplist中存放的数据项个数超过512时，会将底层编码转换为OBJ_ENCODING_HT
-```
-    inthashTypeSet(robj *o, robj *field, robj *value){
+```c
+    int hashTypeSet(robj *o, robj *field, robj *value){
         int update = 0;
         // 底层编码为OBJ_ENCODING_ZIPLIST
         if (o->encoding == OBJ_ENCODING_ZIPLIST) {
@@ -245,18 +252,20 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
 
 对于一个hash对象，Redis为其与客户端交互提供了一系列的操作命令，例如，执行如下命令：
 
+```c
     // 添加键值对[key value]到hash对象中
     127.0.0.1:6379> HSET hash key value
     (integer) 1
     // 获取hash对象中key对应的值
     127.0.0.1:6379> HGET hash key
     "value"
-    
+```
 
 这两个命令分别可以往hash对象中添加元素和获取键对应的值，其实现由hsetCommand和hgetCommand实现。下面来一起看看他们的具体实现步骤。
 
+```c
     /* 向哈希对象中添加元素*/
-    voidhsetCommand(client *c){
+    void hsetCommand(client *c){
         int update;
         robj *o;
         // 查找数据库中是否存在该哈希对象，如果不存在则创建并添加到数据库
@@ -278,7 +287,7 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
         server.dirty++;
     }
     /* 获取哈希对象中指定键对应的值 */
-    voidhgetCommand(client *c){
+    void hgetCommand(client *c){
         robj *o;
         // 检查是否存在该对象且编码类型为HASH
         if ((o = lookupKeyReadOrReply(c,c->argv[1],shared.nullbulk)) == NULL ||
@@ -289,7 +298,7 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
     /* 获取值的底层实现函数
      * 将哈希对象域yield的值添加到回复中
      */
-    staticvoidaddHashFieldToReply(redisClient *c, robj *o, robj *field){
+    static void addHashFieldToReply(redisClient *c, robj *o, robj *field){
         int ret;
         // 对象不存在
         if (o == NULL) {
@@ -329,41 +338,42 @@ _原文_[http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/][1]
             redisPanic("Unknown hash encoding");
         }
     }
-    
+```
 
 其他的命令函数，我一一列出函数声明，有兴趣的同学可以深入到t_set.c文件中剖析它们。
 
+```c
     /* 添加函数操作，如果域field存在则不做处理，反之则添加*/
-    voidhsetnxCommand(client *c);
+    void hsetnxCommand(client *c);
     /* 添加一个或多个键值对到hash对象中*/
-    voidhmsetCommand(client *c);
+    void hmsetCommand(client *c);
     /* 给指定hash对象中的域field对应的值执行增加某个增量操作，值必须是整数*/
-    voidhincrbyCommand(client *c);
+    void hincrbyCommand(client *c);
     /* 同上，只不过增量是float类型*/
-    voidhincrbyfloatCommand(client *c);
+    void hincrbyfloatCommand(client *c);
     /* 获取一个或多个域field对应的值*/
-    voidhmgetCommand(client *c);
+    void hmgetCommand(client *c);
     /* 删除hash对象中的指定域field*/
-    voidhdelCommand(client *c);
+    void hdelCommand(client *c);
     /* 获取hash对象中所有键值对的总个数*/
-    voidhlenCommand(client *c);
+    void hlenCommand(client *c);
     /* 获取hash对象中指定域field对应的值的长度*/
-    voidhstrlenCommand(client *c);
+    void hstrlenCommand(client *c);
     /* 通过当前迭代器指向的位置获取键值对并回复，genericHgetallCommand的底层实现函数*/
-    staticvoidaddHashIteratorCursorToReply(client *c, hashTypeIterator *hi,intwhat);
+    static void addHashIteratorCursorToReply(client *c, hashTypeIterator *hi,int what);
     /* 获取哈希对象中所有的键值对的泛型实现*/
-    voidgenericHgetallCommand(client *c,intflags);
+    void genericHgetallCommand(client *c,int flags);
     /* 获取哈希对象中所有的域*/
-    voidhkeysCommand(client *c);
+    void hkeysCommand(client *c);
     /* 获取哈希对象中所有的值*/
-    voidhvalsCommand(client *c);
+    void hvalsCommand(client *c);
     /* 获取哈希对象中所有的域和值*/ 
-    voidhgetallCommand(client *c);
+    void hgetallCommand(client *c);
     /* 判断哈希对象中是否存在该域field*/
-    voidhexistsCommand(client *c);
+    void hexistsCommand(client *c);
     /* 客户端扫描操作 */
-    voidhscanCommand(client *c);
-    
+    void hscanCommand(client *c);
+```
 
 ## Hash小结 
 
@@ -371,4 +381,4 @@ Hash是Redis的一个重要数据类型，其提供了HSET，HGET，HINCRBY，HL
 
 整个Hash类型的源码剖析就到此，各位读者如果有疑惑的话，可以在下方留言，期待结交更多学习Redis的同学或前辈，一起交流学习。
 
-[1]: http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/?utm_source=tuicool&utm_medium=referral
+[1]: http://zcheng.ren/2016/12/23/TheAnnotatedRedisSourcet-hash/
