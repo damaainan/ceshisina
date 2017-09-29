@@ -1,10 +1,9 @@
 # Logstash实践: 分布式系统的日志监控
 
- 时间 2015-12-28 15:56:15  [伯乐在线][0]  [相似文章][1] (_1_)
+ 时间 2015-12-28 15:56:15  
 
-_原文_[http://blog.jobbole.com/96823/][2]
+原文[http://blog.jobbole.com/96823/][2]
 
- 主题 [Logstash][3][分布式系统][4]
 
 1. 前言
 
@@ -200,10 +199,7 @@ Indexer的配置文件中，我明确指定了 **message_format** 的格式，�
 * [Logstash 官方文档][15]
 
 [0]: http://www.tuicool.com/sites/Yni6be
-[1]: /articles/dup?id=vAjIF3
-[2]: http://blog.jobbole.com/96823/?utm_source=tuicool&utm_medium=referral
-[3]: /topics/11140060
-[4]: /topics/11000146
+[2]: http://blog.jobbole.com/96823/
 [5]: http://img0.tuicool.com/M36Jvij.png!web
 [6]: http://img1.tuicool.com/JjAB7f.png!web
 [7]: http://img0.tuicool.com/3YviUjI.png!web

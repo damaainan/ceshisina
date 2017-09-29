@@ -447,15 +447,15 @@ query string 搜索以 q=field:value 的形式进行查询，比如查询 name �
 
 [0]: http://www.tuicool.com/sites/vEnA7b3
 [1]: http://www.tuicool.com/articles/dup?id=3mUnIju
-[2]: http://funhacks.net/2017/03/22/elasticsearch/?utm_source=tuicool&utm_medium=referral
+[2]: http://funhacks.net/2017/03/22/elasticsearch/
 [3]: http://www.tuicool.com/topics/11020003
-[4]: ./uIzaqmY.png
+[4]: ./img/uIzaqmY.png
 [5]: https://www.elastic.co/products/elasticsearch
 [6]: https://lucene.apache.org/
 [7]: https://www.elastic.co/use-cases
 [8]: https://www.elastic.co/downloads/elasticsearch
 [9]: http://localhost:9200/
-[10]: ./nmERJ3e.png
+[10]: ./img/nmERJ3e.png
 [11]: https://httpie.org/
 [12]: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-from-size.html
 [13]: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html
