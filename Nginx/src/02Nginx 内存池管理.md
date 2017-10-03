@@ -24,6 +24,7 @@ Nginx 内存分配总流图如下：**其中 size 是用户请求分配内存的
 
 Nginx 内存池基本结构定义如下：
 
+```c
     /* 内存池结构 */
     /* 文件 core/ngx_palloc.h */
     typedef struct {/* 内存池数据结构模块 */
@@ -46,20 +47,22 @@ Nginx 内存池基本结构定义如下：
     typedef struct ngx_pool_s   ngx_pool_t;
     typedef struct ngx_chain_s  ngx_chain_t;
     
-    
+```
 
 大块内存分配的数据结构如下：
 
+```c
     typedef struct ngx_pool_large_s ngx_pool_large_t;  
     
     struct ngx_pool_large_s{  
               ngx_pool_large_t  *next;    //指向下一块大块内存  
               void    *alloc;             //指向分配的大块内存  
     };  
-    
+```
 
 其他数据结构如下：
 
+```c
     typedef void (*ngx_pool_cleanup_pt)(void *data);    //cleanup的callback类型  
     
     typedef struct ngx_pool_cleanup_s ngx_pool_cleanup_t;  
@@ -76,7 +79,7 @@ Nginx 内存池基本结构定义如下：
         u_char    *name;  
         ngx_log_t *log;  
     } ngx_pool_cleanup_file_t;  
-    
+```
 
 内存池基本机构之间的关系如下图所示：
 
@@ -92,6 +95,7 @@ Nginx 内存池基本结构定义如下：
 
 ### **创建内存池**
 
+```c
     /* 创建内存池，该函数定义于 src/core/ngx_palloc.c 文件中 */
     ngx_pool_t *
     ngx_create_pool(size_t size, ngx_log_t *log)
@@ -125,10 +129,11 @@ Nginx 内存池基本结构定义如下：
         return p;
     }
     
-    
+```
 
 其中内存分配函数 ngx_memalign 定义如下：
 
+```c
     void *  
     ngx_memalign(size_t alignment, size_t size, ngx_log_t *log)  
     {  
@@ -151,12 +156,13 @@ Nginx 内存池基本结构定义如下：
     }  
     //函数分配以NGX_POOL_ALIGNMENT字节对齐的size字节的内存，在src/core/ngx_palloc.h文件中：  
     #define NGX_POOL_ALIGNMENT       16  
-    
+```
 
 ### 销毁内存池
 
 销毁内存池由 void ngx_destroy_pool(ngx_pool_t *pool) 函数完成。该函数将遍历内存池链表，释放所有内存，如果注册了clenup (也是一个链表结构)，亦将遍历该 cleanup 链表结构依次调用 clenup 的 handler 清理。同时，还将遍历 large 链表，释放大块内存。
 
+```c
     /* 销毁内存池 */
     
     void
@@ -216,12 +222,13 @@ Nginx 内存池基本结构定义如下：
         }
     }
     
-    
+```
 
 ### 重置内存池
 
 重置内存池由 void ngx_reset_pool(ngx_pool_t *pool) 函数完成。该函数将释放所有 large 内存，并且将 d->last 指针重新指向 ngx_pool_t 结构之后数据区的开始位置，使内存池恢复到刚创建时的位置。由于内存池刚被创建初始化时是不包含大块内存的，所以必须释放大块内存。
 
+```c
     /* 重置内存池
      * 定义于 src/core/ngx_palloc.c 文件中
      */
@@ -248,7 +255,7 @@ Nginx 内存池基本结构定义如下：
         pool->large = NULL;
     }
     
-    
+```
 
 ### 内存分配
 
@@ -256,16 +263,18 @@ Nginx 内存池基本结构定义如下：
 
 小块内存分配，即请求分配空间 size 小于内存池最大内存值 max。小内存分配的接口函数如下所示：
 
+```c
     void *ngx_palloc(ngx_pool_t *pool, size_t size);
     void *ngx_pnalloc(ngx_pool_t *pool, size_t size);
     void *ngx_pcalloc(ngx_pool_t *pool, size_t size);
     void *ngx_pmemalign(ngx_pool_t *pool, size_t size, size_t alignment);
-    
+```
 
 ngx_palloc 和 ngx_pnalloc 都是从内存池里分配 size 大小内存。他们的不同之处在于，palloc 取得的内存是对齐的，pnalloc 则不考虑内存对齐问题。ngx_pcalloc 是直接调用 palloc 分配内存，然后进行一次 0 初始化操作。ngx_pmemalign 将在分配 size 大小的内存并按 alignment 对齐，然后挂到 large 字段下，当做大块内存处理。
 
 ngx_palloc的过程一般为，首先判断待分配的内存是否大于 pool->max，如果大于则使用 ngx_palloc_large 在 large 链表里分配一段内存并返回， 如果小于测尝试从链表的 pool->current 开始遍历链表，尝试找出一个可以分配的内存，当链表里的任何一个节点都无法分配内存的时候，就调用 ngx_palloc_block 生成链表里一个新的节点， 并在新的节点里分配内存并返回， 同时， 还会将pool->current 指针指向新的位置（从链表里面pool->d.failed小于等于4的节点里找出） 。
 
+```c
     /* 分配内存 */
     
     void *
@@ -355,8 +364,10 @@ ngx_palloc的过程一般为，首先判断待分配的内存是否大于 pool->
         return m;
     }
     
-    
+```
 
+
+```c
     /* 直接调用palloc函数，再进行一次0初始化操作 */
     void *
     ngx_pcalloc(ngx_pool_t *pool, size_t size)
@@ -396,7 +407,7 @@ ngx_palloc的过程一般为，首先判断待分配的内存是否大于 pool->
         return p;
     }
     
-    
+```
 
 小内存分配之后如下图所示：
 
@@ -406,6 +417,7 @@ ngx_palloc的过程一般为，首先判断待分配的内存是否大于 pool->
 
 ### 大块内存分配
 
+```c
     /* 分配大块内存 */
     static void *
     ngx_palloc_large(ngx_pool_t *pool, size_t size)
@@ -489,7 +501,7 @@ ngx_palloc的过程一般为，首先判断待分配的内存是否大于 pool->
         return NGX_DECLINED;
     }
     
-    
+```
 
 大块内存申请之后如下所示：
 
@@ -497,6 +509,7 @@ ngx_palloc的过程一般为，首先判断待分配的内存是否大于 pool->
 
 ### cleanup 资源
 
+```c
     /* 注册cleanup；
      * size 是 data 字段所指向的资源的大小；
      */
@@ -608,7 +621,7 @@ ngx_palloc的过程一般为，首先判断待分配的内存是否大于 pool->
         }
     }
     
-    
+```
 
 参考资料：
 
@@ -623,11 +636,11 @@ ngx_palloc的过程一般为，首先判断待分配的内存是否大于 pool->
 《[Ningx代码研究][10]》
 
 [0]: http://blog.csdn.net/chenhanzhun/article/details/39153797#t7
-[1]: https://box.kancloud.cn/2016-09-01_57c7edce99d27.jpg
-[2]: https://box.kancloud.cn/2016-09-01_57c7edcebbcb0.jpg
-[3]: https://box.kancloud.cn/2016-09-01_57c7edced7a5b.jpg
-[4]: https://box.kancloud.cn/2016-09-01_57c7edcef154b.jpg
-[5]: https://box.kancloud.cn/2016-09-01_57c7edcf198d1.jpg
+[1]: ./img/2016-09-01_57c7edce99d27.jpg
+[2]: ./img/2016-09-01_57c7edcebbcb0.jpg
+[3]: ./img/2016-09-01_57c7edced7a5b.jpg
+[4]: ./img/2016-09-01_57c7edcef154b.jpg
+[5]: ./img/2016-09-01_57c7edcf198d1.jpg
 [6]: http://blog.csdn.net/v_july_v/article/details/7040425
 [7]: http://blog.csdn.net/livelylittlefish/article/details/6586946
 [8]: http://blog.chinaunix.net/uid-24830931-id-3764858.html

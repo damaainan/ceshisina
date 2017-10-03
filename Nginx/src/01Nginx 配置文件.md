@@ -26,7 +26,7 @@ Nginx 服务运行时，需要加载几个核心模块和一个事件模块，�
 * 事件类配置项；
 
 各个配置项的具体实现如下：
-
+```
     /* Nginx 服务基本配置项 */
     
     /* 用于调试、定位的配置项 */
@@ -124,13 +124,13 @@ Nginx 服务运行时，需要加载几个核心模块和一个事件模块，�
     
     #6、每个worker进行的最大连接数
     #   语法格式：worker_connections number;
-    
+```
     
 
 HTTP 核心模块的配置
 
 具体可以参看《[Nginx 中 HTTP 核心模块配置][2]》
-
+```
     /* HTTP 核心模块配置的功能 */
     
     /* 虚拟主机与请求分发 */
@@ -451,11 +451,11 @@ HTTP 核心模块的配置
     # 语法：server_tokens   on | off;
     # 默认：server_tokens   on;
     # 配置块：http、server、location
-    
+```
     
 
 以下是在 Ubuntu 12.04 系统成功安装 Nginx 之后的主配置文件：
-
+```nginx
     #Nginx服务器正常启动时会读取该配置文件，以下的值都是默认的，若需要可自行修改；
     #以下是配置选项
     
@@ -615,7 +615,7 @@ HTTP 核心模块的配置
         #}
     
     }
-    
+```
     
 
 参考资料：
@@ -626,8 +626,8 @@ HTTP 核心模块的配置
 
 《[Nginx开发从入门到精通][4]》
 
-[0]: https://box.kancloud.cn/2016-09-01_57c7edce687dc.jpg
-[1]: https://box.kancloud.cn/2016-09-01_57c7edce82018.jpg
+[0]: ./img/2016-09-01_57c7edce687dc.jpg
+[1]: ./img/2016-09-01_57c7edce82018.jpg
 [2]: http://nginx.org/en/docs/http/ngx_http_core_module.html
 [3]: http://kb.cnblogs.com/page/98352/#section1-2
 [4]: http://tengine.taobao.org/book/index.html
