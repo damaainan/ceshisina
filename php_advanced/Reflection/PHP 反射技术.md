@@ -116,6 +116,7 @@ $class 就是要进行加载的类的名称，请注意是 类 的名称。
 文件A中有一个写好的类Person，在文件B中要进行使用。这个时候在文件B中添加一个 `__aotoload` 函数即可。而且这个函数的写法也比较的简单（一切按照最简思路来设计的话）。 
 
 ```php
+    <?php
     function __autoload($class) {
         $filename = "$class.class.php";
         if(!file_exists($filename)){
@@ -275,7 +276,8 @@ PHP解释器在扫描到文件B的时候会先进行检查，如果未引入目�
 
 ### 执行类的方法
 
-```
+```php
+    <?php
     $instance->getName(); // 执行Person 里的方法getName
     // 或者：
     $method = $class->getmethod('getName'); // 获取Person 类中的getName方法

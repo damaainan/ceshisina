@@ -27,6 +27,7 @@ php反射api由若干类组成，可帮助我们用来访问程序的元数据�
 **例子**
 
 ```php
+<?php
 class Person {
   /**
    * For the sake of demonstration, we"re setting this private
@@ -68,6 +69,7 @@ class Person {
 接下来反射它，只要把类名"Person"传递给ReflectionClass就可以了：
 
 ```php
+<?php
 $class = new ReflectionClass('Person');//建立 Person这个类的反射类
 $instance = $class->newInstanceArgs($args);//相当于实例化Person 类
 
@@ -75,6 +77,7 @@ $instance = $class->newInstanceArgs($args);//相当于实例化Person 类
 1）获取属性(Properties)：**
 
 ```php
+<?php
 $properties = $class->getProperties();
 foreach($properties as $property) {
   echo $property->getName()."\n";
@@ -106,6 +109,7 @@ ReflectionProperty::IS_PRIVATE
 通过getDocComment可以得到写给property的注释。
 
 ```php
+<?php
 foreach($properties as $property) {
   if($property->isProtected()) {
     $docblock = $property->getDocComment();
