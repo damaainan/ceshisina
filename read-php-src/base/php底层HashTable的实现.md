@@ -5,9 +5,6 @@
 
 [**阿木**][3] 2014年10月11日发布 
 
-* 推荐 **0** 推荐
-* 收藏 **9** 收藏，**2.4k** 浏览
-
 HashTable对PHP来说是一种非常重要的数据结构。很多PHP的内部实现（变量的作用域，函数表，类的属性、方法，数组）就是通过HashTable来实现的。最近了解了一下PHP底层HashTable的实现。  
 PHP底层HashTable的实现有两个非常重要的结构分别是:HashTable和Bucket。  
 先说一下HashTable结构:  
@@ -104,9 +101,9 @@ HashTable的底层实现代码如下:
 > 2、插入Bucket2时，由于Bucket2的key和Bucket1的key出现冲突，此时将Bucket2放在双链表的前面。 由于Bucket2后插入并置于链表的前端，此时Bucket2.pNext指向Bucket1，由于Bucket2后插入。 Bucket1.pListNext指向Bucket2，这时Bucket2就是哈希表的最后一个元素，这是HashTable.pListTail指向Bucket2。\3、插入Bucket3，该key没有哈希到槽位1，这时Bucket2.pListNext指向Bucket3，因为Bucket3后插入。 同时HashTable.pListTail改为指向Bucket3。  
 > 简单来说就是哈希表的Bucket结构维护了哈希表中插入元素的先后顺序，哈希表结构维护了整个哈希表的头和尾。 在操作哈希表的过程中始终保持预算之间的关系。
 
-[0]: /a/1190000000718519
-[1]: /t/hashtable/blogs
-[2]: /t/php/blogs
-[3]: /u/forse
-[4]: /img/bVdaY5
+[0]: https://segmentfault.com/a/1190000000718519
+[1]: https://segmentfault.com/t/hashtable/blogs
+[2]: https://segmentfault.com/t/php/blogs
+[3]: https://segmentfault.com/u/forse
+[4]: ./img/bVdaY5.png
 [5]: http://www.php-internals.com/book/?p=chapt03/03-01-02-hashtable-in-php

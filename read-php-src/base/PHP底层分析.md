@@ -1,10 +1,7 @@
 # [PHP_底层分析][0]
 
-* [php][1]
-[**Alogy**][2] 2016年08月26日发布 
+ 2016年08月26日发布 
 
-* 推荐 **3** 推荐
-* 收藏 **14** 收藏，**774** 浏览
 
 ### PHP编译特点
 
@@ -697,6 +694,7 @@ define函数当然是 调用zend_register_constant声明的常量
         } else {
             RETURN_FALSE;
         }
+    }
 ```
 
 - - -
@@ -734,6 +732,7 @@ define函数当然是 调用zend_register_constant声明的常量
         zend_hash_add(EG(zend_constants), name, c->name_len, (vaid*)c,sizeof(zend_constant, NULL) == FAILURE);
         ...
         ...
+    }
 ```
 
 对象定义常量
