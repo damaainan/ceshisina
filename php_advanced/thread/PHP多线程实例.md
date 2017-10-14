@@ -1,3 +1,8 @@
+# [PHP多线程实例][0]
+
+2016年12月01日发布 
+
+```php
 <?php 
 class vote extends Thread {
     public $res    = '';
@@ -75,3 +80,8 @@ while (count($pool)) {
     sleep(1);
 }
 echo "所有线程执行完毕.\n";
+```
+
+[0]: /a/1190000007660780
+[1]: /t/php/blogs
+[2]: /u/showersun

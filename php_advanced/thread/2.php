@@ -1,5 +1,15 @@
 <?php
 
+/* 报错的写法
+$thread = new class extends Thread {
+    public function run() {
+        echo 'hello world'.PHP_EOL;
+    }
+}
+print_r(get_class_methods($thread));
+
+ */
+
 class ttt extends Thread {
     public function run() {
         echo 'hello world'.PHP_EOL;
@@ -8,9 +18,9 @@ class ttt extends Thread {
 
 $thread = new ttt();
 
+//打印对象所有方法
 var_dump(get_class_methods($thread));
 
-//打印对象所有方法
 
 
 

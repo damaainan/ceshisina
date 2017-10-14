@@ -205,8 +205,8 @@ echo "关闭OK\n";
 
 具体参考: [http://www.cnblogs.com/lchb/articles/3078169.html][4]
 
-[0]: ./img/05172951-a955fce4e5d04082828e717fe0e102f9.jpg
-[1]: ./img/QQ%E6%88%AA%E5%9B%BE20151010134926.png
-[2]: ./img/QQ%E6%88%AA%E5%9B%BE20151010140519.png
-[3]: ./img/QQ%E6%88%AA%E5%9B%BE20151010140341.png
+[0]: ../img/05172951-a955fce4e5d04082828e717fe0e102f9.jpg
+[1]: ../img/QQ%E6%88%AA%E5%9B%BE20151010134926.png
+[2]: ../img/QQ%E6%88%AA%E5%9B%BE20151010140519.png
+[3]: ../img/QQ%E6%88%AA%E5%9B%BE20151010140341.png
 [4]: http://www.cnblogs.com/lchb/articles/3078169.html
