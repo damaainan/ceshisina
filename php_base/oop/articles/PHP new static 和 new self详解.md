@@ -45,3 +45,6 @@ new self
 
 2.`static` 则上面的基础上，更聪明一点点：`static` 会返回执行 `new static()` 的类，比如 Son 执行 `get_class(Son::getStatic())` 返回的是 Son, Father 执行 `get_class(Father::getStatic())` 返回的是 Father而在没有继承的情况下，可以认为 `new self` 和 `new static`是返回相同的结果。
 
+> Tips: 可以用一个好的 IDE 来直接看注释。比如 PhpStorm：
+
+![](https://segmentfault.com/img/remote/1460000008396832)
