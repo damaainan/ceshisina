@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tree</title>
+</head>
+<body>
+    <canvas id='d1' width="600" height="500" style="border:dashed 2px #ccc;"></canvas>
+    <script>
+    var drawtree = function (ctx,startx,starty,length,angle,depth,branchWidth){
+        var rand=Math.random,
+        n_length,n_angle,n_depth,maxbranch=4,
+        endx,endy,maxangle=2 * Math.PI / 4;
+        var subbranch;
+        ctx.beginPath();
+        ctx.moveTo(startx,starty);
+        endx=startx + length * Math.cos(angle);
+        endy=starty + length * Math.sin(angle);
+        ctx.lineCap='round';
+        ctx.lineWidth=branchWidth;
+        ctx.lineTo(endx,endy);
+        if(depth<=2 ){
+            //树的枝干
+            ctx.strokeStyle= 'rgb(0,' + (((rand() * 64) +128) >>0) + ',0)';
+        }
+        else{
+            //树的叶子
+            ctx.strokeStyle= 'rgb(0,' + (((rand() * 64) +64) >>0) + ',50,25)';
+        }
+        ctx.stroke();
+        n_depth = depth-1;
+        //判断树是否结束
+        if(!n_depth){
+            return;
+        }
+        subbranch= (rand() * (maxbranch-1)) + 1;
+        branchWidth *=0.5; 
+        for(var i=0;i<subbranch;i++){
+            n_angle = angle +rand() * maxangle -maxangle *0.5;
+            n_length = length * (0.5 + rand() *0.5);
+            setTimeout(function (){
+                drawtree(ctx,endx,endy,n_length,n_angle,n_depth,branchWidth);
+                return;
+            },500)
+        }
+    }
+
+    var canvas=document.getElementById('d1');
+    var ctx= canvas.getContext('2d');
+    //初始化的树
+    drawtree(ctx,300,470,100,-Math.PI / 2, 12, 12);
+    </script>
+</body>
+</html>
+
+<!-- 作者：michaelgbw
+链接：http://www.jianshu.com/p/6dbfa38fa536
+來源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。 -->

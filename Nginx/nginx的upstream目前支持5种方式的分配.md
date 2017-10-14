@@ -5,47 +5,59 @@
 weight指定轮询几率，weight和访问比率成正比，用于后端服务器性能不均的情况。    
 例如：
 
+```nginx
     upstream bakend {
          server 192.168.0.14 weight=10;
          server 192.168.0.15 weight=10;
     }
+```
+
 ### 2、ip_hash 
 每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session的问题。  
 例如：
 
+```nginx
     upstream bakend {
          ip_hash;
          server 192.168.0.14:88;
          server 192.168.0.15:80;
     }
+```
+
 ### 3、fair（第三方）
 按后端服务器的响应时间来分配请求，响应时间短的优先分配。
 
+```nginx
     upstream backend {
         server server1;
         server server2;
         fair;
     }
+```
+
 ### 4、url_hash（第三方）
 按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。  
 例：在upstream中加入hash语句，server语句中不能写入weight等其他的参数，hash_method是使用的hash算法  
 
+```nginx
     upstream backend {
         server squid1:3128;
         server squid2:3128;
         hash   $request_uri;
         hash_method crc32;
     }
- 
+```
 ### 5、tips:
-upstream bakend{#定义负载均衡设备的Ip及设备状态
 
-    ip_hash;
+```nginx
+    upstream bakend{#定义负载均衡设备的Ip及设备状态
+        ip_hash;
         server 127.0.0.1:9090 down;
         server 127.0.0.1:8080 weight=2;
         server 127.0.0.1:6060;
         server 127.0.0.1:7070 backup;
     }
+```
 
 在需要使用负载均衡的server中增加
 

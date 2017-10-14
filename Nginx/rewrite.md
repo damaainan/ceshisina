@@ -60,12 +60,12 @@ ngx_http_rewrite_module 模块用来使用正则表达式（PCRE）改变请求�
 #### if 中的几种 判断条件
 
 1. 一个变量名，如果变量 $variable 的值为空字符串或者字符串"0"，则为false
-1. 变量与一个字符串的比较 相等为(=) 不相等为(!=) 注意此处不要把相等当做赋值语句啊
-1. 变量与一个正则表达式的模式匹配 操作符可以是(~ 区分大小写的正则匹配， ~*不区分大小写的正则匹配，!~!~*，前面两者的非)
-1. 检测文件是否存在 使用 -f(存在) 和 !-f(不存在)
-1. 检测路径是否存在 使用 -d(存在) 和 !-d(不存在) 后面判断可以是字符串也可是变量
-1. 检测文件、路径、或者链接文件是否存在 使用 -e(存在) 和 !-e(不存在) 后面判断可以是字符串也可是变量
-1. 检测文件是否为可执行文件 使用 -x(可执行) 和 !-x(不可执行) 后面判断可以是字符串也可是变量
+1. 变量与一个字符串的比较 相等为(`=`) 不相等为(`!=`) 注意此处不要把相等当做赋值语句啊
+1. 变量与一个正则表达式的模式匹配 操作符可以是(`~` 区分大小写的正则匹配， `~*`不区分大小写的正则匹配，`!~!~*`，前面两者的非)
+1. 检测文件是否存在 使用 `-f`(存在) 和 `!-f`(不存在)
+1. 检测路径是否存在 使用 `-d`(存在) 和 `!-d`(不存在) 后面判断可以是字符串也可是变量
+1. 检测文件、路径、或者链接文件是否存在 使用 `-e`(存在) 和 `!-e`(不存在) 后面判断可以是字符串也可是变量
+1. 检测文件是否为可执行文件 使用 `-x`(可执行) 和 `!-x`(不可执行) 后面判断可以是字符串也可是变量
 
 注意 上面 第1，2，3条被判断的必须是 变量， 4, 5, 6, 7则可以是变量也可是字符串
 
@@ -108,7 +108,7 @@ ngx_http_rewrite_module 模块用来使用正则表达式（PCRE）改变请求�
 从0.8.42版本开始， return 语句可以指定重定向 url (状态码可以为如下几种 301,302,303,307),  
 也可以为其他状态码指定响应的文本内容，并且重定向的url和响应的文本可以包含变量。
 
-有一种特殊情况，就是重定向的url可以指定为此服务器本地的urI，这样的话，nginx会依据请求的协议$scheme， server_name_in_redirect 和 port_in_redirect自动生成完整的 url （此处要说明的是server_name_in_redirect 和port_in_redirect 指令是表示是否将server块中的 server_name 和 listen 的端口 作为redirect用 ）
+有一种特殊情况，就是重定向的url可以指定为此服务器本地的urI，这样的话，nginx会依据请求的协议`$scheme`， `server_name_in_redirect` 和 `port_in_redirect`自动生成完整的 url （此处要说明的是`server_name_in_redirect` 和`port_in_redirect` 指令是表示是否将server块中的 `server_name` 和 listen 的端口 作为redirect用 ）
 
 ```nginx
     # return code [text]; 返回 ok 给客户端
@@ -133,7 +133,7 @@ ngx_http_rewrite_module 模块用来使用正则表达式（PCRE）改变请求�
 
     rewrite regex replacement [flag];
 
-rewrite 指令是使用指定的正则表达式regex来匹配请求的urI，如果匹配成功，则使用replacement更改URI。rewrite指令按照它们在配置文件中出现的顺序执行。可以使用flag标志来终止指令的进一步处理。如果替换字符串replacement以http：//，https：//或$ scheme开头，则停止处理后续内容，并直接重定向返回给客户端。
+rewrite 指令是使用指定的正则表达式`regex`来匹配请求的urI，如果匹配成功，则使用`replacement`更改URI。rewrite指令按照它们在配置文件中出现的顺序执行。可以使用flag标志来终止指令的进一步处理。如果替换字符串replacement以http：//，https：//或$ scheme开头，则停止处理后续内容，并直接重定向返回给客户端。
 
 第一种情况 重写的字符串 带http://
 
@@ -166,13 +166,13 @@ rewrite 指令是使用指定的正则表达式regex来匹配请求的urI，如�
 
 #### rewrite 的四个 flag
 
-1. last  
+1. `last`  
 停止处理当前的ngx_http_rewrite_module的指令集，并开始搜索与更改后的URI相匹配的location;
-1. break  
+1. `break`  
 停止处理当前的ngx_http_rewrite_module指令集，就像上面说的break指令一样;
-1. redirect  
+1. `redirect`  
 返回302临时重定向。
-1. permanent  
+1. `permanent`  
 返回301永久重定向。
 
 ```nginx
@@ -197,8 +197,8 @@ rewrite 指令是使用指定的正则表达式regex来匹配请求的urI，如�
 ```
 ##### last 与 break 的区别
 
-> last 和 break一样 它们都会终止此 location 中其他它rewrite模块指令的执行，  
-> 但是 last 立即发起新一轮的 location 匹配 而 break 则不会
+> `last` 和 `break一样` 它们都会终止此 location 中其他它rewrite模块指令的执行，  
+> 但是 **last 立即发起新一轮的 location 匹配** 而 break 则不会
 
 ```nginx
     location / {
@@ -239,7 +239,7 @@ rewrite 指令是使用指定的正则表达式regex来匹配请求的urI，如�
 
 ##### 友情提醒下
 
-此处提一下 在上面的代码中即使将 proxy_pass 放在 带有 break 的 rewrite上面它也是会执行的，这就要扯到nginx的执行流程了。大家有兴趣可以了解下。
+此处提一下 在上面的代码中即使将 `proxy_pass` 放在 带有 break 的 rewrite上面它也是会执行的，这就要扯到nginx的执行流程了。大家有兴趣可以了解下。
 
 #### rewrite 后的请求参数
 

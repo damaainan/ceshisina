@@ -63,17 +63,15 @@ Nginx最多可以打开文件数
 
 ###（2）Nginx事件处理模型
 
+```nginx
     events {
-    
-    use epoll;
-    
-    worker_connections 65535;
-    
-    multi_accept  on;
-    
+        use epoll;  
+        worker_connections 65535;
+        multi_accept  on;
     }
+```
 
-nginx采用epoll事件模型，处理效率高
+nginx采用`epoll`事件模型，处理效率高
 
 work_connections是 单个worker进程允许客户端最大连接数 ，这个数值一般根据服务器性能和内存来制定，实际最大值就是worker进程数乘以work_connections
 

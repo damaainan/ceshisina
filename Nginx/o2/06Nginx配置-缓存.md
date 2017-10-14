@@ -129,4 +129,4 @@ Nginx之所以被大量使用，是因为Nginx可以将目标端服务器的指�
 
 [1]: http://www.jialeens.com/archives/307
 
-[3]: http://img2.tuicool.com/7JB7faq.jpg
+[3]: ../img/7JB7faq.jpg

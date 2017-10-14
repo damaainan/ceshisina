@@ -35,7 +35,7 @@ if (!-e $document_root$fastcgi_script_name) {
 ```
 
 
-**注意: Nginx对配置的格式非常的严格,if后面一定要有空格,运算符前后也必须要用空格隔开**
+**注意: Nginx对配置的格式非常的严格,`if后面一定要有空格`,运算符前后也必须要用空格隔开**
 
     If 空格 (条件) {
         重写模式
@@ -134,7 +134,7 @@ if (!-e $document_root$fastcgi_script_name) {
 /*
 要加break,以 xx.com/dsafsd.html这个不存在页面为例,我们观察访问日志, 日志中显示的访问路径,依然是GET /dsafsd.html HTTP/1.1
 提示: 服务器内部的rewrite和302跳转不一样.302跳转url会改变,变成重新http请求404.html, 而内部rewrite, 上下文没变,
-就是说 fastcgi_script_name 仍然是 dsafsd.html,因此会循环重定向.
+就是说 **fastcgi_script_name** 仍然是 dsafsd.html,因此会循环重定向.
 */
 ```
 
@@ -167,7 +167,7 @@ if (-d $request_filename){
 }
 ```
 
-用([^/])匹配最后一个非'/'的字符,然后自己强行再添加一个'/'($2变量后的那个） 
+用`([^/])`匹配最后一个非'`/`'的字符,然后自己强行再添加一个'`/`'($2变量后的那个） 
 
 **Example4**
 
@@ -197,7 +197,7 @@ location ~* ^.+\.(jpg|jpeg|gif|png|swf|rar|zip|css|js)$ {
 
 隐藏index.php
 
-apache下只要在全局配置文件中设置了缺省首页index.php就能实现直接到达index.php，但是nginx目前默认情况下只能到达index.html而不能访问到index.php,所以只好rewrite重写使其支持
+apache下只要在全局配置文件中设置了缺省首页index.php就能实现直接到达index.php，但是**nginx目前默认情况下只能到达index.html而不能访问到index.php**,所以**`只好rewrite重写使其支持`**
 
     
 

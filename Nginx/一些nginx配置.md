@@ -1,20 +1,20 @@
 # 一些nginx配置 
 
 * [一些nginx配置][0]
-  * [使用独立目录, 然后include具体配置][1]
-    * [gzip on][2]
-  * [for multi processers][3]
-  * [static file cache][4]
-  * [proxy pass][5]
-  * [静态目录 or 文件][6]
-  * [静态站][7]
-  * [服务转发][8]
-  * [return][9]
-  * [for mobile][10]
-  * [redirect to www][11]
-  * [allow and deny][12]
-  * [负载均衡][13]
-  * [centos service cmds][14]
+    * [使用独立目录, 然后include具体配置][1]
+        * [gzip on][2]
+    * [for multi processers][3]
+    * [static file cache][4]
+    * [proxy pass][5]
+    * [静态目录 or 文件][6]
+    * [静态站][7]
+    * [服务转发][8]
+    * [return][9]
+    * [for mobile][10]
+    * [redirect to www][11]
+    * [allow and deny][12]
+    * [负载均衡][13]
+    * [centos service cmds][14]
 
 nginx配置
 
@@ -34,8 +34,6 @@ nginx.conf
 
 ```nginx
     http {
-    
-        .......
         include /etc/nginx/conf.d/*.conf;
         include sites/*.conf;
     }
@@ -49,11 +47,6 @@ nginx.conf
 
 ```nginx
     http {
-    
-    
-        .....
-    
-    
         gzip on;
         gzip_min_length 1k;
         gzip_comp_level 5;
@@ -61,7 +54,7 @@ nginx.conf
         gzip_types text/plain text/css application/javascript text/javascript application/x-javascript text/xml application/xml application/xml+rss application/json image/x-icon image/png image/jpg image/jpeg application/font-woff;
         gzip_vary on;
     }
-```   
+```
 
 ## for multi processers
 
@@ -252,26 +245,30 @@ e.g.
 
 ## redirect to www
 
+```nginx
     server {
         server_name  abc.com;
         rewrite ^(.*) http://www.abc.com$1 permanent;
     }
+```
 
 ## allow and deny
 
 访问ip控制
 
+```nginx
     location /test/ {
         allow 192.168.1.1;
         deny all;
     
     }
-    
+```
 
 ## 负载均衡
 
 nginx.conf
 
+```nginx
     http {
     
         upstream A {
@@ -279,9 +276,11 @@ nginx.conf
             server 192.168.1.2:5000;
         }
     }
+```
 
 sites/a.conf
 
+```nginx
     server {
     
         location / {
@@ -289,7 +288,7 @@ sites/a.conf
         }
     
     }
-    
+```
 
 - - -
 

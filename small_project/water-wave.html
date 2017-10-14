@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>水纹的canvas(差分函数)</title>
+</head>
+
+<!-- 
+来自于 
+http://www.jianshu.com/p/225842949d76
+
+的博客
+
+核心代码：差分方程的递归公式
+
+diff[i] -= (diff[i] - diff[i+1])*(1-facter*d);
+
+每次点击(click)后，这点击的地方改变震荡点的diff值。
+
+if(mouse.y>(height/2-50) && mouse.y<(height/2 +50)){
+  initDiff = 1000;
+  vPos = 1 + Math.floor((verNum - 2) * mouse.x / wid);
+  diff[vPos] = initDiff;
+  }
+
+设置每个点的diff值，然后改变对应点的Y坐标，核心理念就是n个小直线组成的震荡，只不过我们把每条直线的空隙去掉，整体是矩形呈现
+
+增加趣味性，还加入了可控的小参数
+
+function Vertex(x,y,baseY){
+      this.baseY = baseY; //水纹基线
+      this.x = x;
+      this.y = y;
+      this.vy = 0;  //    竖直方向的速度
+      this.targetY = 0; //目标位置
+      this.friction = 0.15;  //水的弹力
+      this.deceleration = 0.95; //减缓力
+  }
+
+  Vertex.prototype.updateY = function(diffVal){
+      this.targetY = diffVal + this.baseY;
+      this.vy += (this.targetY - this.y);
+      this.vy *= this.deceleration;
+      this.y += this.vy * this.friction;
+  }
+
+
+大家可以试着更改下这些参数，曲线的频度和幅度会有所改变~
+还有安利下window.requestAnimationFrame这个函数，在H5动画里还是用这个，比setInterval好用,不会丢帧哦~
+结语
+
+
+ -->
+
+<style type="text/css">
+    body{
+            overflow: hidden;
+        }
+        .info{
+            position: absolute;
+            top: 10%;
+            left: 45%;
+            color: #777;
+        }
+        #tips{
+            position: absolute;
+            top: 26%;
+            left: 43%;
+            color: #777;
+        }
+        .info h1{
+            margin-left: -20px;
+            margin-bottom: 10px;
+            letter-spacing: 10px;
+            font-weight: lighter;
+            font-size: 35px;
+            font-family: "Microsoft Yahei";
+            -webkit-user-select:none;
+        }
+        span{
+             height:10px;
+               width:25px;
+             display:inline-block;
+             cursor:pointer;  
+                    transition: height 0.2s;
+        }
+        span:hover{
+             height:20px;
+        }
+        #blue{
+              background-color:#367aec;
+              left:30px;
+        }
+        #purple{
+              background-color:#E84A5F;
+              left:50px;
+        }
+        #black{
+              background-color:#52D681;
+              left:70px;
+        }
+</style>
+<body>
+<div class="info">
+    <h1>水波纹</h1>
+    <span id="blue" onclick="blue()"></span>
+       <span id="purple" onclick="purple()"></span>
+        <span id="black" onclick="black()"></span>
+</div>
+<div id = "tips">点色块改变液体颜色</div>
+<canvas id="can" style="background:#fff;" height="150"></canvas>
+<script type="text/javascript">
+    function Vertex(x,y,baseY){
+        this.baseY = baseY; //水纹基线
+        this.x = x;
+        this.y = y;
+        this.vy = 0;  //    竖直方向的速度
+        this.targetY = 0; //目标位置
+        this.friction = 0.15;  //水的弹力
+        this.deceleration = 0.95; //减缓力
+    }
+
+    Vertex.prototype.updateY = function(diffVal){
+        this.targetY = diffVal + this.baseY;
+        this.vy += (this.targetY - this.y);
+        this.vy *= this.deceleration;
+        this.y += this.vy * this.friction;
+    }
+    var canvas = document.getElementById('can')
+    var ctx = canvas.getContext('2d')
+    var wid = window.innerWidth
+    var height = window.innerHeight * 3/4
+    var blue = function(){
+        color1 = "#71A4F9";
+        color2 = "#367aec";
+    }
+    var black = function(){
+        color1 = "#52D681";
+        color2 = "#00AD7C";
+    }
+    var purple = function(){
+        color1 = "#FF847C";
+        color2 = "#E84A5F";
+    }
+    var color1 = "#71A4F9",
+    color2 = "#367aec";
+    var vertexes = [],
+    verNum = 200,
+    diff=[],
+    initDiff=1000;
+
+    canvas.width = wid
+    canvas.height = height
+    var vPos = verNum / 2;  //震荡点
+    var limitd = 20;     //缓冲
+    //初始化
+    for(var i =0;i < verNum; i++){
+        vertexes[i] = new Vertex(wid / (verNum - 1) * i,height/2,height / 2)
+        diff[i] = 0
+    }
+    //鼠标点击事件
+    canvas.addEventListener('click', clickChangediff, false)
+    window.addEventListener('keydown', keydownChangelimitd);
+    //绘制
+    function clickChangediff(e){
+        var mouse = {x:null, y:null};
+        if(e.pageX || e.pageY){
+            mouse.x = e.pageX;
+            mouse.y = e.pageY;
+        }else{
+            mouse.x = e.clientX + document.body.scrollLeft +document.documentElement.scrollLeft;
+                    mouse.y = e.clientY + document.body.scrollTop +document.documentElement.scrollTop;
+        }
+        //重设差分值
+        if(mouse.y>(height/2-50) && mouse.y<(height/2 +50)){
+            initDiff = 1000;
+            vPos = 1 + Math.floor((verNum - 2) * mouse.x / wid);
+            diff[vPos] = initDiff;
+        }
+        console.log(mouse.x, mouse.y)
+    }
+    function draw(){
+        //小矩形(其实是更大的矩形)
+        ctx.save()
+        ctx.fillStyle = color1
+        ctx.beginPath()
+        ctx.moveTo(0, height)
+        ctx.lineTo(vertexes[0].x, vertexes[0].y)
+        for(var i=1; i<vertexes.length; i++){
+            ctx.lineTo(vertexes[i].x, vertexes[i].y)
+        }
+        ctx.lineTo(wid,height)
+        ctx.lineTo(0,height)
+        ctx.fill()
+        ctx.restore()
+        ctx.save()
+        //大矩形
+        ctx.fillStyle = color2;
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+        ctx.lineTo(vertexes[0].x, vertexes[0].y+5);
+        for(var i=1; i<vertexes.length; i++){
+            ctx.lineTo(vertexes[i].x, vertexes[i].y+5);
+        }
+        ctx.lineTo(wid, height);
+        ctx.lineTo(0, height);
+        ctx.fill();
+        ctx.restore();
+        ctx.save();
+
+        ctx.fillStyle="#777";
+        ctx.font="12px sans-serif";
+        ctx.textBaseline="top";
+        ctx.fillText("点 击 液 体 表 面",70,canvas.height/2-20);
+        ctx.fillStyle="#fff";
+        ctx.fillText("方向键up和down改 变 液 体 粘 度",70,canvas.height/2+15);
+        ctx.fillText("液体粘稠度粘稠度 / Viscosity: "+((limitd -20)).toFixed(2)+"%",wid/2.5,canvas.height-20);
+        ctx.restore();
+    }
+    function update(){
+        initDiff  -= initDiff * 0.9;
+        diff[vPos] = initDiff ; 
+        facter = 0.01
+        //左侧
+        for(var i=vPos-1; i>0; i--){
+            var d = vPos-i;
+            if(d > limitd){
+                d=limitd;
+            }
+            diff[i] -= (diff[i] - diff[i+1])*(1-facter*d);
+        }
+        //右侧
+        for(var i=vPos+1; i<verNum; i++){
+            var d = i-vPos;
+            if(d>limitd){
+                d=limitd;
+            }
+            diff[i] -= (diff[i] - diff[i-1])*(1-facter*d);
+        }
+        //更新Y坐标
+        for(var i=0; i<vertexes.length; i++){
+            vertexes[i].updateY(diff[i]);
+        }
+
+    }
+    function keydownChangelimitd(e){
+        //up
+        if(e && e.keyCode== 38){
+            limitd  = (limitd <80) ? ++limitd : 80
+        }
+        //down
+        if(e && e.keyCode == 40){
+            limitd = (limitd > 5) ? --limitd : 5
+        }
+    }
+    //main
+    (function drawframe(){
+        //更新坐标点
+        ctx.clearRect(0, 0, wid, height)
+        window.requestAnimationFrame(drawframe, canvas)
+            update()
+        draw()
+    })()
+
+</script>
+</body>
+</html>

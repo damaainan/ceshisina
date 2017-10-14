@@ -11,16 +11,18 @@ location 有"定位"的意思, 根据Uri来进行不同的定位.
     location [=|~|~*|^~] patt {}
     
 
-中括号可以不写任何参数,此时称为一般匹配,也可以写参数.因此,大类型可以分为3种：
+中括号可以不写任何参数,此时称为一般匹配,也可以写参数.
 
-    location = patt {} [精准匹配]
-    location patt{}  [一般匹配]
-    location ~ patt{} [正则匹配]
+因此,大类型可以分为**3种**：
+
+`location = patt {}` **[精准匹配]**  
+`location patt{}`  **[一般匹配]**  
+`location ~ patt{}` **[正则匹配]**  
     
 
 ### 匹配说明
 
-### **精准匹配 =**
+### **精准匹配 `=`**
 
 完全匹配指定的 pattern ，且这里的 pattern 被限制成简单的字符串，也就是说这里不能使用正则表达式.
 
@@ -56,9 +58,9 @@ location 有"定位"的意思, 根据Uri来进行不同的定位.
     http://website.com/abcde    # 仍然匹配，因为 URI 是以 pattern 开头的
     
 
-### **正则匹配 ~**
+### **正则匹配 `~`**
 
-对大小写敏感(**在window上无效**)，且 pattern 须是正则表达式
+`对大小写敏感`(**在window上无效**)，且 pattern 须是正则表达式
 
     server {
         server_name website.com;
@@ -79,9 +81,9 @@ location 有"定位"的意思, 根据Uri来进行不同的定位.
     http://website.com/abcde    # 不匹配正则表达式 ^/abcd$
     
 
-### **正则匹配 ~***
+### **正则匹配 `~*`**
 
-不区分大小写，pattern 须是正则表达式
+`不区分大小写`，pattern 须是正则表达式
 
     server {
         server_name website.com;
@@ -101,27 +103,29 @@ location 有"定位"的意思, 根据Uri来进行不同的定位.
     http://website.com/abcde    # 不匹配正则表达式 ^/abcd$
     
 
-### **正则匹配 ^~**
+### **正则匹配 `^~`**
 
 匹配情况类似`一般匹配`，以指定匹配模式开头的 URI 被匹配
 
-### **!~和!~***
+### **`!~`和`!~`***
 
-分别为区分大小写不匹配及不区分大小写不匹配的正则
+分别为`区分大小写不匹配`及`不区分大小写不匹配`的正则
 
-### **通用匹配 /**
+### **通用匹配 `/`**
 
 任何请求都会匹配到.
 
-### **特殊匹配 @**
+### **特殊匹配 `@`**
 
-用于定义一个 Location 块，且该块不能被外部 Client 所访问，只能被 Nginx 内部配置指令所访问，比如 try_files or error_page
+用于定义一个 Location 块，且该块不能被外部 Client 所访问，只能被 Nginx 内部配置指令所访问，比如 **try_files** or **error_page**
 
 ## 匹配优先级
 
-`http://www.test.com/` 从域名后面(uri:http请求行的第二列)开始匹配,也就是/,匹配原则一般都是左前缀匹配,location / {} 能够匹配所有HTTP 请求，因为任何HTTP 请求都必然是以'/'开始的,但是，正则location 和其他任何比'/'更长的普通location (location / {} 是普通location 里面最短的，因此其他任何普通location 都会比它更长，当然location = / {} 和 location ^~ / {} 是一样长的）会优先匹,由此可见匹配的优先级可以总结为:
+`http://www.test.com/` 从域名后面(uri:http请求行的第二列)开始匹配,也就是`/`,匹配原则一般都是**左前缀匹配**,  
+location / {} 能够匹配所有HTTP 请求，因为任何HTTP 请求都必然是以'/'开始的,但是，**正则location 和其他任何比'/'更长的普通location** (location / {} 是普通location 里面最短的，因此其他任何普通location 都会比它更长，当然location = / {} 和 location ^~ / {} 是一样长的）**会优先匹**,由此可见匹配的优先级可以总结为:
 
-**越详细就越优先**
+<font color=green size=3>
+**越详细就越优先**</font>
 
 > 是不是有点像css的选择器?
 
@@ -130,8 +134,9 @@ location 有"定位"的意思, 根据Uri来进行不同的定位.
 ```nginx
 # 首先看有没有精准匹配,如果有,则停止匹配过程.
 location = patt {
-  config A
+  config A;
 }
+
 location / {
   root   /usr/local/nginx/html;
   index  index.html index.htm;
@@ -177,7 +182,7 @@ location ~ image {
 **正则表达式的成果将会使用.因为此时的正则表达式更详细**  
 图片真正会访问 /var/www/image/logo.png 
 
-**再次总结优先级序如下：**
+### **再次总结优先级序如下：**
 
     1. =
     2. (None)    前提是 pattern 完全匹配 URI 的情况（不是只匹配 URI 的头部,这点很重要）
@@ -227,9 +232,10 @@ URI 请求 | 配置一 | 配置二
 curl [http://localhost:9090/regextest.html][3] | 404 Not Found | 404 Not Found 
 curl [http://localhost:9090/prefix/regextest.html][4] | 404 Not Found | 403 Forbidden 
 
-Location ~ ^/prefix/.*.html $ {deny all;} 表示正则 location 对于以 /prefix/ 开头， .html 结尾的所有 URI 请求，都拒绝访问； location ~.html $ {allow all;} 表示正则 location 对于以 .html 结尾的 URI 请求，都允许访问. 实际上，prefix 的是 ~.html $ 的子集.
+`Location ~ ^/prefix/.*.html$ {deny all;}` 表示正则 location 对于以 `/prefix/` 开头， `.html` 结尾的所有 URI 请求，都拒绝访问；   
+`location ~.html$ {allow all;}` 表示正则 location 对于以 `.html` 结尾的 URI 请求，都允许访问. 实际上，`prefix` 的是 `~.html$` 的子集.
 
-在"配置一 "下，两个请求都匹配上 location ~.html $ {allow all;} ，并且停止后面的搜索，于是都允许访问， 404 Not Found ；在"配置二 "下， /regextest.html 无法匹配 prefix ，于是继续搜索 ~.html $ ，允许访问，于是 404 Not Found ；然而 /prefix/regextest.html 匹配到 prefix ，于是 deny all ， 403 Forbidden .
+在"配置一 "下，两个请求都匹配上 `location ~.html$ {allow all;}` ，并且停止后面的搜索，于是都允许访问， 404 Not Found ；在"配置二 "下， /regextest.html 无法匹配 prefix ，于是继续搜索 `~.html$` ，允许访问，于是 404 Not Found ；然而 /prefix/regextest.html 匹配到 prefix ，于是 deny all ， 403 Forbidden .
 
 ### 优先级最终总结
 
@@ -240,7 +246,8 @@ Location ~ ^/prefix/.*.html $ {deny all;} 表示正则 location 对于以 /prefi
     5. (None) pattern 匹配 URI 的头部
     
 
-**越详细就越优先,但是同优先级的情况下,按书写顺序谁先出现就以谁为准(就近原则)**
+<font color=green size=3>
+**越详细就越优先,但是`同优先级`的情况下,按书写顺序谁先出现就以谁为准(就近原则)**</font>
 
 > 依然和css选择器的优先级很像...
 
@@ -250,7 +257,7 @@ Location ~ ^/prefix/.*.html $ {deny all;} 表示正则 location 对于以 /prefi
 
 ## 推荐必须的location
 
-    
+## `\.` 中 `\` 是转义符
 
 ```nginx
 

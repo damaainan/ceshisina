@@ -117,9 +117,11 @@
 
 在server根目录下，增加phpinfo.php测试文件，内容如下：vi phpinfo.php
 
+```php
     <?php
         echo phpinfo();
     ?>
+```
 
 保存后退出。访问`http://你的服务器ip/phpinfo.php`，就可以见到php信息了。
 
@@ -130,5 +132,5 @@
 
 [1]: http://www.jialeens.com/archives/309
 
-[4]: http://img2.tuicool.com/yeAJVnq.png
-[5]: http://img2.tuicool.com/6VBBB33.png
+[4]: ../img/yeAJVnq.png
+[5]: ../img/6VBBB33.png

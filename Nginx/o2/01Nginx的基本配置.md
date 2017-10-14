@@ -1,4 +1,4 @@
-讲解Nginx的基本配置。 
+## Nginx的基本配置
 
 <font face=微软雅黑>
 ### 一、配置文件
@@ -229,5 +229,5 @@ Nginx安装完成之后，可以再安装目录下看到有以下几个文件。
 
 
 
-[0]: http://img1.tuicool.com/VvUnEfe.png
-[1]: http://img1.tuicool.com/aIfm2eN.png
+[0]: ../img/VvUnEfe.png
+[1]: ../img/aIfm2eN.png
