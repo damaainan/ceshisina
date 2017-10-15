@@ -16,11 +16,11 @@ php是为web而生的一门后端语言，我们php狗当然是最清楚的啦�
 
 那么常见的web服务器有哪些呢？php狗用的最多的就是Apache了，还有其他的：
 
-* > apache
-* > nginx
-* > IIS
-* > lighttpd
-* > tomcat
+> * apache
+> * nginx
+> * IIS
+> * lighttpd
+> * tomcat
 
 基本上就是上面几种，与php相关联起来用的最多的就是Apache和Nginx了。
 
@@ -144,8 +144,8 @@ PHP-CGI就是PHP实现的自带的FastCGI管理器。
 
 虽然是php官方出品，自带的，但是这丫的却一点也不给力，性能太差，而且也很麻烦不人性化，主要体现在：
 
-1. > php-cgi变更php.ini配置后需重启php-cgi才能让新的php-ini生效，不可以平滑重启。
-1. > 直接杀死php-cgi进程，php就不能运行了。
+> 1. php-cgi变更php.ini配置后需重启php-cgi才能让新的php-ini生效，不可以平滑重启。
+> 1. 直接杀死php-cgi进程，php就不能运行了。
 
 上面2个问题，一直让很多人病垢了很久，所以很多人一直还是在用mode_php方式。
 
@@ -155,8 +155,8 @@ PHP-CGI就是PHP实现的自带的FastCGI管理器。
 
 [0]: http://wenku.baidu.com/link?url=WpHSSuwGw9gushP4G9Yl03IVOx2bgzug_4tlTroL4PCPc5c0jJyTOcHHxSWAcDaoaYIVaH7HOK1kkX0pf-RcUN7RKiiuQwPtXHf04pmuIHC
 [1]: http://wenku.baidu.com/view/67f5815f804d2b160b4ec0d8.html?re=view
-[2]: http://img.my.csdn.net/uploads/201411/29/1417244372_3979.jpg
-[3]: http://laruence-wordpress.stor.sinaapp.com/uploads/php-arch.jpg
-[4]: http://img.my.csdn.net/uploads/201411/29/1417244404_9526.png
-[5]: http://img.my.csdn.net/uploads/201411/29/1417244403_6086.png
+[2]: ./img/1417244372_3979.jpg
+[3]: ./img/php-arch.jpg
+[4]: ./img/1417244404_9526.png
+[5]: ./img/1417244403_6086.png
 [6]: http://php-fpm.org/about/

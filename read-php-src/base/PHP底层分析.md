@@ -69,9 +69,9 @@ PHP的大部分功能，都是以extenstion形式来完成的。
     }
 ```
 
-PHP中的一个变量，zend虚拟机中，使用的是 _zval_struct 的结构体来描述，变量的值也是一个就结构体来描述.
+PHP中的一个变量，zend虚拟机中，使用的是 `_zval_struct` 的结构体来描述，变量的值也是一个就结构体来描述.
 
-_zval_struct的结构体是由 四个字段/域 (可以理解成关联数组)
+`_zval_struct`的结构体是由 四个字段/域 (可以理解成关联数组)
 
 zvalue_value value; /* 值 */PHP变量的值，存储这个字段中。
 
