@@ -10,6 +10,7 @@
 
     
 ```php
+<?php
 function getKingMokey($n, $m)
 {
     $monkey[0] = 0;
@@ -100,6 +101,7 @@ echo getKingMokey($n, $m)."是猴王";
 
     
 ```php
+<?php
 function killMonkey($monkeys , $m , $current = 0){
     $number = count($monkeys);
     $num = 1;
@@ -128,6 +130,7 @@ killMonkey($monkeys , $m);
 
     
 ```php
+<?php
 function yuesefu($n,$m) {
     $r=0;
     for($i=2; $i<=$n; $i++) {
@@ -136,4 +139,22 @@ function yuesefu($n,$m) {
     return $r+1;
 }
 echo yuesefu(10,3)."是猴王";
+```
+
+## 方法四：
+```php
+<?php
+function get_king_mokey($n, $m) 
+{
+    $arr = range(1, $n);
+    $i = 0;
+    while (count($arr) > 1) {
+        $i++;
+        $survice = array_shift($arr);
+        if ($i % $m != 0) {
+            array_push($arr, $survice);
+        }
+    }
+    return $arr[0];
+}
 ```

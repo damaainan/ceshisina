@@ -9,41 +9,41 @@
 笔试分三大类，让60分钟写完
 
 一，单选题  
-1，HTT,1.0中，状态码403的 含义是（）
+1，HTT,1.0中，状态码403的 含义是（）  `Forbidden`  禁止访问
 
 2，使用下面哪个语句包含文件时，可能包含一个致命错误：  
-A. include B.require C. inport  
+A. include B.`require` C. inport  
 (注：也可以思考一下require报错的类型，因为我面YY 的时候有被问)
 
 3，进一法取整的函数是：（ ）  
-A. floor B.ceil C. mod D.round
+A. floor（舍去） B.`ceil` C. mod D.round(四舍五入)
 
 4，将数组开头的单元移出的函数是： （）  
-A. array_pop B.array_push C.array_shift D.array_unshift
+A. array_pop(尾弹出) B.array_push C.`array_shift` D.array_unshift
 
 5，哪个函数可从结果集中取出一行作为关联数组，或数字数组，或二者兼有：（）  
-A.mysql_fetch_object B.mysql_fetch_row C.mysql_fetch_array D.mysql_fetch_assoc
+A.mysql_fetch_object B.mysql_fetch_row（索引数组） C.`mysql_fetch_array` D.mysql_fetch_assoc(关联数组)
 
 6，哪个函数返回结果集中行的数目，且仅对 SELECT 语句有效：（）  
-A.mysql_fetch_row B.msyql_num_rows C.mysql_affected_rows D.mysql_rows_count
+A.mysql_fetch_row（资源） B.`msyql_num_rows` C.mysql_affected_rows D.mysql_rows_count
 
 7，PHP5 中，默认的权限控制是：（）  
-A.public B.private C.protected D.package 
+A.`public` B.private C.protected D.package 
 
-8，以下哪个是对类本身的一个引用，常用来指向类中的静态成员：（）  
-A. $this -> B. this:: C. $self -> D.self:: 
+8，以下哪个是对类本身的一个引用，常用来指向类中的静态成员：（）    **有疑问  ？**
+A. $this -> B. this:: C. $self -> D.`self::` 
 
-9，返回路径中的文件名部分的函数是：（）
+9，返回路径中的文件名部分的函数是：（）  `basename`
 
 10，只有满足联结条件的记录才包含在查询结果中，这种联结为：（）  
-A.左联结 B.右联结 C.内联结 D.完全联结
+A.左联结 B.右联结 C.`内联结` D.完全联结
 
 二，简答题  
 1，请设计一个单例模式的操作MySQL的操作类（只要实现连接部分即可）
 
 2，请写出10条linux命令，并中文简述用法
 
-3，从用户在浏览器输入的一个url，到网页打开展现出来，中间 发生了什么
+3，**从用户在浏览器输入的一个url，到网页打开展现出来，中间 发生了什么**
 
 4，观察这幅来自监控的图，猜一下这幅图是属于什么指标的监控图，并指出图中可能存在问题及应对方法
 
@@ -64,4 +64,6 @@ SID, CID，分别代表学号、所选的课程编号
 2）查询不选课程编号为C1的学员学号和姓名
 
 2，请用PHP 实现冒泡算法
+
+
 
