@@ -23,12 +23,10 @@
     * 在MySQL5.1的年代，一个MySQL实例，就只有一个rollback segment
     * 在MySQL5.1+ 的年代，一个MySQL实例里面，可以有128个rollback segment
     
-
 * undo segment
     * 一个segment 有 1024 个 undo slot，一个undo slot 对应一个undo log  
     * 一个事务(dml)对应一个undo log
     
-
 * 总结  
     据此推断：  
     1) 5.1 最多能够承载的并发事务（dml），1 * 1024 = 1024   
@@ -36,7 +34,6 @@
     
     从此可以看出，5.1 之后的版本支持的并发写入事务数更多，性能更好
     
-
 ## undo的格式
 
 * insert_undo

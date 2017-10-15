@@ -46,7 +46,7 @@ RR隔离级别
 
 * 表结构
 
-```
+```sql
     dba:lc_3> show create table a;
     +-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     -------------+
@@ -81,12 +81,13 @@ RR隔离级别
 ```
 
 * 设置RR隔离级别
+```sql
     set tx_isolation = 'repeatable-read';
-    
+```
 
 * 等值查询，非唯一索引的加锁逻辑
 
-```
+```sql
     dba:lc_3> begin;
     Query OK, 0 rows affected (0.00 sec)
     
@@ -97,7 +98,9 @@ RR隔离级别
     | 5 |    7 |    9 |   11 |
     +---+------+------+------+
     1 row in set (0.00 sec)
-    
+```
+
+```
     TABLE LOCK table `lc_3`.`a` trx id 133601815 lock mode IX
     RECORD LOCKS space id 281 page no 5 n bits 72 index idx_c of table `lc_3`.`a` trx id 133601815 lock_mode X
     Record lock, heap no 4 PHYSICAL RECORD: n_fields 2; compact format; info bits 0
@@ -130,7 +133,7 @@ RR隔离级别
 
 * 等值查询，唯一键的加锁逻辑
 
-```
+```sql
     dba:lc_3> select * from a where b=9 for update;
     +---+------+------+------+
     | a | b    | c    | d    |
@@ -149,7 +152,7 @@ RR隔离级别
     Record lock, heap no 5 PHYSICAL RECORD: n_fields 6; compact format; info bits 0
      0: len 4; hex 80000007; asc     ;;
      1: len 6; hex 000007f66444; asc     dD;;
-     2: len 7; hex fc0000271d0137; asc    ' 7;;
+     2: len 7; hex fc0000271d0137; asc    ' 7';;
      3: len 4; hex 80000009; asc     ;;
      4: len 4; hex 8000000b; asc     ;;
      5: len 4; hex 8000000d; asc     ;;
@@ -166,7 +169,7 @@ RR隔离级别
 
 * = ，非唯一索引的加锁逻辑
 
-```
+```sql
     dba:lc_3> select * from a where c>=9 for update;
     +---+------+------+------+
     | a | b    | c    | d    |
@@ -175,7 +178,9 @@ RR隔离级别
     | 7 |    9 |   11 |   13 |
     +---+------+------+------+
     2 rows in set (0.00 sec)
-    
+```
+
+```
     TABLE LOCK table `lc_3`.`a` trx id 133601817 lock mode IX
     RECORD LOCKS space id 281 page no 5 n bits 72 index idx_c of table `lc_3`.`a` trx id 133601817 lock_mode X
     Record lock, heap no 1 PHYSICAL RECORD: n_fields 1; compact format; info bits 0
@@ -218,7 +223,7 @@ RR隔离级别
 
 * = ，唯一索引的加锁逻辑
 
-```
+```sql
     dba:lc_3> select * from a where b>=7 for update;
     +---+------+------+------+
     | a | b    | c    | d    |
@@ -227,8 +232,9 @@ RR隔离级别
     | 7 |    9 |   11 |   13 |
     +---+------+------+------+
     2 rows in set (0.00 sec)
-    
-    
+```
+
+```
     TABLE LOCK table `lc_3`.`a` trx id 133601820 lock mode IX
     RECORD LOCKS space id 281 page no 4 n bits 72 index idx_b of table `lc_3`.`a` trx id 133601820 lock_mode X
     Record lock, heap no 1 PHYSICAL RECORD: n_fields 1; compact format; info bits 0
@@ -271,7 +277,7 @@ RR隔离级别
 
 * <= , 非唯一索引的加锁逻辑
 
-```
+```sql
     dba:lc_3> select * from a where c<=7 for update;
     +---+------+------+------+
     | a | b    | c    | d    |
@@ -280,7 +286,9 @@ RR隔离级别
     | 3 |    5 |    7 |    9 |
     +---+------+------+------+
     2 rows in set (0.00 sec)
-    
+```
+
+```
     TABLE LOCK table `lc_3`.`a` trx id 133601822 lock mode IX
     RECORD LOCKS space id 281 page no 5 n bits 72 index idx_c of table `lc_3`.`a` trx id 133601822 lock_mode X
     Record lock, heap no 2 PHYSICAL RECORD: n_fields 2; compact format; info bits 0
@@ -324,9 +332,9 @@ RR隔离级别
         1. 加record lock，[1],[3]
     
 
-* <= , 唯一索引的加锁逻辑
+* `<=` , 唯一索引的加锁逻辑
 
-```
+```sql
     dba:lc_3> select * from a where b<=5 for update;
     +---+------+------+------+
     | a | b    | c    | d    |
@@ -336,8 +344,9 @@ RR隔离级别
     +---+------+------+------+
     2 rows in set (0.00 sec)
     
-    
-    
+```
+
+```
     TABLE LOCK table `lc_3`.`a` trx id 133601823 lock mode IX
     RECORD LOCKS space id 281 page no 4 n bits 72 index idx_b of table `lc_3`.`a` trx id 133601823 lock_mode X
     Record lock, heap no 2 PHYSICAL RECORD: n_fields 2; compact format; info bits 0
@@ -383,7 +392,7 @@ RR隔离级别
 
 * , 非唯一索引的加锁逻辑
 
-```
+```sql
     dba:lc_3> select * from a where c>9 for update;
     +---+------+------+------+
     | a | b    | c    | d    |
@@ -392,8 +401,9 @@ RR隔离级别
     +---+------+------+------+
     1 row in set (0.00 sec)
     
-    
-    
+```
+
+```
     RECORD LOCKS space id 281 page no 5 n bits 72 index idx_c of table `lc_3`.`a` trx id 133601825 lock_mode X
     Record lock, heap no 1 PHYSICAL RECORD: n_fields 1; compact format; info bits 0
      0: len 8; hex 73757072656d756d; asc supremum;;
@@ -427,7 +437,7 @@ RR隔离级别
 
 * , 唯一索引的加锁逻辑
 
-```
+```sql
     dba:lc_3> select * from a where b>7 for update;
     +---+------+------+------+
     | a | b    | c    | d    |
@@ -436,7 +446,9 @@ RR隔离级别
     +---+------+------+------+
     1 row in set (0.00 sec)
     
-    
+```
+
+```
     
     TABLE LOCK table `lc_3`.`a` trx id 133601826 lock mode IX
     RECORD LOCKS space id 281 page no 4 n bits 72 index idx_b of table `lc_3`.`a` trx id 133601826 lock_mode X
@@ -470,7 +482,7 @@ RR隔离级别
 
 * < , 非唯一索引的加锁逻辑
 
-```
+```sql
     dba:lc_3> select * from a where c<7 for update;
     +---+------+------+------+
     | a | b    | c    | d    |
@@ -479,7 +491,9 @@ RR隔离级别
     +---+------+------+------+
     1 row in set (0.00 sec)
     
-    
+```
+
+```
     TABLE LOCK table `lc_3`.`a` trx id 133601827 lock mode IX
     RECORD LOCKS space id 281 page no 5 n bits 72 index idx_c of table `lc_3`.`a` trx id 133601827 lock_mode X
     Record lock, heap no 2 PHYSICAL RECORD: n_fields 2; compact format; info bits 0
@@ -516,7 +530,7 @@ RR隔离级别
 
 * < , 唯一索引的加锁逻辑
 
-```
+```sql
     dba:lc_3> select * from a where b<5 for update;
     +---+------+------+------+
     | a | b    | c    | d    |
@@ -525,7 +539,9 @@ RR隔离级别
     +---+------+------+------+
     1 row in set (0.00 sec)
     
-    
+```
+
+```
     TABLE LOCK table `lc_3`.`a` trx id 133601828 lock mode IX
     RECORD LOCKS space id 281 page no 4 n bits 72 index idx_b of table `lc_3`.`a` trx id 133601828 lock_mode X
     Record lock, heap no 2 PHYSICAL RECORD: n_fields 2; compact format; info bits 0
@@ -637,7 +653,7 @@ RR 隔离级别
 
 * 表结构
 
-```
+```sql
     dba:lc_3> show create table tb_non_uk;
     +-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
     | Table | Create Table |
@@ -687,7 +703,7 @@ RR 隔离级别
 ```
 * 普通的insert,insert之前,其他事务没有对next-record加任何锁
 
-```   
+```   sql
     dba:lc_3>insertinto tb_uk select100,200;
     Query OK, 1 row affected (0.00 sec)
     Records: 1  Duplicates: 0  Warnings: 0
@@ -1010,7 +1026,7 @@ RR 隔离级别
 
 * 环境
 
-```
+```sql
     settx_isolation ='repeatable-read';
     
     CREATE TABLE `a`(

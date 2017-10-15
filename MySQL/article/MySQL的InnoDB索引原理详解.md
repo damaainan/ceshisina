@@ -183,7 +183,7 @@ MyISM使用的是 **非聚簇索引**，非聚簇索引的两棵`B+树`看上去
 
 </font>
 
-[0]: /caomiao2006/article/details/52433417
+[0]: http://blog.csdn.net/caomiao2006/article/details/52433417
 [8]: #
 [9]: #t0
 [10]: #t1

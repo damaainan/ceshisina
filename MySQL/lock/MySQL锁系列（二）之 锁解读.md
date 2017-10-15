@@ -22,15 +22,11 @@ show engine innodb status 关于锁的信息是最详细的
 * 前期准备
 
 ```sql
-    dba:lc_3>
-    dba:lc_3>
+
     dba:lc_3> show create table a;
-    +-------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    ----------------------------------------------------------------------+
-    | Table | Create Table
-     |
-    +-------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    ----------------------------------------------------------------------+
+    +-------+---------------------------------------------------------+
+    | Table | Create Table |
+    +-------+------------------------------------------------------------+
     | a     | CREATE TABLE `a` (
      `a` int(11) NOT NULL,
      `b` int(11) DEFAULT NULL,
@@ -40,11 +36,9 @@ show engine innodb status 关于锁的信息是最详细的
      UNIQUE KEY `idx_b` (`b`),
      KEY `idx_c` (`c`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 |
-    +-------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    ----------------------------------------------------------------------+
+    +-------+------------------+
     1 row in set (0.00 sec)
     
-    dba:lc_3>
     dba:lc_3> select * from a;
     +---+------+------+------+
     | a |    b |    c |    d |
@@ -59,7 +53,7 @@ show engine innodb status 关于锁的信息是最详细的
 
 * 产生锁的语句
 
-```
+```sql
     dba:lc_3> set tx_isolation = 'repeatable-read';  --事务隔离级别为repeatable-read，以后介绍
     Query OK, 0 rows affected (0.00 sec)
     
@@ -67,7 +61,7 @@ show engine innodb status 关于锁的信息是最详细的
     select * from a where c=7 for update;
 ```
 
-* show engine innodb status
+* `show engine innodb status`
 
 ```
     ------------
@@ -103,7 +97,7 @@ show engine innodb status 关于锁的信息是最详细的
      1: len 4; hex 80000005; asc     ;;
 ```
 
-* show engine innodb status 解读
+* `show engine innodb status` 解读
 
 ```
     * Trx id counter 133588132
@@ -163,7 +157,7 @@ show engine innodb status 关于锁的信息是最详细的
 
 * 前期准备
 
-```
+```sql
     dba:lc_3> show create table t;
     +-------+------------------------------------------------------------------------------------+
     | Table | Create Table |
@@ -200,7 +194,7 @@ show engine innodb status 关于锁的信息是最详细的
 
 * 产生锁语句
 
-```
+```sql
     dba:lc_3> set tx_isolation = 'repeatable-read';
     Query OK, 0 rows affected (0.00 sec)
     
@@ -213,7 +207,7 @@ show engine innodb status 关于锁的信息是最详细的
     1 row in set (0.00 sec)
 ```
 
-* show engine innodb status
+* `show engine innodb status`
 
 ```
     ------------

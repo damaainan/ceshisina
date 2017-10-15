@@ -1,5 +1,10 @@
 <?php
 
+/*
+贝尔曼-福特 算法
+ */
+
+
 define("I", PHP_INT_MAX);
 $graph = [
     0 => [I, 3, 5, 9, I, I],

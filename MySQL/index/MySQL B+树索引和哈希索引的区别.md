@@ -6,7 +6,7 @@
 
 # 二者区别
 
-**备注**：先说下，**在MySQL文档里，实际上是把B+树索引写成了BTREE**，例如像下面这样的写法：
+**备注**：先说下，**在MySQL文档里，实际上是把`B+树索引写成了BTREE`**，例如像下面这样的写法：
 
 ```sql
 CREATE TABLE t(  
@@ -16,7 +16,7 @@ username varchar(20) not null default '',
 detail varchar(255) not null default '',  
 primary key(aid),  
 unique key(uid) USING  BTREE ,  
-key (username(12)) USING  BTREE  #  此处 uname 列只创建了最左12个字符长度的部分索引
+key (username(12)) USING  BTREE  --  此处 uname 列只创建了最左12个字符长度的部分索引
 )engine=InnoDB;
 ```
 一个经典的**B+树索引数据结构**见下图：

@@ -20,7 +20,7 @@ class Client
 
 //            $tree = new Bst();   //搜索二叉树
             $tree = new Avl();    //平衡二叉树
-//            $tree = new Rbt();   //红黑树
+           // $tree = new Rbt();   //红黑树
 
             $tree->init($arr);     //树的初始化
 //            $tree->Delete(62);
