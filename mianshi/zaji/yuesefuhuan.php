@@ -7,3 +7,17 @@
 递归算法
 线性表应用 (最牛，最简单)
  */
+
+function demo($n,$m){
+	$arr=range(1,$n);
+	$i=0;
+	while(count($arr)>1){
+		$i++;
+		$s=array_shift($arr);
+		if($i%$m!=0){
+			array_push($arr, $s);
+		}
+	}
+	return $arr[0];
+}
+echo demo(10,5);
