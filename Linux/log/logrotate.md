@@ -1,6 +1,6 @@
 # logrotate命令
 
-**logrotate命令**用于对系统日志进行轮转、压缩和删除，也可以将日志发送到指定邮箱。使用logrotate指令，可让你轻松管理系统所产生的记录文件。每个记录文件都可被设置成每日，每周或每月处理，也能在文件太大时立即处理。您必须自行编辑，指定配置文件，预设的配置文件存放在/etc/logrotate.conf文件中。 
+**logrotate命令**用于对系统日志进行轮转、压缩和删除，也可以将日志发送到指定邮箱。使用logrotate指令，可让你轻松管理系统所产生的记录文件。每个记录文件都可被设置成每日，每周或每月处理，也能在文件太大时立即处理。您必须自行编辑，指定配置文件，预设的配置文件存放在`/etc/logrotate.conf`文件中。 
 
 ### 语法  
     logrotate(选项)(参数)
@@ -16,21 +16,19 @@
 ### 参数  
 配置文件：指定lograote指令的配置文件。
 
-
-
 ----
 
 # 使用logrotate来切割日志文件
 
  时间 2017-04-22 15:02:38  Wuyuan's Blog
 
-_原文_[https://wuyuans.com/2017/04/logrotate-usage][1]
+原文[https://wuyuans.com/2017/04/logrotate-usage][1]
 
 程序在运行的时候为了了解运行状态，会输出日志文件，时间久了日志文件会变得非常大，甚至达到GB级别。我在golang应用里使用logrus包来打日志，配置和使用都很方便，就是没有日志分割的功能，应用在线上运行一个月后日志文件都已经达到上百兆。后来发现了logrotate，这是centos自带的日志分割工具，都不用安装额外组件就能实现定时分割日志。
 
 ## 1.运行原理 
 
-logrotate由系统的cron运行，位置在/etc/cron.daily/logrotate
+logrotate由系统的cron运行，位置在`/etc/cron.daily/logrotate`
 
 
 ```bash
@@ -61,7 +59,7 @@ logrotate由系统的cron运行，位置在/etc/cron.daily/logrotate
         endscript
     }
 
-第一行定义的是日志文件的路径，可以用*通配，一般可以定义成*.log来匹配所有日志文件。也可以指定多个文件，用空格隔开，比如
+第一行定义的是日志文件的路径，可以用*通配，一般可以定义成`*.log`来匹配所有日志文件。也可以指定多个文件，用空格隔开，比如
 
     /var/log/nginx/access.log /var/log/nginx/error.log {
      

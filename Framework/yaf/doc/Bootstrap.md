@@ -2,7 +2,7 @@
 
 ### 简介
 
-Bootstrap, 也叫做引导程序. 它是Yaf提供的一个全局配置的入口, 在Bootstrap中, 你可以做很多全局自定义的工作.
+Bootstrap, 也叫做`引导程序`. 它是Yaf提供的一个**全局配置的入口**, 在Bootstrap中, 你可以做很多全局自定义的工作.
 
 
 
@@ -24,7 +24,7 @@ $app
 
 当bootstrap被调用的时刻, Yaf_Application就会默认的在APPLICATION_PATH下, 寻找Bootstrap.php, 而这个文件中, 必须定义一个Bootstrap类, 而这个类也必须继承自Yaf_Bootstrap_Abstract.
 
-实例化成功之后, 所有在Bootstrap类中定义的, 以_init开头的方法, 都会被依次调用, 而这些方法都可以接受一个Yaf_Dispatcher实例作为参数.
+实例化成功之后, 所有在Bootstrap类中定义的, 以`_init`开头的方法, 都会被依次调用, 而这些方法都可以接受一个`Yaf_Dispatcher`实例作为参数.
 
 > 注意
 也可以通过在配置文件中修改application.bootstrap来变更Bootstrap类的位置.

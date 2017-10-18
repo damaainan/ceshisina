@@ -6,6 +6,7 @@
 
 
 ```nginx
+
 server {
     listen 82;
     server_name  localhost;
@@ -34,4 +35,4 @@ server {
     }
 
 }
-``
+```
