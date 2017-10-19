@@ -8,7 +8,7 @@ $v_arr = array(11, 21, 31, 33, 43, 53, 55, 65);
 $w_arr = array(1, 11, 21, 23, 33, 43, 45, 55);
 $n     = count($w_arr);
 //测试输出
-var_dump(bknap1(110));
+print_r(bknap1(110));
 //var_dump(bound(139,89,7,110));
 function bound($v, $w, $k, $W_total)
 {

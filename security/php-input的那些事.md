@@ -18,7 +18,7 @@
     //@eval(file_get_contents('php://input'))
     ?>
 
- 发现php://input是用来接收post数据（这里有[php://input][3]的介绍）
+ 发现**php://input是用来接收post数据**（这里有[php://input][3]的介绍）
 
 [![](./img/20131014231728_30225.jpg)](./img/20131014231728_30225.jpg)
 

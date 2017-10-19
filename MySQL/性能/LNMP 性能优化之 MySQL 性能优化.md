@@ -429,7 +429,9 @@ LIMIT 常用于分页处理，时常会伴随 ORDER BY 从句使用，因此大�
     count(DISTINCT customer_id):599
     count(DISTINCT staff_id):2
 ```
-由于 customer_id 的离散度更大，所以应该使用 index(customer_id,staff_id)#### 找到重复和冗余的索引
+由于 customer_id 的离散度更大，所以应该使用 index(customer_id,staff_id)
+
+#### 找到重复和冗余的索引
 
 之所以要找到重复和冗余的索引，是因为过多的索引不但影响写入，而且影响查询，索引越多，分析越慢。那么为何重复索引、冗余索引？概念如下：
 
@@ -501,7 +503,9 @@ UNIQUE(ID) 和 PRIMARY KEY 重复了。
 
 数据库是基于操作系统的，目前大多数 MySQL 都是安装在Linux 系统之上，所以对于操作系统的一些参数配置也会影响到 MySQL 的性能，下面列举一些常用到的系统配置。
 
-网络方面的配置，要修改文件 /etc/sysctl.conf    # 增加 tcp 支持的队列数
+网络方面的配置，要修改文件 `/etc/sysctl.conf`
+
+    # 增加 tcp 支持的队列数
     net.ipv4.tcp_max_syn_backlog = 65535
     
     # 减少断开连接时，资源回收
@@ -511,7 +515,7 @@ UNIQUE(ID) 和 PRIMARY KEY 重复了。
     net.ipv4.tcp_fin_timeout = 10
     
 
-打开文件数的限制，可以使用 ulimit -a 查看目录的各项限制，可以修改文件 /etc/security/limits.conf ，增加以下内容以修改打开文件数量的限制
+打开文件数的限制，可以使用 `ulimit -a` 查看目录的各项限制，可以修改文件 `/etc/security/limits.conf` ，增加以下内容以修改打开文件数量的限制
 
     soft nofile 65535
     hard nofile 65535
@@ -521,11 +525,11 @@ UNIQUE(ID) 和 PRIMARY KEY 重复了。
 
 #### MySQL 配置文件
 
-MySQL 可以通过启动时指定配置参数和使用配置文件两种方法进行配置，在一般情况下，配置文件位于 /etc/my.cnf 或是 /etc/mysql/my.cnf，MySQL 查询配置文件的顺序是可以通过以下方法过的
+MySQL 可以通过启动时指定配置参数和使用配置文件两种方法进行配置，在一般情况下，配置文件位于 `/etc/my.cnf` 或是 `/etc/mysql/my.cnf`，MySQL 查询配置文件的顺序是可以通过以下方法过的
 
 常用参数说明
 
-* innodb_buffer_pool_size：用于配置 Innodb 的缓冲池 
+* `innodb_buffer_pool_size`：用于配置 Innodb 的缓冲池 
     * 如果数据库中只有 Innodb 表，则推荐配置量为总内存的 75%
     * Innodb_buffer_pool_size >= Total MB
 
@@ -546,6 +550,7 @@ MySQL 可以通过启动时指定配置参数和使用配置文件两种方法�
     GROUP BY
       ENGINE;
 ```
+
 * **innodb_buffer_pool_instances**：MySQL 5.5 中新增参数，可以控制缓冲池的个数，默认情况下只有一个缓冲池。
 * **innodb_log_buffer_size**：Innodb 日志缓冲的大小，由于日志最长，每秒钟就会刷新，所以一般不用太大。
 * **innodb_flush_log_at_trx_commit**：对 Innodb 的 IO 效率影响很大。
