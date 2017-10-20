@@ -1,6 +1,6 @@
 ## 【SQL解题】用户来源去向的SQL语句你会写吗？ 
 
-_2017-09-20_[数据分析师Nieson][0] 数据分析师Nieson **数据分析师Nieson** DataAnalystNieson
+2017-09-20[数据分析师Nieson][0] 数据分析师Nieson **数据分析师Nieson** DataAnalystNieson
 
  玩转数据，挖掘数据，发现数据，利用数据！与数据分析爱好者一起，畅游数据的海洋！
 
@@ -32,24 +32,18 @@ _2017-09-20_[数据分析师Nieson][0] 数据分析师Nieson **数据分析师Ni
 1. 如何计算不同来源去向的用户数？
 
  解决问题1和2需要查询到用打开app后下一个打开app是哪个。在SQL语言里面如果要得到两两交叉的结果，需要使用到交叉关联，同时需要是同个用户打开的app，具体实现代码如下：
-```
- SELECT
-
- a.user_id,
-
- a.app_name AS start_app,
-
- a.create_time AS start_time,
-
- b.app_name AS end_app,
-
- b.create_time AS end_time
-
- FROM record a
-
- JOIN record b
-
- WHERE a.user_id = b.user_id
+```sql
+SELECT
+    a.user_id,
+    a.app_name AS start_app,
+    a.create_time AS start_time,
+    b.app_name AS end_app,
+    b.create_time AS end_time
+FROM
+    record a
+JOIN record b
+WHERE
+    a.user_id = b.user_id
 ```
  
 
@@ -58,28 +52,20 @@ _2017-09-20_[数据分析师Nieson][0] 数据分析师Nieson **数据分析师Ni
  查询1的结果
 
  从上图的查询结果可以看到两个问题，交叉关联后来源与去向重合，来源app打开时间要大于去向打开时间。于是我们需要添加两个条件即start_app不等于end_app，start_time要小于end_time，修改后的代码如下：
-```
- SELECT
-
- a.user_id,
-
- a.app_name AS start_app,
-
- a.create_time AS start_time,
-
- b.app_name AS end_app,
-
- b.create_time AS end_time
-
- FROM record a
-
- JOIN record b
-
- WHERE a.user_id = b.user_id
-
- AND a.app_name != b.app_name
-
- AND a.create_time < b.create_time
+```sql
+SELECT
+    a.user_id,
+    a.app_name AS start_app,
+    a.create_time AS start_time,
+    b.app_name AS end_app,
+    b.create_time AS end_time
+FROM
+    record a
+JOIN record b
+WHERE
+    a.user_id = b.user_id
+AND a.app_name != b.app_name
+AND a.create_time < b.create_time
 ```
  
 
@@ -88,30 +74,24 @@ _2017-09-20_[数据分析师Nieson][0] 数据分析师Nieson **数据分析师Ni
  查询2的结果
 
  这样的处理同时问题4也解决，因为当用户只打开一个app的时候交叉关联后去向app还是自身，所以在上述操作中已经过滤。从上图可以发现1001用户在打开唯品会前打开过两次淘宝，故有两条来源去向的记录，这里就会造成重复统计，所以我们需要用户最后一次的来源去向记录即可，具体修改如下：
-```
- SELECT
-
- a.user_id,
-
- a.app_name AS start_app,
-
- MAX(a.create_time) AS start_time,
-
- b.app_name AS end_app,
-
- b.create_time AS end_time
-
- FROM record a
-
- JOIN record b
-
- WHERE a.user_id = b.user_id
-
- AND a.app_name != b.app_name
-
- AND a.create_time < b.create_time
-
- GROUP BY a.user_id, a.app_name, b.app_name
+```sql
+SELECT
+    a.user_id,
+    a.app_name AS start_app,
+    MAX(a.create_time) AS start_time,
+    b.app_name AS end_app,
+    b.create_time AS end_time
+FROM
+    record a
+JOIN record b
+WHERE
+    a.user_id = b.user_id
+AND a.app_name != b.app_name
+AND a.create_time < b.create_time
+GROUP BY
+    a.user_id,
+    a.app_name,
+    b.app_name
 ```
  
 
@@ -120,44 +100,34 @@ _2017-09-20_[数据分析师Nieson][0] 数据分析师Nieson **数据分析师Ni
  查询3的结果
 
  现在，我们需要计算不同来源去向的用户占比，即求得来源和去向分组后的user_id除重的结果，具体实现代码如下：
-```
- SELECT
-
- start_app,
-
- end_app,
-
- COUNT(DISTINCT user_id) AS user_num
-
- FROM (
-
- SELECT
-
- a.user_id,
-
- a.app_name AS start_app,
-
- MAX(a.create_time) AS start_time,
-
- b.app_name AS end_app,
-
- b.create_time AS end_time
-
- FROM record a
-
- JOIN record b
-
- WHERE a.user_id = b.user_id
-
- AND a.app_name != b.app_name
-
- AND a.create_time < b.create_time
-
- GROUP BY a.user_id, a.app_name, b.app_name
-
- ) groups
-
- GROUP BY start_app, end_app
+```sql
+SELECT
+    start_app,
+    end_app,
+    COUNT(DISTINCT user_id) AS user_num
+FROM
+    (
+        SELECT
+            a.user_id,
+            a.app_name AS start_app,
+            MAX(a.create_time) AS start_time,
+            b.app_name AS end_app,
+            b.create_time AS end_time
+        FROM
+            record a
+        JOIN record b
+        WHERE
+            a.user_id = b.user_id
+        AND a.app_name != b.app_name
+        AND a.create_time < b.create_time
+        GROUP BY
+            a.user_id,
+            a.app_name,
+            b.app_name
+    ) groups
+GROUP BY
+    start_app,
+    end_app
 ```
  
 

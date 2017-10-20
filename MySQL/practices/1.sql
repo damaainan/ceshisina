@@ -1,26 +1,42 @@
 -- 未提交事务隔离级别
-SET session transaction isolation level  read uncommitted ;
-SET global transaction isolation level read uncommitted;
-SELECT @@global.tx_isolation;
-SELECT @@session.tx_isolation;
-SELECT @@tx_isolation;
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+SELECT
+	@@GLOBAL .tx_isolation;
+
+SELECT
+	@@SESSION .tx_isolation;
+
+SELECT
+	@@tx_isolation;
+
 -- 未提交事务隔离级别是的实例
-drop table if exists student;
-create table student(
-id int primary key auto_increment comment 'id',
-name varchar(100) comment '名称' not NULL,
-num int
+DROP TABLE
+IF EXISTS student;
+
+CREATE TABLE student (
+	id INT PRIMARY KEY auto_increment COMMENT 'id',
+	NAME VARCHAR (100) COMMENT '名称' NOT NULL,
+	num INT
 );
-drop procedure if exists proc_on_sw;
+
+DROP PROCEDURE
+IF EXISTS proc_on_sw;
 delimiter ;;
-create procedure proc_on_sw()
-begin
- 
-start transaction;
-insert into student(name,num) value('aaa',1);
-select * from information_schema.INNODB_TRX;
-end
-;;
+
+
+CREATE PROCEDURE proc_on_sw ()
+BEGIN
+	START TRANSACTION ; INSERT INTO student (NAME, num)
+VALUE
+	('aaa', 1) ; SELECT
+		*
+	FROM
+		information_schema.INNODB_TRX ;
+	END;;
 delimiter ;;
 call proc_on_sw();
 -- 新建事务2，查询student表，我们在READ UNCOMMITTED级别下，可以看到其他事务未提交的数据：
@@ -35,53 +51,55 @@ SET session transaction isolation level  read committed ;
  
 drop procedure if exists proc_on_up;
 delimiter ;;
-create procedure proc_on_up()
-begin
-set autocommit=0;
-update student set name='cc' where id=1;
-commit;
-set autocommit=1;
-end
-;;
+
+
+CREATE PROCEDURE proc_on_up ()
+BEGIN
+
+SET autocommit = 0 ; UPDATE student
+SET NAME = 'cc'
+WHERE
+	id = 1 ; COMMIT ;
+SET autocommit = 1 ;
+END;;
 delimiter ;;
-call proc_on_up();
-select * from student;
--- 可重复读取实例
-set session transaction isolation level repeatable read;
-SET global transaction isolation level repeatable read; /*全局建议不用*/
-start transaction;
-update student set name='atttc' where id=1;
-commit;
-select * from student;
- 
--- 串行化
-set session transaction isolation level serializable;
- 
--- 完整实例
-SET session transaction isolation level  read committed ;
- SET global transaction isolation level read committed; 
-drop procedure if exists pro_new;
-delimiter;;
-create procedure pro_new(out rtn int)
-begin
-declare err INT default 0;
--- 如果出现异常，会自动处理并rollback
-declare exit handler for  sqlexception ROLLBACK ; 
--- 启动事务
-set autocommit=0;
-start transaction;
-insert into student(name,num) values(NULL,2.3);
--- set err = @@IDENTITY; -- =   获取上一次插入的自增ID;
-set err =last_insert_id(); -- 获取上一次插入的自增ID
-insert into student(name,num) VALUEs('ccc',err);
--- 运行没有异常，提交事务
-commit;
--- 设置返回值为1
-set rtn=1;
-set autocommit=1;
-end
-;;
+
+
+CALL proc_on_up () ; SELECT
+	*
+FROM
+	student ; -- 可重复读取实例
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+SET GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ ; /*全局建议不用*/
+START TRANSACTION ; UPDATE student
+SET NAME = 'atttc'
+WHERE
+	id = 1 ; COMMIT ; SELECT
+		*
+	FROM
+		student ; -- 串行化
+	SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE ; -- 完整实例
+	SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED ;
+	SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED ; DROP PROCEDURE
+	IF EXISTS pro_new ; delimiter ;; CREATE PROCEDURE pro_new (OUT rtn INT)
+	BEGIN
+
+	DECLARE err INT DEFAULT 0 ; -- 如果出现异常，会自动处理并rollback
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK ; -- 启动事务
+	SET autocommit = 0 ; START TRANSACTION ; INSERT INTO student (NAME, num)
+	VALUES
+		(NULL, 2.3) ; -- set err = @@IDENTITY; -- =   获取上一次插入的自增ID;
+	SET err = last_insert_id() ; -- 获取上一次插入的自增ID
+	INSERT INTO student (NAME, num)
+	VALUES
+		('ccc', err) ; -- 运行没有异常，提交事务
+		COMMIT ; -- 设置返回值为1
+	SET rtn = 1 ;
+	SET autocommit = 1 ;
+	END;;
 delimiter ;;
-set @n=1;
-call pro_new(@n);
-select @n;
+
+
+
+SET @n = 1 ; CALL pro_new (@n) ; SELECT
+	@n ;
