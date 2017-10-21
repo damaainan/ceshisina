@@ -1,3 +1,6 @@
+<style type="text/css">
+    body{background: rgba(12, 100, 129, 0.2)}
+</style>
 # [TCP/IP（六）应用层（DNS和HTTP协议）][0]
 
 **阅读目录(Content)**

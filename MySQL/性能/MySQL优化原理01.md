@@ -1,3 +1,6 @@
+<style type="text/css">
+    h2,h3,h4,h5{color:#428BD1;}
+</style>
 # 我必须得告诉大家的MySQL优化原理
 
 作者  [CHEN川][0] 2017.04.25 11:40  字数 11839  
