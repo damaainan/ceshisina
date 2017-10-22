@@ -110,27 +110,7 @@ cluster.c | Redis 集群的实现代码。
 
 下图总结了本文介绍的阅读顺序：
 
-![digraph {
-
-    node [shape = plaintext]
-
-    datastruct [label = "数据结构\n（sds、adlist、dict、t_zset、hyperloglog）"]
-
-    encoding_datastruct [label = "内存编码数据结构\n（intset、ziplist）"]
-
-    object [label = "数据类型\n（object、t_string、t_list、t_hash、t_set、t_zset、hyperloglog）"]
-
-    db [label = "数据库相关\n（db、notify、rdb、aof）"]
-
-    client_and_server [label = "客户端与服务器相关\n（ae、networking、redis）"]
-
-    multi_server [label = "多机功能\n（replication、sentinel、cluster）"]
-
-    //
-
-    datastruct -> encoding_datastruct -> object -> db -> client_and_server -> multi_server
-
-}][7]
+![][7]
 
 ## 结语[¶][8]
 

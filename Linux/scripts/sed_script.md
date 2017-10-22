@@ -96,6 +96,9 @@ done
 
     ls *.png | awk '{if(length() ==23)  print $0}' | xargs -I[ rm -rf [
 
+比较 范围有问题，改用查找字符串解决
+
+    awk -F': ' '/.png/{if(index($2,"http")==1)print $2}' *.md
 
 ##### 去除问号之后的部分
 > sed 替换 改变分隔符
@@ -138,7 +141,7 @@ done
 ```
 
 
-    ls | xargs -i[ awk 'NR==1{print $2"***["}' [ | awk '{sub(/\[0\]/,"");sub(/\[/,"");sub(/\]/,"");sub(/\(.\)/,"");print} | awk -F'***' '{system("mv "$2" "$1".m d")}'
+    ls | xargs -i[ awk 'NR==1{print $2"***["}' [ | awk '{sub(/\[0\]/,"");sub(/\[/,"");sub(/\]/,"");sub(/\(.\)/,"");print} | awk -F'***' '{system("mv "$2" "$1".md")}'
 
 
 **全面替换标记g**

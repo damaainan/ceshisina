@@ -1,4 +1,4 @@
-# Redis源码分析（三十六）--- Redis中的11大优秀设计
+# [Redis源码分析（三十六）--- Redis中的11大优秀设计](http://blog.csdn.net/androidlushangderen/article/details/40918317)
 
 原创  2014年11月08日 10:16:37
 
@@ -29,7 +29,9 @@
     }
 ```
 
-3.multi事务操作(http://blog.csdn.net/androidlushangderen/article/details/40392209)。Redis中的事务操作给我一种焕然一新的感觉，作者在做此设计的时候，用到了key，和watch key的概念，一个key维护了一个所有watch他的所有Client列表，一个Client自身也拥有一个他所监视的所有key，如果一个key被touch了，所有同样见识此key的客户端的下一步操作统统失效，具体怎么实现，请猛点后面的链接。 4.redis-benchmark性能测试(http://blog.csdn.net/androidlushangderen/article/details/40211907)。Redis在这里出现了一个性能统计的概念，比较高大上的感觉，与调用了很多latency延时类的方法，就是判断延时的情况来看性能的好坏的。
+3.multi事务操作(http://blog.csdn.net/androidlushangderen/article/details/40392209)。Redis中的事务操作给我一种焕然一新的感觉，作者在做此设计的时候，用到了key，和watch key的概念，一个key维护了一个所有watch他的所有Client列表，一个Client自身也拥有一个他所监视的所有key，如果一个key被touch了，所有同样见识此key的客户端的下一步操作统统失效，具体怎么实现，请猛点后面的链接。 
+
+4.redis-benchmark性能测试(http://blog.csdn.net/androidlushangderen/article/details/40211907)。Redis在这里出现了一个性能统计的概念，比较高大上的感觉，与调用了很多latency延时类的方法，就是判断延时的情况来看性能的好坏的。
 
 5.zipmap压缩结构的设计(http://blog.csdn.net/androidlushangderen/article/details/39994599)。Redis在内存处理上可谓是想尽了办法，ziplist压缩列表和zipmap压缩图就是非常典型的设计。与往常的结构体内直接放一个int64类型的整形变量，这样就占了8个字节，但是一般情况下，我们保存的数值都比较小，1个字节差不多就够了，所有就浪费了7个字节，所以zip压缩系列结构体，就可以动态分配字节应对不同的情况，这个设计非常精彩，要确定这个key-value 的位置，通过前面保留的长度做偏移量的定位。
 
