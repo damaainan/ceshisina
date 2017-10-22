@@ -1,11 +1,12 @@
 ## [PHP控制反转（IOC）和依赖注入（DI）][0]
 
 2017-03-12 15:12 by 编程老头, 1495 阅读
+
 > 「七天自制PHP框架」已经开始连载，谢谢关注和支持！[点击这里][3]
 
 先看一个例子：
 
-```
+```php
 <?php
  
 class A
@@ -71,11 +72,12 @@ A类**依赖**B类和C类
 
 > 高层模块不应该依赖于底层模块，两个都应该依赖抽象。
 
-控制反转（IOC）是一种思想，依赖注入（DI）是实施这种思想的方法。
+**`控制反转（IOC）`是一种思想**，**`依赖注入（DI）`是实施这种思想的方法。**
 
 第一种方法叫做：构造器注入（这种方法也不推荐用，但比不用要好）
 
-```
+```php
+<?php
 class A
 {
     public $b;
@@ -95,7 +97,8 @@ class A
 
 客户端类这样写： 
 
-```
+```php
+<?php
 $a=new A(new B(),new C());
 $a->Method();
 ```
@@ -104,7 +107,8 @@ A类的构造器依赖B类和C类，通过构造器的参数传入，至少实�
 
 假如有一天，我们需要扩充B类，做两个B类的子类
 
-```
+```php
+<?php
 class B
 {
     public function B()
@@ -144,7 +148,8 @@ class B2 extends B
 
 也很简单，客户端类这么写：
 
-```
+```php
+<?php
 $a=new A(new B2(),new C());
 $a->Method();
 ```
@@ -154,7 +159,8 @@ $a->Method();
 第二种方法叫做：工厂模式注入（推荐使用）
 
 
-```
+```php
+<?php
 class Factory
 {
     public function Factory()
@@ -187,7 +193,8 @@ class Factory
 
 我们A类代码改为：
 
-```
+```php
+<?php
 class A
 {
     public $b;
@@ -217,7 +224,8 @@ class A
 
 把B类和C类中的方法再抽象出来，做一个接口
 
-```
+```php
+<?php
 interface IMethod
 {
     public function Method();
@@ -226,7 +234,8 @@ interface IMethod
 
 这样，A类中的  b变量和 c变量就不再是一个具体的变量了，而是一个抽象类型的变量，不到运行那一刻，不知道他们的Method方式是怎么实现的。
 
-```
+```php
+<?php
 class B implements IMethod
 {
     public function B()

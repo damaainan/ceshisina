@@ -794,42 +794,44 @@ void listen(string|array $events, mixed $listener, int $priority)
 
 ## Input
 
-Input::get('key');
-// 指定默认值
- Input::get('key', 'default');
-Input::has('key');
-Input::all();
-// 只取回 'foo' 和 'bar'，返回数组
- Input::only('foo', 'bar');
-// 取除了 'foo' 的所有用户输入数组
- Input::except('foo');
-Input::flush();
+    Input::get('key');
+    // 指定默认值
+     Input::get('key', 'default');
+    Input::has('key');
+    Input::all();
+    // 只取回 'foo' 和 'bar'，返回数组
+     Input::only('foo', 'bar');
+    // 取除了 'foo' 的所有用户输入数组
+     Input::except('foo');
+    Input::flush();
               
 会话周期内 Input
-// 清除会话周期内的输入
- Input::flash();
-// 清除会话周期内的指定输入
- Input::flashOnly('foo', 'bar');
-// 清除会话周期内的除了指定的其他输入
- Input::flashExcept('foo', 'baz');
-// 取回一个旧的输入条目
- Input::old('key','default_value');
+
+    // 清除会话周期内的输入
+     Input::flash();
+    // 清除会话周期内的指定输入
+     Input::flashOnly('foo', 'bar');
+    // 清除会话周期内的除了指定的其他输入
+     Input::flashExcept('foo', 'baz');
+    // 取回一个旧的输入条目
+     Input::old('key','default_value');
               
 Files
-// 使用一个已上传的文件
- Input::file('filename');
-// 判断文件是否已上传
- Input::hasFile('filename');
-// 获取文件属性
- Input::file('name')->getRealPath();
-Input::file('name')->getClientOriginalName();
-Input::file('name')->getClientOriginalExtension();
-Input::file('name')->getSize();
-Input::file('name')->getMimeType();
-// 移动一个已上传的文件
- Input::file('name')->move($destinationPath);
-// 移动一个已上传的文件，并设置新的名字
- Input::file('name')->move($destinationPath, $fileName);
+
+    // 使用一个已上传的文件
+     Input::file('filename');
+    // 判断文件是否已上传
+     Input::hasFile('filename');
+    // 获取文件属性
+     Input::file('name')->getRealPath();
+    Input::file('name')->getClientOriginalName();
+    Input::file('name')->getClientOriginalExtension();
+    Input::file('name')->getSize();
+    Input::file('name')->getMimeType();
+    // 移动一个已上传的文件
+     Input::file('name')->move($destinationPath);
+    // 移动一个已上传的文件，并设置新的名字
+     Input::file('name')->move($destinationPath, $fileName);
 
 ## Cache
 
@@ -858,48 +860,48 @@ Input::file('name')->getMimeType();
 
 ## Cookie
 
-Cookie::get('key');
-Cookie::get('key', 'default');
-// 创建一个永久有效的 cookie
- Cookie::forever('key', 'value');
-// 创建一个 N 分钟有效的 cookie
- Cookie::make('key', 'value', 'minutes');
-// 在回应之前先积累 cookie，回应时统一返回
- Cookie::queue('key', 'value', 'minutes');
-// 移除 Cookie
- Cookie::forget('key');
-// 从 response 发送一个 cookie
-$response = Response::make('Hello World');
-$response->withCookie(Cookie::make('name', 'value', $minutes));
+    Cookie::get('key');
+    Cookie::get('key', 'default');
+    // 创建一个永久有效的 cookie
+     Cookie::forever('key', 'value');
+    // 创建一个 N 分钟有效的 cookie
+     Cookie::make('key', 'value', 'minutes');
+    // 在回应之前先积累 cookie，回应时统一返回
+     Cookie::queue('key', 'value', 'minutes');
+    // 移除 Cookie
+     Cookie::forget('key');
+    // 从 response 发送一个 cookie
+    $response = Response::make('Hello World');
+    $response->withCookie(Cookie::make('name', 'value', $minutes));
 
 ## Session
 
-Session::get('key');
-// 从会话中读取一个条目
- Session::get('key', 'default');
-Session::get('key', function(){ return 'default'; });
-// 获取 session 的 ID
- Session::getId();
-// 增加一个会话键值数据
- Session::put('key', 'value');
-// 将一个值加入到 session 的数组中
- Session::push('foo.bar','value');
-// 返回 session 的所有条目
- Session::all();
-// 检查 session 里是否有此条目
- Session::has('key');
-// 从 session 中移除一个条目
- Session::forget('key');
-// 从 session 中移除所有条目
- Session::flush();
-// 生成一个新的 session 标识符
- Session::regenerate();
-// 把一条数据暂存到 session 中
- Session::flash('key', 'value');
-// 清空所有的暂存数据
- Session::reflash();
-// 重新暂存当前暂存数据的子集
- Session::keep(array('key1', 'key2'));
+    Session::get('key');
+    // 从会话中读取一个条目
+     Session::get('key', 'default');
+    Session::get('key', function(){ return 'default'; });
+    // 获取 session 的 ID
+     Session::getId();
+    // 增加一个会话键值数据
+     Session::put('key', 'value');
+    // 将一个值加入到 session 的数组中
+     Session::push('foo.bar','value');
+    // 返回 session 的所有条目
+     Session::all();
+    // 检查 session 里是否有此条目
+     Session::has('key');
+    // 从 session 中移除一个条目
+     Session::forget('key');
+    // 从 session 中移除所有条目
+     Session::flush();
+    // 生成一个新的 session 标识符
+     Session::regenerate();
+    // 把一条数据暂存到 session 中
+     Session::flash('key', 'value');
+    // 清空所有的暂存数据
+     Session::reflash();
+    // 重新暂存当前暂存数据的子集
+     Session::keep(array('key1', 'key2'));
 
 ## Request
 
@@ -961,161 +963,164 @@ Session::get('key', function(){ return 'default'; });
 
 ## Redirect
 
-return Redirect::to('foo/bar');
-return Redirect::to('foo/bar')->with('key', 'value');
-return Redirect::to('foo/bar')->withInput(Input::get());
-return Redirect::to('foo/bar')->withInput(Input::except('password'));
-return Redirect::to('foo/bar')->withErrors($validator);
-// 重定向到之前的请求
- return Redirect::back();
-// 重定向到命名路由（根据命名路由算出 URL）
- return Redirect::route('foobar');
-return Redirect::route('foobar', array('value'));
-return Redirect::route('foobar', array('key' => 'value'));
-// 重定向到控制器动作（根据控制器动作算出 URL）
- return Redirect::action('FooController@index');
-return Redirect::action('FooController@baz', array('value'));
-return Redirect::action('FooController@baz', array('key' => 'value'));
-// 跳转到目的地址，如果没有设置则使用默认值 foo/bar
- return Redirect::intended('foo/bar');
+    return Redirect::to('foo/bar');
+    return Redirect::to('foo/bar')->with('key', 'value');
+    return Redirect::to('foo/bar')->withInput(Input::get());
+    return Redirect::to('foo/bar')->withInput(Input::except('password'));
+    return Redirect::to('foo/bar')->withErrors($validator);
+    // 重定向到之前的请求
+     return Redirect::back();
+    // 重定向到命名路由（根据命名路由算出 URL）
+     return Redirect::route('foobar');
+    return Redirect::route('foobar', array('value'));
+    return Redirect::route('foobar', array('key' => 'value'));
+    // 重定向到控制器动作（根据控制器动作算出 URL）
+     return Redirect::action('FooController@index');
+    return Redirect::action('FooController@baz', array('value'));
+    return Redirect::action('FooController@baz', array('key' => 'value'));
+    // 跳转到目的地址，如果没有设置则使用默认值 foo/bar
+     return Redirect::intended('foo/bar');
 
 ## Security
 
 哈希 
-Hash::make('secretpassword');
-Hash::check('secretpassword', $hashedPassword);
-Hash::needsRehash($hashedPassword);
+
+    Hash::make('secretpassword');
+    Hash::check('secretpassword', $hashedPassword);
+    Hash::needsRehash($hashedPassword);
               
 加密解密
-Crypt::encrypt('secretstring');
-Crypt::decrypt($encryptedString);
-Crypt::setMode('ctr');
-Crypt::setCipher($cipher);
+
+    Crypt::encrypt('secretstring');
+    Crypt::decrypt($encryptedString);
+    Crypt::setMode('ctr');
+    Crypt::setCipher($cipher);
 
 ## Container
 
-App::bind('foo', function($app){ return new Foo; });
-App::make('foo');
-// 如果存在此类, 则返回
- App::make('FooBar');
-// 单例模式实例到服务容器中
- App::singleton('foo', function(){ return new Foo; });
-// 将已实例化的对象注册到服务容器中
- App::instance('foo', new Foo);
-// 注册绑定规则到服务容器中
- App::bind('FooRepositoryInterface', 'BarRepository');
-// 给应用注册一个服务提供者
- App::register('FooServiceProvider');
-// 监听容器对某个对象的解析
- App::resolving(function($object){});
+    App::bind('foo', function($app){ return new Foo; });
+    App::make('foo');
+    // 如果存在此类, 则返回
+     App::make('FooBar');
+    // 单例模式实例到服务容器中
+     App::singleton('foo', function(){ return new Foo; });
+    // 将已实例化的对象注册到服务容器中
+     App::instance('foo', new Foo);
+    // 注册绑定规则到服务容器中
+     App::bind('FooRepositoryInterface', 'BarRepository');
+    // 给应用注册一个服务提供者
+     App::register('FooServiceProvider');
+    // 监听容器对某个对象的解析
+     App::resolving(function($object){});
               
 
 ## Mail
 
-Mail::send('email.view', $data, function($message){});
-Mail::send(array('html.view', 'text.view'), $data, $callback);
-Mail::queue('email.view', $data, function($message){});
-Mail::queueOn('queue-name', 'email.view', $data, $callback);
-Mail::later(5, 'email.view', $data, function($message){});
-// 零时将发送邮件请求写入 log，方便测试
- Mail::pretend();
+    Mail::send('email.view', $data, function($message){});
+    Mail::send(array('html.view', 'text.view'), $data, $callback);
+    Mail::queue('email.view', $data, function($message){});
+    Mail::queueOn('queue-name', 'email.view', $data, $callback);
+    Mail::later(5, 'email.view', $data, function($message){});
+    // 零时将发送邮件请求写入 log，方便测试
+     Mail::pretend();
               
 消息
-// 这些都能在 $message 实例中使用, 并可传入到 Mail::send() 或 Mail::queue()
-$message->from('email@example.com', 'Mr. Example');
-$message->sender('email@example.com', 'Mr. Example');
-$message->returnPath('email@example.com');
-$message->to('email@example.com', 'Mr. Example');
-$message->cc('email@example.com', 'Mr. Example');
-$message->bcc('email@example.com', 'Mr. Example');
-$message->replyTo('email@example.com', 'Mr. Example');
-$message->subject('Welcome to the Jungle');
-$message->priority(2);
-$message->attach('foo\bar.txt', $options);
-// 使用内存数据作为附件
-$message->attachData('bar', 'Data Name', $options);
-// 附带文件，并返回 CID
-$message->embed('foo\bar.txt');
-$message->embedData('foo', 'Data Name', $options);
-// 获取底层的 Swift Message 对象
-$message->getSwiftMessage();
+
+    // 这些都能在 $message 实例中使用, 并可传入到 Mail::send() 或 Mail::queue()
+    $message->from('email@example.com', 'Mr. Example');
+    $message->sender('email@example.com', 'Mr. Example');
+    $message->returnPath('email@example.com');
+    $message->to('email@example.com', 'Mr. Example');
+    $message->cc('email@example.com', 'Mr. Example');
+    $message->bcc('email@example.com', 'Mr. Example');
+    $message->replyTo('email@example.com', 'Mr. Example');
+    $message->subject('Welcome to the Jungle');
+    $message->priority(2);
+    $message->attach('foo\bar.txt', $options);
+    // 使用内存数据作为附件
+    $message->attachData('bar', 'Data Name', $options);
+    // 附带文件，并返回 CID
+    $message->embed('foo\bar.txt');
+    $message->embedData('foo', 'Data Name', $options);
+    // 获取底层的 Swift Message 对象
+    $message->getSwiftMessage();
 
 ## Auth
 
 #### 用户认证 
-判断当前用户是否已认证（是否已登录）
- Auth::check();
-// 获取当前的认证用户
- Auth::user();
-// 获取当前的认证用户的 ID（未登录情况下会报错）
- Auth::id();
-// 通过给定的信息来尝试对用户进行认证（成功后会自动启动会话）
- Auth::attempt(['email' => $email, 'password' => $password]);
-// 通过 Auth::attempt() 传入 true 值来开启 '记住我' 功能
- Auth::attempt($credentials, true);
-// 只针对一次的请求来认证用户
- Auth::once($credentials);
-// 登录一个指定用户到应用上
- Auth::login(User::find(1));
-// 登录指定用户 ID 的用户到应用上
- Auth::loginUsingId(1);
-// 使用户退出登录（清除会话）
- Auth::logout();
-// 验证用户凭证
- Auth::validate($credentials);
-// Attempt to authenticate using HTTP Basic Auth
- // 使用 HTTP 的基本认证方式来认证
- Auth::basic('username');
-// Perform a stateless HTTP Basic login attempt
- // 执行「HTTP Basic」登录尝试
- Auth::onceBasic();
-// 发送密码重置提示给用户
- Password::remind($credentials, function($message, $user){});
-              
-用户授权 
-// 定义权限
- Gate::define('update-post', 'Class@method');
-Gate::define('update-post', function ($user, $post) {...});
-// 传递多个参数
- Gate::define('delete-comment', function ($user, $post, $comment) {});
+    判断当前用户是否已认证（是否已登录）
+     Auth::check();
+    // 获取当前的认证用户
+     Auth::user();
+    // 获取当前的认证用户的 ID（未登录情况下会报错）
+     Auth::id();
+    // 通过给定的信息来尝试对用户进行认证（成功后会自动启动会话）
+     Auth::attempt(['email' => $email, 'password' => $password]);
+    // 通过 Auth::attempt() 传入 true 值来开启 '记住我' 功能
+     Auth::attempt($credentials, true);
+    // 只针对一次的请求来认证用户
+     Auth::once($credentials);
+    // 登录一个指定用户到应用上
+     Auth::login(User::find(1));
+    // 登录指定用户 ID 的用户到应用上
+     Auth::loginUsingId(1);
+    // 使用户退出登录（清除会话）
+     Auth::logout();
+    // 验证用户凭证
+     Auth::validate($credentials);
+    // Attempt to authenticate using HTTP Basic Auth
+     // 使用 HTTP 的基本认证方式来认证
+     Auth::basic('username');
+    // Perform a stateless HTTP Basic login attempt
+     // 执行「HTTP Basic」登录尝试
+     Auth::onceBasic();
+    // 发送密码重置提示给用户
+     Password::remind($credentials, function($message, $user){});
+                  
+    用户授权 
+    // 定义权限
+     Gate::define('update-post', 'Class@method');
+    Gate::define('update-post', function ($user, $post) {...});
+    // 传递多个参数
+     Gate::define('delete-comment', function ($user, $post, $comment) {});
 
-// 检查权限
- Gate::denies('update-post', $post);
-Gate::allows('update-post', $post);
-Gate::check('update-post', $post);
-// 指定用户进行检查
- Gate::forUser($user)->allows('update-post', $post);
-// 在 User 模型下，使用 Authorizable trait
- User::find(1)->can('update-post', $post);
-User::find(1)->cannot('update-post', $post);
+    // 检查权限
+     Gate::denies('update-post', $post);
+    Gate::allows('update-post', $post);
+    Gate::check('update-post', $post);
+    // 指定用户进行检查
+     Gate::forUser($user)->allows('update-post', $post);
+    // 在 User 模型下，使用 Authorizable trait
+     User::find(1)->can('update-post', $post);
+    User::find(1)->cannot('update-post', $post);
 
-// 拦截所有检查
- Gate::before(function ($user, $ability) {});
-Gate::after(function ($user, $ability) {});
+    // 拦截所有检查
+     Gate::before(function ($user, $ability) {});
+    Gate::after(function ($user, $ability) {});
 
-// Blade 模板语法
- @can('update-post', $post)
-@endcan
-// 支持 else 表达式
- @can('update-post', $post)
-@else
-@endcan
+    // Blade 模板语法
+     @can('update-post', $post)
+    @endcan
+    // 支持 else 表达式
+     @can('update-post', $post)
+    @else
+    @endcan
 
-// 生成一个新的策略
-php artisan make:policy PostPolicy
-// `policy` 帮助函数
-policy($post)->update($user, $post)
+    // 生成一个新的策略
+    php artisan make:policy PostPolicy
+    // `policy` 帮助函数
+    policy($post)->update($user, $post)
 
-// 控制器授权
-$this->authorize('update', $post);
-// 指定用户 $user 授权
-$this->authorizeForUser($user, 'update', $post);
+    // 控制器授权
+    $this->authorize('update', $post);
+    // 指定用户 $user 授权
+    $this->authorizeForUser($user, 'update', $post);
 
 ## Queue
 
-Queue::push('SendMail', array('message' => $message));
-Queue::push('SendEmail@send', array('message' => $message));
-Queue::push(function($job) use $id {});
+    Queue::push('SendMail', array('message' => $message));
+    Queue::push('SendEmail@send', array('message' => $message));
+    Queue::push(function($job) use $id {});
 
 在多个 workers 中使用相同的负载
 
@@ -1794,28 +1799,29 @@ View::exists('foo/bar');
 | php artisan config:cache          | 合并所有的配置信息为一个，提高加载速度      |     |
 | php artisan config:clear          | 移除配置缓存文件      |     |
 | `$exitCode = Artisan::call('config:cache');` | 程序内部调用 Artisan 命令      |     |
-| php artisan db:seed [--class[="..."]] [--database[="..."]] [--force] | 运行所有的 seed 假数据生成类   --class 可以指定运行的类，默认是: "DatabaseSeeder"   --database   可以指定数据库   --force      当处于生产环境时强制执行操作   ||
+| php artisan db:seed [--class[="..."]] [--database[="..."]] [--force] | 运行所有的 seed 假数据生成类   | --class 可以指定运行的类，默认是: "DatabaseSeeder" <br/>   --database   可以指定数据库 <br/>  --force      当处于生产环境时强制执行操作  |
 | php artisan event:generate                | 基于注册的信息，生成遗漏的 events 和 handlers      |     |
-| php artisan handler:command [--command="..."] name | 生成新的处理器类 --command      需要处理器处理的命令类名字     |     |
-| php artisan handler:event [--event="..."] [--queued] name | 创建一个新的时间处理器类 --event  需要处理器处理的事件类名字  --queued       需要处理器使用队列话处理的事件类名字   |     |
+| php artisan handler:command [--command="..."] name | 生成新的处理器类 | --command      需要处理器处理的命令类名字         |
+| php artisan handler:event [--event="..."] [--queued] name | 创建一个新的时间处理器类 | --event  需要处理器处理的事件类名字<br/>  --queued       需要处理器使用队列话处理的事件类名字       |
 | php artisan key:generate              | 生成应用的 key（会覆盖）      |     |
-| php artisan make:command [--handler] [--queued] name | 在默认情况下, 这将创建未加入队列的自处理命令 通过 --handler 标识来生成一个处理器, 用 --queued 来使其入队列.     | |
-| php artisan make:console [--command[="..."]] name | 创建一个新的 Artisan 命令 --command     命令被调用的名称。 (默认为: "command:name")     |     |
-| php artisan make:controller [--plain] name | 创建一个新的资源控制器  --plain      生成一个空白的控制器类    |     |
+| php artisan make:command [--handler] [--queued] name | 在默认情况下, 这将创建未加入队列的自处理命令 | 通过 --handler 标识来生成一个处理器, <br/>用 --queued 来使其入队列.      |
+| php artisan make:console [--command[="..."]] name | 创建一个新的 Artisan 命令 | --command     命令被调用的名称。 (默认为: "command:name")         |
+| php artisan make:controller [--plain] name | 创建一个新的资源控制器  | --plain      生成一个空白的控制器类        |
 | php artisan make:event name           | 创建一个新的事件类      |     |
 | php artisan make:middleware name      | 创建一个新的中间件类      |     |
-| php artisan make:migration [--create[="..."]] [--table[="..."]] name | 创建一个新的迁移文件 --create  将被创建的数据表.  --table  将被迁移的数据表.   |     |
+| php artisan make:migration [--create[="..."]] [--table[="..."]] name | 创建一个新的迁移文件 | --create  将被创建的数据表.<br/>  --table  将被迁移的数据表.       |
 | php artisan make:model name           | 创建一个新的 Eloquent 模型类      |     |
 | php artisan make:provider name            | 创建一个新的服务提供者类      |     |
 | php artisan make:request name             | 创建一个新的表单请求类      |     |
 
     
 数据库迁移  
- // --database   指定数据库连接（下同）  
- // --force      当处于生产环境时强制执行，不询问（下同）  
- // --path       指定单独迁移文件地址  
- // --pretend    把将要运行的 SQL 语句打印出来（下同）  
- // --seed       Seed 任务是否需要被重新运行（下同）  
+
+     // --database   指定数据库连接（下同）  
+     // --force      当处于生产环境时强制执行，不询问（下同）  
+     // --path       指定单独迁移文件地址  
+     // --pretend    把将要运行的 SQL 语句打印出来（下同）  
+     // --seed       Seed 任务是否需要被重新运行（下同）  
  
     php artisan migrate [--database[="..."]] [--force] [--path[="..."]] [--pretend] [--seed]
     
@@ -1845,12 +1851,13 @@ migrations 数据库表信息
     php artisan queue:table
     
 监听指定的队列
- // --queue      被监听的队列  
- // --delay      给执行失败的任务设置延时时间 (默认为零: 0)  
- // --memory     内存限制大小，单位为 MB (默认为: 128)  
- // --timeout    指定任务运行超时秒数 (默认为: 60)  
- // --sleep      等待检查队列任务的秒数 (默认为: 3)  
- // --tries      任务记录失败重试次数 (默认为: 0)  
+
+     // --queue      被监听的队列  
+     // --delay      给执行失败的任务设置延时时间 (默认为零: 0)  
+     // --memory     内存限制大小，单位为 MB (默认为: 128)  
+     // --timeout    指定任务运行超时秒数 (默认为: 60)  
+     // --sleep      等待检查队列任务的秒数 (默认为: 3)  
+     // --tries      任务记录失败重试次数 (默认为: 0)  
  
     php artisan queue:listen [--queue[="..."]] [--delay[="..."]] [--memory[="..."]] [--timeout[="..."]] [--sleep[="..."]] [--tries[="..."]] [connection]
     
@@ -1879,21 +1886,23 @@ migrations 数据库表信息
     php artisan queue:retry id
     
 指定订阅 Iron.io 队列的链接
- // queue: Iron.io 的队列名称.  
- // url: 将被订阅的 URL.  
- // --type       指定队列的推送类型.  
+
+     // queue: Iron.io 的队列名称.  
+     // url: 将被订阅的 URL.  
+     // --type       指定队列的推送类型.  
  
     php artisan queue:subscribe [--type[="..."]] queue url
     
 处理下一个队列任务  
- // --queue      被监听的队列  
- // --daemon     在后台模式运行  
- // --delay      给执行失败的任务设置延时时间 (默认为零: 0)  
- // --force      强制在「维护模式下」运行  
- // --memory     内存限制大小，单位为 MB (默认为: 128)  
- // --sleep      当没有任务处于有效状态时, 设置其进入休眠的秒数 (默认为: 3)  
- // --tries      任务记录失败重试次数 (默认为: 0)  
- 
+
+     // --queue      被监听的队列  
+     // --daemon     在后台模式运行  
+     // --delay      给执行失败的任务设置延时时间 (默认为零: 0)  
+     // --force      强制在「维护模式下」运行  
+     // --memory     内存限制大小，单位为 MB (默认为: 128)  
+     // --sleep      当没有任务处于有效状态时, 设置其进入休眠的秒数 (默认为: 3)  
+     // --tries      任务记录失败重试次数 (默认为: 0)  
+     
     php artisan queue:work [--queue[="..."]] [--daemon] [--delay[="..."]] [--force] [--memory[="..."]] [--sleep[="..."]] [--tries[="..."]] [connection]
 
 生成路由缓存文件来提升路由效率
@@ -1917,9 +1926,10 @@ migrations 数据库表信息
     php artisan session:table
 
 从 vendor 的扩展包中发布任何可发布的资源  
- // --force        重写所有已存在的文件  
- // --provider     指定你想要发布资源文件的服务提供者   
- // --tag          指定你想要发布标记资源.  
+
+     // --force        重写所有已存在的文件  
+     // --provider     指定你想要发布资源文件的服务提供者   
+     // --tag          指定你想要发布标记资源.  
  
     php artisan vendor:publish [--force] [--provider[="..."]] [--tag[="..."]]
     php artisan tail [--path[="..."]] [--lines[="..."]] [connection]
