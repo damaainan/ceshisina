@@ -1,14 +1,16 @@
 ## Memcache/Memcached的PHP操作手册（纯手稿版）
 
 
-**Memcache和Memcached 其实是一个东西，只是php中要是用的扩展不一样, 2009年左右有人丰富memcache的用法和性能，编写了一个libmemcached是独立第三方client library，才有了memcached ,用法也有了很大的改进比如添加了 getMulti() 批量获取键值**
+`Memcache`和`Memcached` 其实是一个东西，只是php中要是用的扩展不一样, 2009年左右有人丰富memcache的用法和性能，编写了一个libmemcached是独立第三方client library，才有了memcached ,用法也有了很大的改进比如添加了 getMulti() 批量获取键值
 
-**windows下只能安装php_memcache.dll 扩展并不存在 php_memcached.dll, 所以windows 中只能使用$mcd = new Memcache() 不能使用new Memcached()**
+windows下只能安装`php_memcache.dll` 扩展并不存在 php_memcached.dll, 所以windows 中只能使用$mcd = new Memcache() 不能使用new Memcached()
 
 - - -
 
 ## Memcache 类
 
+```php
+    <?php
     $memcache = new Memcache;
 
     $memcache->connect('127.0.0.1', 11211);
@@ -19,17 +21,17 @@
 
     $memcache->addServer('123.57.210.55', 11211,$persistent,$weight); 
     // 向连接池中添加一个memcache服务器 $persistent 是否持久化连接 $weight 
-       控制桶的数量提升被选中的权重 $timeout 表示连续持续时间
+       //控制桶的数量提升被选中的权重 $timeout 表示连续持续时间
     
 
     $memcache->set('name', 'TK'); 
     // 默认存储不压缩 不过期 , 其中字符串和数值直接存储，其他类型序列化后存储 
-       set其实是add方法和replace方法集合
+       //set其实是add方法和replace方法集合
     
 
     $memcache->set('email', 'julylovin@163.com',MEMCACHE_COMPRESSED,5);
     // MEMCACHE_COMPRESSED设置存储是否压缩 , 5表示5秒后过期但是最大只能设置2592000秒(30天)
-       如果设置为0 表示永不过期, 可以设置将来的时间戳
+      // 如果设置为0 表示永不过期, 可以设置将来的时间戳
     
 
     $memcache->set('info',array('age'=>'26','salary'=>'1000'));  
@@ -43,7 +45,7 @@
 
     $memcache->increment('counter', 3); 
     // 首先将元素当前值转换成数值然后减去value 操作counter键值+3 
-       若键不存在 则返回false 不能用于压缩的键值操作，否则get键会失败
+     //  若键不存在 则返回false 不能用于压缩的键值操作，否则get键会失败
     
 
     $memcache->decrement('counter', 3); // 操作counter键值-3 , 若键不存在 则返回false
@@ -74,15 +76,17 @@
 
     $memcache->setServerParams('memcache_host', 11211, 1, 15, true, '_callback_memcache_failure'); 
     // $memcache->addServer('memcache_host', 11211, false, 1, 1, -1, false);
-       已经通过addServer 配置过服务器 使用setServerParams 重新设置配置信息
+     //  已经通过addServer 配置过服务器 使用setServerParams 重新设置配置信息
     
-
+```
 - - -
 
 ## Memcached 类
 
 **此次练习我是在linux上安装了phpstorm，linux平台开发配置看我的其他文章**
 
+```php 
+    <?php
     $memcached = new Memcached(); //   必须安装memcached扩展 不会安装看我的相关文章
 
     #server_key名词解释#
@@ -243,3 +247,4 @@
 
     $memcached->quit(); # 关闭所有打开的链接
 
+```

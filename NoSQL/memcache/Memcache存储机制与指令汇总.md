@@ -1,18 +1,22 @@
+<style type="text/css">
+   code{color:black;}
+</style>
+
 # [Memcache存储机制与指令汇总][0]
 
 **阅读目录**
 
 * [1、memcache基本简介][1]
 * [2、理解memcache的内存存储][2]
-* [2.1、存储机制][3]
-* [2.3、理解四个名词][4]
-* [2.4、Slab的内存分配具体过程][5]
-* [2.5、Memcache存储具体过程][6]
-* [2.6、Slab Allocator缺点][7]
-* [2.7、使用-f增长因子进行调优][8]
+    * [2.1、存储机制][3]
+    * [2.3、理解四个名词][4]
+    * [2.4、Slab的内存分配具体过程][5]
+    * [2.5、Memcache存储具体过程][6]
+    * [2.6、Slab Allocator缺点][7]
+    * [2.7、使用-f增长因子进行调优][8]
 * [3、memcache删除机制][9]
-* [3.1、Lazy Expiration][10]
-* [3.2、LRU删除][11]
+    * [3.1、Lazy Expiration][10]
+    * [3.2、LRU删除][11]
 * [4、启动memcache参数][12]
 * [5、Memcache指令汇总][13]
 
@@ -28,11 +32,11 @@ Memcache的运行图：
 
 memcached作为高速运行的分布式缓存服务器，具有以下的特点。
 
-1、基于C/S架构协议简单
+1、基于`C/S架构`协议简单
 
 memcached的服务器客户端通信并不使用复杂的XML等格式，而使用简单的基于文本行的协议。 因此，通过telnet也能在memcached上保存数据、取得数据。
 
-2、基于libevent的事件处理
+2、基于`libevent`的事件处理
 
 libevent是个程序库，它将Linux的epoll、BSD类操作系统的kqueue等事件处理功能封装成统一的接口。即使对服务器的连接数增加，也能发挥O(1)的性能。memcached使用这个libevent库，因此 能在Linux、BSD、Solaris等操作系统上发挥其高性能。
 
@@ -48,11 +52,11 @@ memcached尽管是“分布式”缓存服务器，但服务器端并没有分�
 
 #### **2、理解memcache的内存存储**
 
-#### **_2.1__、存储机制_**
+#### 2.1、存储机制
 
 Memcache采用的是Slab Allocator方式进行存储数据。这一机制可以很好的整理内存，以便重复利用，从而解决了内存碎片的问题。在该机制出现以前，内存的分配是通过对所有记录简单地进行malloc和free来进行的。但是，这种方式会导致内存碎片，加重操作系统内存管理器的负担，最坏的情况下，会导致操作系统比memcached进程本身还慢。
 
-_**2.2**_**_、__Slab Allocator__基本原理_**
+#### 2.2、Slab Allocator基本原理
 
 1、按照预先规定的大小，将分配的内存以page（默认每个page为1M）为单位分为特定的块（chunk），并且把相同大小的chunk分成组（chunk的集合）；
 
@@ -60,7 +64,7 @@ _**2.2**_**_、__Slab Allocator__基本原理_**
 
 3、内存一旦以page的形式分配出去，在重启前不会被回收或者重新分配，以解决内存碎片问题。（分配的内存不会释放，而是重复利用）
 
-#### **_2.3__、理解四个名词_**
+#### 2.3、理解四个名词
 
 **【可参考下面的形象解析图进行理解】**
 
@@ -80,7 +84,7 @@ _**2.2**_**_、__Slab Allocator__基本原理_**
 
 特定大小的Chunk集合
 
-#### **_2.4__、__Slab__的内存分配具体过程_**
+#### 2.4、Slab的内存分配具体过程
 
 Memcached在启动时通过**-m****参数**指定最大使用内存，但是这个不会一启动就占用完，而是逐步分配给各slab的。如果一个新的数据要被存放，首先选择一个合适的slab，然后查看该slab是否还有空闲的chunk，如果有则直接存放进去；如果没有则要进行申请，slab申请内存时以page为单位，无论大小为多少，都会有1M大小的page被分配给该slab（该page不会被回收或者重新分配，永远都属于该slab）。申请到page后，slab会将这个page的内存按chunk的大小进行切分，这样就变成了一个chunk的数组，再从这个chunk数组中选择一个用于存储数据。若没有空闲的page的时候，则会对改slab进行LRU，而不是对整个memcache进行LRU。
 
@@ -88,7 +92,7 @@ Memcached在启动时通过**-m****参数**指定最大使用内存，但是这�
 
 ![][17]
 
-#### **_2.5__、__Memcache__存储具体过程_**
+#### 2.5、Memcache存储具体过程
 
 Memcached并不是将所有大小的数据都放在一起的，而是预先将数据空间划分为一系列slabs，每个slab只负责一定范围内的数据存储。memcached根据收到的数据的大小，选择最适合数据大小的slab。假若这个slab仍有空闲chunk的列表，根据该列表选择chunk，然后将数据缓存于其中；若无则申请page（1M）【可以参考上面我画的形象图23333】
 
@@ -98,7 +102,7 @@ Memcached并不是将所有大小的数据都放在一起的，而是预先将�
 
 ![][18]
 
-#### **_2.6__、__Slab Allocator__缺点_**
+#### 2.6、Slab Allocator缺点
 
 Slab Allocator解决了当初的内存碎片问题，但新的机制也给memcached带来了新的问题。
 
@@ -106,7 +110,7 @@ Slab Allocator解决了当初的内存碎片问题，但新的机制也给memcac
 
 ![][19]
 
-#### **_2.7__、使用__-f__增长因子进行调优_**
+#### 2.7、使用`-f`增长因子进行调优
 
 增长因子就是相邻两个chunk之间的增长倍数。这个参数memcache默认是1.25，但是我们先采用整数2来测试一下，看看效果。
 
@@ -130,11 +134,11 @@ Slab Allocator解决了当初的内存碎片问题，但新的机制也给memcac
 
 从上面我们知道，已经分配出去的内存是不会被释放回收的，记录超时后，客户端就无法看到该记录，其存储空间即可重复使用。
 
-#### **_3.1__、__Lazy Expiration_**
+#### 3.1、Lazy Expiration
 
 memcached内部不会监视记录是否过期，而是在get时查看记录的时间戳，检查记录是否过期。这种技术被称为lazy（惰性）expiration。因此，memcached不会在过期监视上耗费CPU时间。
 
-#### **_3.2__、__LRU__删除_**
+#### 3.2、LRU删除
 
 memcached会优先使用已超时的记录的空间，但即使如此，也会发生追加新记录时空间不足的情况， 此时就要使用名为Least Recently Used（LRU）机制来分配空间。顾名思义，这是删除“最近最少 使用”的记录的机制。因此，当memcached的内存空间不足时（无法从slab class获取到新的空间时），就从最近未被使用的记录中搜索，并将其空间分配给新的记录。从缓存的实用角度来看，该模型十分理想。
 
@@ -152,30 +156,30 @@ memcached会优先使用已超时的记录的空间，但即使如此，也会�
 
 -|-
 -|-
-**-p<num>** | 监听的TCP端口（默认：11211）
--U<num> | UDP监听端口（默认：11211 0关闭）
+**`-p<num>`** | 监听的TCP端口（默认：11211）
+`-U<num>` | UDP监听端口（默认：11211 0关闭）
 **-d** | 以守护进程方式运行
-**-u<username>** | 指定用户运行
-**-m<num>.** | 最大内存使用，单位MB。默认64MB
-**-c<num>** | 最大同时连接数，默认是1024
+**`-u<username>`** | 指定用户运行
+**`-m<num>.`** | 最大内存使用，单位MB。默认64MB
+**`-c<num>`** | 最大同时连接数，默认是1024
 -v | 输出警告和错误消息
 -vv | 打印客户端的请求和返回信息
 -h | 帮助信息
-**-l<ip>** | 绑定地址（默认任何ip地址都可以访问）
-**-P<file>** |     将PID保存在file文件
+**`-l<ip>`** | 绑定地址（默认任何ip地址都可以访问）
+**`-P<file>`** |     将PID保存在file文件
 -i | 打印memcached和libevent版权信息
 **-M** | 禁止LRU策略，内存耗尽时返回错误
-**-f<factor>** | 增长因子，默认1.25
--n<bytes> |     初始chunk=key+suffix+value+32结构体，默认48字节
+**`-f<factor>`** | 增长因子，默认1.25
+`-n<bytes>` |     初始chunk=key+suffix+value+32结构体，默认48字节
 -L |    启用大内存页，可以降低内存浪费，改进性能
 -l | 调整分配slab页的大小，默认1M，最小1k到128M
--t<num> | 线程数，默认4。由于memcached采用NIO，所以更多线程没有太多作用
+`-t<num>` | 线程数，默认4。由于memcached采用NIO，所以更多线程没有太多作用
 -R | 每个event连接最大并发数，默认20
 -C | 禁用CAS命令（可以禁止版本计数，减少开销）
 -b | Set the backlog queue limit (default: 1024)
 -B | Binding protocol-one of ascii, binary or auto (default)
--s<file> | UNIX socket
--a<mask> | access mask for UNIX socket, in octal (default: 0700)
+`-s<file>` | UNIX socket
+`-a<mask>` | access mask for UNIX socket, in octal (default: 0700)
 
 #### **5、Memcache指令汇总**
 
