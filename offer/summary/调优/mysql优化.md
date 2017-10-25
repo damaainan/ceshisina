@@ -1,3 +1,20 @@
+MySQL优化框架
+
+    1. SQL语句优化
+    2. 索引优化
+    3. 数据库结构优化
+    4. InnoDB表优化
+    5. MyISAM表优化
+    6. Memory表优化
+    7. 理解查询执行计划
+    8. 缓冲和缓存
+    9. 锁优化
+    10. MySQL服务器优化
+    11. 性能评估
+    12. MySQL优化内幕
+
+
+
 # mysql优化,不用怕面试题
 
 #  第一方面：`30种`mysql优化sql语句查询的方法
@@ -92,11 +109,11 @@ create table #t(...)
 ##第二方面：  
 `select Count (*)`和`Select Count(1)`以及`Select Count(column)`区别  
 
-一般情况下，Select Count (*)和Select Count(1)两着返回结果是一样的  
-假如表沒有主键(Primary key), 那么count(1)比count(*)快，  
+一般情况下，`Select Count (*)`和`Select Count(1)`两着返回结果是一样的  
+假如表沒有主键(Primary key), 那么`count(1)`比`count(*)`快，  
 如果有主键的話，那主键作为count的条件时候count(主键)最快  
-如果你的表只有一个字段的话那count(*)就是最快的  
-count(*) 跟 count(1) 的结果一样，都包括对NULL的统计，而count(column) 是不包括NULL的统计  
+如果你的表只有一个字段的话那`count(*)`就是最快的  
+`count(*)` 跟 count(1) 的结果一样，都包括对NULL的统计，而count(column) 是不包括NULL的统计  
   
 ## 第三方面：  
 索引列上计算引起的索引失效及优化措施以及注意事项  
