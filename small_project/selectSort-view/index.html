@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>选择排序算法动画</title>
+</head>
+<body style="height: 100%, width: 1000px;">
+    <canvas id="canvas" style="height: 100%">
+        当前浏览器不支持Canvas，请更换浏览器后再试
+    </canvas>
+
+    <script src="AlgoVisHelper.js"></script>
+    <script src="AlgoFrame.js"></script>
+    <script src="SelectionSortData.js"></script>
+    <script src="AlgoVisualizer.js"></script>
+    <script type="text/javascript">
+        window.onload = function(){
+            var sceneWidth = 1000;
+            var sceneHeight = 600;
+
+            var canvas = document.getElementById('canvas');
+            var g2d = canvas.getContext('2d');
+
+            canvas.width = sceneWidth;
+            canvas.height = sceneHeight;
+
+            var N = 100;
+
+            var visualizer = new AlgoVisualizer(g2d, sceneWidth, sceneHeight, 100);
+        }
+    </script>
+</body>
+</html>
+
+<!-- 
+看了 @Liuyubobo 老师的 深度实战玩转算法 课程，感觉对自己解决问题的思路提供了很多帮助。本着毫不为己专门为人的精神[自己都脸红]，在不破坏算法本身和最大限度保持和课程代码一致的前提下，使用canvas重写了这些课程中的代码。希望能给大家提供一些思路，写的可能不太好，希望大家多包涵，如果有好的思路和建议也可以在下面留言告诉我。
+说明
+本来的渲染应该是一边执行算法一边渲染的，但是js中没有sleep这种线程休眠的方法。尝试了一些类似的手段，结果发现会导致浏览器卡住。为了不破坏算法本身的意义，就采用了一种比较作弊的手段。先计算出所有的数据，保存在一个数组里，然后再使用setInterval来进行渲染。
+如果大家有更好的实现方式，可以在下面留言告诉我。
+
+作者： 秋名山车神 
+链接：http://www.imooc.com/article/20330
+来源：慕课网
+本文原创发布于慕课网 ，转载请注明出处，谢谢合作！
+
+ -->

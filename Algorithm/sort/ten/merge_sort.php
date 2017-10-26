@@ -76,7 +76,7 @@ function demo($arr){
     $reg = [];
     while(count($larr) && count($rarr))
     {
-        $reg[]=$larr[0]<$rarr?array_shift($larr):array_shift($rarr);
+        $reg[]=$larr[0]<$rarr[0]?array_shift($larr):array_shift($rarr);
     }
     return array_merge($reg,$larr,$rarr);
 }

@@ -40,3 +40,8 @@
 
     $ cd /path/to/some/where
     $ du -hsx * | sort -rh | head -10
+
+
+## 统计文件行数
+
+    find ./ -name '*.php'  | xargs cat | wc -l
