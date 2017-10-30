@@ -8,15 +8,15 @@
 下面以阶乘（Factorial）为例来说明一下递归的用法，实现语言是PHP：
 
 ```php
-    <?php
-    function factorial($n) {
-        if ($n == 0) {
-            return 1;
-        }
-        return factorial($n - 1) * $n;
+<?php
+function factorial($n) {
+    if ($n == 0) {
+        return 1;
     }
-    var_dump(factorial(100));
-    ?>
+    return factorial($n - 1) * $n;
+}
+var_dump(factorial(100));
+?>
 ```
 如果安装了XDebug的话，可能会遇到如下错误：
 
@@ -59,64 +59,64 @@ print(factorial(100))
 照猫画虎，我们用PHP来实现一个**`尾调用`**版本的阶乘：
 
 ```php
-    <?php
-    
-    function factorial($n, $accumulator = 1) {
-        if ($n == 0) {
-            return $accumulator;
-        }
-    
-        return factorial($n - 1, $accumulator * $n);
+<?php
+
+function factorial($n, $accumulator = 1) {
+    if ($n == 0) {
+        return $accumulator;
     }
-    
-    var_dump(factorial(100));
-    
-    ?>
+
+    return factorial($n - 1, $accumulator * $n);
+}
+
+var_dump(factorial(100));
+
+?>
 ```
 
 可惜测试后才发现`PHP根本不支持尾调用`！好在天无绝人之路，仔细阅读维基百科中关于尾调用的介绍，你会发现里面提到了`Trampoline`的概念。简单点说就是`利用高阶函数消除递归`，依照这样的理论基础，我们可以把上面的尾调用代码改写成如下方式：
 
 ```php
-    <?php
-    
-    function factorial($n, $accumulator = 1) {
-        if ($n == 0) {
-            return $accumulator;
-        }
-        return function() use($n, $accumulator) {
-            return factorial($n - 1, $accumulator * $n);
-        };
+<?php
+
+function factorial($n, $accumulator = 1) {
+    if ($n == 0) {
+        return $accumulator;
     }
-    
-    function trampoline($callback, $params) {
-        $result = call_user_func_array($callback, $params);
-        while (is_callable($result)) {
-            $result = $result();
-        }
-        return $result;
+    return function() use($n, $accumulator) {
+        return factorial($n - 1, $accumulator * $n);
+    };
+}
+
+function trampoline($callback, $params) {
+    $result = call_user_func_array($callback, $params);
+    while (is_callable($result)) {
+        $result = $result();
     }
-    var_dump(trampoline('factorial', array(100)));
-    
-    ?>
+    return $result;
+}
+var_dump(trampoline('factorial', array(100)));
+
+?>
 ```
 看上去不错，不过我不得不向大家道个歉，本文用递归实现阶乘其实是个玩笑，实际上只要用一个循环就行了，《代码大全》里专门提到了这一点：
 
 ```php
-    <?php
-    
-    function factorial($n) {
-        $result = 1;
-    
-        for ($i = 1; $i <= $n; $i++) {
-            $result *= $i;
-        }
-    
-        return $result;
+<?php
+
+function factorial($n) {
+    $result = 1;
+
+    for ($i = 1; $i <= $n; $i++) {
+        $result *= $i;
     }
-    
-    var_dump(factorial(100));
-    
-    ?>
+
+    return $result;
+}
+
+var_dump(factorial(100));
+
+?>
 ```
 还有很多别的方法可以用来规避递归引起的栈溢出问题，比如说Python中可以通过装饰器和异常来消灭尾调用，让人有一种别有洞天的感觉：
 
