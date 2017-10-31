@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <title>Halloween</title>
+    <style>
+        html,
+        body,
+        canvas {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        .switch {
+            position: absolute;
+            top: 70%;
+            right: 10%;
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            outline: none;
+            cursor: pointer;
+            animation: switch-animate alternate infinite ease 1s 0s;
+        }
+
+        @keyframes switch-animate {
+            from {
+                box-shadow: 0 0 30px #ece9c5;
+            }
+
+            to {
+                box-shadow: 0 0 100px #eae5a7;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <button id="click" class="switch">Click</button>
+    <script>
+        (function () {
+
+            class Halloween {
+                constructor(id) {
+                    this.canvas = document.getElementById(id);
+                    this.ctx = this.canvas.getContext('2d');
+                    this.w = this.canvas.width;
+                    this.h = this.canvas.height;
+                    this.data = [];
+                }
+
+                //初始画布
+                initDraw(img) {
+                    this.w = this.canvas.width = img.width;
+                    this.h = this.canvas.height = img.height;
+                    this.ctx.drawImage(img, 0, 0);
+                    this.data = this.ctx.getImageData(0, 0, this.w, this.h);
+                }
+
+                //显示文字
+                drawText() {
+                    this.ctx.font = '60px Microsoft YaHei';
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.fillText('万圣节快乐', 350, 280);
+                }
+
+                //闪电
+                lightning() {
+                    let ctx = this.ctx;
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(800, 10);
+                    ctx.lineTo(600, 100);
+                    ctx.lineTo(500, 200);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(600, 100);
+                    ctx.lineTo(650, 170);
+                    ctx.stroke()
+                }
+
+                //打雷
+                thunder() {
+                    let timer = Math.floor(800 * Math.random());
+                    this.reverse();
+                    this.lightning();
+                    this.drawText();
+                    setTimeout(() => {
+                        this.reset();
+                    }, timer);
+                }
+
+                //反转画布
+                reverse() {
+                    let imgData = this.ctx.getImageData(0, 0, this.w, this.h);
+                    for (var i = 0, len = imgData.data.length; i < len; i += 4) {
+                        imgData.data[i] = 255 - imgData.data[i];
+                        imgData.data[i + 1] = 255 - imgData.data[i + 1];
+                        imgData.data[i + 2] = 255 - imgData.data[i + 2];
+                        imgData.data[i + 3] = 255;
+                    }
+                    this.ctx.putImageData(imgData, 0, 0);
+                }
+
+                //重置画布
+                reset() {
+                    this.ctx.putImageData(this.data, 0, 0);
+                }
+            }
+
+
+            let halloween = new Halloween('canvas');
+            let canvas = document.getElementById('canvas');
+            let ctx = canvas.getContext('2d');
+            let img = new Image();
+            img.src = './img/halloween.png';
+            img.onload = () => {
+                halloween.initDraw(img);
+            }
+
+            document.getElementById('click').onclick = () => {
+                halloween.thunder();
+            }
+
+        })();
+    </script>
+
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?d4222597fdc0f3f93caa8eedd9eced66";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+</body>
+
+</html>

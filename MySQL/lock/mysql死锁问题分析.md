@@ -208,7 +208,7 @@ innodb在RR级别下，如下的情况也会产生死锁，比较隐晦。不清
 
 这不就是图10描述的死锁嘛！
 
-[0]: /baihuaxiu123/article/details/54015279
+[0]: http://blog.csdn.net/baihuaxiu123/article/details/54015279
 [11]: #t0
 [12]: #t1
 [13]: #t2
