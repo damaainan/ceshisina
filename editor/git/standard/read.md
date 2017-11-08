@@ -1,0 +1,1 @@
+http://dev45.gitlab.miyabaobei.com/git/demo/uploads/d0a16b1b4554a8f7f4dff839617a9728/release.png
