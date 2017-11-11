@@ -1,13 +1,4 @@
-
-
 # [检测 PHP 应用的代码复杂度][0]
-
-* [php][1]
-* [code][2]
-* [代码复杂度][3]
-
-[**JellyBool**][4] 6月4日发布 
-
 
 > 原文来自：[https://www.laravist.com/blog...][13]
 
@@ -108,13 +99,9 @@
 ![][16]
 
 [0]: https://segmentfault.com/a/1190000009654074
-[1]: https://segmentfault.com/t/php/blogs
-[2]: https://segmentfault.com/t/code/blogs
-[3]: https://segmentfault.com/t/%E4%BB%A3%E7%A0%81%E5%A4%8D%E6%9D%82%E5%BA%A6/blogs
-[4]: https://segmentfault.com/u/jellybool
 [13]: https://www.laravist.com/blog/post/code-complexity-tools-for-php-apps
 [14]: https://github.com/sebastianbergmann/phploc
 [15]: http://www.phpmetrics.org/
-[16]: https://segmentfault.com/img/bVOFB1
+[16]: ../img/bVOFB1.png
 
 

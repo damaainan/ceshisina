@@ -47,4 +47,4 @@ new self
 
 > Tips: 可以用一个好的 IDE 来直接看注释。比如 PhpStorm：
 
-![](https://segmentfault.com/img/remote/1460000008396832)
+![](../../img/1460000008396832.gif)
