@@ -22,3 +22,7 @@
     :b# -- 你之前所在的前一个 buffer
 
     :bdelete num -- 删除第num编号buffer
+
+####  命令行（在状态行下）的高度
+
+    "set cmdheight=1     " 命令行（在状态行下）的高度，设置为1  
