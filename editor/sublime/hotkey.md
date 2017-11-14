@@ -4,8 +4,8 @@
 
 |快捷键组合|功能| 
 |---|---| 
-|shift + cmd + p|打开命令面板| 
-|control + |控制台| 
+|shift + cmd + p|**`打开命令面板`**| 
+|control + \` |控制台| 
 |cmd + n|新建标签| 
 |cmd + 数字|标签切换| 
 |cmd + option + 2|分成两屏| 
@@ -13,8 +13,8 @@
 |cmd + delelte|删除光标前所有字符, 貌似是Mac快捷键| 
 |cmd + f| 查找| 
 |option + cmd + f|查找替换| 
-|cmd + t|文件跳转| 
-|control + g|行跳转, 类似vim中的num + gg| 
+|cmd + t|**`文件跳转`**| 
+|control + g|**`行跳转`**, 类似vim中的num + gg| 
 |cmd + r|函数跳转| 
 |cmd + /|给选中行添加或去掉注释| 
 |cmd + [或 cmd + ]|智能行缩进| 
@@ -60,7 +60,7 @@ Ctrl + Shift + H：|替换当前关键字
 Ctrl + Alt + Enter：|替换所有关键字匹配  
 Ctrl + Shift + F：|多文件搜索&替换  
 跳转（Jumping）  
-Ctrl + P：|跳转到指定文件，输入文件名后可以：|  
+Ctrl + P：|**`跳转到指定文件，输入文件名后可以`**：|  
 @ 符号跳转：|输入@symbol跳转到symbol符号所在的位置  
 \# 关键字跳转：|输入#keyword跳转到keyword所在的位置  
 : 行号跳转：|输入:12跳转到文件的第12行。  
