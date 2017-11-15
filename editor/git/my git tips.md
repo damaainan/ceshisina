@@ -6,6 +6,11 @@
 
     git status
 
+#### 保存现场
+
+    git stash
+    git stash list
+    git stash pop
 
 #### 1.删除无用的分支
     
@@ -16,7 +21,8 @@
     $ git tag -d <tag_name>
 
 #### 3.**`清理本地版本库`**  合并 `.git` 目录对象
-    
+
+
     $ git gc --prune=now
 
 
