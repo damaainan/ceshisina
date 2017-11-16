@@ -31,11 +31,11 @@ $win = new class("Starfield", new Size(640, 480), false) extends Window {
     }
 };
 
-$box = new Box(Box::Vertical);
+$box = new Box(Box::Horizontal);//  Vertical Horizontal 两个常量值
 $win->add($box);
 
 $font = new UI\Draw\Text\Font(
-    new UI\Draw\Text\Font\Descriptor("arial", 12)           
+    new UI\Draw\Text\Font\Descriptor("arial", 14)// 字体设置 字体 大小 重量 斜体  拉伸
 );
 
 $stars = new class($box, 1024, 64, $font) extends Area {
@@ -60,7 +60,7 @@ $stars = new class($box, 1024, 64, $font) extends Area {
         $path = new Path();
         $path->addRectangle(Point::at(0), $size);
         $path->end();
-        $pen->fill($path, 0x000000FF);
+        $pen->fill($path, 0x000000FF);//背景颜色
 
         foreach ($this->stars as $idx => &$star) {
             $star[1] -= $this->velocity / 10;
