@@ -16,8 +16,6 @@ S1：
 
 在项目根目录创建composer.json文件，写入代码
 
-
-
     {
         "type": "project",
         "autoload": {
@@ -26,11 +24,8 @@ S1：
             }
         }
     }
-
   
 S2：在项目根目录打开命令，写入命令
-
-
 
     composer update
 
@@ -40,17 +35,18 @@ S2：在项目根目录打开命令，写入命令
 
 S3：
 
-说明：使用之前需要require一下"/vendor/autoload.[PHP][6]"文件。
+说明：使用之前需要require一下"/vendor/autoload.php"文件。
 
 ```php
     $autoLoadFilePath = dirname($_SERVER['DOCUMENT_ROOT']).DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
     require_once $autoLoadFilePath;
 ```
 
-  
-说明：我的入口文件在根目录下的"\public\"文件夹下。S4：
+说明：我的入口文件在根目录下的"\public\"文件夹下。
 
-在"/admin/"目录下新建test.[php][6]文件，文件内容如下
+S4：
+
+在"/admin/"目录下新建test.php文件，文件内容如下
 
 ```php
     <?php
@@ -66,7 +62,6 @@ S3：
     }
 ```
 
-  
 在"/public/"目录下新建index.php文件，文件内容如下
 
 ```php
@@ -79,7 +74,6 @@ S3：
     $test = new \Admin\test();
     $test->sayHi();
 ```
-    
 
 S5：配置apache，访问路径，得到如下
 
