@@ -26,3 +26,18 @@
 ####  命令行（在状态行下）的高度
 
     "set cmdheight=1     " 命令行（在状态行下）的高度，设置为1  
+
+
+### vim 中改变文件编码方式
+
+    :set fileencoding  # 查看
+    :set fileencoding=utf-8
+
+### vim dos/unix互转
+
+1.使用命令：dos2unixor
+
+2.使用vim命令:`%s/^M//g` ，注意用 `Ctrl - v`  `Ctrl - m` 输入 `^M`
+
+3.使用vim命令 `:set ff=unix`
+
