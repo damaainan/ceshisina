@@ -6,4 +6,5 @@ sublimeCodeIntel
 sublimeLinter  
 sublimeLinter-php 
 
-phpfmt
+phpfmt  
+需要配置 php 路径
