@@ -85,5 +85,8 @@ awk的字段分隔符可以为**单个字符**也可以为**正则表达式**！
 
 对于连续出现的分隔符，awk完全按照FS的设定进行，上面示例中均设置FS为一个正则表达式，不同之处是一个**+**的区别，这里的+是扩展正则表达式中的一个元字符，表示前面中括号中的字符可以出现1次或者多次，因此下面的awk指令可以正确的将输入分割为四个字段，而前一个awk指令则分割出了7个字段，其中有三个字段为空，这个主要是FS使用的正则表达式不同所导致。
 
+    awk '!_[$0]++{print}' 去重
+
+
 [0]: http://www.letuknowit.com/topics/20120318/the-records-and-fields-of-awk.html
 [1]: http://www.letuknowit.com/topics/20120320/awk-command-syntax-and-detailed-examples.html
