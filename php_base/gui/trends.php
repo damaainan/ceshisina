@@ -270,7 +270,7 @@ $fontCombo = new class($histogram) extends Combo {
         $this->histogram->setFontSource($this);
     }
 
-    public function getFont(int $selected = -1, int $size = 12) {
+    public function getFont(int $selected = -1, int $size = 15) {
         return new Font(
             new Descriptor($this->families[
                 $selected > -1 ? $families : $this->getSelected()
