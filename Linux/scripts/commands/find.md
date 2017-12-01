@@ -45,3 +45,11 @@
 ## 统计文件行数
 
     find ./ -name '*.php'  | xargs cat | wc -l
+
+## 统计 git 文件
+
+    git status | awk  '/Server/ &&  !/modif/{print $1}' | xargs -i[ ls -lR [
+
+统计行数 （Server 为目录名）
+
+     git status | awk  '/Server/ &&  !/modif/{print $1}' | xargs -i[ find [ -name '*.php'  | xargs cat | wc -l
