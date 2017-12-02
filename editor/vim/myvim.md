@@ -41,3 +41,7 @@
 
 3.使用vim命令 `:set ff=unix`
 
+
+## Gvim 64位下载地址
+
+[https://github.com/vim/vim-win32-installer/releases](https://github.com/vim/vim-win32-installer/releases)

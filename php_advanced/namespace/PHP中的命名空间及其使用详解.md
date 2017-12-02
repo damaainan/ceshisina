@@ -1,8 +1,8 @@
 # [PHP中的命名空间(namespace)及其使用详解][0]
 
- [晶晶][1]  4年前 (2014-01-02)  30533次浏览  [PHP][2]
+(2014-01-02)  
 
-php自5.3.0开始，引入了一个namespace关键字以及__NAMESPACE__魔术常量（当然use关键字或use as嵌套语句也同时引入）；那么什么是命名空间呢？php官网已很明确的进行了定义并形象化解释，这里直接从php官网copy一段文字[[来源][3]]。 
+php自5.3.0开始，引入了一个namespace关键字以及`__NAMESPACE__`魔术常量（当然`use`关键字或`use as`嵌套语句也同时引入）；那么什么是命名空间呢？php官网已很明确的进行了定义并形象化解释，这里直接从php官网copy一段文字[[来源][3]]。 
 
 “什么是命名空间？从广义上来说，命名空间是一种封装事物的方法。在很多地方都可以见到这种抽象概念。例如，在操作系统中目录用来将相关文件分组，对于目录中的文件来说，它就扮演了命名空间的角色。具体举个例子，文件 foo.txt 可以同时在目录/home/greg 和 /home/other 中存在，但在同一个目录中不能存在两个 foo.txt 文件。另外，在目录 /home/greg 外访问 foo.txt 文件时，我们必须将目录名以及目录分隔符放在文件名之前得到 /home/greg/foo.txt。这个原理应用到程序设计领域就是命名空间的概念。” 
 
@@ -44,9 +44,9 @@ index.php文件代码
 ?>
 ```
 
-输出结果1：“This is namespace of PHP demo ,The Demo magic constant "__NAMESPACE__" is DemoNameSpace” 
+输出结果1：“This is namespace of PHP demo ,The Demo magic constant "**`__NAMESPACE__`**" is DemoNameSpace” 
 
-以上示例的说明：Demo.php中有一个_NAMESPACE__魔法常量；“它包含当前命名空间名称的字符串。在全局的，不包括在任何命名空间中的代码，它包含一个空的字符串。” 
+以上示例的说明：Demo.php中有一个`__NAMESPACE__`魔法常量；“它包含当前命名空间名称的字符串。在全局的，不包括在任何命名空间中的代码，它包含一个空的字符串。” 
 
 接着做示例： 
 
