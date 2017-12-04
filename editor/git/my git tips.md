@@ -25,6 +25,10 @@
 
     $ git gc --prune=now
 
+本地分支和远程分支没有建立联系--解决执行 git pull 报错
+
+    git branch --set-upstream-to=origin/远程分支的名字 本地分支的名字
+
 
 一些常用的git命令行使用小技巧
 

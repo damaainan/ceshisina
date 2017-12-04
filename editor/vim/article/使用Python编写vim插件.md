@@ -56,7 +56,9 @@ vim是个伟大的编辑器，不仅在于她特立独行的编辑方式，还�
 
 ## 操作vim像vimL一样容易
 
-怎么用Python来访问vim的信息以及操作vim呢？很简单，vim的Python接口提供了一个叫vim的模块（module）。vim模块是Python和vim沟通的桥梁，通过它，Python可以访问vim的一切信息以及操作vim，就像使用vimL一样。所以写脚本，首先要 `import vim` 。 
+怎么用Python来访问vim的信息以及操作vim呢？很简单，vim的Python接口提供了一个叫vim的模块（module）。vim模块是Python和vim沟通的桥梁，通过它，Python可以访问vim的一切信息以及操作vim，就像使用vimL一样。所以写脚本，首先要 `:py import vim` 。 
+
+也可以将命令写入 vimrc 打开时即执行
 
 ### vim模块
 

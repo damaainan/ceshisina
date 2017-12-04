@@ -25,6 +25,24 @@ vundle 环境设置
     call vundle#end()
     filetype plugin indent on
 
+windows 下放在安装目录的设置 `$VIM`  (安装目录下 `vimrc` 文件)
+
+    "需要先设置好 bundle 目录  下载好 vundle.vim 文件
+    set nocompatible              " be iMproved, required
+    filetype off                  " required
+
+    " set the runtime path to include Vundle and initialize
+    set rtp+=$VIM/gvimfiles/bundle/Vundle.vim
+    "call vundle#begin()
+    call vundle#begin('$VIM/gvimfiles/bundle/')
+
+    " gvim 配置文件 在 $HOME 新建插件目录
+    " 设置缓存文件夹  C:\windows\Temp  属性可读，完全控制
+    " 管理员身份打开 gvim ，安装插件
+    " set rtp+=$HOME/gvimfiles/bundle/Vundle.vim
+    " let path='$HOME/gvimfiles/bundle'
+    " call vundle#begin(path)
+
 
 
 进入 vim 执行
