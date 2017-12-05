@@ -71,11 +71,9 @@ vim模块提供了两个非常有用的函数接口:
     :py vim.command("normal! dd")
 ```
 * vim.eval(str) 求vim表达式 str 的值，（什么是vim表达式，参见 `:h expr` ），返回结果类型为： 
-
-
-  * string : 如果vim表达式的值的类型是 string 或 number
-  * list ：如果vim表达式的值的类型是一个vim list（ :h list ）
-  * dictionary ：如果vim表达式的值的类型是一个vim dictionary（ :h dict ）
+    * string : 如果vim表达式的值的类型是 string 或 number
+    * list ：如果vim表达式的值的类型是一个vim list（ :h list ）
+    * dictionary ：如果vim表达式的值的类型是一个vim dictionary（ :h dict ）
 
 例如：
 
