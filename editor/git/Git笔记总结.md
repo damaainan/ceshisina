@@ -121,52 +121,52 @@
 
 ### 分支 
 
-    git branch#列出本地分支
-    git branch -r#列出远端分支
-    git branch -a#列出所有分支
-    git branch -v#查看各个分支最后一个提交对象的信息
-    git branch --merge#查看已经合并到当前分支的分支
-    git branch --no-merge#查看为合并到当前分支的分支
-    git branch test#新建test分支
+    git branch # 列出本地分支
+    git branch -r # 列出远端分支
+    git branch -a # 列出所有分支
+    git branch -v # 查看各个分支最后一个提交对象的信息
+    git branch --merge # 查看已经合并到当前分支的分支
+    git branch --no-merge # 查看为合并到当前分支的分支
+    git branch test # 新建test分支
     git branch branch [branch|commit|tag] # 从指定位置出新建分支
     git branch --track branch remote-branch # 新建一个分支，与指定的远程分支建立追踪关系
     git branch -m old new #重命名分支
-    git branch -d test#删除test分支
-    git branch -D test#强制删除test分支
-    git branch --set-upstream dev origin/dev #将本地dev分支与远程dev分支之间建立链接
+    git branch -d test # 删除test分支
+    git branch -D test # 强制删除test分支
+    git branch --set-upstream dev origin/dev # 将本地dev分支与远程dev分支之间建立链接
     
-    git checkout test#切换到test分支
-    git checkout -b test#新建+切换到test分支
-    git checkout -b test dev#基于dev新建test分支，并切换
+    git checkout test # 切换到test分支
+    git checkout -b test # 新建+切换到test分支
+    git checkout -b test dev # 基于dev新建test分支，并切换
     
-    git merge test#将test分支合并到当前分支
+    git merge test # 将test分支合并到当前分支
     git merge --squash test ## 合并压缩，将test上的commit压缩为一条
     
-    git cherry-pick commit #拣选合并，将commit合并到当前分支
-    git cherry-pick -n commit #拣选多个提交，合并完后可以继续拣选下一个提交
+    git cherry-pick commit # 拣选合并，将commit合并到当前分支
+    git cherry-pick -n commit # 拣选多个提交，合并完后可以继续拣选下一个提交
     
-    git rebase master#将master分之上超前的提交，变基到当前分支
-    git rebase --onto master 169a6 #限制回滚范围，rebase当前分支从169a6以后的提交
-    git rebase --interactive #交互模式    
-    git rebase --continue# 处理完冲突继续合并    
-    git rebase --skip# 跳过    
-    git rebase --abort# 取消合并
+    git rebase master # 将master分之上超前的提交，变基到当前分支
+    git rebase --onto master 169a6 # 限制回滚范围，rebase当前分支从169a6以后的提交
+    git rebase --interactive # 交互模式    
+    git rebase --continue # 处理完冲突继续合并    
+    git rebase --skip # 跳过    
+    git rebase --abort # 取消合并
     
 
 ### 远端 
 
-    git fetch origin remotebranch[:localbranch]# 从远端拉去分支[到本地指定分支]
+    git fetch origin remotebranch[:localbranch] # 从远端拉去分支[到本地指定分支]
     
-    git merge origin/branch#合并远端上指定分支
+    git merge origin/branch # 合并远端上指定分支
     
-    git pull origin remotebranch:localbranch# 拉去远端分支到本地分支
+    git pull origin remotebranch:localbranch # 拉去远端分支到本地分支
     
     git push origin branch#将当前分支，推送到远端上指定分支
-    git push origin localbranch:remotebranch#推送本地指定分支，到远端上指定分支
+    git push origin localbranch:remotebranch # 推送本地指定分支，到远端上指定分支
     git push origin :remotebranch # 删除远端指定分支
     git push origin remotebranch --delete # 删除远程分支
     git branch -dr branch # 删除本地和远程分支
-    git checkout -b [--track] test origin/dev#基于远端dev分支，新建本地test分支[同时设置跟踪]
+    git checkout -b [--track] test origin/dev # 基于远端dev分支，新建本地test分支[同时设置跟踪]
     
 
 ### 源 
@@ -177,32 +177,32 @@ git是一个分布式代码管理工具，所以可以支持多个仓库，在gi
 ```
     git remote add origin1 git@github.com:yanhaijing/data.js.git
     
-    git remote#显示全部源
-    git remote -v#显示全部源+详细信息
+    git remote # 显示全部源
+    git remote -v # 显示全部源+详细信息
     
-    git remote rename origin1 origin2#重命名
+    git remote rename origin1 origin2 # 重命名
     
-    git remote rm origin#删除
+    git remote rm origin # 删除
     
-    git remote show origin#查看指定源的全部信息
+    git remote show origin # 查看指定源的全部信息
 ```
 
 ### 标签 
 
 当开发到一定阶段时，给程序打标签是非常棒的功能。
 
-    git tag#列出现有标签    
+    git tag # 列出现有标签    
     
-    git tag v0.1 [branch|commit] # [从指定位置]新建标签
-    git tag -a v0.1 -m 'my version 1.4'#新建带注释标签
+    git tag v0.1 [branch|commit]  #  [从指定位置]新建标签
+    git tag -a v0.1 -m 'my version 1.4' # 新建带注释标签
     
-    git checkout tagname#切换到标签
+    git checkout tagname # 切换到标签
     
-    git push origin v1.5#推送分支到源上
-    git push origin --tags#一次性推送所有分支
+    git push origin v1.5 # 推送分支到源上
+    git push origin --tags # 一次性推送所有分支
     
-    git tag -d v0.1#删除标签
-    git push origin :refs/tags/v0.1#删除远程标签
+    git tag -d v0.1 # 删除标签
+    git push origin :refs/tags/v0.1 # 删除远程标签
 
 
 [2]: http://blog.poetries.top/2017/07/29/git-notes/
