@@ -27,6 +27,10 @@ vundle 环境设置
 
 windows 下放在安装目录的设置 `$VIM`  (安装目录下 `vimrc` 文件)
 
+#### 1. 需要将 gvim 目录加入系统环境变量
+#### 2. 需要将 git 目录加入系统环境变量
+#### 3. 设置缓存文件夹  C:\windows\Temp  属性可读，完全控制
+
     "需要先设置好 bundle 目录  下载好 vundle.vim 文件
     set nocompatible              " be iMproved, required
     filetype off                  " required
@@ -44,12 +48,9 @@ windows 下放在安装目录的设置 `$VIM`  (安装目录下 `vimrc` 文件)
     " call vundle#begin(path)
 
 
-
 进入 vim 执行
 
     :PluginInstall
-
-
 
 要卸载插件，先在 .vimrc 中注释或者删除对应插件配置信息，然后在 vim 中执行
 
