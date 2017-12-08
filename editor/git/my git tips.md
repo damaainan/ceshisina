@@ -55,3 +55,6 @@
     git checkout -b [--track] test origin/dev # 基于远端dev分支，新建本地test分支[同时设置跟踪]
 
 
+## git status 显示中文乱码
+
+    git config --global core.quotepath false
