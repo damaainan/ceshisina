@@ -60,5 +60,5 @@ CLI下PHP默认会优先读取php-cli.ini,如果没有则读取php.ini,执行php
 [1]: http://php.net/manual/zh/pthreads.requirements.php
 [2]: http://php.net/manual/zh/features.commandline.php
 [3]: http://segmentfault.com/q/1010000002577629/a-1020000002630826
-[4]: [10]: http://www.cnblogs.com/yuanfeiblog/p/5723699.html
+[4]: http://www.cnblogs.com/yuanfeiblog/p/5723699.html
 

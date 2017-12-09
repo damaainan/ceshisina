@@ -1,5 +1,5 @@
 <?php 
-class vote extends Thread {
+class vote extends \Thread {
     public $res    = '';
     public $url    = array();
     public $name   = '';

@@ -1,5 +1,5 @@
 <?php
-class AsyncOperation extends Thread {
+class AsyncOperation extends \Thread {
   public function __construct($arg){
     $this->arg = $arg;
   }

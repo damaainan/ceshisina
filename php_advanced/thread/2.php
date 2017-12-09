@@ -10,7 +10,7 @@ print_r(get_class_methods($thread));
 
  */
 
-class ttt extends Thread {
+class ttt extends \Thread {
     public function run() {
         echo 'hello world'.PHP_EOL;
     }
