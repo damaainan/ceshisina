@@ -36,7 +36,7 @@ $t = microtime(true);
 		  usleep(100);  
 	 }
 	 if ($workers[$key]->join()) {
-		  dump($workers[$key]->result);
+		  var_dump($workers[$key]->result);
 	 }
  }
 $e = microtime(true);
@@ -44,7 +44,7 @@ echo "多线程耗时：".($e-$t)."秒<br>";
  /* 单线程速度测试 */
 $t = microtime(true);
  foreach ($urls as $key=>$url) {
-	 dump(model_http_curl_get($url));
+	 var_dump(model_http_curl_get($url));
  }
 $e = microtime(true);
 echo "For循环耗时：".($e-$t)."秒<br>";

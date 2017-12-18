@@ -1,22 +1,13 @@
 # [Git学习 <day6>－Fast-forward][0]
 
- 标签： [git][1][合并][2]
 
- 2016-07-30 22:40  663人阅读  [评论][3](0)  [收藏][4]  [举报][5]
-
-![][6]
-
- 分类：
-
-版权声明：本文为博主原创文章，未经博主允许不得转载。
-
- 目录[(?)][7] [[+]][7]
+ 2016-07-30 22:40 
 
 1. [Fast-forward方式合并][8]
-  1. [git merge ff][9]
-  1. [git merge no-ff][10]
-  1. [git merge ff-only][11]
-  1. [用Fast-forward方式好还是不用好呢][12]
+    1. [git merge ff][9]
+    1. [git merge no-ff][10]
+    1. [git merge ff-only][11]
+    1. [用Fast-forward方式好还是不用好呢][12]
 
 ## Fast-forward方式合并
 
@@ -32,35 +23,21 @@ git merge默认使用的是Fast-forward的方式，git merge可以选择使用�
      env.properties | 1 +
      1 file changed, 1 insertion(+)
 
-* 1
-* 2
-* 3
-* 4
-* 5
 提示信息说，本次merge是快进方式，因此针对commit的说明，即-m 后面跟的comment被忽视掉了，因为快进方式没有commit提交，仅仅是指针的移动。
 
-➜ erp git:(master) git log --graph --pretty=oneline --abbrev-commit    * 101317b modify file on mobile branch
-    *   c1c36d7 merge test to master
-    |\  
-    | * 3011210 modify env file on test
-    * |   cea1dc3 Merge branch 'test'
+    ➜ erp git:(master) git log --graph --pretty=oneline --abbrev-commit    1317b modify file on mobile branch
+        *   c1c36d7 merge test to master
+        |\  
+        | 11210 modify env file on test
+        * |   cea1dc3 Merge branch 'test'
 
-* 1
-* 2
-* 3
-* 4
-* 5
 --graph 表示以图的形式显示log信息，--pretty=oneline 表示每条日志信息显示一行，--abbrev-commit 表示以缩略的形式显示提交信息。从分支树中很直观地看到，master分支的指针向后移动了一个位置，指向了mobile分支的最新提交。整个快进式合并没有产生新的commit提交。
 
-➜ erp git:(master) git reflog    101317b HEAD@{0}: merge mobile: Fast-forward (no commit created; -m option ignored)
-    c1c36d7 HEAD@{1}: checkout: moving from mobile to master
-    101317b HEAD@{2}: commit: modify file on mobile branch
-    c1c36d7 HEAD@{3}: checkout: moving from master to mobile
+    ➜ erp git:(master) git reflog    101317b HEAD@{0}: merge mobile: Fast-forward (no commit created; -m option ignored)
+        c1c36d7 HEAD@{1}: checkout: moving from mobile to master
+        101317b HEAD@{2}: commit: modify file on mobile branch
+        c1c36d7 HEAD@{3}: checkout: moving from master to mobile
 
-* 1
-* 2
-* 3
-* 4
 可以看到针对默认方式没有产生commit提交。
 
 #### **git merge –no-ff**
@@ -72,34 +49,21 @@ git merge默认使用的是Fast-forward的方式，git merge可以选择使用�
      env.properties | 1 +
      1 file changed, 1 insertion(+)
 
-* 1
-* 2
-* 3
-* 4
 提示信息显示使用recursive递归的方式进行合并。
 
-➜ erp git:(master) git log --graph --pretty=oneline --abbrev-commit    *   4ecfc99 Merge mobile to master with --no-ff
-    |\  
-    | * a351eb2 modify env file on mobile branch
-    |/  
-    * 101317b modify file on mobile branch
+    ➜ erp git:(master) git log --graph --pretty=oneline --abbrev-commit    *   4ecfc99 Merge mobile to master with --no-ff
+        |\  
+        | * a351eb2 modify env file on mobile branch
+        |/  
+        1317b modify file on mobile branch
 
-* 1
-* 2
-* 3
-* 4
-* 5
 从上面的分支树很清晰地看到，这次合并并不是仅仅将master的指针移动到mobile分支的最新提交那么简单，而是真对此次merge专门产生了一个commit。通过查看操作日志也能很清晰地看到这点：
 
-➜ erp git:(master) git reflog    4ecfc99 HEAD@{0}: merge mobile: Merge made by the 'recursive' strategy.
-    101317b HEAD@{1}: checkout: moving from mobile to master
-    a351eb2 HEAD@{2}: commit: modify env file on mobile branch
-    101317b HEAD@{3}: checkout: moving from master to mobile
+    ➜ erp git:(master) git reflog    4ecfc99 HEAD@{0}: merge mobile: Merge made by the 'recursive' strategy.
+        101317b HEAD@{1}: checkout: moving from mobile to master
+        a351eb2 HEAD@{2}: commit: modify env file on mobile branch
+        101317b HEAD@{3}: checkout: moving from master to mobile
 
-* 1
-* 2
-* 3
-* 4
 #### **git merge –ff-only**
 
 我分别在mobile和master分支修改了env.properties文件的同一个地方，切换到master分支上做merge：
@@ -107,8 +71,6 @@ git merge默认使用的是Fast-forward的方式，git merge可以选择使用�
     ➜  erp git:(master) git merge --ff-only mobile
     fatal: Not possible to fast-forward, aborting.
 
-* 1
-* 2
 --ff-only 表示只支持快进方式合并，如果git 发现此次合并无法解析为快进方式，那么什么都不做。
 
 #### **用Fast-forward方式好还是不用好呢？**
@@ -116,37 +78,20 @@ git merge默认使用的是Fast-forward的方式，git merge可以选择使用�
 Fast-forward看起来很简单，当不需要程序员手动merge代码的时候，用快进方式只移动指针即可，简单又粗暴。然而快进方式也会带来一些问题：_记录丢失_  
 切换到mobile分支上，在env.properties中添加属性server=jboss，切换到master分支上，将mobile分支merge到master。
 
-➜ erp git:(master) git log --graph --pretty=oneline --abbrev-commit    * 8d42c83 add server property
-    *   c1c36d7 merge test to master
-    |\  
-    | * 3011210 modify env file on test
-    * |   cea1dc3 Merge branch 'test'
-    |\ \  
-    | |/  
-    | * d4cdf09 modify env file on test
-    |/  
-    * 6988129 modify env properties file
+    ➜ erp git:(master) git log --graph --pretty=oneline --abbrev-commit    d42c83 add server property
+        *   c1c36d7 merge test to master
+        |\  
+        | 11210 modify env file on test
+        * |   cea1dc3 Merge branch 'test'
+        |\ \  
+        | |/  
+        | * d4cdf09 modify env file on test
+        |/  
+        88129 modify env properties file
 
-* 1
-* 2
-* 3
-* 4
-* 5
-* 6
-* 7
-* 8
-* 9
-* 10
 仅从上图中我们无法判断8d42c83 add server property 是哪个分支所做的操作，也看不出来曾经做过合并。
 
 [0]: /chi_wawa/article/details/52075642
-[1]: http://www.csdn.net/tag/git
-[2]: http://www.csdn.net/tag/%e5%90%88%e5%b9%b6
-[3]: #comments
-[4]: javascript:void(0);
-[5]: #report
-[6]: http://static.blog.csdn.net/images/category_icon.jpg
-[7]: #
 [8]: #t0
 [9]: #t1
 [10]: #t2
