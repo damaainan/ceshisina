@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="600" height="1000">   
-
-    <polyline points="20,20 40,40 50,80 100,80" style="fill:none;stroke:black;stroke-width:3"/> 
-</svg>
-<!-- 
-属性：
-每一组为一个坐标点
- -->
