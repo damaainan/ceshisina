@@ -30,6 +30,12 @@
 **`git merge <branch>`** | **合并指定分支到当前分支**
 
 
+###   git pull --ff-only 报错  `fatal: Not possible to fast-forward, aborting.`
+
+解决办法 [https://adamcod.es/2014/12/10/git-pull-correct-workflow.html](https://adamcod.es/2014/12/10/git-pull-correct-workflow.html)
+    
+    git rebase --preserve-merges origin/master
+
 #### git拉取远程分支到本地分支或者创建本地新分支
 
     git fetch origin branchname:branchname
