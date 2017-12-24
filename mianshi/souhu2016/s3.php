@@ -44,30 +44,30 @@
 将树的结构转化为多维数组
  */
 function deal($arr) {
-	$narr = [];
-	$len = count($arr);
-	$flag = 0; //第几棵树  还得检查层
-	$num = 0;
-	/*for($i=0;$i<$len-1;$i++){
-		        $temp=$arr[$i-1]<$arr[$i+1]?$arr[$i-1]:$arr[$i+1];
-		        if($temp<$arr[$i]){
-		            if($temp==$arr[$i-1]){
-		                $na=$temp.','.$arr[$i];
-		            }else{
-		                $na=$arr[$i].','.$temp;
-		            }
-		            if($num==0){
-		                $center=$arr[$i];
-		            }
-		            $num++;
+    $narr = [];
+    $len = count($arr);
+    $flag = 0; //第几棵树  还得检查层
+    $num = 0;
+    /*for($i=0;$i<$len-1;$i++){
+    $temp=$arr[$i-1]<$arr[$i+1]?$arr[$i-1]:$arr[$i+1];
+    if($temp<$arr[$i]){
+    if($temp==$arr[$i-1]){
+    $na=$temp.','.$arr[$i];
+    }else{
+    $na=$arr[$i].','.$temp;
+    }
+    if($num==0){
+    $center=$arr[$i];
+    }
+    $num++;
 
-		        }else{
-		            $narr[$flag][]=$arr[$i];
-		            $flag++;
-		        }
-	*/
-	for ($i = 0; $i < $len - 1; $i++) {
+    }else{
+    $narr[$flag][]=$arr[$i];
+    $flag++;
+    }
+     */
+    for ($i = 0; $i < $len - 1; $i++) {
 
-	}
+    }
 
 }

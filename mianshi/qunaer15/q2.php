@@ -9,20 +9,20 @@
  */
 
 // 分割  去重 顺序索引 值为null
-function deal($str){
-	$l=strlen($str);
-	$narr=[];
-	for($i=0;$i<$l;$i++){
-		$s=ord($str[$i]);
-		if(($s>64 && $s<91) || ($s>96 && $s<123)){
-			if(!in_array($s,$narr)){
-				$narr[]=$s;
-			}else{
-				echo "first==  ",chr($s);
-				break;
-			}
-		}
-	}
+function deal($str) {
+    $l = strlen($str);
+    $narr = [];
+    for ($i = 0; $i < $l; $i++) {
+        $s = ord($str[$i]);
+        if (($s > 64 && $s < 91) || ($s > 96 && $s < 123)) {
+            if (!in_array($s, $narr)) {
+                $narr[] = $s;
+            } else {
+                echo "first==  ", chr($s);
+                break;
+            }
+        }
+    }
 }
 
 deal("qywyer23tdd");

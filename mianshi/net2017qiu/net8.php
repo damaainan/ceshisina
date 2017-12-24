@@ -17,15 +17,15 @@ A - B, B - C, A + B, B + C. 这四个数值.每个字母代表每个人所拥有
 输出例子:
 2 1 3
  */
-function deal($a,$b,$c,$d){
-	$m=$a+$b;
-	$n=$a+$d;
-	$C=($n-$m)/2;
-	$B=$d-$C;
-	$A=$a+$B;
-	if($A < 0 || $B < 0 || $C < 0){
-		echo "NO";
-	}
-	echo $A,$B,$C;
+function deal($a, $b, $c, $d) {
+    $m = $a + $b;
+    $n = $a + $d;
+    $C = ($n - $m) / 2;
+    $B = $d - $C;
+    $A = $a + $B;
+    if ($A < 0 || $B < 0 || $C < 0) {
+        echo "NO";
+    }
+    echo $A, $B, $C;
 }
-deal(1,-2,3,4);
+deal(1, -2, 3, 4);

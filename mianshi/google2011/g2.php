@@ -13,31 +13,27 @@
  * 简化为用 秒 处理 时间戳
  *
  * 看到达时间
- * 
+ *
  * 生成四个等待数组
  * 第一个等待数组  第二个 第三个  第四个
  *
  * 比较 最后一个元素的 到达时间+处理时间  和 下一个的到达时间
  *
- * 
+ *
  */
 
+function deal($arr, $pro) {
+    asort($arr); //保留索引关系排序
+    //假设只有两个窗口
 
-function deal($arr,$pro){
-	asort($arr);//保留索引关系排序
-	//假设只有两个窗口
-	
 }
 
-
-
-
-function createArr($n,$start=1460040000,$end=1460126400){
-	for($i=0;$i<$n;$i++){
-		$rand=mt_rand($start,$end);
-		$arr[]=$rand;
-	}
-	return $arr;
+function createArr($n, $start = 1460040000, $end = 1460126400) {
+    for ($i = 0; $i < $n; $i++) {
+        $rand = mt_rand($start, $end);
+        $arr[] = $rand;
+    }
+    return $arr;
 }
-$arr=createArr(200);
-$pro=createArr(200,100,1000);
+$arr = createArr(200);
+$pro = createArr(200, 100, 1000);

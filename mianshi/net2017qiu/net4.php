@@ -21,14 +21,14 @@ AABBCCAABB 不存在一个长度为3的连续子串包含'A','B','C',所以是�
 21
  */
 
-function deal($l){
-	if($l<3){
-		echo '数目：',pow(3,$l); 
-		return;
-	}
-	$num=$l-2;
-	$count=pow(3,$l)-$num*6*pow(3,$l-3);
-	echo '数目：',$count; 
+function deal($l) {
+    if ($l < 3) {
+        echo '数目：', pow(3, $l);
+        return;
+    }
+    $num = $l - 2;
+    $count = pow(3, $l) - $num * 6 * pow(3, $l - 3);
+    echo '数目：', $count;
 }
 deal(2);
 deal(3);

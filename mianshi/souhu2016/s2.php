@@ -45,122 +45,128 @@ JKJ 926
  * 2. 不等
  * 3. 相等  豹子 顺子 对子 普通
  */
-function init($str1,$str2){
-	$arr1=str2array($str1);
-	$arr2=str2array($str2);
-	// var_dump($arr1);
-	// var_dump($arr2);
-	deal($arr1,$arr2);
+function init($str1, $str2) {
+    $arr1 = str2array($str1);
+    $arr2 = str2array($str2);
+    // var_dump($arr1);
+    // var_dump($arr2);
+    deal($arr1, $arr2);
 }
-function str2array($str){
-	$s=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-	$arr=str_split($str);
-	$narr=[];
-	for($i=0,$len=count($arr);$i<$len;$i++){
-		if(!in_array($arr[$i],$s) ){
-			$narr[]=$arr[$i].$arr[$i+1];
-			$i++;
-		}else{
-			$narr[]=$arr[$i];
-		}
-	}
-	return $narr;
-}
-
-function deal($arr1,$arr2){
-	$arr1=change($arr1);
-	$arr2=change($arr2);
-	$k1=check($arr1);
-	$k2=check($arr2);
-	if($k1!=$k2){
-		if($k1<$k2)
-			echo 1;
-		else
-			echo -1;
-	}else{
-		// 分 对子 和其他
-		if($k1==2){//比较对子的大小
-			$dd1=dealD($arr1);
-			$dd2=dealD($arr2);
-			if($dd1>$dd2)
-				echo 1;
-			else
-				echo -1;
-			
-		}else{
-			for ($j=count($arr1)-1;$j>0;$j--) {
-				if($arr1[$j]>$arr2[$j]){
-					echo 1;
-					return;
-				}
-				if($arr1[$j]<$arr2[$j]){
-					echo -1;
-					return;
-				}
-			}
-			echo 0;
-		}
-	}
-
-
-}
-function dealD($arr){//将数组的比较转化成 数的大小的比较
-	$a=array_unique($arr);
-	$sum=0;
-	foreach ($a as $key => $value) {
-		$k=array_keys($arr,$a[$key]);
-		if(count($k)==2)
-			$sum+=$a[$key]*100;
-		else
-			$sum+=$a[$key];
-	}
-	return $sum;
-}
-function change($arr){
-	$tu=["2"=>2,"3"=>3,"4"=>4,"5"=>5,"6"=>6,"7"=>7,"8"=>8,"9"=>9,"10"=>10,"J"=>11,"Q"=>12,"K"=>13,"A"=>14];
-	foreach ($arr as $ke => $va) {
-		$narr[]=$tu[$va];
-	}
-	sort($narr);
-	return $narr;
+function str2array($str) {
+    $s = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    $arr = str_split($str);
+    $narr = [];
+    for ($i = 0, $len = count($arr); $i < $len; $i++) {
+        if (!in_array($arr[$i], $s)) {
+            $narr[] = $arr[$i] . $arr[$i + 1];
+            $i++;
+        } else {
+            $narr[] = $arr[$i];
+        }
+    }
+    return $narr;
 }
 
-function check($arr){
-	// var_dump($arr);
-	sort($arr);
-	$arr=array_unique($arr);
-	$len=count($arr);
-	if($len==1){
-		return 1;
-	}elseif($len==2){
-		return 2;
-	}else{
-		if($arr[2]-$arr[1]==1 && $arr[1]-$arr[0]==1){
-			return 3;
-		}else{
-			return 4;
-		}
-	}
+function deal($arr1, $arr2) {
+    $arr1 = change($arr1);
+    $arr2 = change($arr2);
+    $k1 = check($arr1);
+    $k2 = check($arr2);
+    if ($k1 != $k2) {
+        if ($k1 < $k2) {
+            echo 1;
+        } else {
+            echo -1;
+        }
+
+    } else {
+        // 分 对子 和其他
+        if ($k1 == 2) {
+//比较对子的大小
+            $dd1 = dealD($arr1);
+            $dd2 = dealD($arr2);
+            if ($dd1 > $dd2) {
+                echo 1;
+            } else {
+                echo -1;
+            }
+
+        } else {
+            for ($j = count($arr1) - 1; $j > 0; $j--) {
+                if ($arr1[$j] > $arr2[$j]) {
+                    echo 1;
+                    return;
+                }
+                if ($arr1[$j] < $arr2[$j]) {
+                    echo -1;
+                    return;
+                }
+            }
+            echo 0;
+        }
+    }
+
+}
+function dealD($arr) {
+//将数组的比较转化成 数的大小的比较
+    $a = array_unique($arr);
+    $sum = 0;
+    foreach ($a as $key => $value) {
+        $k = array_keys($arr, $a[$key]);
+        if (count($k) == 2) {
+            $sum += $a[$key] * 100;
+        } else {
+            $sum += $a[$key];
+        }
+
+    }
+    return $sum;
+}
+function change($arr) {
+    $tu = ["2" => 2, "3" => 3, "4" => 4, "5" => 5, "6" => 6, "7" => 7, "8" => 8, "9" => 9, "10" => 10, "J" => 11, "Q" => 12, "K" => 13, "A" => 14];
+    foreach ($arr as $ke => $va) {
+        $narr[] = $tu[$va];
+    }
+    sort($narr);
+    return $narr;
 }
 
-$str1="KQ3";
-$str2="3Q9";
-init($str1,$str2);
+function check($arr) {
+    // var_dump($arr);
+    sort($arr);
+    $arr = array_unique($arr);
+    $len = count($arr);
+    if ($len == 1) {
+        return 1;
+    } elseif ($len == 2) {
+        return 2;
+    } else {
+        if ($arr[2] - $arr[1] == 1 && $arr[1] - $arr[0] == 1) {
+            return 3;
+        } else {
+            return 4;
+        }
+    }
+}
+
+$str1 = "KQ3";
+$str2 = "3Q9";
+init($str1, $str2);
 echo "<br/>";
 
-$str1="10QA";
-$str2="6102";
-init($str1,$str2);
+$str1 = "10QA";
+$str2 = "6102";
+init($str1, $str2);
 echo "<br/>";
-$str1="5810";
-$str2="7KK";
-init($str1,$str2);
+$str1 = "5810";
+$str2 = "7KK";
+init($str1, $str2);
 echo "<br/>";
-$str1="632";
-$str2="74J";
-init($str1,$str2);
+$str1 = "632";
+$str2 = "74J";
+init($str1, $str2);
 echo "<br/>";
-$str1="10102";
-$str2="K77";
-init($str1,$str2);
+$str1 = "10102";
+$str2 = "K77";
+init($str1, $str2);
 echo "<br/>";

@@ -18,27 +18,27 @@
 输出例子:
 223
  */
-function deal($n,$m){
-	$n=rev($n);
-	$m=rev($m);
-	return rev($n+$m);
+function deal($n, $m) {
+    $n = rev($n);
+    $m = rev($m);
+    return rev($n + $m);
 }
-function rev($n){
-	$n=dealZero($n);
-	$str="".$n;
-	$str=strrev($str);
-	return 0+$str;
+function rev($n) {
+    $n = dealZero($n);
+    $str = "" . $n;
+    $str = strrev($str);
+    return 0 + $str;
 }
-function dealZero($n){
-	$k=$n%10;
-	if($k==0){
-		$j=$n/10;
-		$m=dealZero($j);
-		return $m;
-	}else{
-		return $n;
-	}
+function dealZero($n) {
+    $k = $n % 10;
+    if ($k == 0) {
+        $j = $n / 10;
+        $m = dealZero($j);
+        return $m;
+    } else {
+        return $n;
+    }
 }
 
-$j=deal(123,100);
-echo 'j==',$j;
+$j = deal(123, 100);
+echo 'j==', $j;

@@ -16,16 +16,16 @@
 3
  */
 
-function deal($n){
-	$k=floor($n/8);
-	for($i=$k;$i>=0;$i--){
-		if(($n-8*$i)%6===0){
-			return $i+($n-8*$i)/6;
-			break;
-		}
-	}
-	return -1;
+function deal($n) {
+    $k = floor($n / 8);
+    for ($i = $k; $i >= 0; $i--) {
+        if (($n - 8 * $i) % 6 === 0) {
+            return $i + ($n - 8 * $i) / 6;
+            break;
+        }
+    }
+    return -1;
 }
 
-$s=deal(20);
-echo 'ddd=',$s; 
+$s = deal(20);
+echo 'ddd=', $s;

@@ -27,17 +27,17 @@ kleieilABCD
  */
 
 function deal($str) {
-	$l = strlen($str);
-	for ($i = 0; $i < $l; $i++) {
-		// echo $str[$i], '<br/>';
-		if (ord($str[$i]) > 64 && ord($str[$i]) < 91) {
-			$str .= $str[$i];
-			$str[$i] = '';
-			$i--;
-			$l--;
-		}
-	}
-	echo $str;
+    $l = strlen($str);
+    for ($i = 0; $i < $l; $i++) {
+        // echo $str[$i], '<br/>';
+        if (ord($str[$i]) > 64 && ord($str[$i]) < 91) {
+            $str .= $str[$i];
+            $str[$i] = '';
+            $i--;
+            $l--;
+        }
+    }
+    echo $str;
 }
 
 deal("adsAdfVsfBd");

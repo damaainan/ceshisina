@@ -21,27 +21,26 @@ f(1) + f(2) + f(3) + f(4) + f(5) + f(6) + f(7) = 1 + 1 + 3 + 1 + 5 + 3 + 7 = 21
  */
 // 偶数除2  奇数本身
 
-
-function deal($n){
-	$sum=0;
-	for($i=1;$i<=$n;$i++){
-		if($i%2===1){
-			$sum+=$i;
-		}else{
-			$k=dealEven($i);
-			$sum+=$k;
-		}
-	}
-	return $sum;
+function deal($n) {
+    $sum = 0;
+    for ($i = 1; $i <= $n; $i++) {
+        if ($i % 2 === 1) {
+            $sum += $i;
+        } else {
+            $k = dealEven($i);
+            $sum += $k;
+        }
+    }
+    return $sum;
 }
-function dealEven($n){
-	$m=$n/2;
-	if($m%2===0){
-		$k=dealEven($m);
-		return $k;
-	}else{
-		return $m;
-	}
+function dealEven($n) {
+    $m = $n / 2;
+    if ($m % 2 === 0) {
+        $k = dealEven($m);
+        return $k;
+    } else {
+        return $m;
+    }
 }
-$m=deal(10);
-echo "m===",$m;
+$m = deal(10);
+echo "m===", $m;

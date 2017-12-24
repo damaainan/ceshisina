@@ -24,101 +24,101 @@
 2
  */
 function dealHui($arr) {
-	$n = count($arr);
-	$narr = deal($n, $arr);
-	echo "newarr";
-	$flag = check($narr);
-	if ($flag == 1) {
-		var_dump($narr);
-		echo "newarr";
-		$k = $n - count($narr);
-		return $k;
-	} else {
-		return -1;
-	}
-	var_dump($narr);
-	echo "newarr";
-	$k = $n - count($narr);
-	return $k;
+    $n = count($arr);
+    $narr = deal($n, $arr);
+    echo "newarr";
+    $flag = check($narr);
+    if ($flag == 1) {
+        var_dump($narr);
+        echo "newarr";
+        $k = $n - count($narr);
+        return $k;
+    } else {
+        return -1;
+    }
+    var_dump($narr);
+    echo "newarr";
+    $k = $n - count($narr);
+    return $k;
 }
 function deal($n, $arr) {
-	if ($n == 1) {
-		return $arr;
-	}
-	$flag = check($arr);
-	if ($flag == 1) {
-		return $arr;
-	}
-	if ($flag == 0 && count($arr) == 2) {
-		return $arr;
-	}
-	// $arr = dealOdd($arr);
-	$k = count($arr);
-	echo "<br/>", "k====", $k, "<br/>";
-	if ($k % 2 == 0) {
-		$arr = dealOdd($arr);
-		$narr = deal(count($arr), $arr);
-		return $narr;
-	} else {
-		$arr = dealEven($arr);
-		$narr = deal(count($arr), $arr);
-		return $narr;
-	}
+    if ($n == 1) {
+        return $arr;
+    }
+    $flag = check($arr);
+    if ($flag == 1) {
+        return $arr;
+    }
+    if ($flag == 0 && count($arr) == 2) {
+        return $arr;
+    }
+    // $arr = dealOdd($arr);
+    $k = count($arr);
+    echo "<br/>", "k====", $k, "<br/>";
+    if ($k % 2 == 0) {
+        $arr = dealOdd($arr);
+        $narr = deal(count($arr), $arr);
+        return $narr;
+    } else {
+        $arr = dealEven($arr);
+        $narr = deal(count($arr), $arr);
+        return $narr;
+    }
 
 }
 function check($arr) {
-	$n = count($arr);
-	$flag = 1;
-	for ($i = 0; $i < $n; $i++) {
-		if ($arr[$i] != $arr[$n - 1 - $i]) {
-			$flag = 0;
-			break;
-		}
-	}
-	return $flag;
+    $n = count($arr);
+    $flag = 1;
+    for ($i = 0; $i < $n; $i++) {
+        if ($arr[$i] != $arr[$n - 1 - $i]) {
+            $flag = 0;
+            break;
+        }
+    }
+    return $flag;
 }
 
 function dealOdd($arr) {
-	$n = count($arr);
-	for ($i = 0; $i < ($n - 1) / 2; $i++) {
-		if ($arr[$i] != $arr[$n - $i - 1]) {
-			// if($i+1<($n-1)/2){
-			if (($arr[$i] + $arr[$i + 1]) < ($arr[$n - $i - 1] + $arr[$n - $i - 2])) {
-				//前加
-				echo $i;
-				$newArr = array_splice($arr, $i, 2, $arr[$i] + $arr[$i + 1]);
-				break;
-			} else {
-				//后加
-				echo $i;
-				$newArr = array_splice($arr, $n - $i - 1, 2, $arr[$n - $i - 1] + $arr[$n - $i - 2]);
-				break;
-			}
-		}
-	}
-	var_dump($arr);
-	return $arr;
+    $n = count($arr);
+    for ($i = 0; $i < ($n - 1) / 2; $i++) {
+        if ($arr[$i] != $arr[$n - $i - 1]) {
+            // if($i+1<($n-1)/2){
+            if (($arr[$i] + $arr[$i + 1]) < ($arr[$n - $i - 1] + $arr[$n - $i - 2])) {
+                //前加
+                echo $i;
+                $newArr = array_splice($arr, $i, 2, $arr[$i] + $arr[$i + 1]);
+                break;
+            } else {
+                //后加
+                echo $i;
+                $newArr = array_splice($arr, $n - $i - 1, 2, $arr[$n - $i - 1] + $arr[$n - $i - 2]);
+                break;
+            }
+        }
+    }
+    var_dump($arr);
+    return $arr;
 }
 function dealEven($arr) {
-	$n = count($arr);
-	var_dump($arr);
-	for ($i = 0; $i < $n / 2 - 1; $i++) {
-		if ($arr[$i] != $arr[$n - $i - 1]) {
-			// if($i+1<($n-1)/2){
-			if (($arr[$i] + $arr[$i + 1]) < ($arr[$n - $i - 1] + $arr[$n - $i - 2])) {
-				//前加
-				echo $i;
-				$newArr = array_splice($arr, $i, 2, $arr[$i] + $arr[$i + 1]);
-				break;
-			} else {
-				//后加
-				echo $i;
-				$newArr = array_splice($arr, $n - $i - 1, 2, $arr[$n - $i - 1] + $arr[$n - $i - 2]);
-				break;
-			}
-		}
-	}
-	return $arr;
+    $n = count($arr);
+    var_dump($arr);
+    for ($i = 0; $i < $n / 2 - 1; $i++) {
+        if ($arr[$i] != $arr[$n - $i - 1]) {
+            // if($i+1<($n-1)/2){
+            if (($arr[$i] + $arr[$i + 1]) < ($arr[$n - $i - 1] + $arr[$n - $i - 2])) {
+                //前加
+                echo $i;
+                $newArr = array_splice($arr, $i, 2, $arr[$i] + $arr[$i + 1]);
+                break;
+            } else {
+                //后加
+                echo $i;
+                $newArr = array_splice($arr, $n - $i - 1, 2, $arr[$n - $i - 1] + $arr[$n - $i - 2]);
+                break;
+            }
+        }
+    }
+    return $arr;
 }
 
 $arr = [1, 2, 4, 3, 6, 5, 1, 1, 2];
