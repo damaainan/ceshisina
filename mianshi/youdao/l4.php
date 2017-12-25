@@ -23,3 +23,24 @@
 1 5 4 3 2 6
 1 1 1 1
  */
+
+function deal($n, $count, $arr) {
+    if (count($arr) != 2 * $n) {
+        echo false;
+        return;
+    }
+    $left = array_slice($arr, 0, $n);
+    $right = array_slice($arr, $n, $n);
+    while ($left) {
+        $temp[] = array_shift($left);
+        $temp[] = array_shift($right);
+    }
+    $count--;
+    if ($count) {
+        $temp = deal($n, $count, $temp);
+    }
+    return $temp;
+
+}
+
+print_r(deal(3, 2, [1, 2, 3, 4, 5, 6]));
