@@ -53,42 +53,26 @@
 如下是上图的算法实现(对应**方案一**: 内/外层循环均是正序遍历).
 ```js
 //先将交换元素部分抽象出来
-
 function swap(i,j,array){
-
   var temp = array[j];
-
   array[j] = array[i];
-
   array[i] = temp;
-
 }
 ```
     
 
 ```js
 function bubbleSort(array) {
-
   var length = array.length, isSwap;
-
   for (var i = 0; i < length; i++) {            //正序
-
     isSwap = false;
-
     for (var j = 0; j < length - 1 - i; j++) {   //正序
-
       array[j] > array[j+1] && (isSwap = true) && swap(j,j+1,array);
-
     }
-
     if(!isSwap)
-
       break;
-
   }
-
   return array;
-
 }
 ```
 以上, 排序的特点就是: 靠后的元素位置先确定.
@@ -99,27 +83,16 @@ function bubbleSort(array) {
 
 ```js
 function bubbleSort(array) {
-
   var length = array.length, isSwap;
-
   for (var i = 0; i < length; i++) {            //正序
-
     isSwap = false;
-
     for (var j = length - 1; j >= i+1; j--) {    //逆序
-
       array[j] < array[j-1] && (isSwap = true) && swap(j,j-1,array);
-
     }
-
     if(!isSwap)
-
       break;
-
   }
-
   return array;
-
 }
 ```
 以上, 靠前的元素位置先确定.
@@ -158,27 +131,16 @@ function bubbleSort(array) {
 **方案四**: 外循环逆序遍历, 内循环逆序遍历, 代码如下:
 ```js
 function bubbleSort(array) {
-
   var length = array.length, isSwap;
-
   for (var i = length - 1; i >= 0; i--) {               //逆序
-
     isSwap = false;
-
     for (var j = length - 1; j >= length - 1 - i; j--) { //逆序
-
       array[j] < array[j-1] && (isSwap = true) && swap(j,j-1,array);
-
     }
-
     if(!isSwap)
-
       break;
-
   }
-
   return array;
-
 }
 ```
 以上, 由于内循环是逆序遍历, 因此靠前的元素位置先确定.
@@ -197,31 +159,18 @@ O(n²) | O(n) | O(n²) | O(1)
 
 如下是算法实现:
 ```js
-
 function bothwayBubbleSort(array){
-
   var tail = array.length-1, i, isSwap = false;
-
   for(i = 0; i < tail; tail--){
-
     for(var j = tail; j > i; j--){  //第一轮, 先将最小的数据冒泡到前面
-
       array[j-1] > array[j] && (isSwap = true) && swap(j,j-1,array);
-
     }
-
     i++;
-
     for(j = i; j < tail; j++){      //第二轮, 将最大的数据冒泡到后面
-
       array[j] > array[j+1] && (isSwap = true) && swap(j,j+1,array);
-
     }
-
   }
-
   return array;
-
 }
 ```
 ### 选择排序
@@ -237,25 +186,15 @@ function bothwayBubbleSort(array){
 如下是上图的算法实现:
 ```js
 function selectSort(array) {
-
   var length = array.length, min;
-
   for (var i = 0; i < length - 1; i++) {
-
     min = i;
-
     for (var j = i + 1; j < length; j++) {
-
       array[j] < array[min] && (min = j); //记住最小数的下标
-
     }
-
     min!=i && swap(i,min,array);
-
   }
-
   return array;
-
 }
 ```
 以下是其算法复杂度:
@@ -281,37 +220,21 @@ function selectSort(array) {
 如下是上图的算法实现:
 ```js
 function directInsertionSort(array) {
-
   var length = array.length, index, current;
-
   for (var i = 1; i < length; i++) {
-
     index = i - 1;       //待比较元素的下标
-
     current = array[i];  //当前元素
-
     while(index >= 0 && array[index] > current) { //前置条件之一:待比较元素比当前元素大
-
       array[index+1] = array[index];    //将待比较元素后移一位
-
       index--;                         //游标前移一位
-
       //console.log(array);
-
     }
-
     if(index+1 != i){                  //避免同一个元素赋值给自身
-
       array[index+1] = current;         //将当前元素插入预留空位
-
       //console.log(array);
-
     }       
-
   }
-
   return array;
-
 }
 ```
 为了更好的观察到直接插入排序的实现过程, 我们不妨将上述代码中的注释部分加入. 以数组 [5,4,3,2,1] 为例, 如下便是原数组的演化过程.
@@ -340,45 +263,25 @@ function directInsertionSort(array) {
 如下是算法实现:
 ```js
 function binaryInsertionSort(array){
-
   var current, i, j, low, high, m;
-
   for(i = 1; i < array.length; i++){
-
     low = 0;
-
     high = i - 1;
-
     current = array[i];
-
     while(low <= high){         //步骤1&2:折半查找
-
       m = (low + high)>>1;
-
       if(array[i] >= array[m]){//值相同时, 切换到高半区，保证稳定性
-
         low = m + 1;        //插入点在高半区
-
       }else{
-
         high = m - 1;       //插入点在低半区
-
       }
-
     }
-
     for(j = i; j > low; j--){    //步骤3:插入位置之后的元素全部后移一位
-
       array[j] = array[j-1];
-
     }
-
     array[low] = current;        //步骤4:插入该元素
-
   }
-
   return array;
-
 }
 ```
 为了便于对比, 同样以数组 [5,4,3,2,1] 举例🌰. 原数组的演化过程如下(与上述一样):
@@ -409,53 +312,31 @@ function binaryInsertionSort(array){
 //形参增加步数gap(实际上就相当于gap替换了原来的数字1)
 
 function directInsertionSort(array, gap) {
-
   gap = (gap == undefined) ? 1 : gap;       //默认从下标为1的元素开始遍历
-
   var length = array.length, index, current;
-
   for (var i = gap; i < length; i++) {
-
     index = i - gap;    //待比较元素的下标
-
     current = array[i]; //当前元素
-
     while(index >= 0 && array[index] > current) { //前置条件之一:待比较元素比当前元素大
-
       array[index + gap] = array[index];    //将待比较元素后移gap位
-
       index -= gap;                        //游标前移gap位
-
     }
-
     if(index + gap != i){                  //避免同一个元素赋值给自身
-
       array[index + gap] = current;         //将当前元素插入预留空位
-
     }
-
   }
-
   return array;
-
 }
 ```
 那么希尔排序的算法实现如下:
 ```js
 function shellSort(array){
-
   var length = array.length, gap = length>>1, current, i, j;
-
   while(gap > 0){
-
     directInsertionSort(array, gap); //按指定步长进行直接插入排序
-
     gap = gap>>1;
-
   }
-
   return array;
-
 }
 ```
 同样以数组[5,4,3,2,1] 举例🌰. 原数组的演化过程如下:
@@ -486,39 +367,22 @@ function shellSort(array){
 如下是算法实现(方式1:递归):
 ```js
 function mergeSort(array) {  //采用自上而下的递归方法
-
   var length = array.length;
-
   if(length < 2) {
-
     return array;
-
   }
-
   var m = (length >> 1),
-
       left = array.slice(0, m),
-
       right = array.slice(m); //拆分为两个子数组
-
   return merge(mergeSort(left), mergeSort(right));//子数组继续递归拆分,然后再合并
-
 }
-
 function merge(left, right){ //合并两个子数组
-
   var result = [];
-
   while (left.length && right.length) {
-
     var item = left[0] <= right[0] ? left.shift() : right.shift();//注意:判断的条件是小于或等于,如果只是小于,那么排序将不稳定.
-
     result.push(item);
-
   }
-
   return result.concat(left.length ? left : right);
-
 }
 ```
 由上, 长度为n的数组, 最终会调用mergeSort函数2n-1次. 通过自上而下的递归实现的归并排序, 将存在堆栈溢出的风险. 亲测各浏览器的堆栈溢出所需的递归调用次数大致为:
@@ -531,23 +395,14 @@ function merge(left, right){ //合并两个子数组
 ```js
 
 function computeMaxCallStackSize() {
-
   try {
-
     return 1 + computeMaxCallStackSize();
-
   } catch (e) {
-
     // Call stack overflow
-
     return 1;
-
   }
-
 }
-
 var time = computeMaxCallStackSize();
-
 console.log(time);
 ```
 为此, ES6规范中提出了尾调优化的思想: 如果一个函数的最后一步也是一个函数调用, 那么该函数所需要的栈空间将被释放, 它将直接进入到下次调用中, 最终调用栈里只保留最后一次的调用记录.
@@ -571,39 +426,22 @@ console.log(time);
 如下是算法实现:
 ```js
 function quickSort(array, left, right) {
-
   var partitionIndex,
-
       left = typeof left == 'number' ? left : 0,
-
       right = typeof right == 'number' ? right : array.length-1;
-
   if (left < right) {
-
     partitionIndex = partition(array, left, right);//切分的基准值
-
     quickSort(array, left, partitionIndex-1);
-
     quickSort(array, partitionIndex+1, right);
-
   }
-
   return array;
-
 }
-
 function partition(array, left ,right) {   //分区操作
-
   for (var i = left+1, j = left; i <= right; i++) {//j是较小值存储位置的游标
-
     array[i] < array[left] && swap(i, ++j, array);//以第一个元素为基准
-
   }
-
   swap(left, j, array);         //将第一个元素移至中间
-
   return j;
-
 }
 ```
 以下是其算法复杂度:
@@ -637,59 +475,32 @@ function partition(array, left ,right) {   //分区操作
 如下是算法实现:
 ```js
 function heapAdjust(array, i, length) {//堆调整
-
   var left = 2 * i + 1,
-
       right = 2 * i + 2,
-
       largest = i;
-
   if (left < length && array[largest] < array[left]) {
-
     largest = left;
-
   }
-
   if (right < length && array[largest] < array[right]) {
-
     largest = right;
-
   }
-
   if (largest != i) {
-
     swap(i, largest, array);
-
     heapAdjust(array, largest, length);
-
   }
-
 }
-
 function heapSort(array) {
-
   //建立大顶堆
-
   length = array.length;
-
   for (var i = length>>1; i >= 0; i--) {
-
     heapAdjust(array, i, length);
-
   }
-
   //调换第一个与最后一个元素,重新调整为大顶堆
-
   for (var i = length - 1; i > 0; i--) {
-
     swap(0, i, array);
-
     heapAdjust(array, 0, --length);
-
   }
-
   return array;
-
 }
 ```
 以上, ①建立堆的过程, 从length/2 一直处理到0, 时间复杂度为O(n);
@@ -724,45 +535,25 @@ function heapSort(array) {
 如下是算法实现:
 ```js
 function countSort(array, max) {
-
     var tempLength = max + 1,
-
         temp = new Array(tempLength),
-
         index = 0,
-
         length = array.length;   
-
     //初始化缓存数组各项的值
-
     for (var i = 0; i < length; i++) {
-
         if (!temp[array[i]]) {
-
             temp[array[i]] = 0;
-
         }
-
         temp[array[i]]++;
-
     }
-
     //依次取出缓存数组的值,并写入原数组
-
     for (var j = 0; j < tempLength; j++) {
-
         while(temp[j] > 0) {
-
             array[index++] = j;
-
             temp[j]--;
-
         }
-
     }
-
     return array;
-
 }
 ```
 **_Tips_**: 计数排序不改变相同元素之间原本相对的顺序, 因此它是稳定的排序算法.
@@ -778,71 +569,38 @@ function countSort(array, max) {
 如下是算法实现:
 ```js
 function bucketSort(array, bucketSize) {
-
   if (array.length === 0) {
-
     return array;
-
   }
-
   var i = 1,
-
       min = array[0],
-
       max = min;
-
   while (i++ < array.length) {
-
     if (array[i] < min) {
-
       min = array[i];                //输入数据的最小值
-
     } else if (array[i] > max) {
-
       max = array[i];                //输入数据的最大值
-
     }
-
   }
-
   //桶的初始化
-
   bucketSize = bucketSize || 5; //设置桶的默认大小为5
-
   var bucketCount = ~~((max - min) / bucketSize) + 1, //桶的个数
-
       buckets = new Array(bucketCount); //创建桶
-
   for (i = 0; i < buckets.length; i++) {
-
     buckets[i] = []; //初始化桶
-
   }
-
   //将数据分配到各个桶中,这里直接按照数据值的分布来分配,一定范围内均匀分布的数据效率最为高效
-
   for (i = 0; i < array.length; i++) {
-
     buckets[~~((array[i] - min) / bucketSize)].push(array[i]);
-
   }
-
   array.length = 0;
-
   for (i = 0; i < buckets.length; i++) {
-
     quickSort(buckets[i]); //对每个桶进行排序，这里使用了快速排序
-
     for (var j = 0; j < buckets[i].length; j++) {
-
       array.push(buckets[i][j]); //将已排序的数据写回数组中
-
     }
-
   }
-
   return array;
-
 }
 ```
 **_Tips_**: 桶排序本身是稳定的排序, 因此它的稳定性与桶内排序的稳定性保持一致.
@@ -865,51 +623,28 @@ function bucketSort(array, bucketSize) {
 如下是算法实现:
 ```js
 function radixSort(array, max) {
-
     var buckets = [],
-
         unit = 10,
-
         base = 1;
-
     for (var i = 0; i < max; i++, base *= 10, unit *= 10) {
-
         for(var j = 0; j < array.length; j++) {
-
             var index = ~~((array[j] % unit) / base);//依次过滤出个位,十位等等数字
-
             if(buckets[index] == null) {
-
                 buckets[index] = []; //初始化桶
-
             }
-
             buckets[index].push(array[j]);//往不同桶里添加数据
-
         }
-
         var pos = 0,
-
             value;
-
         for(var j = 0, length = buckets.length; j < length; j++) {
-
             if(buckets[j] != null) {
-
                 while ((value = buckets[j].shift()) != null) {
-
                       array[pos++] = value; //将不同桶里数据挨个捞出来,为下一轮高位排序做准备,由于靠近桶底的元素排名靠前,因此从桶底先捞
-
                 }
-
             }
-
         }
-
     }
-
     return array;
-
 }
 ```
 以上算法, 如果用来比较时间, 先按日排序, 再按月排序, 最后按年排序, 仅需排序三次.
