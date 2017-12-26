@@ -1,39 +1,64 @@
 <?php
 header("Content-type:text/html; Charset=utf-8");
 
-
+/**
+ * 圣诞树
+ */
 class xmas {
-    public $h = 120;
-    public $w = 61;
-
-    public function getTree($w) {
-        $arr[$w] = str_pad('', $w, '^');
-        $arr[1] = str_pad('', 30, ' ') . "*" . str_pad('', 30, ' ');
-        for ($i = $w - 1; $i > 1; $i = $i - 2) {
-            $num = ($w - $i - 2 + 1) / 2;
-            $randstr = self::randStr($num);
-            $arr[$i] = str_pad('/', $num, ' ', STR_PAD_LEFT) . $randstr . str_pad("\\", $num, ' ', STR_PAD_RIGHT);
+    public $w;
+    public function __construct($w = 31) {
+        $this->w = $w;
+    }
+    public function plant() {
+        $tree = self::getTree();
+        $root = self::getRoot();
+        foreach ($tree as $val) {
+            echo $val, "\n";
+        }
+        for ($i = 0; $i < 5; $i++) {
+            echo $root, "\n";
         }
     }
+    public function getTree() {
+        $w = $this->w;
+        $arr[1] = str_pad('', ($w - 3) / 2, ' ') . "*";
+        for ($i = ($w - 1) / 2; $i >= 2; $i = $i - 1) {
+            $num = $w - 2 * $i;
+            $randstr = self::randStr($num);
+            $arr[$i] = str_pad('/', $i - 1, ' ', STR_PAD_LEFT) . $randstr . str_pad("\\", $i - 1, ' ', STR_PAD_RIGHT);
+        }
+        $arr[($w + 1) / 2] = str_pad('', $w - 2, '^');
+        sort($arr);
+        return $arr;
+    }
+    public function getRoot() {
+        $w = $this->w;
+        $width = 3;
+        $l = ($w - $width) / 2;
+        $r = ($w - $width) / 2 + $width;
+        return str_pad('|', $l - 1, ' ', STR_PAD_LEFT) . str_pad('', $width, ' ') . str_pad("|", $r - 1, ' ', STR_PAD_RIGHT);
+    }
     public function randStr($n) {
-        $strA = ["@", "#", "%", "P", "W", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+        $strA = ["@", "#", "%", "P", "W", 'a', '2', 'b', '=', '-', '^', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
         $out = ["0;30", "1;30", "0;34", "1;34", "0;32", "1;32", "0;36", "1;36", "0;31", "1;31", "0;35", "1;35", "0;33", "1;33", "0;37", "1;37"];
 
         $str = '';
         for ($i = 0; $i < $n; $i++) {
             $randstr = $strA[array_rand($strA)];
             $randcolor = $out[array_rand($out)];
-            // echo "\n",$randcolor,"\n";
             $str .= "\033[" . $randcolor . "m" . $randstr . "\033[0m";
-            // echo $str;
         }
         return $str;
     }
 }
 
-$xmas = new xmas();
-$str = $xmas->randStr(20);
-echo $str;
+$xmas = new xmas(31);
+$xmas->plant();
+
+// $str = $xmas->randStr(20);
+// echo $str;
+
+// echo str_pad('/', 20, ' ', STR_PAD_LEFT) . 'test' . str_pad("\\", 2, ' ', STR_PAD_RIGHT);
 
 // $out = "[44m";
 // echo chr(27) . "$out" . "text" . chr(27) . "[0m";
