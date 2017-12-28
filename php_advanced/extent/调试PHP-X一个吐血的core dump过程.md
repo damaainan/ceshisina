@@ -11,6 +11,7 @@
 
 先看看我们的源码：
 
+```c
     ZEND_RESULT_CODE _check_args_num(zend_execute_data *data, int num_args)
     {
         uint32_t min_num_args = data->func->common.required_num_args;
@@ -29,7 +30,7 @@
     
         return SUCCESS;
     }
-    
+```
 
 使用gdb对core进行分析 
 
@@ -71,6 +72,7 @@
 
 直接上我们的代码： 
 
+```c
     void printArgs(Args args){
         cout << "Args: ";
         for (unsigned int i = 0; i <args.count(); i++)
@@ -97,12 +99,13 @@
         printArgs(args);
         cout << "noneArgs() called" << endl;
     }
-    
+```
 
 我们来看看 PHPX_METHOD 这个宏的定义 
 
+```c
     #definePHPX_METHOD(c, m) void c##_##m(Object &_this, Args &args, Variant &retval)
-    
+```
 
 注意上面的代码中 printArgs(args); 这一行代码传入了args参数，而从 PHPX_METHOD 定义我们可以看到，args是一个引用参数，但是在 printArgs() 函数定义时，没有把args作为引用参数而导致了错误。初步猜测是因为传参过程中，一些对象复制的问题导致了错误 
 

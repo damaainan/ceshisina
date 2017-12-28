@@ -148,6 +148,10 @@
 
 在php.ini中找到`auto_prepend_file`，然后写上你相对应的路径，比如像下面这样的：
 
+在相应文件引入此全局配置即可
+    
+    require "D:/composer/vendor/autoload.php"; // 非 root 目录页面使用报错，命令行正常
+
 ```
      auto_prepend_file = ${HOME}/.composer/vendor/autoload.php 
 ```
