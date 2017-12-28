@@ -43,47 +43,41 @@ PHP手册文档：[http://php.net/manual/zh/book.pthreads.php][2]
 这里用一个最简单的代码来说明一下多线程的实用方法
 
 ```php
-    <?php
-    //这里用一个函数，表示操作日志，每操作一次花1秒的时间
-    function doThings( $i )
-    {
-        //  Write log file
-        sleep(1);
+<?php
+//这里用一个函数，表示操作日志，每操作一次花1秒的时间
+function doThings($i) {
+    //  Write log file
+    sleep(1);
+}
+
+$s = microtime(true);
+for ($i = 1; $i <= 10; $i++) {
+    doThings($i);
+}
+$e = microtime(true);
+echo "For循环：" . ($e - $s) . "\n";
+
+#############################################
+class MyThread extends Thread {
+    private $i = null;
+
+    public function __construct($i) {
+        $this->i = $i;
     }
-    
-    $s = microtime(true);
-    for($i = 1; $i <= 10; $i ++)
-    {
-        doThings( $i );
+
+    public function run() {
+        doThings($this->i);
     }
-    $e = microtime(true);
-    echo "For循环：" . ($e - $s) . "\n";  
-    
-    #############################################
-    class MyThread extends Thread
-    {
-        private $i = null;
-    
-        public function __construct( $i )
-        {
-        $this->i = $i;
-        }
-    
-        public function run()
-        {
-            doThings( $this->i );
-        }
-    }
-    
-    $s = microtime(true);
-    $work = array();
-    for($i = 1; $i <= 10; $i ++)
-    {
-        $work[$i] = new MyThread( $i );
-        $work[$i]->start();
-    }
-    $e = microtime(true);
-    echo "多线程：" . ($e - $s) . "\n";
+}
+
+$s = microtime(true);
+$work = array();
+for ($i = 1; $i <= 10; $i++) {
+    $work[$i] = new MyThread($i);
+    $work[$i]->start();
+}
+$e = microtime(true);
+echo "多线程：" . ($e - $s) . "\n";
 ```
 
 运行此文件之后，发现多线程的效率会远远高于 for 循环, 效果如图

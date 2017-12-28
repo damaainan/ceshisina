@@ -20,3 +20,9 @@ For Wampp (Windows)
 
 
 只在 php.ini 中添加扩展 
+
+## 最新扩展地址  
+
+https://github.com/SirSnyder/pthreads/releases/tag/v3.1.7-beta.1  7.1 
+
+http://windows.php.net/downloads/pecl/snaps/pthreads/3.1.6/  最新扩展 7.2

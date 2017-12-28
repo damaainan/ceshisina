@@ -278,7 +278,7 @@ https://github.com/oscm/shell/blob/master/php/5.5.9.sh
 
 有些场景我们不希望 thread->start() 就开始运行程序，而是希望线程等待我们的命令。
 
-$thread->wait();测作用是 thread->start()后线程并不会立即运行，只有收到 $thread->notify(); 发出的信号后才运行 
+$thread->wait();作用是 thread->start()后线程并不会立即运行，只有收到 $thread->notify(); 发出的信号后才运行 
 
 ```php
     <?php

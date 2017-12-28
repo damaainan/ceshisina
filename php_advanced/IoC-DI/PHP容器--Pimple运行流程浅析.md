@@ -341,7 +341,7 @@ $raw($this)返回的是实例化的对象User。也就是说只有实际调用�
 6、Pimple/README_zh.rst at master · 52fhy/Pimple  
 [https://github.com/52fhy/Pimp...][6]
 
-> 原文发布于博客园：[> http://www.cnblogs.com/52fhy/...][7]
+> 原文发布于博客园：[http://www.cnblogs.com/52fhy/...][7]
 
 [0]: https://github.com/silexphp/Pimple/blob/master/src/Pimple/Container.php
 [1]: http://php.net/manual/zh/class.arrayaccess.php
