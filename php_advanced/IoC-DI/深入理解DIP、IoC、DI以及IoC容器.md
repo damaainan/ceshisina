@@ -81,7 +81,7 @@ DIP是一种 软件设计原则，它仅仅告诉你两个模块之间应该如�
 
 做过电商网站的朋友都会面临这样一个问题：订单入库。假设系统设计初期，用的是SQL Server数据库。通常我们会定义一个SqlServerDal类，用于数据库的读写。
 
-```
+```csharp
     public class SqlServerDal
     {
          public void Add()
@@ -92,7 +92,7 @@ DIP是一种 软件设计原则，它仅仅告诉你两个模块之间应该如�
 ```
 然后我们定义一个Order类，负责订单的逻辑处理。由于订单要入库，需要依赖于数据库的操作。因此在Order类中，我们需要定义SqlServerDal类的变量并初始化。
 
-```
+```csharp
     public class Order
     {
             private readonly SqlServerDal dal = new SqlServerDal();//添加一个私有变量保存数据库操作的对象
@@ -105,7 +105,7 @@ DIP是一种 软件设计原则，它仅仅告诉你两个模块之间应该如�
 ```
 最后，我们写一个控制台程序来检验成果。
 
-```
+```csharp
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -133,7 +133,7 @@ OK，结果看起来挺不错的！正当你沾沾自喜的时候，这时BOSS�
 
 由于换成了Access数据库，SqlServerDal类肯定用不了了。因此，我们需要新定义一个AccessDal类，负责Access数据库的操作。
 
-```
+```csharp
     public class AccessDal
     {
         public void Add()
@@ -144,7 +144,7 @@ OK，结果看起来挺不错的！正当你沾沾自喜的时候，这时BOSS�
 ```
 然后，再看Order类中的代码。由于，Order类中直接引用了SqlServerDal类的对象。所以还需要修改引用，换成AccessDal对象。
 
-```
+```csharp
     public class Order
     {
             private readonly AccessDal dal = new AccessDal();//添加一个私有变量保存数据库操作的对象
@@ -177,7 +177,7 @@ OK，结果看起来挺不错的！正当你沾沾自喜的时候，这时BOSS�
 
 首选，我们需要定义SqlServerDal的抽象类型IDataAccess，并在IDataAccess接口中声明一个Add方法。
 
-```
+```csharp
     public interface IDataAccess
     {
             void Add();
@@ -185,7 +185,7 @@ OK，结果看起来挺不错的！正当你沾沾自喜的时候，这时BOSS�
 ```
 然后在SqlServerDal类中，实现IDataAccess接口。
 
-```
+```csharp
      public class SqlServerDal:IDataAccess
      {
             public void Add()
@@ -196,7 +196,7 @@ OK，结果看起来挺不错的！正当你沾沾自喜的时候，这时BOSS�
 ```
 接下来，我们还需要修改Order类。
 
-```
+```csharp
       public class Order
       {
             private IDataAccess _ida;//定义一个私有变量保存抽象
@@ -215,7 +215,7 @@ OK，结果看起来挺不错的！正当你沾沾自喜的时候，这时BOSS�
 ```
 OK，我们再来编写一个控制台程序。
 
-```
+```csharp
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -245,7 +245,7 @@ OK，我们再来编写一个控制台程序。
 
 定义AccessDal类：
 
-```
+```csharp
     public class AccessDal:IDataAccess
     {
             public void Add()
@@ -256,7 +256,7 @@ OK，我们再来编写一个控制台程序。
 ```
 然后在控制台程序中重新绑定依赖关系：
 
-```
+```csharp
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -288,7 +288,7 @@ OK，我们再来编写一个控制台程序。
 
 顾名思义，属性注入是通过属性来传递依赖。因此，我们首先需要在依赖类Order中定义一个属性：
 
-```
+```csharp
      public class Order
      {
            private IDataAccess _ida;//定义一个私有变量保存抽象
@@ -308,7 +308,7 @@ OK，我们再来编写一个控制台程序。
 ```
 然后在控制台程序中，给属性赋值，从而传递依赖：
 
-```
+```csharp
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -339,7 +339,7 @@ OK，我们再来编写一个控制台程序。
 
 首先定义一个接口：
 
-```
+```csharp
      public interface IDependent
      {
                 void SetDependence(IDataAccess ida);//设置依赖项
@@ -347,7 +347,7 @@ OK，我们再来编写一个控制台程序。
 ```
 依赖类实现这个接口：
 
-```
+```csharp
        public class Order : IDependent
         {
             private IDataAccess _ida;//定义一个私有变量保存抽象
@@ -367,7 +367,7 @@ OK，我们再来编写一个控制台程序。
 ```
 控制台程序通过SetDependence方法传递依赖：
 
-```
+```csharp
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -397,7 +397,7 @@ OK，我们再来编写一个控制台程序。
 
 前面所有的例子中，我们都是通过手动的方式来创建依赖对象，并将引用传递给被依赖模块。比如：
 
-```
+```csharp
     SqlServerDal dal = new SqlServerDal();//在外部创建依赖对象 
     Order order = new Order(dal);//通过构造函数注入依赖
 ```
@@ -452,7 +452,7 @@ OK，我们再来编写一个控制台程序。
 ```
 下面，我们写一个完整的控制台程序
 
-```
+```csharp
     using System;
     using System.Collections.Generic;
     using System.Linq;

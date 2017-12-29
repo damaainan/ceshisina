@@ -98,17 +98,18 @@ phpdbg是php的一个sapi，它可以以命令行的方式调试php。常用参�
 
 之前我们介绍过gdb工具。其实phpdbg和gdb功能有些地方非常相似。如，可以设置断点，可以单步执行，等。只是他们调试的语言不一样，gdb侧重于调试c或者c++语言，而phpdbg侧重于调试php语言。下面我们将对phpdbg的一些常用调试功能做下介绍。要调试的代码如下：
 
-文件test_phpdbg_inc.php源代码如下：
+文件 test_phpdbg_inc.php 源代码如下：
 
+```php
     <?php 
     function phpdbg_inc_func()
     {     
         echo "phpdbg_inc_func \n"; 
     } 
     ?>
-
-文件test_phpdgb.php的源代码如下：
-
+```
+文件 test_phpdgb.php 的源代码如下：
+```php
     <?php 
         include(dirname(__FILE__)."/test_phpdbg_inc.php"); 
         class demo{     
@@ -135,12 +136,12 @@ phpdbg是php的一个sapi，它可以以命令行的方式调试php。常用参�
       func();
       phpdbg_inc_func();
     ?>
-
+```
 **启动phpdbg**
 
 phpdbg安装成功后，会在安装目录的bin目录下。进入bin目录，直接输入phpdbg即可。如下：
 
-    #phpdeg
+    #phpdbg
     [Welcome to phpdbg, the interactive PHP debugger, v0.4.0]
     To get help using phpdbg type "help" and press enter
     [Please report bugs to <http://github.com/krakjoe/phpdbg/issues>]
@@ -229,7 +230,7 @@ break del 后面的数字1就是断点号。
 
 phpdbg查看代码的命令也是list。但是和gdb相比，使用的方式更多样一些。
 
-_显示指定函数的代码：_
+**显示指定函数的代码：**
 
     ......
     prompt> l f func

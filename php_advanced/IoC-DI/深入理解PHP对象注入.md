@@ -1,6 +1,6 @@
 # [深入理解PHP对象注入][0]
 
-2016-04-09 分类：[WEB开发][1]、[编程开发][2]、[首页精华][3][0人评论][4] 来源：[吴钧泽博客][5]
+2016-04-09 
 
 
 ## 0×00 背景
@@ -28,31 +28,22 @@
 类和变量是非常容易理解的php概念，打个比方，下面的代码在一个类中定义了一个变量和一个方法。
 
 ```php
-    <?php
-    
-    class TestClass
+<?php
+class TestClass
+{
+    // A variable
+    public $variable = 'This is a string';
+    // A simple method
+    public function PrintVariable()
     {
-        // A variable
-    
-        public $variable = 'This is a string';
-    
-        // A simple method
-    
-        public function PrintVariable()
-        {
-            echo $this->variable;
-        }
+        echo $this->variable;
     }
-    
-    // Create an object
-    
-    $object = new TestClass();
-    
-    // Call a method
-    
-    $object->PrintVariable();
-    
-    ?>
+}
+// Create an object
+$object = new TestClass();
+// Call a method
+$object->PrintVariable();
+?>
 ```
 
 它创建了一个对象并且调用了 PrintVariable 函数，该函数会输出变量 variable。
@@ -70,57 +61,57 @@ php类可能会包含一些特殊的函数叫magic函数，magic函数命名是�
 为了更好的理解magic方法是如何工作的，让我们添加一个magic方法在我们的类中。
 
 ```php
-    <?php
-        class TestClass
-        {
-        // 一个变量public $variable = 'This is a string';// 一个简单的方法
-    
-        public function PrintVariable()
-        {
-        echo $this->variable . '<br />';
-        }
-    
-        // Constructor
-    
-        public function __construct()
-        {
-        echo '__construct <br />';
-        }
-    
-        // Destructor
-    
-        public function __destruct()
-        {
-        echo '__destruct <br />';
-        }
-    
-        // Call
-    
-        public function __toString()
-        {
-        return '__toString<br />';
-        }
-        }
-    
-        // 创建一个对象
-        // __construct会被调用
-    
-        $object = new TestClass();
-    
-        // 创建一个方法
-        // 'This is a string’ 这玩意会被输出
-    
-        $object->PrintVariable();
-    
-        // 对象被当作一个字符串
-        // __toString 会被调用
-    
-        echo $object;
-    
-        // End of PHP script
-        // php脚本要结束了， __destruct会被调用
-    
-        ?>
+<?php
+class TestClass
+{
+    // 一个变量public $variable = 'This is a string';// 一个简单的方法
+
+public function PrintVariable()
+{
+    echo $this->variable . '<br />';
+}
+
+// Constructor
+
+public function __construct()
+{
+    echo '__construct <br />';
+}
+
+// Destructor
+
+public function __destruct()
+{
+    echo '__destruct <br />';
+}
+
+// Call
+
+public function __toString()
+{
+    return '__toString<br />';
+}
+}
+
+// 创建一个对象
+// __construct会被调用
+
+$object = new TestClass();
+
+// 创建一个方法
+// 'This is a string’ 这玩意会被输出
+
+$object->PrintVariable();
+
+// 对象被当作一个字符串
+// __toString 会被调用
+
+echo $object;
+
+// End of PHP script
+// php脚本要结束了， __destruct会被调用
+
+?>
 ```
 
 我们往里头放了三个 magic方法，`__construct`, `__destruct`和 `__toString`，你可以看出来，`__construct`在对象创建时调用， `__destruct`在php脚本结束时调用，`__toString`在对象被当作一个字符串使用时调用。
@@ -143,9 +134,9 @@ php允许保存一个对象方便以后重用，这个过程被称为序列化�
 让我们在序列化丢进那个例子，看看序列化张什么样。
 
 ```php
-    <?php
-    // 某类class User
-    {
+<?php
+// 某类class User
+{
     // 类数据public $age = 0;
     public $name = '';
     
@@ -153,28 +144,27 @@ php允许保存一个对象方便以后重用，这个过程被称为序列化�
     
     public function PrintData()
     {
-    echo 'User ' . $this->name . ' is ' . $this->age
-    . ' years old. <br />';
+        echo 'User ' . $this->name . ' is ' . $this->age. ' years old. <br />';
     }
-    }
-    
-    // 创建一个对象
-    
-    $usr = new User();
-    
-    // 设置数据
-    
-    $usr->age = 20;
-    $usr->name = 'John';
-    
-    // 输出数据
-    
-    $usr->PrintData();
-    
-    // 输出序列化之后的数据
-    
-    echo serialize($usr);
-    
+}
+
+// 创建一个对象
+
+$usr = new User();
+
+// 设置数据
+
+$usr->age = 20;
+$usr->name = 'John';
+
+// 输出数据
+
+$usr->PrintData();
+
+// 输出序列化之后的数据
+
+echo serialize($usr);
+
     ?>
 ```
 
@@ -488,10 +478,6 @@ ps:我希望这让你能够理解。
 虽然很难找到而且很难利用，但是这真的真的很严重，可以导致各种各样的漏洞。
 
 [0]: http://www.codeceo.com/article/php-object-injection.html
-[1]: http://www.codeceo.com/article/category/develop/web
-[2]: http://www.codeceo.com/article/category/develop
-[3]: http://www.codeceo.com/article/category/pick
-[4]: http://www.codeceo.com/article/php-object-injection.html#comments
 [5]: https://wujunze.com/php_class_inject.jsp
 [6]: https://vagosec.org/2013/09/wordpress-php-object-injection/
 [7]: https://websec.wordpress.com/2014/12/08/magento-1-9-0-1-poi/
