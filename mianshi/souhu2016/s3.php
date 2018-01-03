@@ -34,7 +34,7 @@
  * 找出一个合适的最低的点 向两边延伸 一个点只能见到自己两侧较低的点  像树的结构
 20      12           11
 /       / \         /  \
-33      32  32      45   21
+33      32  32      45   21想
  *                         \
  *                         31
  *                          \
@@ -43,6 +43,26 @@
 
 将树的结构转化为多维数组
  */
+function demo($arr){
+    $n = count($arr);
+    if($n<2){
+        echo 1;
+        return ;
+    }
+    if($arr[$n-1]>$arr[0]){
+
+    }
+    for($i=0;$i<$n-1;$i++){
+        for($k=$i;$k<$n-1;$k++){
+            // 想不出来了 二进制 或字符串 计数
+        }
+    }
+}
+
+function arrayToTree($arr){
+    // 一个比两边的数都小的数作为根节点 一圈
+    $n = count($arr);
+}
 function deal($arr) {
     $narr = [];
     $len = count($arr);
