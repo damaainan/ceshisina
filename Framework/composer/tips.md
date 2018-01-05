@@ -1,5 +1,6 @@
 #### 国内镜像
 
+    composer config -g repo.packagist composer https://packagist.phpcomposer.com
 
 ```
 "repositories": {
