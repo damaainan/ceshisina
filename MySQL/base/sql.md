@@ -1,9 +1,7 @@
-
+## SQL编程 
 
     
-    /* SQL编程 */ ------------------
-    
-    --// 局部变量 ----------
+#### 局部变量 
     -- 变量声明
         declare var_name[,...] type [default value] 
         这个语句被用来声明局部变量。要给变量提供一个默认值，请包含一个default子句。值可以被指定为一个表达式，不需要为一个常数。如果没有default子句，初始值为null。 
@@ -14,27 +12,29 @@
         - 注意：在函数内是可以使用全局变量（用户自定义的变量）
     
     
-    --// 全局变量 ----------
+#### 全局变量 
     -- 定义、赋值
     set 语句可以定义并为变量赋值。
     set @var = value;
     也可以使用select into语句为变量初始化并赋值。这样要求select语句只能返回一行，但是可以是多个字段，就意味着同时为多个变量进行赋值，变量的数量需要与查询的列数一致。
     还可以把赋值语句看作一个表达式，通过select执行完成。此时为了避免=被当作关系运算符看待，使用:=代替。（set语句可以使用= 和 :=）。
-    select @var:=**20**;
-    select @v1:=id, @v2=name from t1 limit **1**;
-    select * from tbl_name where @var:=**30**;
+    select @var:= 20 ;
+    select @v1:=id, @v2=name from t1 limit  1 ;
+    select * from tbl_name where @var:= 30 ;
     
     select into 可以将表中查询获得的数据赋给变量。
         -| select max(height) into @max_height from tb;
     
-    -- 自定义变量名
+#### 自定义变量名
     为了避免select语句中，用户自定义的变量与系统标识符（通常是字段名）冲突，用户自定义变量在变量名前使用@作为开始符号。
-    @var=**10**;
+    @var= 10 ;
     
         - 变量被定义后，在整个会话周期都有效（登录到退出）
     
-    
-    --// 控制结构 ----------
+
+
+#### 控制结构 
+
     -- if语句
     if search_condition then 
         statement_list    
@@ -65,8 +65,10 @@
             通过退出的标签决定退出哪个循环
     
     
-    --// 内置函数 ----------
-    -- 数值函数
+
+## 内置函数 
+
+#### 数值函数
     abs(x)            -- 绝对值 abs(-10.9) = 10
     format(x, d)    -- 格式化千分位数值 format(1234567.456, 2) = 1,234,567.46
     ceil(x)            -- 向上取整 ceil(10.1) = 11
@@ -79,7 +81,7 @@
     rand()            -- 随机数
     truncate(x, d)    -- 截取d位小数
     
-    -- 时间日期函数
+#### 时间日期函数
     now(), current_timestamp();     -- 当前日期时间
     current_date();                    -- 当前日期
     current_time();                    -- 当前时间
@@ -89,7 +91,7 @@
     unix_timestamp();                -- 获得unix时间戳
     from_unixtime();                -- 从时间戳获得时间
     
-    -- 字符串函数
+#### 字符串函数
     length(string)            -- string长度，字节
     char_length(string)        -- string的字符个数
     substring(str, position [,length])        -- 从str的position开始,取length个字符
@@ -108,11 +110,11 @@
     rtrim(string)            -- 去除后端空格
     strcmp(string1 ,string2)    -- 逐字符比较两字串大小
     
-    -- 流程函数
+#### 流程函数
     case when [condition] then result [when [condition] then result ...] [else result] end   多分支
     if(expr1,expr2,expr3)  双分支。
     
-    -- 聚合函数
+#### 聚合函数
     count()
     sum();
     max();
@@ -120,12 +122,13 @@
     avg();
     group_concat()
     
-    -- 其他常用函数
+#### 其他常用函数
     md5();
     default();
     
     
-    --// 存储函数，自定义函数 ----------
+
+##  存储函数，自定义函数 
     -- 新建
         CREATE FUNCTION function_name (参数列表) RETURNS 返回值类型
             函数体

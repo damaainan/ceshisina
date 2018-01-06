@@ -1,5 +1,6 @@
 # [show profiles 分析sql耗时瓶颈](http://www.cnblogs.com/chenqionghe/p/4298813.html)
-1、首先查看是否开启profiling功能
+
+### 1、首先查看是否开启profiling功能
 
     SHOW VARIABLES LIKE '%pro%'; 
 
@@ -7,16 +8,16 @@
 
     SELECT @@profiling; 
 
-2、开启profiling
+### 2、开启profiling
 
     SET profiling=1; 
 
-3、执行sql语句  
+### 3、执行sql语句  
 例如：
 
     SELECT table_schema FROM cqh_test GROUP BY table_schema ;  
 
-4、查看结果
+### 4、查看结果
 
 
     SHOW profiles;  查看查询语句的信息(QUERY_ID,查询时间，查询语句内容)  

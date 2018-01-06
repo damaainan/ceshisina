@@ -2,7 +2,7 @@
 
 
     
-    /* select */ ------------------
+## select 
     
     select [all|distinct] select_expr from -> where -> group by [合计函数] -> having -> order by -> limit
     
@@ -10,10 +10,10 @@
         -- 可以用 * 表示所有字段。
             select * from tb;
         -- 可以使用表达式（计算公式、函数调用、字段也是个表达式）
-            select stu, **29**+**25**, now() from tb;
+            select stu,  29 + 25 , now() from tb;
         -- 可以为每个列使用别名。适用于简化列标识，避免多个列标识符重复。
             - 使用 as 关键字，也可省略 as.
-            select stu+**10** as add10 from tb;
+            select stu+ 10  as add10 from tb;
     
     b. from 子句
         用于标识查询来源。
@@ -70,7 +70,8 @@
         默认为 all, 全部记录
     
     
-    /* UNION */ ------------------
+### UNION 
+
         将多个select查询的结果组合成一个结果集合。
         SELECT ... UNION [ALL|DISTINCT] SELECT ...
         默认 DISTINCT 方式，即所有返回的行都是唯一的
@@ -80,14 +81,14 @@
         每个select查询的字段列表(数量、类型)应一致，因为结果中的字段名以第一条select语句为准。
     
     
-    /* 子查询 */ ------------------
+### 子查询 
         - 子查询需用括号包裹。
     -- from型
         from后要求是一个表，必须给子查询结果取个别名。
         - 简化每个查询内的条件。
         - from型需将结果生成一个临时表格，可用以原表的锁定的释放。
         - 子查询返回一个表，表型子查询。
-        select * from (select * from tb where id>**0**) as subfrom where id>**1**;
+        select * from (select * from tb where id> 0 ) as subfrom where id> 1 ;
     -- where型
         - 子查询返回一个值，标量子查询。
         - 不需要给子查询取别名。
@@ -112,7 +113,7 @@
         all, some 可以配合其他运算符一起使用。
     
     
-    /* 连接查询(join) */ ------------------
+## 连接查询(join) 
         将多个表的字段进行连接，可以指定连接条件。
     -- 内连接(inner join)
         - 默认就是内连接，可省略inner。
@@ -139,7 +140,7 @@
     
     select info.id, info.name, info.stu_num, extra_info.hobby, extra_info.sex from info, extra_info where info.stu_num = extra_info.stu_id;
     
-    /* 导入导出 */ ------------------
+## 导入导出 
     select * into outfile 文件地址 [控制格式] from 表名;    -- 导出表数据
     load data [local] infile 文件地址 [replace|ignore] into table 表名 [控制格式];    -- 导入数据
         生成的数据默认的分隔符是制表符
