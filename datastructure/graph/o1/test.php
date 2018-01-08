@@ -1,5 +1,9 @@
 <?php 
 //数据结构之最小树生成(用php描述) 
+include "Graph.php";
+include "Edge.php";
+include "Tree.php";
+include "Vertex.php";
 
 try {
     $graph = new \DataStructure\Graph();
@@ -25,7 +29,7 @@ try {
     /**@var \DataStructure\Edge $edge */
     foreach ($minimalSpanningTree as $edge) {
         echo implode(',', [$edge->getSource()->getNumber(), $edge->getTarget()->getNumber(), $edge->getWeight()]);
-        echo '<br/>';
+        echo "\n";
     }
 } catch (\Exception $e) {
     var_dump($e->getMessage());
