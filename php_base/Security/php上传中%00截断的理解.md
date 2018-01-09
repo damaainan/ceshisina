@@ -174,5 +174,5 @@ ASCII 值可被指定为十进制值、八进制值或十六进制值。八进�
 
 
 [1]: http://www.secange.com/2017/08/php上传中�截断的理解/
-[4]: http://img2.tuicool.com/73Qzmiz.png!web
-[5]: http://img0.tuicool.com/ayYN3qJ.png!web
+[4]: http://img2.tuicool.com/73Qzmiz.png
+[5]: http://img0.tuicool.com/ayYN3qJ.png

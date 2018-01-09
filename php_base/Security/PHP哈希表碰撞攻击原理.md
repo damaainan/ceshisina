@@ -2,8 +2,6 @@
 
 作者 张洋 | 发布于 2012-01-04 
 
-[PHP][1][哈希碰撞][2][ZendEngine][3][数据结构][4]
-
 最近哈希表碰撞攻击（Hashtable collisions as DOS attack）的话题不断被提起，各种语言纷纷中招。本文结合PHP内核源码，聊一聊这种攻击的原理及实现。
 
 ### 哈希表碰撞攻击的基本原理
@@ -260,15 +258,11 @@ echo $endTime - $startTime, ' seconds', "\n";
 5. [PHP 5.4.0 RC4 released][16]
 
 [0]: http://blog.codinglabs.org/articles/hash-collisions-attack-on-php.html
-[1]: http://blog.codinglabs.org/tag.html#PHP
-[2]: http://blog.codinglabs.org/tag.html#哈希碰撞
-[3]: http://blog.codinglabs.org/tag.html#ZendEngine
-[4]: http://blog.codinglabs.org/tag.html#数据结构
-[5]: ./img/hash-collisions-attack-on-php1.png
+[5]: ../img/hash-collisions-attack-on-php1.png
 [6]: http://blog.csdn.net/chen_alvin/article/details5846714
-[7]: ./img/hash-collisions-attack-on-php2.png
-[8]: ./img/hash-collisions-attack-on-php3.png
-[9]: ./img/hash-collisions-attack-on-php4.png
+[7]: ../img/hash-collisions-attack-on-php2.png
+[8]: ../img/hash-collisions-attack-on-php3.png
+[9]: ../img/hash-collisions-attack-on-php4.png
 [10]: http://www.laruence.com/2011/12/302440.html
 [11]: http://cn.php.net/manual/en/function.json-decode.php
 [12]: http://en.wikipedia.org/wiki/Red%E2%80%93black_tree
