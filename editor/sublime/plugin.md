@@ -156,3 +156,8 @@ Preferences > Package Settings > phpfmt > Settings - User
 
 
 ----
+
+
+状态栏显示当前文件大小 [StatusBarFileSize](https://github.com/SublimeText/StatusBarFileSize)   
+状态栏显示当前时间 [StatusBarTime](https://github.com/lowliet/sublimetext-StatusBarTime)   
+字数统计 [WordCount](https://github.com/titoBouzout/WordCount)   

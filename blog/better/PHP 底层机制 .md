@@ -5,15 +5,15 @@
 _注：本博文转载自[百度搜索研发部官方博客][0]__小部分内容有修改，关键字使用粗体标出，斜体字为自己添加的内容，改善了原博文的排版_ 
 
 
-###1.什么是PHP？
+### 1.什么是PHP？
 
 > 一种适用于web开发的动态语言。具体点说：就是一个用c语言实现包含大量组件的软件框架。更狭义点看，可以把它认为是一个强大的ui框架.
 
-###2.为何要了解PHP的底层？
+### 2.为何要了解PHP的底层？
 
 > 了解一门语言的实现将有助于我们更好的使用这门语言，优化我们的程序性能，可以了解到在什么地方该用它，什么地方不该使用。
 
-###3.PHP 的设计理念及特点
+### 3.PHP 的设计理念及特点
 
 * 多进程模型：由于php是多进程模型，不同请求间互不干涉，这样保证了一个请求挂掉不会对全盘服务造成影响.
 * 弱类型语言：和c/c++、java、c#等语言不同，PHP是一门 **弱类型语言**：一个变量的类型并不是一开始就确定不变，运行中才会确定并可能发生隐式或显式的类型转换，这种机制的灵活性在web开发中非常方便、高效，具体会在后面php变量中详述.
@@ -21,23 +21,23 @@ _注：本博文转载自[百度搜索研发部官方博客][0]__小部分内容
 * 中间层(sapi)隔绝web server和PHP
 * 语法简单灵活，没有太多规范
 
-###4.PHP四层系统结构
+### 4.PHP四层系统结构
 
 ![PHP四层系统结构][1]
 
-#####Zend引擎
+##### Zend引擎
 
 > Zend整体用纯c实现，是php的内核部分，它将php代码翻译(词法、语法解析等一系列编译过程)为可执行opcode的处理并实现相应的处理方法、实现了基本的数据结构(如hashtable、oo)、内存分配及管理、提供了相应的api方法供外部调用，是一切的核心，所有的外围功能均围绕zend实现。
 
-#####Extensions
+##### Extensions
 
-> 围绕着zend引擎，extensions通过组件式的方式提供各种基础服务，我们常见的各种**> 内置函数**> （如array系列）、标准库等都是通过extension来实现，用户也可以根据需要实现自己的extension以达到功能扩展、性能优化等目的（如贴吧正在使用的php中间层、富文本解析就是extension的典型应用）。
+> 围绕着zend引擎，extensions通过组件式的方式提供各种基础服务，我们常见的各种**内置函数**（如array系列）、标准库等都是通过extension来实现，用户也可以根据需要实现自己的extension以达到功能扩展、性能优化等目的（如贴吧正在使用的php中间层、富文本解析就是extension的典型应用）。
 
-#####SAPI
+##### SAPI
 
-> 全称是Server Application Programming Interface，也就是服务端应用编程接口，sapi通过一系列**> 钩子函数**> （如Apache的hook机制），使得php可以和外围交互数据，这是php非常优雅和成功的一个设计，通过sapi成功的将php本身和上层应用解耦隔离，php可以不再考虑如何针对不同应用进行兼容，而应用本身也可以针对自己的特点实现不同的处理方式，后面将在sapi章节中介绍。
+> 全称是Server Application Programming Interface，也就是服务端应用编程接口，sapi通过一系列** 钩子函数** （如Apache的hook机制），使得php可以和外围交互数据，这是php非常优雅和成功的一个设计，通过sapi成功的将php本身和上层应用解耦隔离，php可以不再考虑如何针对不同应用进行兼容，而应用本身也可以针对自己的特点实现不同的处理方式，后面将在sapi章节中介绍。
 
-#####上层应用
+##### 上层应用
 
 > 这就我们平时编写的php程序，通过不同的sapi方式得到各种各样的应用模式，如通过webserver实现web应用、在命令行下以脚本方式运行（CLI模式）等等。
 
@@ -47,7 +47,7 @@ _> 这个比方很贴切~_
 
 > 因此，我们需要：性能优异的引擎+合适的车轮+正确的跑道
 
-###5.Sapi
+### 5.Sapi
 
 > 如前所述，sapi通过通过一系列的接口，使得外部应用可以和php交换数据并可以根据不同应用特点实现特定的处理方法，我们常见的一些sapi有：
 
@@ -57,7 +57,7 @@ _> 这个比方很贴切~_
 
 > cgi
 
-> webserver和php直接的另一种交互方式，也就是大名鼎鼎的fastcgi协议，在最近今年**> > fastcgi+php**> > （nginx+fastcgi+php）得到越来越多的应用，也是异步webserver所唯一支持的方式。关于fastcgi和mod_php，可以参见另外一篇文章[《php性能调研-mod_php vs fastcgi》][2]
+> webserver和php直接的另一种交互方式，也就是大名鼎鼎的fastcgi协议，在最近今年**fastcgi+php**（nginx+fastcgi+php）得到越来越多的应用，也是异步webserver所唯一支持的方式。关于fastcgi和mod_php，可以参见另外一篇文章[《php性能调研-mod_php vs fastcgi》][2]
 
 > cli
 
@@ -69,17 +69,17 @@ _> 这个比方很贴切~_
 
 > 这里介绍一下其中一些主要函数
 
-* > startup：php被调用时初始化操作
-* > 比如cgi模式，在startup的时候会加载所有的extension并执行模块初始化工作。
-* > shutdown：php关闭时收尾工作
-* > activate：请求初始化
-* > dectivate：请求结束时收尾工作
-* > ub_write：指定数据输出方式,比如apache2handler方式，由于php作为apache的一个so存在，因此其输出也就是调用apache的ap_write函数，而在cgi模式下，会系统调用write。
-* > sapi_error：错误处理函数
-* > read_post：读取post数据
-* > register_server_variables：往$_SERVER中注册环境变量,这个一般是根据不同协议标准注册的变量。
+> * startup：php被调用时初始化操作
+> * 比如cgi模式，在startup的时候会加载所有的extension并执行模块初始化工作。
+> * shutdown：php关闭时收尾工作
+> * activate：请求初始化
+> * dectivate：请求结束时收尾工作
+> * ub_write：指定数据输出方式,比如apache2handler方式，由于php作为apache的一个so存在，因此其输出也就是调用apache的ap_write函数，而在cgi模式下，会系统调用write。
+> * sapi_error：错误处理函数
+> * read_post：读取post数据
+> * register_server_variables：往$_SERVER中注册环境变量,这个一般是根据不同协议标准注册的变量。
 
-###6.Php的执行流程&opcode
+### 6.Php的执行流程&opcode
 
 > 我们先来看看php代码的执行所经过的流程。
 
@@ -93,12 +93,12 @@ _> 这个比方很贴切~_
 
 > 常见的几个处理函数
 
-* > ZEND_ASSIGN_SPEC_CV_CV_HANDLER : 变量分配 （$a=$b）
-* > ZEND_DO_FCALL_BY_NAME_SPEC_HANDLER：函数调用
-* > ZEND_CONCAT_SPEC_CV_CV_HANDLER：字符串拼接 $a.$b
-* > ZEND_ADD_SPEC_CV_CONST_HANDLER: 加法运算 $a+2
-* > ZEND_IS_EQUAL_SPEC_CV_CONST：判断相等 $a==1
-* > ZEND_IS_IDENTICAL_SPEC_CV_CONST：判断相等 $a===1
+> * ZEND_ASSIGN_SPEC_CV_CV_HANDLER : 变量分配 （$a=$b）
+> * ZEND_DO_FCALL_BY_NAME_SPEC_HANDLER：函数调用
+> * ZEND_CONCAT_SPEC_CV_CV_HANDLER：字符串拼接 $a.$b
+> * ZEND_ADD_SPEC_CV_CONST_HANDLER: 加法运算 $a+2
+> * ZEND_IS_EQUAL_SPEC_CV_CONST：判断相等 $a==1
+> * ZEND_IS_IDENTICAL_SPEC_CV_CONST：判断相等 $a===1
 
 ###7.HashTable （核心数据结构）
 
@@ -110,7 +110,7 @@ _> 这个比方很贴切~_
 * > 可以当做数组使用
 * > 添加、删除节点是O（1）复杂度
 * > key支持混合类型：同时存在关联数组和索引数组
-* > Value支持混合类型：array(“string”,2332)
+* > Value支持混合类型：array("string",2332)
 * > 支持线性遍历：如foreach
 
 > Zend hash table实现了典型的hash表散列结构，同时通过附加一个双向链表，提供了正向、反向遍历数组的功能。其结构如下图
@@ -152,7 +152,7 @@ _> 这个比方很贴切~_
 
 > 对于double类型的key，Zend HashTable会将他当做索引key处理。
 
-###8.PHP变量
+### 8.PHP变量
 
 > 概述
 
@@ -170,21 +170,21 @@ _> 这个比方很贴切~_
 
 > Zval主要由三部分组成：
 
-1. > > type：指定了变量所述的类型（整数、字符串、数组等）
-1. > > refcount_gc,is_ref_gc：用来实现引用计数(后面具体介绍)
-1. > > value：核心部分，存储了变量的实际数据
+1. type：指定了变量所述的类型（整数、字符串、数组等）
+1. refcount_gc,is_ref_gc：用来实现引用计数(后面具体介绍)
+1. value：核心部分，存储了变量的实际数据
 
-**> Zvalue**> 是用来保存一个变量的实际数据。因为要存储多种类型，所以zvalue是一个union，也由此实现了弱类型。
+**Zvalue**是用来保存一个变量的实际数据。因为要存储多种类型，所以zvalue是一个union，也由此实现了弱类型。
 
 > Php变量类型和其实际存储对应关系如下
 
-* > IS_LONG -> lvalue
-* > IS_DOUBLE -> dvalue
-* > IS_ARRAY -> ht
-* > IS_STRING -> str
-* > IS_RESOURCE -> lvalue
+* IS_LONG -> lvalue
+* IS_DOUBLE -> dvalue
+* IS_ARRAY -> ht
+* IS_STRING -> str
+* IS_RESOURCE -> lvalue
 
-**> 引用计数**> 在内存回收、字符串操作等地方使用非常广泛，PHP中的变量就是引用计数的典型应用。
+**引用计数**在内存回收、字符串操作等地方使用非常广泛，PHP中的变量就是引用计数的典型应用。
 
 > Zval的引用计数通过成员变量is_ref和ref_count实现，通过引用计数，多个变量可以共享同一份数据。避免频繁拷贝带来的大量消耗。
 
@@ -192,9 +192,9 @@ _> 这个比方很贴切~_
 
 > 如果是引用赋值，则zend会修改is_ref_gc为1（如$a=&$b）。
 
-**写时拷贝**PHP变量通过引用计数实现变量共享数据，那如果改变其中一个变量值呢？
+**写时拷贝** PHP变量通过引用计数实现变量共享数据，那如果改变其中一个变量值呢？
 
-> 当试图写入一个变量时，Zend若发现该变量指向的zval被多个变量共享，则为其复制一份refcount_gc为1的zval，并递减原zval的refcount_gc，这个过程称为“zval分离”。可见，只有在有写操作发生时zend才进行拷贝操作，因此也叫copy-on-write(写时拷贝)
+> 当试图写入一个变量时，Zend若发现该变量指向的zval被多个变量共享，则为其复制一份refcount_gc为1的zval，并递减原zval的refcount_gc，这个过程称为"zval分离"。可见，只有在有写操作发生时zend才进行拷贝操作，因此也叫copy-on-write(写时拷贝)
 
 > 对于引用型变量，其要求和非引用型相反，引用赋值的变量间必须是捆绑的，修改一个变量就修改了所有捆绑变量。
 
@@ -224,11 +224,11 @@ _> 这个比方很贴切~_
 
 > 假设有如下4个变量：
 
-> $strA=‘123’; $strB = ‘456’; $intA=123; intB=456;
+> $strA='123'; $strB = '456'; $intA=123; intB=456;
 
 > 现在对如下的几种字符串拼接方式做一个比较和说明
 
-> 1、$res = $strA.$strB和$res = “$strA$strB”
+> 1、$res = $strA.$strB和$res = "$strA$strB"
 
 > 这种情况下，zend会重新malloc一块内存并进行相应处理，其速度一般
 
@@ -240,7 +240,7 @@ _> 这个比方很贴切~_
 
 > 这种速度较慢，因为需要做隐式的格式转换，实际编写程序中也应该注意尽量避免
 
-> 4、$strA = sprintf (“%s%s”,$strA.$strB);
+> 4、$strA = sprintf ("%s%s",$strA.$strB);
 
 > 这会是最慢的一种方式，因为sprintf在php中并不是一个语言结构，本身对于格式识别和处理就需要耗费比较多时间，另外本身机制也是malloc。不过sprintf的方式最具可读性，实际中可以根据具体情况灵活选择。
 
@@ -250,7 +250,7 @@ _> 这个比方很贴切~_
 
 > 对一个数组的foreach就是通过遍历hashtable中的双向链表完成。对于索引数组，通过foreach遍历效率比for高很多，省去了key->value的查找，Count操作直接调用HashTable-NumOfElements，O(1)操作
 
-> 对于’123’这样的字符串，zend会转换为其整数形式。$arr[‘123’]和$arr[123]是等价的
+> 对于'123'这样的字符串，zend会转换为其整数形式。$arr['123']和$arr[123]是等价的
 
 > 资源类型变量：
 
@@ -278,7 +278,7 @@ _> 这个比方很贴切~_
 
 > 很多情况下，持久化资源可以在一定程度上提高性能。比如我们常见的mysql_pconnect ,持久化资源通过pemalloc分配内存，这样在请求结束的时候不会释放。
 
-> 对zend来说，对两者本身并不区分。_> > (?哪两者？)_
+> 对zend来说，对两者本身并不区分。_(?哪两者？)_
 
 > PHP变量的作用域：
 
@@ -288,7 +288,7 @@ _> 这个比方很贴切~_
 
 > 获取变量值：php的符号表是通过hash_table实现的，对于每个变量都分配唯一标识，获取的时候根据标识从表中找到相应zval返回。
 
-> 函数中使用全局变量：在函数中，我们可以通过显式申明global来使用全局变量。在active_symbol_table中创建symbol_table中同名变量的引用，如果symbol_table中没有同名变量则会先创建。_> > 我的理解：全局变量是存在symbol_table中的，用global声明变量是在active_symbol_table创建这个变量的引用)_
+> 函数中使用全局变量：在函数中，我们可以通过显式申明global来使用全局变量。在active_symbol_table中创建symbol_table中同名变量的引用，如果symbol_table中没有同名变量则会先创建。_我的理解：全局变量是存在symbol_table中的，用global声明变量是在active_symbol_table创建这个变量的引用)_
 
 
 [0]: http://stblog.baidu-tech.com/?p=763

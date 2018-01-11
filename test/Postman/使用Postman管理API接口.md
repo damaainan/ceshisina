@@ -1,11 +1,6 @@
 # [使用Postman管理API接口][0]
 
-* [postman][1]
-* [api][2]
-
-[**Corwien**][3] 1月20日发布 
-
-
+ 1月20日发布 
 
 > 为了使服务端开发的API接口管理正规化流程化，所以，使用Postman这款神器来管理我们的接口，以方便后续项目的迭代开发。
 
@@ -19,7 +14,8 @@
 
 ### 1.具体步骤
 
-#### 1.下载 [Postman][12]#### 2.导入 [接口信息文件][15] 
+#### 1.下载 [Postman][12]
+#### 2.导入 [接口信息文件][15] 
 
 ![][16]
 
@@ -72,9 +68,6 @@
 [基于Postman的API自动化测试][25]
 
 [0]: /a/1190000008181875
-[1]: /t/postman/blogs
-[2]: /t/api/blogs
-[3]: /u/corwien
 [12]: https://www.getpostman.com/
 [13]: https://laravel-china.org/topics/3097
 [14]: https://github.com/summerblue/phphub5
