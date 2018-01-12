@@ -21,7 +21,8 @@ MySQL是项目中常用的数据库，其中in查询也是很常用。最近项�
 
 如果有相关索引会非常快的，拆解来讲就是以下这样的：
 
-    1.selectauthor_idfromartilcewheretype=1;　　2.select*fromuserinfowhereidin(1,2,3);
+    1.selec tauthor_id from artilce where type=1;　　
+    2.select * from userinfo where id in (1,2,3);
 
 **但是事实是这样的：**
 
