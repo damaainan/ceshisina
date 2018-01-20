@@ -13,7 +13,7 @@ $headerIp = array(
 $refer = 'http://www.nidagelail.com';
 
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'http://localhost/phpdemo/test.php');
+curl_setopt($ch, CURLOPT_URL, 'http://longnian8.com/portal.php?x=11250');
 
 //伪造来源refer
 curl_setopt($ch, CURLOPT_REFERER, $refer);
