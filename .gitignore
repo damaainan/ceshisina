@@ -49,3 +49,4 @@ Temporary Items
 *.exe
 */vendor/
 */vendor/*
+vendor/
