@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>发送弹幕</title>
+  <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+      </div>
+      <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+        <div class="form-group">
+          <p style="height:30px"></p>
+          <div class="col-sm-2">
+          </div>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="barrage" name="barrage" placeholder="弹幕" value="">
+          </div>
+          <div class="col-sm-4">
+            <button type="button" class="btn btn-primary" id="send">发送弹幕</button>
+          </div>
+        </div>
+
+        <!-- 弹幕内容 -->
+        <div class="form-group">
+          <p style="height:30px"></p>
+          <textarea class="form-control" rows="20" id="content"></textarea>
+        </div>
+      </div>
+      <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  $(document).ready(function () {
+    var ws = new WebSocket("ws://127.0.0.1:9777");
+    ws.onopen = function () {
+      console.log("握手成功");
+    }
+    ws.onmessage = function (e) {
+      var content = e.data;
+      $('#content').append(content + "\n");
+      console.log(content);
+    }
+    ws.onerror = function () {
+      console.log("error");
+    }
+    $('#send').click(function (e) {
+      e.preventDefault();
+      var barrage = $('#barrage').val();
+      ws.send(barrage);
+    });
+    $('#barrage').bind('keypress', function (event) {
+      if (event.keyCode == "13") {
+        var barrage = $('#barrage').val();
+        ws.send(barrage);
+      }
+    });
+  });
+</script>
+
+</html>
