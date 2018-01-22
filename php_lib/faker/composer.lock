@@ -4,7 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "40d3caf3dd7cf6321bb44b04f74b3f9d",
     "content-hash": "306c56b1b121348450b006dfe4689950",
     "packages": [
         {
@@ -55,7 +54,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2017-08-15 16:48:10"
+            "time": "2017-08-15T16:48:10+00:00"
         }
     ],
     "packages-dev": [],
