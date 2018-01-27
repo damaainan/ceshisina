@@ -23,11 +23,11 @@ PHP根据不同SAPI的实现，各阶段的执行情况有些差异。譬如cli�
 开发者可以通过C/C++实现自定义的功能，通过扩展嵌入到PHP中。  
 编写扩展的步骤：
 
-1. 通过ext目录下**ext_skel**脚本生成扩展的基本框架./ext_skel --extname=module （module is the name of your extension）
+1. 通过ext目录下 **ext_skel**脚本生成扩展的基本框架./ext_skel --extname=module （module is the name of your extension）
 1. 修改config.m4配置：设置编译配置参数、设置扩展源文件
 1. 编写扩展源代码
 1. 生成configure：写完后先phpize（在php的bin目录下）运行一下
-1. 编译&安装： ./configure、 make、make install，然后改一下php.ini文件，添加一下.so文件
+1. 编译&安装： ./configure、 make、make install，然后改一下php.ini文件，添加一下`.so`文件
 
 # 举例
 
@@ -47,6 +47,7 @@ PHP版本：PHP 7.1.11
 
 ##### my_test.c
 
+```c
     /* $Salamander$ */
     
     #ifdef HAVE_CONFIG_H
@@ -128,7 +129,9 @@ PHP版本：PHP 7.1.11
     #endif
     ZEND_GET_MODULE(my_test)
     #endif
+    #endif
     
+```
 
 可以注意到这里有一些**宏**
 
@@ -147,6 +150,7 @@ PHP版本：PHP 7.1.11
 **PHP_MINFO_FUNCTION** 指获取模块信息  
 最后，设置**zend_module_entry**这个结构体
 
+```c
     zend_module_entry my_test_module_entry = {
         STANDARD_MODULE_HEADER,
         "my_test",
@@ -159,6 +163,7 @@ PHP版本：PHP 7.1.11
         PHP_MY_TEST_VERSION,
         STANDARD_MODULE_PROPERTIES
     };
+```
 
 获取各个钩子函数的指针，有对对应的宏PHP_MINIT，PHP_MSHUTDOWN，PHP_RINIT，PHP_RSHUTDOWN，PHP_MINFO
 
@@ -186,14 +191,16 @@ For Example：
 
 **zend_function_entry**可以通过宏PHP_FE或ZEND_FE生成（FE即function entry）。
 
+```c
     const zend_function_entry my_test_functions[] = {
         PHP_FE(my_func, NULL)
         PHP_FE_END
     };
+```
+`my_test_functions`就是这个扩展注册的函数数组。  
+最后，它设置在了`zend_module_entry`（第三个参数）
 
-my_test_functions就是这个扩展注册的函数数组。  
-最后，它设置在了zend_module_entry（第三个参数）
-
+```c
     zend_module_entry my_test_module_entry = {
         STANDARD_MODULE_HEADER,
         "my_test",
@@ -206,20 +213,22 @@ my_test_functions就是这个扩展注册的函数数组。
         PHP_MY_TEST_VERSION,
         STANDARD_MODULE_PROPERTIES
     };
-
+```
 ### 函数参数解析
 
-PHP提供了一个方法将zend_execute_data上的参数解析到指定变量上。
+PHP提供了一个方法将`zend_execute_data`上的参数解析到指定变量上。
 
+```c
     //file: Zend/zend_API.h
     ZEND_API int zend_parse_parameters(int num_args, const char *type_spec, ...)
-
-* num_args：参数数量，用ZEND_NUM_ARGS()可以获取
-* type_spec 为参数解析规则，是一个字符串
+```
+* `num_args`：参数数量，用`ZEND_NUM_ARGS()`可以获取
+* `type_spec` 为参数解析规则，是一个字符串
 * 最后一个是可变参数，指定要解析到的变量地址
 
 举例：
 
+```c
     PHP_FUNCTION(my_func)
     {
         zval *arr;
@@ -228,7 +237,7 @@ PHP提供了一个方法将zend_execute_data上的参数解析到指定变量上
         }
         ...
     }
-
+```
 如果有多个变量type_spec可以变为"la"，l表示整型，a表示数组（另外还有b：布尔型，s：字符串型，o：对象）  
 ，后面则改为&a, &b
 
@@ -236,6 +245,7 @@ PHP提供了一个方法将zend_execute_data上的参数解析到指定变量上
 
 可以设置return_value，但PHP提供了设置了设置返回值的宏
 
+```c
     #define RETURN_BOOL(b)                     { RETVAL_BOOL(b); return; }
     #define RETURN_NULL()                     { RETVAL_NULL(); return;}
     #define RETURN_LONG(l)                     { RETVAL_LONG(l); return; }
@@ -253,11 +263,12 @@ PHP提供了一个方法将zend_execute_data上的参数解析到指定变量上
     #define RETURN_ZVAL(zv, copy, dtor)        { RETVAL_ZVAL(zv, copy, dtor); return; }
     #define RETURN_FALSE                      { RETVAL_FALSE; return; }
     #define RETURN_TRUE                       { RETVAL_TRUE; return; }
-
+```
 # 写个小例子
 
 写一个两个整型变量相加的函数
 
+```c
     /* $Salamander$ */
     
     #ifdef HAVE_CONFIG_H
@@ -344,7 +355,7 @@ PHP提供了一个方法将zend_execute_data上的参数解析到指定变量上
         PHP_MY_TEST_VERSION,
         STANDARD_MODULE_PROPERTIES
     };
-    
+
     
     #ifdef COMPILE_DL_MY_TEST
     #ifdef ZTS
@@ -352,6 +363,8 @@ PHP提供了一个方法将zend_execute_data上的参数解析到指定变量上
     #endif
     ZEND_GET_MODULE(my_test)
     #endif
+    #endif
+```
 
 config.m4中取消以下注释（删除**dnl**即可）
 
@@ -374,8 +387,9 @@ php-config这个脚本是获取PHP安装信息的（PHP安装路径，PHP版本�
 
     Installing shared extensions:     /usr/local/php7.1/lib/php/extensions/no-debug-zts-20160303/
 
-修改php.ini文件，加入.so
+修改`php.ini`文件，加入`.so`
 
+```ini
     date.timezone = "Asia/Shanghai"
     display_errors = On
     error_reporting = E_ALL
@@ -385,7 +399,7 @@ php-config这个脚本是获取PHP安装信息的（PHP安装路径，PHP版本�
     memory_limit=512M
     
     extension=my_test.so
-
+```
 ### 测试加载
 
     php -m
@@ -400,10 +414,10 @@ php-config这个脚本是获取PHP安装信息的（PHP安装路径，PHP版本�
 ![][6]   
 函数调用成功。
 
-[0]: https://segmentfault.com/img/bV2Gzd
+[0]: ./img/bV2Gzd.png
 [1]: https://github.com/php/php-src
-[2]: https://segmentfault.com/img/bV2F24
-[3]: https://segmentfault.com/img/bV2F1r
-[4]: https://segmentfault.com/img/bV2Gcg
-[5]: https://segmentfault.com/img/bV2Gxy
-[6]: https://segmentfault.com/img/bV2Gx3
+[2]: ./img/bV2F24.png
+[3]: ./img/bV2F1r.png
+[4]: ./img/bV2Gcg.png
+[5]: ./img/bV2Gxy.png
+[6]: ./img/bV2Gx3.png

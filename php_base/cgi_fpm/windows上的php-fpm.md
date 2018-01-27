@@ -19,11 +19,12 @@ Github这么神奇的地方，怎么会有你找不到的东西呢？我找到�
 
 1. 然后修改php.ini（把php.ini-development或者php.ini-production改名过来），修改extension_dir（去掉;）为当前php7中ext文件夹的路径，也就是D:/wnp/php7/ext。检验一下：
 
+```
     D:\wnp\php7>php.exe -v
     PHP 7.0.22 (cli) (built: Aug  1 2017 14:13:41) ( NTS )
     Copyright (c) 1997-2017 The PHP Group
     Zend Engine v3.0.0, Copyright (c) 1998-2017 Zend Technologies
-    
+```
 
 然后开启php-cgi-spawner：
 
@@ -34,6 +35,7 @@ Github这么神奇的地方，怎么会有你找不到的东西呢？我找到�
 
 然后配置nginx中conf里nginx.conf文件：
 
+```nginx
      server {
             listen       80;
             server_name  localhost;
@@ -53,15 +55,16 @@ Github这么神奇的地方，怎么会有你找不到的东西呢？我找到�
                 include        fastcgi_params;
             }
     }
-
+```
 在D盘建立一个web_root的文件夹，放入index.php，开启nginx测试
 
 ![][7]   
 index.php写入
 
+```php
     <?php
     echo "hello  world";
-
+```
 访问[http://localhost][8]
 
 ![][9]
@@ -75,9 +78,9 @@ index.php写入
 [2]: https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe
 [3]: http://nginx.org/download/nginx-1.12.1.zip
 [4]: http://ongd1spyv.bkt.clouddn.com/php-cgi-spawner.exe
-[5]: https://segmentfault.com/img/bVTMgD
-[6]: https://segmentfault.com/img/bVTMg1
-[7]: https://segmentfault.com/img/bVTMhi
+[5]: ../img/bVTMgD.png
+[6]: ../img/bVTMg1.png
+[7]: ../img/bVTMhi.png
 [8]: http://localhost
-[9]: https://segmentfault.com/img/bVTNpW
+[9]: ../img/bVTNpW.png
 [10]: https://github.com/salamander-mh/SalamanderWnmp
