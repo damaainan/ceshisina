@@ -37,6 +37,7 @@ Union All：对两个结果集进行并集操作，包括重复行，不进行�
 
 下面进行本文重点，Join的使用注意事项和技巧，首先给出要使用的表结构：
 
+```sql
     -- auto-generated definition
     CREATE TABLE customer
     (
@@ -60,7 +61,7 @@ Union All：对两个结果集进行并集操作，包括重复行，不进行�
       UNIQUE (id)
     )
       ENGINE = InnoDB;
-
+```
 ![][5]
 
 customer表中数据，代表客户的信息
@@ -73,16 +74,18 @@ faculty表中的数据，代表职工的信息
 
 所谓显式连接，即如上显示使用 **inner Join** 关键字连接两个表， 
 
+```sql
     select * from
     table a inner join table b
     on a.id = b.id;
-
+```
 而隐式连接即不显示使用 **inner Join** 关键字，如： 
 
+```sql
     select a.*, b.*
     from table a, table b
     where a.id = b.id;
-
+```
 二者在功能上没有差别，实现的性能上也几乎一样。只不过隐式连接是 **SQL92** 中的标准内容，而在 **SQL99** 中显式连接为标准，虽然很多人还在用隐私连接，但是它已经从标准中被移除。从使用的角度来说，还是推荐使用显示连接，这样可以更清楚的显示出多个表之间的连接关系和连接依赖的属性。 
 
 ### 2.2 On VS Where
@@ -105,10 +108,11 @@ ON 条件（“A LEFT JOIN B ON 条件表达式”中的ON）用来决定如何�
 
 为了解决这种更新的过虑条件中包含要更新的表的情况，可以把带过滤条件的查询结果当做一个新表，在新表上，执行更新操作。
 
+```sql
     UPDATE (faculty f INNER JOIN customer c
         on user_name=cust_name)
     set c.over = "优惠";
-
+```
 ![][8]
 
 更新成功
@@ -117,17 +121,19 @@ ON 条件（“A LEFT JOIN B ON 条件表达式”中的ON）用来决定如何�
 
 嵌套的子查询是比较低效地，因为每一条记录都要进行匹配，如果记录长度比较大的话，那么我们的查询就有可能非常的耗时。我们应该尽量避免使用子查询，而用表连接。如下面的这个子查询就可以转化为等价的连接查询
 
+```sql
     SELECT user_name, over ,(SELECT over FROM customer c where user_name=cust_name) as over2
     from faculty f;
 
     SELECT user_name, f.over , c.over as over2
     from faculty f
       LEFT JOIN customer c ON cust_name=user_name;
-
+```
 ### 3.3 使用Join优化聚合查询
 
 为了说明这个问题 ，我们在添加一个工作量的表，记录每个职工每天的工作量
 
+```sql
     -- auto-generated definition
     CREATE TABLE tasks
     (
@@ -139,13 +145,14 @@ ON 条件（“A LEFT JOIN B ON 条件表达式”中的ON）用来决定如何�
     )
       ENGINE = InnoDB
       CHARSET = utf8;
-
+```
 ![][9]
 
 tasks记录职工的工作量
 
 比如我们想查询每个员工工作量最多是哪一天，通过子查询可以这样实现：
 
+```sql
     select a.user_name ,b.timestr,b.workload
     from faculty a
       join tasks b
@@ -154,20 +161,21 @@ tasks记录职工的工作量
       select max(c.workload)
       from tasks c
       where c.facult_id = b.facult_id)
-
+```
 ![][10]
 
 查询结果
 
 使用表连接优化之后：
 
+```sql
     SELECT user_name, t.timestr, t.workload
     FROM faculty f
       JOIN tasks t ON f.id = t.facult_id
       JOIN tasks t2 ON t2.facult_id = t.facult_id
     GROUP BY user_name,t.timestr，t.workload
     HAVING t.workload = max(t2.workload);
-
+```
 这里额外的再连接了一个task表中内容，在这个“额外表”中通过聚合计算出工作量的最大值，然后再过虑（HAVING）出工作量最大的日期。
 
 因为聚合函数通过作用于一组数据而只返回一个单个值，因此，在SELECT语句中出现的元素要么为一个聚合函数的输入值，要么为GROUP BY语句的参数，否则会出错。
@@ -178,6 +186,7 @@ tasks记录职工的工作量
 
 要获取每个员工完成工作量最多的两天。这个也可以通过Join来完成。
 
+```sql
     select d.user_name,c.timestr,workload
     FROM (
            select facult_id,timestr,workload,
@@ -188,18 +197,19 @@ tasks记录职工的工作量
            GROUP BY facult_id,timestr,workload) c
       JOIN faculty d ON c.facult_id=d.id
     WHERE cnt <= 2;
-
+```
 其中，内部的查询结果 **cnt** 表示对于tasks表中某个给定记录，相同员工的工作里记录比其大的数量有多少。 
 
 内部查询的结果如下：
 
+```sql
     select facult_id,timestr,workload,
              (SELECT COUNT(*)
               FROM tasks b
               WHERE b.facult_id=a.facult_id AND a.workload<=b.workload) AS cnt
            FROM tasks a
            GROUP BY facult_id,timestr,workload;
-
+```
 ![][11]
 
 内部查询的结果
@@ -218,13 +228,14 @@ join的实现是采用Nested Loop Join算法，就是通过驱动表的结果集
 
 比如我们以如下SQL语句为例：
 
+```sql
     EXPLAIN SELECT C.id, cust_name,T.workload
     FROM customer C
       INNER JOIN faculty F
         ON C.cust_name = F.user_name
       INNER JOIN tasks T
         ON T.facult_id = F.id ;
-
+```
 ![][13]
 
 EXPLAIN 连接查询
@@ -235,9 +246,9 @@ EXPLAIN 连接查询
 
 其过程类似于三次次嵌套的循环。
 
-需要说明的是， **C** 作为驱动表，通过 _Using Where_ 和 _Using join buffer_ 来匹配 **F** ，是因为 C.cust_name ，F.user_name 都没有加索引，要获取具体的内容只能通过对全表的数据进行where过滤才能获取，而 _Using join buffer_ 是指使用到了Cache(只有当join类型为 **ALL** ，index，rang或者是index_merge的时候才会使用join buffer)，记录已经查询的结果，提高效率。 
+需要说明的是， **C** 作为驱动表，通过 _Using Where_ 和 _Using join buffer_ 来匹配 **F** ，是因为 C.cust_name ，F.user_name 都没有加索引，要获取具体的内容只能通过对全表的数据进行where过滤才能获取，而 _Using join buffer_ 是指使用到了Cache(只有当join类型为 **ALL** ，`index`，`rang`或者是`index_merge`的时候才会使用`join buffer`)，记录已经查询的结果，提高效率。 
 
-而对于 **T** 和 **F** 之间通过T的主键T.id连接，所以join类型为 eq_ref ，也不用使用Using join buffer。 
+而对于 **T** 和 **F** 之间通过T的主键T.id连接，所以join类型为 `eq_ref` ，也不用使用Using join buffer。 
 
 ## 5. join语句的优化原则
 
@@ -256,17 +267,17 @@ EXPLAIN 连接查询
 1. [Deprecation of "Old Style" JOIN Syntax: Only A Partial Thing][18]
 
 [1]: http://www.jianshu.com/p/6864abb4d885
-[3]: https://img1.tuicool.com/Jr2yaeZ.png
+[3]: ./img/Jr2yaeZ.png
 [4]: https://link.jianshu.com?t=https%3A%2F%2Fwww.cnblogs.com%2Fblueoverflow%2Fp%2F4714470.html
-[5]: https://img0.tuicool.com/IvA3Uny.png
-[6]: https://img2.tuicool.com/qIjq6ve.png
-[7]: https://img0.tuicool.com/VjmAvai.png
-[8]: https://img2.tuicool.com/3M7niaB.png
-[9]: https://img2.tuicool.com/uQNNJzb.png
-[10]: https://img2.tuicool.com/rAbU7jY.png
-[11]: https://img2.tuicool.com/22qAbyR.png
-[12]: https://img1.tuicool.com/NzuUnin.png
-[13]: https://img1.tuicool.com/EzeUrmr.png
+[5]: ./img/IvA3Uny.png
+[6]: ./img/qIjq6ve.png
+[7]: ./img/VjmAvai.png
+[8]: ./img/3M7niaB.png
+[9]: ./img/uQNNJzb.png
+[10]: ./img/rAbU7jY.png
+[11]: ./img/22qAbyR.png
+[12]: ./img/NzuUnin.png
+[13]: ./img/EzeUrmr.png
 [14]: https://link.jianshu.com?t=http%3A%2F%2Fblog.itpub.net%2F7607759%2Fviewspace-692946%2F
 [15]: https://link.jianshu.com?t=ttps%3A%2F%2Fwww.cnblogs.com%2F8335IT%2Fp%2F5850531.html
 [16]: https://link.jianshu.com?t=http%3A%2F%2Fblog.csdn.net%2Ftonyxf121%2Farticle%2Fdetails%2F7796657
