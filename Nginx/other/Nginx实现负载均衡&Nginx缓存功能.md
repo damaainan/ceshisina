@@ -694,12 +694,12 @@ bing~我们的测试已经成功啦~
 [2]: http://www.cnblogs.com/keerya/p/7819842.html
 
 [5]: http://ooxx.me/readme
-[6]: https://img0.tuicool.com/jYF3Mvz.png
-[7]: https://img0.tuicool.com/6jYjuiM.png
-[8]: https://img1.tuicool.com/zu6n633.png
-[9]: https://img1.tuicool.com/Ez63Qzq.png
-[10]: https://img2.tuicool.com/2m6NfeE.png
-[11]: https://img0.tuicool.com/e6BZ3qm.png
-[12]: https://img2.tuicool.com/I32aEfE.png
-[13]: https://img0.tuicool.com/AzURrqU.png
-[14]: https://img0.tuicool.com/bqy2um6.png
+[6]: ../img/jYF3Mvz.png
+[7]: ../img/6jYjuiM.png
+[8]: ../img/zu6n633.png
+[9]: ../img/Ez63Qzq.png
+[10]: ../img/2m6NfeE.png
+[11]: ../img/e6BZ3qm.png
+[12]: ../img/I32aEfE.png
+[13]: ../img/AzURrqU.png
+[14]: ../img/bqy2um6.png
