@@ -13,3 +13,21 @@ foreach ($s as &$value) {
 $stt=implode($s,',');
 var_dump($stt);
 ```
+
+```php
+
+$str = "123456789";
+$str = preg_replace('/(?!^)(?=(\d{3})+$)/', ',',$str);
+echo $str;
+echo "\n*****\n";
+
+$str = "12345678 123456789";
+$str = preg_replace('/(?!\b)(?=(\d{3})+\b)/', ',',$str);
+echo $str;
+echo "\n*****\n";
+
+$str = "12345678 123456789";
+$str = preg_replace('/\B(?=(\d{3})+\b)/', ',',$str);
+echo $str;
+```
+

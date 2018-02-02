@@ -83,7 +83,7 @@
 ```
 
 
-> 相比原生 MySQL API，面向过程化的MySQLi里的> $link> 是不可以省略的，如果没有填写，会抛出一个警告。由上面代码也可以看出，面向过程化的MySQLi与原生 MySQL API基本一致。
+> 相比原生 MySQL API，面向过程化的MySQLi里的 $link 是不可以省略的，如果没有填写，会抛出一个警告。由上面代码也可以看出，面向过程化的MySQLi与原生 MySQL API基本一致。
 
 ### MySQLi面向对象
 

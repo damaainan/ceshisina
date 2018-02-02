@@ -3,7 +3,7 @@ declare(strict_types=1); // 采用完全约束  必须放在第一行
 header("Content-type:text/html; Charset=utf-8");
 /**
  * Created by Sublime.
- * User: jiachunhui<jiachunhui@mia.com>
+ * User: damaainan<damaainan@gmail.com>
  * Date: 2017-12-19 17:03:26
  * 基本代码格式
  */
