@@ -17,7 +17,7 @@ class yao {
 		$di=$dayan-$tian-1;
 		$tian=$tian-($tian%4===0?4:$tian%4);
 		$di=$di-($di%4===0?4:$di%4);
-		// echo ($tian+$di),"<br/>";
+		// echo ($tian+$di),"\n";
 		return $tian+$di;
 	}
 	public function sanbian($dayan){
@@ -132,6 +132,7 @@ class yao {
 		$narr=$resu[0];
 		$yaoci=$resu[1];
 		$biangua=$this->xiang($narr);
+		// 查 本卦 变卦的名称
 
 		//选择
 		$ci=$this->choose($yaoci,$bengua,$biangua);
@@ -143,6 +144,3 @@ class yao {
 	}
 
 }
-$yao =new yao();
-$one=$yao->guaxiang(49);
-var_dump($one);
