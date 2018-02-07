@@ -9,13 +9,13 @@ function DynamicFib($index){
 	$fibo_arr[0]=1;
 	$fibo_arr[1]=1;
 	for($pos=2;$pos<=$index;$pos++){
-		$fibo_arr[$pos]=$fibo_arr[$pos-2]+$fibo_arr[$pos-1];
+		$fibo_arr[$pos]=$fibo_arr[$pos-2]+$fibo_arr[$pos-1]; // 突破了递归的层数限制
 	}
 	return $fibo_arr[$index];
 }
 
-// $rest=DynamicFib(120);
-// var_dump($rest);
+$rest=DynamicFib(120);
+var_dump($rest);
 
 
 function Climb($floor){
@@ -34,5 +34,5 @@ function Climb($floor){
 	return $plans;
 }
 
-$rest=Climb(12);
-var_dump($rest);
+// $rest=Climb(12);
+// print_r($rest);

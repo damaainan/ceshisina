@@ -24,4 +24,4 @@
     let weight = [4, 5, 6, 2, 2]
     let value = [6, 4, 5, 3, 6]
      
-    console.log(packageMaxValue(weight, value, 10))
+    console.log(packageMaxValue(weight, value, 10)) // 重量为 10 最大价值
