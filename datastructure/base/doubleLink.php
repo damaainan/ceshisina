@@ -3,8 +3,15 @@
  * 从链表的头节点遍历到尾节点很简单， 但反过来， 从后向前遍历则没那么简单
  */
 
-include "node.php";
-
+class Node{
+    public $element;
+    public $next = null;
+    public $previous = null;//当属性私有的时候不能被访问？
+    public function __construct($element)
+    {
+        $this->element = $element;
+    }
+}
 class DLList{
     protected $head;
 

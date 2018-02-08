@@ -9,8 +9,15 @@
  * 许多链表的实现都在链表最前面有一个特殊节点， 叫做头节点
  */
 
-include "node.php";
-
+class Node{
+    public $element;
+    public $next = null;
+    public $previous = null;//当属性私有的时候不能被访问？
+    public function __construct($element)
+    {
+        $this->element = $element;
+    }
+}
 class LList{
     public $head;
     public function __construct()

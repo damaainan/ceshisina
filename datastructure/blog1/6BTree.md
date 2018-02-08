@@ -148,10 +148,10 @@ B*树：在B+树基础上，为非叶子结点也增加链表指针，将结点�
 [1]: http://www.csdn.net/tag/%e4%ba%8c%e5%8f%89%e6%a0%91
 [2]: http://www.csdn.net/tag/%e7%ae%97%e6%b3%95
 [3]: http://www.csdn.net/tag/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84
-[8]: http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/1.JPG
-[9]: http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/2.JPG
-[10]: http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/31.JPG
-[11]: http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/4.JPG
-[12]: http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/0.JPG
-[13]: http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/5.JPG
-[14]: http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/6.JPG
+[8]: ./img/1.JPG
+[9]: ./img/2.JPG
+[10]: ./img/31.JPG
+[11]: ./img/4.JPG
+[12]: ./img/0.JPG
+[13]: ./img/5.JPG
+[14]: ./img/6.JPG
