@@ -21,38 +21,6 @@ function getPride($pdo, $arr) {
 	return $resu;
 }
 
-function randPic() {
-//关于更好的随机数的图片形式的表现
-	header("Content-type: image/png");
-	$im = imagecreatetruecolor(512, 512) or die("Cannot Initialize new GD image stream");
-	$white = imagecolorallocate($im, 255, 255, 255);
-	for ($y = 0; $y < 512; $y++) {
-		for ($x = 0; $x < 512; $x++) {
-			if (random_int(0, 1) === 1) {
-				imagesetpixel($im, $x, $y, $white);
-			}
-		}
-	}
-	imagepng($im);
-	imagedestroy($im);
-}
-function randPic2() {
-	header("Content-type: image/png");
-	$im = imagecreatetruecolor(512, 512) or die("Cannot Initialize new GD image stream");
-	$white = imagecolorallocate($im, 255, 255, 255);
-	for ($y = 0; $y < 512; $y++) {
-		for ($x = 0; $x < 512; $x++) {
-			$color = mt_rand(0, 1);
-			if (mt_rand(0, 1) === 1) {
-				imagesetpixel($im, $x, $y, $white);
-			}
-		}
-	}
-	imagepng($im);
-	imagedestroy($im);
-}
-// randPic2();
-// randPic2();
 function randNum() {
 	$balls = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33];
 	$luck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
@@ -70,7 +38,7 @@ function randNum() {
 }
 function deal($arr) {
 	$l = count($arr);
-	$int = random_int(0, $l - 1);
+	$int = random_int(0, $l - 1); // 使用 random_compat 库生成的随机数
 	// echo "rand===",$arr[$int],"<br/>";
 	array_splice($arr, $int, 1);
 	$arr = array_reverse($arr);

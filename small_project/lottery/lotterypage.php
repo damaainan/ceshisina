@@ -2,6 +2,9 @@
 header('Content-Type:text/html; charset=UTF-8');
 include "Snoopy.class.php";
 include "phpQuery/phpQuery.php";
+
+// 抓取详细信息 存储
+
 set_time_limit(0);
 // $link = "http://www.17500.cn/ssq/details.php?issue=2016141";
 function getPage($link) {

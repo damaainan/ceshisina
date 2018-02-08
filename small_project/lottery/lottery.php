@@ -3,8 +3,8 @@ header('Content-Type:text/html; charset=UTF-8');
 include "Snoopy.class.php";
 include "phpQuery/phpQuery.php";
 set_time_limit(0);
-
-$link = "http://www.17500.cn/ssq/all2004.php";
+// 获取所有列表页 存储
+$link = "http://www.17500.cn/ssq/all2018.php";
 function getAllPage($link) {
 //获取完整列表页
 	$result = openUrl($link);
