@@ -11,7 +11,7 @@
 
 ## Fast-forward方式合并
 
-git merge默认使用的是Fast-forward的方式，git merge可以选择使用或者不使用快进方式合并。–ff是Fast-forward的简写，git merge --ff 是默认的方式，只更新指针的指向，没有针对merge的commit提交。–no-ff 强制针对本次merge产生一个commit提交，即使本次merge经git解析可以使用快进方式，也会产生额外的针对此次merge的commit。–ff-only 只能进行快进方式的合并，否则git拒绝进行merge。
+git merge默认使用的是Fast-forward的方式，git merge可以选择使用或者不使用快进方式合并。–ff是Fast-forward的简写，git merge --ff 是默认的方式，只更新指针的指向，没有**`针对merge的commit提交`**。–no-ff 强制针对本次merge产生一个commit提交，即使本次merge经git解析可以使用快进方式，也会产生额外的针对此次merge的commit。–ff-only 只能进行快进方式的合并，否则git拒绝进行merge。
 
 #### **git merge –ff**
 
