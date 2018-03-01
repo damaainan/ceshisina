@@ -53,3 +53,8 @@
 统计行数 （Server 为目录名）
 
      git status | awk  '/Server/ &&  !/modif/{print $1}' | xargs -i[ find [ -name '*.php'  | xargs cat | wc -l
+
+#### 统计demo目录下所有js文件代码行数，过滤了空行：
+    
+    find /demo -name "*.js" | xargs cat | grep -v ^$ | wc -l
+
