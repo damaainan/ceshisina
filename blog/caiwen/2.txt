@@ -1,0 +1,12 @@
+【memcache缓存专题（1）】memcache的介绍与应用场景**segmentfault1190000004053366.md
+【mysql的设计与优化专题（1）】ER图，数据建模与数据字典**segmentfault1190000004053409.md
+【mysql的设计与优化专题（2）】数据中设计中的范式与反范式**segmentfault1190000004174135.md
+【mysql的设计与优化专题（3）】字段类型与合理的选择字段类型**segmentfault1190000004177184.md
+【memcache缓存专题（2）】memcache安装与命令行使用**segmentfault1190000004177212.md
+【memcache缓存专题（3）】PHP-memcache扩展的安装以及使用**segmentfault1190000004181726.md
+【mongoDB运维篇②】备份与恢复（导入与导出）**segmentfault1190000004263279.md
+【mongoDB高级篇②】大数据聚集运算之mapReduce（映射化简）**segmentfault1190000004263358.md
+【mongoDB高级篇③】综合实战（1）:**segmentfault1190000004536424.md
+【mysql的设计与优化专题（4）】表的垂直拆分和水平拆分**segmentfault1190000006063258.md
+【mysql的设计与优化专题（5）】慢查询详解**segmentfault1190000006063268.md
+【mysql的设计与优化专题（6）】mysql索引攻略**segmentfault1190000006063289.md
