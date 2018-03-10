@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>红绿灯</title>
+    <style type="text/css">
+    /*
+思路：
+    总共三个灯，分别红黄绿，要一个一个按顺序点亮，我们可以这样暂定一个循环需要10秒中，每盏灯点亮3秒，
+    那么在keyframes中对应写法就如下所示（红灯点亮时间为10%--40%，黄灯点亮时间为40%--70%，绿灯点亮时间为70%--100%）
+*/
+
+    @keyframes redLamp {
+        0% {
+            background-color: #999;
+        }
+        9.9% {
+            background-color: #999;
+        }
+        10% {
+            background-color: red;
+        }
+        40% {
+            background-color: red;
+        }
+        40.1% {
+            background-color: #999;
+        }
+        100% {
+            background-color: #999;
+        }
+    }
+
+    @keyframes yellowLamp {
+        0% {
+            background-color: #999;
+        }
+        39.9% {
+            background-color: #999;
+        }
+        40% {
+            background-color: yellow;
+        }
+        70% {
+            background-color: yellow;
+        }
+        70.1% {
+            background-color: #999;
+        }
+        100% {
+            background-color: #999;
+        }
+    }
+
+    @keyframes greenLamp {
+        0% {
+            background-color: #999;
+        }
+        69.9% {
+            background-color: #999;
+        }
+        70% {
+            background-color: green;
+        }
+        100% {
+            background-color: green;
+        }
+    }
+
+    #lamp,
+    #lamp:before,
+    #lamp:after {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: #999;
+        position: relative;
+    }
+
+    #lamp {
+        left: 100px;
+        animation: yellowLamp 10s ease infinite;
+    }
+
+    #lamp:before {
+        display: block;
+        content: '';
+        left: -100px;
+        animation: redLamp 10s ease infinite;
+    }
+
+    #lamp:after {
+        display: block;
+        content: '';
+        left: 100px;
+        top: -100px;
+        animation: greenLamp 10s ease infinite;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="lamp"></div>
+</body>
+
+</html>

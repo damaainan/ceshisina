@@ -42,4 +42,7 @@ login: root
 Password:   
 Login incorrect
 ```
+
+`ctrl + ]` 之后 `quit` 退出
+
 [0]: http://codecloud.net/tag/Linux

@@ -81,3 +81,23 @@
 ## git status 显示中文乱码
 
     git config --global core.quotepath false
+
+## 删除错误的 commit
+
+假设你有3个commit如下：
+
+    commit 3
+    commit 2
+    commit 1
+    
+
+其中最后一次提交commit 3是错误的，那么可以执行：
+
+    git reset --hard HEAD~1
+    
+
+你会发现，HEAD is now at commit 2。
+
+然后再使用`git push --force origi master` 将本次变更强行推送至服务器。这样在服务器上的最后一次错误提交也彻底消失了。
+
+> 值得注意的是，这类操作比较比较危险，例如：在你的> commit 3> 之后别人又提交了新的> commit 4> ，那在你强制推送之后，那位仁兄的> commit 4> 也跟着一起消失了。
