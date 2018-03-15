@@ -1,0 +1,5 @@
+data/
+*/vendor/
+*/vendor/*
+vendor/
+composer.lock

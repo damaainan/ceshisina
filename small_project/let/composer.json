@@ -1,0 +1,20 @@
+{
+    "type": "project",
+    "autoload": {  
+        "psr-4": {  
+            "Tools\\": "lib/",
+            "Tools\\lib\\": "lib/library/",
+            "Tools\\DB\\": "lib/Database/"
+        }  
+    },"require": {
+        "jaeger/querylist": "^4.0",
+        "symfony/dom-crawler": "^4.0",
+        "jaeger/phpquery-single": "^0.9.9",
+        "catfan/Medoo": "^1.5"
+    },"repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}
