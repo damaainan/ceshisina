@@ -1,7 +1,7 @@
 awk 系列：awk 怎么从标准输入（STDIN）读取输入
 ============================================
 
-![](http://www.tecmint.com/wp-content/uploads/2016/06/Read-Awk-Input-from-STDIN.png)
+![](./img/Read-Awk-Input-from-STDIN.png)
 
 在 awk 系列的前几节，我们看到大多数操作都是从一个文件或多个文件读取输入，或者你想要把标准输入作为 awk 的输入。
 
@@ -13,7 +13,7 @@ awk 系列：awk 怎么从标准输入（STDIN）读取输入
 # dir -l | awk '{print $3, $4, $9;}'
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/06/List-Files-Owned-By-User-in-Directory.png)
+![](./img/List-Files-Owned-By-User-in-Directory.png)
 
 *列出当前路径下的用户文件*
 
@@ -24,7 +24,7 @@ awk 系列：awk 怎么从标准输入（STDIN）读取输入
 # dir -l | awk '$3=="root" {print $1,$3,$4, $9;} '
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/06/List-Files-Owned-by-Root-User.png)
+![](./img/List-Files-Owned-by-Root-User.png)
 
 *列出 root 用户的文件*
 
@@ -40,7 +40,7 @@ awk 系列：awk 怎么从标准输入（STDIN）读取输入
 # cat tecmint_deals.txt | awk '$4 ~ /Tech/{print}'
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/06/Use-Comparison-Operator-to-Match-String.png)
+![](./img/Use-Comparison-Operator-to-Match-String.png)
 
 *用 Awk 比较运算符匹配字符串*
 

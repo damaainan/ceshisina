@@ -3,7 +3,7 @@ awk 系列：如何在 awk 中使用流控制语句
 
 回顾从 Awk 系列，从最开始到现在我们所讲的所有关于 Awk 的例子，你会发现不同例子中的所有命令都是顺序执行的，也就是一个接一个的执行。但是在某些场景下，我们可能希望根据一些条件来执行一些[文本过滤操作][1]，这个时候流控制语句就派上用场了。
 
-![](http://www.tecmint.com/wp-content/uploads/2016/08/Use-Flow-Control-Statements-in-Awk.png)
+![](./img/Use-Flow-Control-Statements-in-Awk.png)
 
 Awk 包含很多的流控制语句，包括：
 

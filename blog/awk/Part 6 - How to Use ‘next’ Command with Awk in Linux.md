@@ -1,7 +1,7 @@
 awk 系列：如何使用 awk 的 ‘next’ 命令
 =============================================
 
-![](http://www.tecmint.com/wp-content/uploads/2016/06/Use-next-Command-with-Awk-in-Linux.png)
+![](./img/Use-next-Command-with-Awk-in-Linux.png)
 
 在 awk 系列的第六节，我们来看一下`next`命令 ，它告诉 awk 跳过你所提供的所有剩下的模式和表达式，直接处理下一个输入行。
 

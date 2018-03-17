@@ -1,7 +1,7 @@
 awk 系列：如何使用 awk 语言编写脚本
 ====
 
-![](http://www.tecmint.com/wp-content/uploads/2016/08/Write-Shell-Scripts-in-Awk.png)
+![](./img/Write-Shell-Scripts-in-Awk.png)
 
 从 awk 系列开始直到[第 12 部分][1]，我们都是在命令行或者脚本文件里写一些简短的 awk 命令和程序。
 

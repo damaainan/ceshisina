@@ -1,7 +1,7 @@
 awk 系列：如何使用 awk 复合表达式
 ====================================================
 
-![](http://www.tecmint.com/wp-content/uploads/2016/05/Use-Compound-Expressions-with-Awk.png)
+![](./img/Use-Compound-Expressions-with-Awk.png)
 
 一直以来在查对条件是否匹配时，我们使用的都是简单的表达式。那如果你想用超过一个表达式来查对特定的条件呢？
 

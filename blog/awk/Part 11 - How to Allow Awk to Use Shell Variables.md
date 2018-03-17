@@ -5,7 +5,7 @@ awk 系列：如何让 awk 使用 Shell 变量
 
 我们可以通过在 awk 命令中使用 shell 变量达到目的，在 awk 系列的这一节中，我们将学习如何让 awk 使用 shell 变量，这些变量可能包含我们希望传递给 awk 命令的值。
 
-![](http://www.tecmint.com/wp-content/uploads/2016/08/Use-Shell-Variables-in-Awk.png)
+![](./img/Use-Shell-Variables-in-Awk.png)
 
 有两种可能的方法可以让 awk 使用 shell 变量：
 
@@ -46,7 +46,7 @@ $ ./text.sh
 
 运行脚本后，它会提示你输入一个用户名，然后你输入一个合法的用户名并回车。你将会看到来自 /etc/passwd 文件中详细的用户账户信息，如下图所示：
 
-![](http://www.tecmint.com/wp-content/uploads/2016/08/Shell-Script-to-Find-Username-in-Passwd-File.png)
+![](./img/Shell-Script-to-Find-Username-in-Passwd-File.png)
 
 *在 Password 文件中查找用户名的 shell 脚本*
 
@@ -66,7 +66,7 @@ username="aaronkilik"
 # cat /etc/passwd | awk -v name="$username" ' $0 ~ name {print $0}'
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/08/Find-Username-in-Password-File-Using-Awk.png)
+![](./img/Find-Username-in-Password-File-Using-Awk.png)
 
 *使用 awk 在 Password 文件中查找用户名*
 

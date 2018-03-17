@@ -5,7 +5,7 @@ awk 系列：怎样使用 awk 变量、数值表达式以及赋值运算符
 
 在这一部分，我们将会进入 awk 更高级的部分，使用 awk 处理更复杂的文本和进行字符串过滤操作。因此，我们将会讲到 Awk 的一些特性，诸如变量、数值表达式和赋值运算符。
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Learn-Awk-Variables-Numeric-Expressions-Assignment-Operators.png)
+![](./img/Learn-Awk-Variables-Numeric-Expressions-Assignment-Operators.png)
 
 *学习 Awk 变量，数值表达式和赋值运算符*
 
@@ -56,7 +56,7 @@ second_name=$3
 $ cat names.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/List-File-Content-Using-cat-Command.png)
+![](./img/List-File-Content-Using-cat-Command.png)
 
 *使用 cat 命令查看列表文件内容*
 
@@ -66,7 +66,7 @@ $ cat names.txt
 $ awk '/Aaron/{ first_name=$2 ; second_name=$3 ; print first_name, second_name ; }' names.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Store-Variables-Using-Awk-Command.png)
+![](./img/Store-Variables-Using-Awk-Command.png)
 
 *使用 Awk 命令为变量赋值*
 
@@ -79,7 +79,7 @@ $ uname -a
 $ uname -a | awk '{hostname=$2 ; print hostname ; }' 
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Store-Command-Output-to-Variable-Using-Awk.png)
+![](./img/Store-Command-Output-to-Variable-Using-Awk.png)
 
 *使用 Awk 把命令的输出赋给变量*
 
@@ -138,7 +138,7 @@ tecmint.com
 $ cat domains.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/View-Contents-of-File.png)
+![](./img/View-Contents-of-File.png)
 
 *查看文件内容*
 
@@ -162,7 +162,7 @@ done
 exit 0
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Shell-Script-to-Count-a-String-in-File.png)
+![](./img/Shell-Script-to-Count-a-String-in-File.png)
 
 *计算一个字符串或文本在文件中出现次数的 shell 脚本*
 
@@ -173,7 +173,7 @@ exit 0
 $ ./script.sh  ~/domains.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Script-To-Count-String.png)
+![](./img/Script-To-Count-String.png)
 
 *计算字符串或文本出现次数的脚本*
 
@@ -236,7 +236,7 @@ exit 0
 ```
 
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Alter-Shell-Script.png)
+![](./img/Alter-Shell-Script.png)
 
 *修改了的 shell 脚本*
 

@@ -3,7 +3,7 @@ awk 系列：在 awk 中如何使用流程控制语句
 
 当你回顾所有到目前为止我们已经覆盖的 awk 实例，从 awk 系列的开始，你会注意到各种实例的所有指令是顺序执行的，即一个接一个地执行。但在某些情况下，我们可能希望基于一些条件进行文本过滤操作，即流程控制语句允许的那些语句。
 
-![](http://www.tecmint.com/wp-content/uploads/2016/08/Use-Flow-Control-Statements-in-Awk.png)
+![](./img/Use-Flow-Control-Statements-in-Awk.png)
 
 在 awk 编程中有各种各样的流程控制语句，其中包括：
 

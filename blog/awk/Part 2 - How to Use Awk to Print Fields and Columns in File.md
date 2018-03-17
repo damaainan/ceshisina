@@ -5,7 +5,7 @@ awk 系列：如何使用 awk 输出文本中的字段和列
 
 首先我们要知道，Awk 能够自动将输入的行，分隔为若干字段。每一个字段就是一组字符，它们和其他的字段由一个内部字段分隔符分隔开来。
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Awk-Print-Fields-and-Columns.png)
+![](./img/Awk-Print-Fields-and-Columns.png)
 
 *Awk 输出字段和列*
 
@@ -22,7 +22,7 @@ awk 中的字段分隔符的工作原理如下：当读到一行输入时，将�
 # cat tecmintinfo.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Create-File-in-Linux.png)
+![](./img/Create-File-in-Linux.png)
 
 *在 Linux 上创建一个文件*
 

@@ -1,7 +1,7 @@
 awk 系列：如何使用 awk 和正则表达式过滤文本或文件中的字符串
 =============================================================================
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Linux-Awk-Command-Examples.png)
+![](./img/Linux-Awk-Command-Examples.png)
 
 当我们在 Unix/Linux 下使用特定的命令从字符串或文件中读取或编辑文本时，我们经常需要过滤输出以得到感兴趣的部分。这时正则表达式就派上用场了。
 
@@ -15,12 +15,12 @@ awk 系列：如何使用 awk 和正则表达式过滤文本或文件中的字�
 
 - **普通字符**，例如空格、下划线、A-Z、a-z、0-9。
 - 可以扩展为普通字符的**元字符**，它们包括：
-  - `(.)` 它匹配除了换行符外的任何单个字符。
-  - `(*)` 它匹配零个或多个在其之前紧挨着的字符。
-  - `[ character(s) ]` 它匹配任何由其中的字符/字符集指定的字符，你可以使用连字符(-)代表字符区间，例如 [a-f]、[1-5]等。
-  - `^` 它匹配文件中一行的开头。
-  - `$` 它匹配文件中一行的结尾。
-  - `\` 这是一个转义字符。
+    - `(.)` 它匹配除了换行符外的任何单个字符。
+    - `(*)` 它匹配零个或多个在其之前紧挨着的字符。
+    - `[ character(s) ]` 它匹配任何由其中的字符/字符集指定的字符，你可以使用连字符(-)代表字符区间，例如 [a-f]、[1-5]等。
+    - `^` 它匹配文件中一行的开头。
+    - `$` 它匹配文件中一行的结尾。
+    - `\` 这是一个转义字符。
 
 你必须使用类似 awk 这样的文本过滤工具来过滤文本。你还可以把 awk 自身当作一个编程语言。但由于这个指南的适用范围是关于使用 awk 的，我会按照一个简单的命令行过滤工具来介绍它。
 
@@ -48,7 +48,7 @@ awk 的一般语法如下：
 # awk '//{print}' /etc/hosts
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Awk-Command-Example.gif)
+![](./img/Awk-Command-Example.gif)
 
 *awk 打印文件中的所有行*
 
@@ -60,7 +60,7 @@ awk 的一般语法如下：
 # awk '/localhost/{print}' /etc/hosts 
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-Command-with-Pattern.gif)
+![](./img/Use-Awk-Command-with-Pattern.gif)
 
 *awk 打印文件中匹配模式的行*
 
@@ -74,7 +74,7 @@ awk 的一般语法如下：
 # awk '/l.c/{print}' /etc/hosts
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-with-Wild-Cards.gif)
+![](./img/Use-Awk-with-Wild-Cards.gif)
 
 *使用 awk 打印文件中匹配模式的字符串*
 
@@ -86,7 +86,7 @@ awk 的一般语法如下：
 # awk '/l*c/{print}' /etc/localhost
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-to-Match-Strings-in-File.gif)
+![](./img/Use-Awk-to-Match-Strings-in-File.gif)
 
 *使用 awk 匹配文件中的字符串*
 
@@ -124,7 +124,7 @@ this is tecmint, where you get the best good tutorials, how to's, guides, tecmin
 # awk '/[al1]/{print}' /etc/hosts
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-to-Print-Matching-Character.gif)
+![](./img/Use-Awk-to-Print-Matching-Character.gif)
 
 *使用 awk 打印文件中匹配的字符*
 
@@ -134,7 +134,7 @@ this is tecmint, where you get the best good tutorials, how to's, guides, tecmin
 # awk '/[Kk]T/{print}' /etc/hosts 
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-to-Print-Matched-String-in-File.gif)
+![](./img/Use-Awk-to-Print-Matched-String-in-File.gif)
 
 *使用 awk 打印文件中匹配的字符*
 
@@ -154,7 +154,7 @@ awk 所能理解的字符：
 # awk '/[0-9]/{print}' /etc/hosts 
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-To-Print-Matching-Numbers-in-File.gif)
+![](./img/Use-Awk-To-Print-Matching-Numbers-in-File.gif)
 
 *使用 awk 打印文件中匹配的数字*
 
@@ -169,7 +169,7 @@ awk 所能理解的字符：
 # awk '/^ff/{print}' /etc/hosts
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-to-Print-All-Matching-Lines-with-Pattern.gif)
+![](./img/Use-Awk-to-Print-All-Matching-Lines-with-Pattern.gif)
 
 *使用 awk 打印与模式匹配的行*
 
@@ -183,7 +183,7 @@ awk 所能理解的字符：
 # awk '/rs$/{print}' /etc/hosts
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-to-Print-Given-Pattern-String.gif)
+![](./img/Use-Awk-to-Print-Given-Pattern-String.gif)
 
 *使用 awk 打印与模式匹配的字符串*
 
@@ -201,7 +201,7 @@ awk 所能理解的字符：
 # awk '/\$25.00/{print}' deals.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-with-Escape-Character.gif)
+![](./img/Use-Awk-with-Escape-Character.gif)
 
 *结合转义字符使用 awk*
 

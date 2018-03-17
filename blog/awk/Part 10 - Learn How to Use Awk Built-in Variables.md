@@ -3,7 +3,7 @@ awk 系列：如何使用 awk 内置变量
 
 我们将逐渐揭开 awk 功能的神秘面纱，在本节中，我们将介绍 awk 内置（built-in）变量的概念。你可以在 awk 中使用两种类型的变量，它们是：用户自定义（user-defined）变量（我们在[第八节][1]中已经介绍了）和内置变量。
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Awk-Built-in-Variables-Examples.png)
+![](./img/Awk-Built-in-Variables-Examples.png)
 
 *awk 内置变量示例*
 
@@ -25,7 +25,7 @@ awk 内置变量已经有预先定义的值了，但我们也可以谨慎地修�
 $ awk ' { print FILENAME } ' ~/domains.txt 
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Awk-FILENAME-Variable.png)
+![](./img/Awk-FILENAME-Variable.png)
 
 *awk FILENAME 变量*
 
@@ -39,7 +39,7 @@ $ awk ' { print FILENAME } ' ~/domains.txt
 $ cat ~/domains.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Print-Contents-of-File.png)
+![](./img/Print-Contents-of-File.png)
 
 *输出文件内容*
 
@@ -48,7 +48,7 @@ $ cat ~/domains.txt
 $ awk ' END { print "Number of records in file is: ", NR } ' ~/domains.txt 
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Awk-Count-Number-of-Lines.png)
+![](./img/Awk-Count-Number-of-Lines.png)
 
 *awk 统计行数*
 
@@ -58,7 +58,7 @@ $ awk ' END { print "Number of records in file is: ", NR } ' ~/domains.txt
 $ cat ~/names.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/List-File-Contents.png)
+![](./img/List-File-Contents.png)
 
 *列出文件内容*
 
@@ -66,7 +66,7 @@ $ cat ~/names.txt
 $ awk '{ "Record:",NR,"has",NF,"fields" ; }' ~/names.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Awk-Count-Number-of-Fields-in-File.png)
+![](./img/Awk-Count-Number-of-Fields-in-File.png)
 
 *awk 统计文件中的字段数*
 
@@ -87,7 +87,7 @@ FS 默认值为“空格”和“制表符”，但我们也能将 FS 值修改�
 $ awk -F':' '{ print $1, $4 ;}' /etc/passwd
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Awk-Filter-Fields-in-Password-File.png)
+![](./img/Awk-Filter-Fields-in-Password-File.png)
 
 *awk 过滤密码文件中的各字段*
 
@@ -97,7 +97,7 @@ $ awk -F':' '{ print $1, $4 ;}' /etc/passwd
 $ awk ' BEGIN {  FS=“:” ; }  { print $1, $4  ; } ' /etc/passwd
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Filter-Fields-in-File-Using-Awk.png)
+![](./img/Filter-Fields-in-File-Using-Awk.png)
 
 *使用 awk 过滤文件中的各字段*
 
@@ -107,7 +107,7 @@ $ awk ' BEGIN {  FS=“:” ; }  { print $1, $4  ; } ' /etc/passwd
 $ awk -F':' ' BEGIN { OFS="==>" ;} { print $1, $4 ;}' /etc/passwd
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Add-Separator-to-Field-in-File.png)
+![](./img/Add-Separator-to-Field-in-File.png)
 
 *向文件中的字段添加分隔符*
 

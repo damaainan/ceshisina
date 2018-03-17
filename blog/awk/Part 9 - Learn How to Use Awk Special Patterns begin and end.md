@@ -4,7 +4,7 @@ awk 系列：如何使用 awk 的特殊模式 BEGIN 和 END
 
 本节我们将学习更多的 awk 功能，即 awk 的特殊模式：`BEGIN` 和 `END`。
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Learn-Awk-Patterns-BEGIN-and-END.png)
+![](./img/Learn-Awk-Patterns-BEGIN-and-END.png)
 > 学习 awk 的模式 BEGIN 和 END
 
 随着我们逐渐展开，并探索出更多构建复杂 awk 操作的方法，将会证明 awk 的这些特殊功能的是多么强大。
@@ -71,7 +71,7 @@ tecmint.com
 $ cat ~/domains.txt
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/View-Contents-of-File.png)
+![](./img/View-Contents-of-File.png)
 
 *查看文件内容*
 
@@ -133,7 +133,7 @@ done
 exit 0
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Awk-BEGIN-and-END-Patterns.png)
+![](./img/Awk-BEGIN-and-END-Patterns.png)
 
 *awk 模式 BEGIN 和 END*
 
@@ -146,7 +146,7 @@ exit 0
 ```
 $ ./script.sh ~/domains.txt 
 ```
-![](http://www.tecmint.com/wp-content/uploads/2016/07/Script-to-Count-Number-of-Times-String-Appears.png)
+![](./img/Script-to-Count-Number-of-Times-String-Appears.png)
 
 *用于统计字符串出现次数的脚本*
 

@@ -1,7 +1,7 @@
 awk 系列：如何使用 awk 比较操作符
 ===================================================
 
-![](http://www.tecmint.com/wp-content/uploads/2016/05/Use-Comparison-Operators-with-AWK.png)
+![](./img/Use-Comparison-Operators-with-AWK.png)
 
 对于 使用 awk 命令的用户来说，处理一行文本中的数字或者字符串时，使用比较运算符来过滤文本和字符串是十分方便的。
 

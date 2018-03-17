@@ -1,7 +1,7 @@
 awk 系列：如何使用 awk 按模式筛选文本或字符串
 =========================================================================
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Use-Awk-to-Filter-Text-or-Strings-Using-Pattern.png)
+![](./img/Use-Awk-to-Filter-Text-or-Strings-Using-Pattern.png)
 
 作为 awk 命令系列的第三部分，这次我们将看一看如何基于用户定义的特定模式来筛选文本或字符串。
 
@@ -27,7 +27,7 @@ No	Item_Name		Quantity	Price
 $ awk '/ *\$[2-9]\.[0-9][0-9] */ { print $1, $2, $3, $4, "*" ; } / *\$[0-1]\.[0-9][0-9] */ { print ; }' food_prices.list
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Filter-and-Print-Text-Using-Awk.gif)
+![](./img/Filter-and-Print-Text-Using-Awk.gif)
 
 *打印出单价大于 $2 的项目*
 
@@ -52,7 +52,7 @@ $ awk '/ *\$[2-9]\.[0-9][0-9] */ { print $1, $2, $3, $4, "*" ; } / *\$[0-1]\.[0-
 $ awk '/ *\$[2-9]\.[0-9][0-9] */ { printf "%-10s %-10s %-10s %-10s\n", $1, $2, $3, $4 "*" ; } / *\$[0-1]\.[0-9][0-9] */ { printf "%-10s %-10s %-10s %-10s\n", $1, $2, $3, $4; }' food_prices.list 
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Filter-and-Print-Items-Using-Awk-and-Printf.gif)
+![](./img/Filter-and-Print-Items-Using-Awk-and-Printf.gif)
 
 *使用 Awk 和 Printf 来筛选和输出项目*
 
@@ -62,7 +62,7 @@ $ awk '/ *\$[2-9]\.[0-9][0-9] */ { printf "%-10s %-10s %-10s %-10s\n", $1, $2, $
 $ awk '/ *\$[2-9]\.[0-9][0-9] */ { print $0 "*" ; } / *\$[0-1]\.[0-9][0-9] */ { print ; }' food_prices.list 
 ```
 
-![](http://www.tecmint.com/wp-content/uploads/2016/04/Filter-and-Print-Items-Using-Awk-and-Variable.gif)
+![](./img/Filter-and-Print-Items-Using-Awk-and-Variable.gif)
 
 *使用 Awk 和变量来筛选和输出项目*
 
