@@ -97,3 +97,17 @@
 
 
 [0]: http://www.linuxprobe.com/aria2-download.html
+
+
+---
+---
+
+## BT 下载保存到指定文件夹
+
+    aria2c -d "D:\down" 11.torrent 
+
+## RPC 启动，可打开  web 界面  不能重命名
+
+在页面设置里选择文件夹（但是不起效）
+
+    aria2c --conf-path=aria2.conf
