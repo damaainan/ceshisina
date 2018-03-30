@@ -43,7 +43,7 @@ var_dump($deque->contains(...['c', 'b', 'a'])); // true
 var_dump($deque->contains(1));                  // true
 var_dump($deque->contains('1'));                // false
 
-var_dump($sequece->contains(...[]));               // true
+var_dump($deque->contains(...[]));               // true
 
 
 

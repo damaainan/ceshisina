@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="pangyongsheng">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼图-</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<body>
+    <div id="info">
+        <p class='tips'>点击要移动的模块</p>
+         <div class='tips'>步数：<span id="step">0</span></div>
+    </div>
+    <div id="main">
+        <div id="block_0" class="block"><span class="order">1</span></div>
+        <div id="block_1" class="block"><span class="order">2</span></div>
+        <div id="block_2" class="block"><span class="order">3</span></div>
+        <div id="block_3" class="block"><span class="order">4</span></div>
+        <div id="block_4" class="block"><span class="order">5</span></div>
+        <div id="block_5" class="block"><span class="order">6</span></div>
+        <div id="block_6" class="block"><span class="order">7</span></div>
+        <div id="block_7" class="block"><span class="order">8</span></div>
+        <div id="block_8" class="block"><span class="order">9</span></div>
+    </div>
+    <div id="control">
+        <h1>
+        <button id="change" class="btn">换图</button>
+        <button id="reset" class="btn">位置重置</button>
+        <button id="showNum" class="btn">显示序号</button>
+        <button id="prompt" class="btn">提示（启发式搜索）</button>
+        </h1>
+    </div>
+    <div id="success">
+        <h2>win</h2>
+            <p>步数：<span id="suc_step">0</span></p>
+        <button id="successB">再来一次</button>
+    </div>
+    <script src="./main.js"></script>
+</body>
+</html>
