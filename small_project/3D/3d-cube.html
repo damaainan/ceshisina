@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>zimv-css 3d cube</title>
+</head>
+<style>
+	body{
+		padding: 300px 0 0 150px;
+	}
+</style>
+<body>
+
+<div class="cube-wrapper">
+	<div class="cube-box">
+		<div class="cube1 cube"></div>
+		<div class="cube2 cube"></div>
+		<div class="cube3 cube"></div>
+		<div class="cube4 cube"></div>
+		<div class="cube5 cube"></div>
+		<div class="cube6 cube"></div>
+	</div>
+</div>
+<div class="cube-wrapper">
+	<div class="cube-box">
+		<div class="cube1 cube"></div>
+		<div class="cube2 cube"></div>
+		<div class="cube3 cube"></div>
+		<div class="cube4 cube"></div>
+		<div class="cube5 cube"></div>
+		<div class="cube6 cube"></div>
+	</div>
+</div>
+<div class="cube-wrapper">
+	<div class="cube-box">
+		<div class="cube1 cube"></div>
+		<div class="cube2 cube"></div>
+		<div class="cube3 cube"></div>
+		<div class="cube4 cube"></div>
+		<div class="cube5 cube"></div>
+		<div class="cube6 cube"></div>
+	</div>
+</div>
+<style>
+.cube-wrapper{
+	position: relative;
+	margin-left: 50px;
+	display: inline-block;
+	transform-style: preserve-3d;
+	transform: rotateX(-30deg) rotateY(45deg);
+}
+.cube-box{
+	transform-style: preserve-3d;
+	width: 30px;
+	height: 100px;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	transition: height 2s;
+}
+.cube{
+	position: absolute;
+	left: 0;
+	top: 0;
+	opacity: .5;
+}
+.cube1{
+	width: 100%;
+	height: 100%;
+	background: #f5d3d3;
+}
+.cube2{
+	width: 100%;
+	height: 100%;
+	background: #f32e2e;
+	transform-origin: left top;
+	transform: rotateY(-90deg);
+}
+.cube3{
+	width: 100%;
+	height: 100%;
+	background: #f59a9a;
+	transform-origin: right top;
+	transform: rotateY(90deg);
+}
+.cube4{
+	width: 100%;
+	height: 100%;
+	background: #e60e0e;
+	transform-origin: right top;
+	transform: translateZ(30px);
+}
+.cube5{
+	width: 100%;
+	padding-top: 100%;
+	background: #f14646;
+	transform-origin: left top;
+	transform: rotateX(90deg);
+}
+.cube6{
+	width: 100%;
+	padding-top: 100%;
+	background: #e6a8a8;
+	top: inherit;
+	bottom: 0;
+	transform-origin: left bottom;
+	transform: rotateX(-90deg);
+}
+</style>
+<script>
+
+	let boxs = document.getElementsByClassName('cube-box');
+	setInterval(()=>{
+		for(let item in boxs){
+			if(boxs[item].style) boxs[item].style.height = `${Math.random()*300}px`;
+		}
+	},5000)
+</script>
+</body>
+</html>
