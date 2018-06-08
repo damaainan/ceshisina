@@ -271,4 +271,4 @@ A Javascript journey with only six characters
 产品技术先行
  
 
-[0]: https://img1.tuicool.com/zE7BNvb.jpg!web
+[0]: https://img1.tuicool.com/zE7BNvb.jpg

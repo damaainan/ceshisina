@@ -49,15 +49,15 @@ function getRet($data, $x, $y, &$result = [], $record)
     } elseif ($data[$x][$y] == "1") {
         //是1的话，记录最新的坐标到当前已找到的路径中，继续向前搜索
         //如果到达出口，记录答案并回溯
-        $snapshort = array_merge($record, [[$x, $y]]);
-        if ($x == $xL && $y == $yL) {
+        $snapshort = array_merge($record, [[$x, $y]]); // 
+        if ($x == $xL && $y == $yL) { //
             $result[] = array_merge($record, [[$x, $y]]);
             return;
         }
     } else {
         return;
     }
-    //向有搜索
+    //向右搜索
     //这里的$snapshort保存当前搜索位置的状态，等到下次回溯到这里的时候会用到
     getRet($data, $x, ++$y, $result, $snapshort);
     //向下搜索
