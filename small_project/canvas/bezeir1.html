@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>bezier</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="1000" height="600"></canvas>
+    <br>
+    <input type="button" id="btn1" value="绘制">
+    <input type="button" id="btn2" value="清空">
+    <input type="button" id="btn3" value="暂停">
+    <script>
+    function getPercentPoints(points, t) {
+        if (points.length <= 1) {
+            return points
+        }
+        const perPoints = []
+        var inx = 0
+        while (inx < points.length - 1) {
+            const current = points[inx]
+            const next = points[inx + 1]
+            var perPoint = {
+                x: current.x + (next.x - current.x) * t,
+                y: current.y + (next.y - current.y) * t
+            }
+            perPoints.push(perPoint)
+            inx++
+        }
+        return perPoints
+    }
+
+
+    function getBezierPoints(points, t, end = 1, start = 0) {
+        var pointArr = []
+        while (start <= end) {
+            var node = getOneBezierPoint(points, start)
+            pointArr.push(node)
+            start += t
+        }
+        return pointArr
+    }
+
+    //曲线上的一个点,分别求出x，和y
+    //points确定系数
+    //t是自变量，这里获取一个点的时候，需要t固定，画线的时候再赋值[0,1],分100份的话，每次t差距0.01，循环t
+    //公式中需要组合
+    function getOneBezierPoint(points, t) {
+        return {
+            x: sigmar('x', points, t),
+            y: sigmar('y', points, t)
+        }
+    }
+    //x或者y方向上的坐标，bezier曲线求和
+    function sigmar(direction, points, t) {
+        var result = 0
+        //n+1个节点，是n次bezier曲线
+        let n = points.length - 1
+        for (let [i, { x, y }] of points.entries()) {
+            var A = C(n, i)
+            var P = direction === 'x' ? x : direction === 'y' ? y : x //不传'x' 'y'默认x方向
+            var t1 = Math.pow(1 - t, n - i)
+            var t2 = Math.pow(t, i)
+            result += A * P * t1 * t2
+        }
+        return result
+    }
+    //组合
+    function C(n, i) {
+        return f(n) / f(i) / f(n - i)
+    }
+    //阶乘 factorial 
+    function f(n) {
+        if (n < 0) {
+            return -1
+        } else if (n === 0 || n === 1) {
+            return 1
+        } else {
+            return (n * f(n - 1))
+        }
+    }
+    </script>
+    <script>
+    const controlPoints = [] //{ x: 100, y: 500 }, { x: 150, y: 400 }, { x: 600, y: 300 }, { x: 400, y: 150 }
+
+    const pen = canvas.getContext('2d')
+
+    function init(pen) {
+        pen.fillStyle = "#444"
+        pen.fillRect(0, 0, canvas.width, canvas.height)
+    }
+    init(pen)
+
+    canvas.onmousedown = function(e) {
+        const point = { x: e.offsetX, y: e.offsetY }
+        controlPoints.push(point)
+        drawText(point, controlPoints.length)
+        drawNode(point)
+        drawLastLine(controlPoints)
+    }
+    //显示点击位置
+    function drawText(point, inx, y = 10, font = 16) {
+        pen.fillStyle = "#fff"
+        pen.textAlign = 'end'
+        pen.textBaseline = 'hanging'
+        pen.font = `${font}px` //times
+        pen.fillText(`${point.x}x${point.y}：${inx}`, 1000 - 20, inx === 1 ? y : (inx - 1) * font + y)
+
+    }
+
+    function drawLastLine(points) {
+        //画最后两点连线 -折线
+        var count = points.length
+        var current = points[count - 2]
+        var next = points[count - 1]
+        if (count >= 2) {
+            drawLine(current, next)
+        }
+    }
+
+    function drawNode(point, nodeColor = 'white') {
+        //画节点
+        pen.beginPath()
+        pen.strokeStyle = nodeColor
+        pen.lineWidth = 2
+        pen.arc(point.x, point.y, 8, 0, 2 * Math.PI)
+        pen.stroke()
+    }
+
+    function drawLine(current, next, color = "white") {
+        //画最后两点连线 -折线
+        pen.beginPath()
+        pen.strokeStyle = color
+        pen.lineWidth = 2
+        pen.moveTo(current.x, current.y)
+        pen.lineTo(next.x, next.y)
+        pen.stroke()
+    }
+
+    const pointCount = 100
+    const step = 1 / pointCount //t->step++[0,1]
+    //绘bezier曲线
+    function drawBrokenLine(points, t = 1, lineColor = 'white', hasNode = true, nodeColor = 'white') {
+        if (points.length >= 2) {
+            for (var i = 0; i < points.length - 1; i++) {
+                var current = points[i]
+                var next = points[i + 1]
+                drawLine(current, next, lineColor)
+                hasNode && drawNode(current, nodeColor)
+            }
+            hasNode && drawNode(points[points.length - 1], nodeColor)
+        }
+
+        return getPercentPoints(points, t)
+    }
+
+    function getRandomColor() {
+        var color = "#"
+        for (let i = 0; i < 6; i++) {
+            color += Array.from('0123456789abcdef')[Math.floor(16 * Math.random())]
+        }
+        return color
+    }
+    //n次，画n-1条折线
+    var lineColors = []
+
+    function getColors(points) {
+        const len = points.length
+        for (let i = 0; i < len - 1; i++) {
+            lineColors.push(getRandomColor())
+        }
+        return lineColors
+    }
+
+    function drawframe(points, t) {
+        var lineColors = getColors(points)
+        canvas.width = canvas.width
+        init(pen)
+        var percentPoints = drawBrokenLine(points, t, 'white', true, 'yellow')
+        var i = 0
+        while (percentPoints.length > 1) {
+            const currentColor = lineColors[++i]
+            percentPoints = drawBrokenLine(percentPoints, t, currentColor, true, currentColor)
+        }
+        const bezeirPoints = getBezierPoints(controlPoints, step, t)
+        drawBrokenLine(bezeirPoints, t, 'red', false)
+    }
+
+    var timer
+    var state
+    var runFlag = true
+
+    function startBezier(t, recursive = false) { //iteration
+        // timer = setInterval(() => {
+        //     if (t <= 1) {
+        //         drawframe(controlPoints, t)
+        //         t += step
+        //         state = t
+        //     } else {
+        //         clearInterval(timer)
+        //         drawframe(controlPoints, 1)
+        //         recursive && startBezier(0)
+        //     }
+        // }, 200)
+        timer = requestAnimationFrame(function frame() {
+            if (runFlag) {
+                if (t <= 1) {
+                    drawframe(controlPoints, t)
+                    t += step
+                    state = t
+                    requestAnimationFrame(frame)
+                } else {
+                    cancelAnimationFrame(timer)
+                    drawframe(controlPoints, 1)
+                    recursive && startBezier(0)
+                }
+            } else {
+                cancelAnimationFrame(timer)
+            }
+        })
+        // const bezeirPoints = getBezierPoints(controlPoints, step, 0.5)
+        // drawBrokenLine(bezeirPoints, 1, 'red')
+    }
+    btn1.onclick = function() {
+        startBezier(0)
+    }
+    btn2.onclick = function() {
+        controlPoints.splice(0, controlPoints.length)
+        canvas.width = canvas.width
+        // clearInterval(timer)
+        runFlag = true
+        init(pen)
+    }
+    var count = 0
+    btn3.onclick = function() {
+        if (++count % 2 === 1) {
+            btn3.value = '继续'
+            if (timer) {
+                //clearInterval(timer)
+                runFlag = false
+            }
+        } else {
+            btn3.value = '暂停'
+            console.log(state)
+            runFlag = true
+            startBezier(state)
+        }
+    }
+    </script>
+</body>
+
+</html>

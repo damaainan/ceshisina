@@ -202,4 +202,4 @@ endsnippet
 
 
 [1]: https://github.com/junegunn/vim-plug
-[0]: https://img2.tuicool.com/3yYBbe7.gif
+[0]: ./img/3yYBbe7.gif
