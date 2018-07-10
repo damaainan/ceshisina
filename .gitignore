@@ -46,6 +46,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+.idea
 *.exe
 */vendor/
 */vendor/*

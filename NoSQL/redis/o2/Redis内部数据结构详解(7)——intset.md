@@ -27,6 +27,7 @@ intset顾名思义，是由整数组成的集合。实际上，intset是一个�
 
 intset的数据结构定义如下（出自intset.h和intset.c）：
 
+```c
     typedef struct intset {
         uint32_t encoding;
         uint32_t length;
@@ -37,6 +38,7 @@ intset的数据结构定义如下（出自intset.h和intset.c）：
     #define INTSET_ENC_INT32 (sizeof(int32_t))
     #define INTSET_ENC_INT64 (sizeof(int64_t))
     
+```
 
 各个字段含义如下：
 
@@ -73,6 +75,7 @@ intset与ziplist相比：
 
 intsetFind 的关键代码如下所示（出自intset.c）： 
 
+```c
     uint8_t intsetFind(intset *is, int64_t value) {
         uint8_t valenc = _intsetValueEncoding(value);
         return valenc <= intrev32ifbe(is->encoding) && intsetSearch(is,value,NULL);
@@ -118,6 +121,7 @@ intsetFind 的关键代码如下所示（出自intset.c）：
             return 0;
         }
     }
+```
 
 关于以上代码，我们需要注意的地方包括：
 
@@ -134,6 +138,7 @@ intsetFind 的关键代码如下所示（出自intset.c）：
 
 而 intsetAdd 的关键代码如下所示（出自intset.c）： 
 
+```c
     intset *intsetAdd(intset *is, int64_t value, uint8_t *success) {
         uint8_t valenc = _intsetValueEncoding(value);
         uint32_t pos;
@@ -162,6 +167,7 @@ intsetFind 的关键代码如下所示（出自intset.c）：
         is->length = intrev32ifbe(intrev32ifbe(is->length)+1);
         return is;
     }
+```
 
 关于以上代码，我们需要注意的地方包括：
 

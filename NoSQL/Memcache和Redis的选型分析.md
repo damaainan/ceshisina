@@ -9,7 +9,7 @@ Memcache和Redis都能很好的满足解决数据库表数据量极大（千万�
 
 ## 1.性能上：
 
-性能上都很出色，具体到细节，由于`Redis只使用单核`，而`Memcache可以使用多核`，所以平均每一个核上Redis在存储小数据时比，Memcache性能更高。
+性能上都很出色，具体到细节，由于`Redis只使用单核`，而`Memcache可以使用多核`，所以平均每一个核上Redis在存储小数据时比Memcache性能更高。
 
 而在**100k以上的数据中，Memcache性能要高于Redis**，虽然redis最近也在存储大数据的性能上进行优化，但是比起 Memcache，还是稍有逊色。
 

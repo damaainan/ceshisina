@@ -338,7 +338,8 @@
     }
 ```
 
-11.Redis的drand48()随机算法重实现([http://blog.csdn.net/androidlushangderen/article/details/40582189][9])。Redis随机算法的实现作为11大设计的最后一个，并不是说这个设计相比前面有多么的烂，因为我觉得比较有特点，我就追加了一个上去。由于Redis的作者考虑到随机算法的在不同的操作系统可能会表现出不同的特性，所以不建议采用math.rand()方法，而是基于drand48()的算法重新实现了一个。具体什么叫drand48().请猛点链接处。 好了，以上就是我印象中的Redis中比较优秀的设计。其实在Redis的很多还有很多优秀代码的痕迹，由于篇幅有限，等待着读者自己去学习，发现。
+11.Redis的drand48()随机算法重实现([http://blog.csdn.net/androidlushangderen/article/details/40582189][9])。   
+Redis随机算法的实现作为11大设计的最后一个，并不是说这个设计相比前面有多么的烂，因为我觉得比较有特点，我就追加了一个上去。由于Redis的作者考虑到随机算法的在不同的操作系统可能会表现出不同的特性，所以不建议采用math.rand()方法，而是基于drand48()的算法重新实现了一个。具体什么叫drand48().请猛点链接处。 好了，以上就是我印象中的Redis中比较优秀的设计。其实在Redis的很多还有很多优秀代码的痕迹，由于篇幅有限，等待着读者自己去学习，发现。
 
 [0]: http://so.csdn.net/so/search/s.do?q=nosql数据库&t=blog
 [1]: http://so.csdn.net/so/search/s.do?q=源码&t=blog

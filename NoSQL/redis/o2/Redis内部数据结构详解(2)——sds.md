@@ -30,14 +30,15 @@ _原文_[http://zhangtielei.com/posts/blog-redis-sds.html][1]
 
 #### sds的数据结构定义
 
-我们知道，在C语言中，字符串是以’\0’字符结尾（NULL结束符）的字符数组来存储的，通常表达为字符指针的形式（char *）。它不允许字节0出现在字符串中间，因此，它不能用来存储任意的二进制数据。
+我们知道，在C语言中，字符串是以’\0’字符结尾（NULL结束符）的字符数组来存储的，通常表达为字符指针的形式（`char *`）。它不允许字节0出现在字符串中间，因此，它不能用来存储任意的二进制数据。
 
-我们可以在sds.h中找到sds的类型定义：
+我们可以在`sds.h`中找到`sds`的类型定义：
 
     typedef char *sds;
 
-肯定有人感到困惑了，竟然sds就等同于char *？我们前面提到过，sds和传统的C语言字符串保持类型兼容，因此它们的类型定义是一样的，都是char *。在有些情况下，需要传入一个C语言字符串的地方，也确实可以传入一个sds。但是，sds和char *并不等同。sds是Binary Safe的，它可以存储任意二进制数据，不能像C语言字符串那样以字符’\0’来标识字符串的结束，因此它必然有个长度字段。但这个长度字段在哪里呢？实际上sds还包含一个header结构：
+肯定有人感到困惑了，竟然sds就等同于c`har *`？我们前面提到过，sds和传统的C语言字符串保持类型兼容，因此它们的类型定义是一样的，都是`char *`。在有些情况下，需要传入一个C语言字符串的地方，也确实可以传入一个sds。但是，`sds`和`char *`并不等同。`sds`是Binary Safe的，它可以存储任意二进制数据，不能像C语言字符串那样以字符’\0’来标识字符串的结束，因此它必然有个长度字段。但这个长度字段在哪里呢？实际上sds还包含一个header结构：
 
+```c
     struct __attribute__ ((__packed__)) sdshdr5 {
         unsigned char flags; /* 3 lsb of type, and 5 msb of string length */
         char buf[];
@@ -66,12 +67,13 @@ _原文_[http://zhangtielei.com/posts/blog-redis-sds.html][1]
         unsigned char flags; /* 3 lsb of type, 5 unused bits */
         char buf[];
     };
+```
 
 sds一共有5种类型的header。之所以有5种，是为了能让不同长度的字符串可以使用不同大小的header。这样，短字符串就能使用较小的header，从而节省内存。
 
 一个sds字符串的完整结构，由在内存地址上前后相邻的两部分组成：
 
-* 一个header。通常包含字符串的长度(len)、最大容量(alloc)和flags。sdshdr5有所不同。
+* 一个header。通常包含`字符串的长度(len)`、`最大容量(alloc)`和`flags`。sdshdr5有所不同。
 * 一个字符数组。这个字符数组的长度等于最大容量+1。真正有效的字符串数据，其长度通常小于最大容量。在真正的字符串数据之后，是空余未用的字节（一般以字节0填充），允许在不重新分配内存的前提下让字符串数据向后做有限的扩展。在真正的字符串数据之后，还有一个NULL结束符，即ASCII码为0的’\0’字符。这是为了和传统C字符串兼容。之所以字符数组的长度比最大容量多1个字节，就是为了在字符串长度达到最大容量时仍然有1个字节存放NULL结束符。
 
 除了sdshdr5之外，其它4个header的结构都包含3个字段：
@@ -80,12 +82,14 @@ sds一共有5种类型的header。之所以有5种，是为了能让不同长度
 * alloc: 表示字符串的最大容量（不包含最后多余的那个字节）。
 * flags: 总是占用一个字节。其中的最低3个bit用来表示header的类型。header的类型共有5种，在sds.h中有常量定义。
 
+```c
     #define SDS_TYPE_5  0
     #define SDS_TYPE_8  1
     #define SDS_TYPE_16 2
     #define SDS_TYPE_32 3
     #define SDS_TYPE_64 4
     
+```
 
 sds的数据结构，我们有必要非常仔细地去解析它。
 
@@ -95,19 +99,21 @@ sds的数据结构，我们有必要非常仔细地去解析它。
 
 sds的字符指针（s1和s2）就是指向真正的数据（字符数组）开始的位置，而header位于内存地址较低的方向。在sds.h中有一些跟解析header有关的宏定义：
 
+```c
     #define SDS_TYPE_MASK 7
     #define SDS_TYPE_BITS 3
     #define SDS_HDR_VAR(T,s) struct sdshdr##T *sh = (void*)((s)-(sizeof(struct sdshdr##T)));
     #define SDS_HDR(T,s) ((struct sdshdr##T *)((s)-(sizeof(struct sdshdr##T))))
     #define SDS_TYPE_5_LEN(f) ((f)>>SDS_TYPE_BITS)
     
+```
 
 其中SDS_HDR用来从sds字符串获得header起始位置的指针，比如SDS_HDR(8, s1)表示s1的header指针，SDS_HDR(16, s2)表示s2的header指针。
 
-当然，使用SDS_HDR之前我们必须先知道到底是哪一种header，这样我们才知道SDS_HDR第1个参数应该传什么。由sds字符指针获得header类型的方法是，先向低地址方向偏移1个字节的位置，得到flags字段。比如，s1[-1]和s2[-1]分别获得了s1和s2的flags的值。然后取flags的最低3个bit得到header的类型。
+当然，使用SDS_HDR之前我们必须先知道到底是哪一种header，这样我们才知道SDS_HDR第1个参数应该传什么。由sds字符指针获得header类型的方法是，先向低地址方向偏移1个字节的位置，得到flags字段。比如，`s1[-1]`和`s2[-1]`分别获得了s1和s2的flags的值。然后取flags的最低3个bit得到header的类型。
 
-* 由于s1[-1] == 0x01 == SDS_TYPE_8，因此s1的header类型是sdshdr8。
-* 由于s2[-1] == 0x02 == SDS_TYPE_16，因此s2的header类型是sdshdr16。
+* 由于`s1[-1] == 0x01 == SDS_TYPE_8`，因此s1的header类型是sdshdr8。
+* 由于`s2[-1] == 0x02 == SDS_TYPE_16`，因此s2的header类型是sdshdr16。
 
 有了header指针，就能很快定位到它的len和alloc字段：
 
@@ -116,14 +122,14 @@ sds的字符指针（s1和s2）就是指向真正的数据（字符数组）开�
 
 在各个header的类型定义中，还有几个需要我们注意的地方：
 
-* 在各个header的定义中使用了__attribute__ (( **packed** ))，是为了让编译器以紧凑模式来分配内存。如果没有这个属性，编译器可能会为struct的字段做优化对齐，在其中填充空字节。那样的话，就不能保证header和sds的数据部分紧紧前后相邻，也不能按照固定向低地址方向偏移1个字节的方式来获取flags字段了。
-* 在各个header的定义中最后有一个char buf[]。我们注意到这是一个没有指明长度的字符数组，这是C语言中定义字符数组的一种特殊写法，称为柔性数组（ [flexible array member][7] ），只能定义在一个结构体的最后一个字段上。它在这里只是起到一个标记的作用，表示在flags字段后面就是一个字符数组，或者说，它指明了紧跟在flags字段后面的这个字符数组在结构体中的偏移位置。而程序在为header分配的内存的时候，它并不占用内存空间。如果计算sizeof(struct sdshdr16)的值，那么结果是5个字节，其中没有buf字段。
+* 在各个header的定义中使用了`__attribute__ (( _packed_ ))`，是为了让编译器以紧凑模式来分配内存。如果没有这个属性，编译器可能会为struct的字段做优化对齐，在其中填充空字节。那样的话，就不能保证header和sds的数据部分紧紧前后相邻，也不能按照固定向低地址方向偏移1个字节的方式来获取flags字段了。
+* 在各个header的定义中最后有一个`char buf[]`。我们注意到这是一个没有指明长度的字符数组，这是C语言中定义字符数组的一种特殊写法，称为柔性数组（ [flexible array member][7] ），只能定义在一个结构体的最后一个字段上。它在这里只是起到一个标记的作用，表示在flags字段后面就是一个字符数组，或者说，它指明了紧跟在flags字段后面的这个字符数组在结构体中的偏移位置。而程序在为header分配的内存的时候，它并不占用内存空间。如果计算sizeof(struct sdshdr16)的值，那么结果是5个字节，其中没有buf字段。
 * sdshdr5与其它几个header结构不同，它不包含alloc字段，而长度使用flags的高5位来存储。因此，它不能为字符串分配空余空间。如果字符串需要动态增长，那么它就必然要重新分配内存才行。所以说，这种类型的sds字符串更适合存储静态的短字符串（长度小于32）。
 
 至此，我们非常清楚地看到了：sds字符串的header，其实隐藏在真正的字符串数据的前面（低地址方向）。这样的一个定义，有如下几个好处：
 
 * header和数据相邻，而不用分成两块内存空间来单独分配。这有利于减少内存碎片，提高存储效率（memory efficiency）。
-* 虽然header有多个类型，但sds可以用统一的char *来表达。且它与传统的C语言字符串保持类型兼容。如果一个sds里面存储的是可打印字符串，那么我们可以直接把它传给C函数，比如使用strcmp比较字符串大小，或者使用printf进行打印。
+* 虽然header有多个类型，但sds可以用统一的`char *`来表达。且它与传统的C语言字符串保持类型兼容。如果一个sds里面存储的是可打印字符串，那么我们可以直接把它传给C函数，比如使用strcmp比较字符串大小，或者使用printf进行打印。
 
 弄清了sds的数据结构，它的具体操作函数就比较好理解了。
 
@@ -140,6 +146,7 @@ sds的字符指针（s1和s2）就是指向真正的数据（字符数组）开�
 
 这里我们挑选sdslen和sdsReqType的代码，察看一下。
 
+```c
     static inline size_t sdslen(const sds s) {
         unsigned char flags = s[-1];
         switch(flags&SDS_TYPE_MASK) {
@@ -168,8 +175,9 @@ sds的字符指针（s1和s2）就是指向真正的数据（字符数组）开�
             return SDS_TYPE_32;
         return SDS_TYPE_64;
     }
+```
 
-跟前面的分析类似，sdslen先用s[-1]向低地址方向偏移1个字节，得到flags；然后与SDS_TYPE_MASK进行按位与，得到header类型；然后根据不同的header类型，调用SDS_HDR得到header起始指针，进而获得len字段。
+跟前面的分析类似，sdslen先用`s[-1]`向低地址方向偏移1个字节，得到flags；然后与SDS_TYPE_MASK进行按位与，得到header类型；然后根据不同的header类型，调用SDS_HDR得到header起始指针，进而获得len字段。
 
 通过sdsReqType的代码，很容易看到：
 
@@ -183,6 +191,7 @@ sds的字符指针（s1和s2）就是指向真正的数据（字符数组）开�
 
 #### sds的创建和销毁
 
+```c
     sds sdsnewlen(const void *init, size_t initlen) {
         void *sh;
         sds s;
@@ -252,6 +261,7 @@ sds的字符指针（s1和s2）就是指向真正的数据（字符数组）开�
         if (s == NULL) return;
         s_free((char*)s-sdsHdrSize(s[-1]));
     }
+```
 
 sdsnewlen创建一个长度为initlen的sds字符串，并使用init指向的字符数组（任意二进制数据）来初始化数据。如果init为NULL，那么使用全0来初始化数据。它的实现中，我们需要注意的是：
 
@@ -263,6 +273,7 @@ sdsnewlen创建一个长度为initlen的sds字符串，并使用init指向的字
 
 #### sds的连接（追加）操作
 
+```c
     sds sdscatlen(sds s, const void *t, size_t len) {
         size_t curlen = sdslen(s);
     
@@ -326,6 +337,7 @@ sdsnewlen创建一个长度为initlen的sds字符串，并使用init指向的字
         sdssetalloc(s, newlen);
         return s;
     }
+```
 
 sdscatlen将t指向的长度为len的任意二进制数据追加到sds字符串s的后面。本文开头演示的string的append命令，内部就是调用sdscatlen来实现的。
 

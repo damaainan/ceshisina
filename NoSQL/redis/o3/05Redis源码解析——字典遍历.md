@@ -301,6 +301,7 @@ Redis中这个方法的调用样例是：
 
 上面测试的代码是：
 
+```c
     #define TWO_FOUR_MASK 15
     #define TWO_THREE_MASK 7
     
@@ -464,6 +465,7 @@ Redis中这个方法的调用样例是：
             printf("\n");
         }
     }
+```
 
 
 [2]: http://blog.csdn.net/breaksoftware/article/details/53509986

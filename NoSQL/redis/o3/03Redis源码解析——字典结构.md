@@ -48,6 +48,7 @@
 
 Redis的Dict中最基础的元素结构是
 
+```c
     typedef struct dictEntry {
         void *key;
         union {
@@ -58,11 +59,13 @@ Redis的Dict中最基础的元素结构是
         } v;
         struct dictEntry *next;
     } dictEntry;
+```
 
 该结构自身内部有一个指向下一个该结构对象的指针，可以见得这是链表元素的结构。key字段是一个无类型指针，我们可以让该key指向任意类型，从而支撑Dict的key是任意类型的能力。联合体v则是key对应的value，它可以是uint_64_t、int64_t、double和void*型，void*型是无类型指针，它使得Dict可以承载任意类型的value值。 
 
 一般一个dict只能承载一种类型的（key,value）对，而key和value的类型则可以是自定义的。这种开放的能力需要优良架构设计的支持。因为对类型没有约束，而框架自身无法得知这些类型的一些信息。但是流程上却需要得知一些必要信息，比如key字段如何进行Hash？key和value如何复制和析构？key字段如何进行等值对比？这些框架无法提前预知的能力只能让数据类型提供者去提供。Redis的Dict中通过下面的结构来指定这些信息
 
+```c
     typedef struct dictType {
         unsigned int (*hashFunction)(const void *key);
         void *(*keyDup)(void *privdata, const void *key);
@@ -71,15 +74,18 @@ Redis的Dict中最基础的元素结构是
         void (*keyDestructor)(void *privdata, void *key);
         void (*valDestructor)(void *privdata, void *obj);
     } dictType;
+```
 
 承载dictEntry的是下面这个结构，它就是我们之前讨论Hash碰撞时拉链算法的体现 
 
+```c
     typedef struct dictht {
         dictEntry **table;
         unsigned long size;
         unsigned long sizemask;
         unsigned long used;
     } dictht;
+```
 
 table是一个保存dicEntry指针的数组；size是数组的长度；sizemask是用于进行hash再归类的桶，它的值是size-1；used是元素个数，我们通过一个图来解释 
 
@@ -87,6 +93,7 @@ table是一个保存dicEntry指针的数组；size是数组的长度；sizemask�
 
 似乎我们可以用这个结构已经可以实现字典了。但是Redis在这个基础上做了一些优化，我们看下它定义的字典结构：
 
+```c
     typedef struct dict {
         dictType *type;
         void *privdata;
@@ -94,6 +101,7 @@ table是一个保存dicEntry指针的数组；size是数组的长度；sizemask�
         long rehashidx; /* rehashing not in progress if rehashidx == -1 */
         int iterators; /* number of iterators currently running */
     } dict;
+```
 
 type字段定义了字典处理key和value的相应方法，通过这个字段该框架开放了处理自定义类型数据的能力。privdata是私有数据，但是一般都传NULL。ht是个数组，它有两个元素，都是可以用于存储数据的。这儿有个问题，就是为什么要两个dictht对象？我们在讲解拉链法时抛出过两个问题，即数据链过长时或数据松散时如何进行优化？我们采用的是扩大数组个数和缩小数组个数，即再Hash（rehash）的方案。其实Redis就是这样的方案去做的，只是它处理的比较精细。ht[0]作为主要的数据存储区域，ht[1]则是用于rehash操作的结果，但是一旦rehash完成，就将ht[1]中的数据赋值给ht[0]。那么为什么不让ht[1]作为rehash操作中一个栈上临时变量，而要保存在字典结构中呢？这是因为如果我们将rehash操作当成一个原子操作在一个函数中去做，此时如果有数据插入或者删除，则需要等到rehash操作完成才可以执行。而当数据量很大时，rehash操作会比较慢，这样势必影响其他操作的速度。于是Redis在设计时，采用的是一种渐进式的rehash方法。因为渐进式非原子性，所以中间状态也要保存在字典结构中以保证数据完整性。这就是为什么有两个dictht的原因。rehashidx是rehash操作时ht[0]中正在被rehash操作的数组下标，如果它是-1则代表没有在进行rehash操作。iterators是迭代器，我们会在之后讲解。 
 

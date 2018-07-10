@@ -97,6 +97,7 @@ Redis对于quicklist内部节点的压缩算法，采用的 [LZF][7] ——一�
 
 quicklist相关的数据结构定义可以在quicklist.h中找到：
 
+```c
     typedef struct quicklistNode {
         struct quicklistNode *prev;
         struct quicklistNode *next;
@@ -123,6 +124,7 @@ quicklist相关的数据结构定义可以在quicklist.h中找到：
         int fill : 16;              /* fill factor for individual nodes */
         unsigned int compress : 16; /* depth of end nodes not to compress;0=off */
     } quicklist;
+```
 
 quicklistNode结构代表quicklist的一个节点，其中各个字段的含义如下：
 
@@ -178,6 +180,7 @@ quicklistLZF结构表示一个被压缩过的ziplist。其中：
 
 当我们使用 lpush 或 rpush 命令第一次向一个不存在的list里面插入数据的时候，Redis会首先调用 quicklistCreate 接口创建一个空的quicklist。 
 
+```c
     quicklist *quicklistCreate(void) {
         struct quicklist *quicklist;
     
@@ -189,6 +192,7 @@ quicklistLZF结构表示一个被压缩过的ziplist。其中：
         quicklist->fill = -2;
         return quicklist;
     }
+```
 
 在很多介绍数据结构的书上，实现双向链表的时候经常会多增加一个空余的头节点，主要是为了插入和删除操作的方便。从上面 quicklistCreate 的代码可以看出，quicklist是一个不包含空余头节点的双向链表（ head 和 tail 都初始化为NULL）。 
 
@@ -196,6 +200,7 @@ quicklistLZF结构表示一个被压缩过的ziplist。其中：
 
 quicklist的push操作是调用 quicklistPush 来实现的。 
 
+```c
     void quicklistPush(quicklist *quicklist, void *value, const size_t sz,
                        int where) {
         if (where == QUICKLIST_HEAD) {
@@ -250,6 +255,7 @@ quicklist的push操作是调用 quicklistPush 来实现的。
         quicklist->tail->count++;
         return (orig_tail != quicklist->tail);
     }
+```
 
 不管是在头部还是尾部插入数据，都包含两种情况：
 

@@ -10,7 +10,7 @@
 
 
 疑问: sentinel与master通信,如果某次因为master IO操作频繁,导致超时,此时,认为master失效,很武断.   
-解决: sentnel允许多个实例看守1个master, 当N台(N可设置)sentinel都认为master失效,才正式失效.
+解决: **sentnel允许多个实例看守1个master, 当N台(N可设置)sentinel都认为master失效,才正式失效**.
 
 ## Sentinel选项配置
 

@@ -40,24 +40,18 @@ redis默认是主数据，所以master无需配置，我们只需要修改slave�
 
 ``` 
 slaveof 192.168.0.107 6379
-
-
 ```
 
 如果master设置了密码。需要配置：
 
 ``` 
 masterauth 
- 
-
 ```
 
 连接成功进入命令行后，可以通过以下命令行查看连接该数据库的其他库信息:
 
 ``` 
 info replication
-
-
 ```
 
 
@@ -79,7 +73,7 @@ info replication
 
 哨兵进程启动时会读取配置文件的内容，通过`sentinel monitor master-name ip port quorum`查找到master的ip端口。一个哨兵可以监控多个master数据库，只需要提供多个该配置项即可。
 
-同事配置文件还定义了与监控相关的参数，比如master多长时间无响应即即判定位为下线。
+同时配置文件还定义了与监控相关的参数，比如master多长时间无响应即即判定位为下线。
 
 哨兵启动后，会与要监控的master建立俩条连接：
 
@@ -94,7 +88,7 @@ info replication
 
 
 * 定期向master和slave发送INFO命令
-* 定期向master个slave的 sentinel :hello频道发送自己的信息    
+* 定期向master和slave的 sentinel :hello频道发送自己的信息    
 * 定期向master、slave和其他哨兵发送PING命令
   
 
@@ -141,8 +135,6 @@ info replication
 
 ``` 
 sentinel monitor mymaster 192.168.0.107 6379 1
-
-
 ```
 
 只要配置需要监控的master就可以了，哨兵会监控连接该master的slave。
@@ -151,8 +143,6 @@ sentinel monitor mymaster 192.168.0.107 6379 1
 
 ``` 
 redis-server sentinel.conf –sentinel &
-
-
 ```
 
 出现如下内容表示启动成功
@@ -189,8 +179,6 @@ redis-server sentinel.conf –sentinel &
 
 ``` 
 bin/redis-cli -h 192.168.0.110 -p 26379 info Sentinel
-
-
 ```
 
 控制台输出哨兵信息：
@@ -217,8 +205,6 @@ master0:name=mymaster,status=ok,address=192.168.0.107:6379,slaves=2,sentinels=1
 
 ``` 
 yum install ruby   yum install rubygems   gem install redis
-
-
 ```
 
 修改配置文件:
@@ -239,8 +225,6 @@ port 6380
 
 ``` 
 dir /usr/local/redis-cluster/6380/
-
-
 ```
 
 
@@ -248,8 +232,6 @@ dir /usr/local/redis-cluster/6380/
 
 ``` 
 cluster-enabled yes
-
-
 ```
 
 
@@ -269,16 +251,12 @@ cluster-node-timeout 15000
 
 ``` 
 reids-service ../6380/redis.conf
-
-
 ```
 
 将节点加入集群中
 
 ``` 
 redis-trib.rb create –replicas 1 192.168.0.107:6380 192.168.0.107:6381 192.168.0.107:6382 192.168.0.107:6383 192.168.0.107:6384 192.168.0.107:6385
-
-
 ```
 
 中途需要输入yes确定创建集群:
@@ -343,8 +321,6 @@ M: d6d01fd8f1e5b9f8fc0c748e08248a358da3638d 192.168.0.107:6385
 
 ``` 
 redis-cli -c -h 192.168.0.107 -p 6381
-
-
 ```
 
 查看集群中的节点:
@@ -367,8 +343,6 @@ b8e047aeacb9398c3f58f96d0602efbbea2078e2 192.168.0.107:6383 slave 5cd3ed3a84ead4
 
 ``` 
 cluster meet ip port
-
-
 ```
 
 

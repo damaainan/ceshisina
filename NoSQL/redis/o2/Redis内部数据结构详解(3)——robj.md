@@ -16,6 +16,7 @@
 
 在server.h中我们找到跟robj定义相关的代码，如下（注意，本系列文章中的代码片段全部来源于Redis源码的3.2分支）：
 
+```c
     /* Object types */
     #define OBJ_STRING 0
     #define OBJ_LIST 1
@@ -45,6 +46,7 @@
         int refcount;
         void *ptr;
     } robj;
+```
 
 一个robj包含如下5个字段：
 
@@ -90,6 +92,7 @@
 
 当我们执行Redis的set命令的时候，Redis首先将接收到的value值（string类型）表示成一个type = OBJ_STRING并且encoding = OBJ_ENCODING_RAW的robj对象，然后在存入内部存储之前先执行一个编码过程，试图将它表示成另一种更节省内存的encoding方式。这一过程的核心代码，是object.c中的tryObjectEncoding函数。
 
+```c
     robj *tryObjectEncoding(robj *o) {
         long value;
         sds s = o->ptr;
@@ -168,25 +171,28 @@
         /* Return the original object. */
         return o;
     }
+```
 
 这段代码执行的操作比较复杂，我们有必要仔细看一下每一步的操作：
 
 * 第1步检查，检查type。确保只对string类型的对象进行操作。
 * 第2步检查，检查encoding。sdsEncodedObject是定义在server.h中的一个宏，确保只对OBJ_ENCODING_RAW和OBJ_ENCODING_EMBSTR编码的string对象进行操作。这两种编码的string都采用sds来存储，可以尝试进一步编码处理。
 
+```c
     #define sdsEncodedObject(objptr) (objptr->encoding == OBJ_ENCODING_RAW || objptr->encoding == OBJ_ENCODING_EMBSTR)
-
+```
 * 第3步检查，检查refcount。引用计数大于1的共享对象，在多处被引用。由于编码过程结束后robj的对象指针可能会变化（我们在前一篇介绍sdscatlen函数的时候提到过类似这种接口使用模式），这样对于引用计数大于1的对象，就需要更新所有地方的引用，这不容易做到。因此，对于计数大于1的对象不做编码处理。
 * 试图将字符串转成64位的long。64位的long所能表达的数据范围是-2^63到2^63-1，用十进制表达出来最长是20位数（包括负号）。这里判断小于等于21，似乎是写多了，实际判断小于等于20就够了（如果我算错了请一定告诉我哦）。string2l如果将字符串转成long转成功了，那么会返回1并且将转好的long存到value变量里。
 * 在转成long成功时，又分为两种情况。 
-  * 第一种情况：如果Redis的配置不要求运行LRU替换算法，且转成的long型数字的值又比较小（小于OBJ_SHARED_INTEGERS，在目前的实现中这个值是10000），那么会使用共享数字对象来表示。之所以这里的判断跟LRU有关，是因为LRU算法要求每个robj有不同的lru字段值，所以用了LRU就不能共享robj。shared.integers是一个长度为10000的数组，里面预存了10000个小的数字对象。这些小数字对象都是encoding = OBJ_ENCODING_INT的string robj对象。
-  * 第二种情况：如果前一步不能使用共享小对象来表示，那么将原来的robj编码成encoding = OBJ_ENCODING_INT，这时ptr字段直接存成这个long型的值。注意ptr字段本来是一个void *指针（即存储的是内存地址），因此在64位机器上有64位宽度，正好能存储一个64位的long型值。这样，除了robj本身之外，它就不再需要额外的内存空间来存储字符串值。
+    * 第一种情况：如果Redis的配置不要求运行LRU替换算法，且转成的long型数字的值又比较小（小于OBJ_SHARED_INTEGERS，在目前的实现中这个值是10000），那么会使用共享数字对象来表示。之所以这里的判断跟LRU有关，是因为LRU算法要求每个robj有不同的lru字段值，所以用了LRU就不能共享robj。shared.integers是一个长度为10000的数组，里面预存了10000个小的数字对象。这些小数字对象都是encoding = OBJ_ENCODING_INT的string robj对象。
+    * 第二种情况：如果前一步不能使用共享小对象来表示，那么将原来的robj编码成encoding = OBJ_ENCODING_INT，这时ptr字段直接存成这个long型的值。注意ptr字段本来是一个void *指针（即存储的是内存地址），因此在64位机器上有64位宽度，正好能存储一个64位的long型值。这样，除了robj本身之外，它就不再需要额外的内存空间来存储字符串值。
 * 接下来是对于那些不能转成64位long的字符串进行处理。最后再做两步处理： 
-  * 如果字符串长度足够小（小于等于OBJ_ENCODING_EMBSTR_SIZE_LIMIT，定义为44），那么调用createEmbeddedStringObject编码成encoding = OBJ_ENCODING_EMBSTR；
-  * 如果前面所有的编码尝试都没有成功（仍然是OBJ_ENCODING_RAW），且sds里空余字节过多，那么做最后一次努力，调用sds的sdsRemoveFreeSpace接口来释放空余字节。
+    * 如果字符串长度足够小（小于等于OBJ_ENCODING_EMBSTR_SIZE_LIMIT，定义为44），那么调用createEmbeddedStringObject编码成encoding = OBJ_ENCODING_EMBSTR；
+    * 如果前面所有的编码尝试都没有成功（仍然是OBJ_ENCODING_RAW），且sds里空余字节过多，那么做最后一次努力，调用sds的sdsRemoveFreeSpace接口来释放空余字节。
 
 其中调用的createEmbeddedStringObject，我们有必要看一下它的代码：
 
+```c
     robj *createEmbeddedStringObject(const char *ptr, size_t len) {
         robj *o = zmalloc(sizeof(robj)+sizeof(struct sdshdr8)+len+1);
         struct sdshdr8 *sh = (void*)(o+1);
@@ -208,6 +214,7 @@
         }
         return o;
     }
+```
 
 createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个连续的内存块中分配，这样对于短字符串的存储有利于减少内存碎片。这个连续的内存块包含如下几部分：
 
@@ -224,6 +231,7 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
 
 这一解码过程的核心代码，是object.c中的getDecodedObject函数。
 
+```c
     robj *getDecodedObject(robj *o) {
         robj *dec;
     
@@ -241,18 +249,21 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
             serverPanic("Unknown encoding type");
         }
     }
+```
 
 这个过程比较简单，需要我们注意的点有：
 
 * 编码为OBJ_ENCODING_RAW和OBJ_ENCODING_EMBSTR的字符串robj对象，不做变化，原封不动返回。站在使用者的角度，这两种编码没有什么区别，内部都是封装的sds。
 * 编码为数字的字符串robj对象，将long重新转为十进制字符串的形式，然后调用createStringObject转为sds的表示。注意：这里由long转成的sds字符串长度肯定不超过20，而根据createStringObject的实现，它们肯定会被编码成OBJ_ENCODING_EMBSTR的对象。createStringObject的代码如下：
 
+```c
     robj *createStringObject(const char *ptr, size_t len) {
         if (len <= OBJ_ENCODING_EMBSTR_SIZE_LIMIT)
             return createEmbeddedStringObject(ptr,len);
         else
             return createRawStringObject(ptr,len);
     }
+```
 
 #### 再谈sds与string的关系
 
@@ -262,12 +273,13 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
 * 用来表示string的robj可能编码成3种内部表示：OBJ_ENCODING_RAW, OBJ_ENCODING_EMBSTR, OBJ_ENCODING_INT。其中前两种编码使用的是sds来存储，最后一种OBJ_ENCODING_INT编码直接把string存成了long型。
 * 在对string进行incr, decr等操作的时候，如果它内部是OBJ_ENCODING_INT编码，那么可以直接进行加减操作；如果它内部是OBJ_ENCODING_RAW或OBJ_ENCODING_EMBSTR编码，那么Redis会先试图把sds存储的字符串转成long型，如果能转成功，再进行加减操作。
 * 对一个内部表示成long型的string执行append, setbit, getrange这些命令，针对的仍然是string的值（即十进制表示的字符串），而不是针对内部表示的long型进行操作。比如字符串”32”，如果按照字符数组来解释，它包含两个字符，它们的ASCII码分别是0x33和0x32。当我们执行命令setbit key 7 0的时候，相当于把字符0x33变成了0x32，这样字符串的值就变成了”22”。而如果将字符串”32”按照内部的64位long型来解释，那么它是0x0000000000000020，在这个基础上执行setbit位操作，结果就完全不对了。因此，在这些命令的实现中，会把long型先转成字符串再进行相应的操作。由于篇幅原因，这三个命令的实现代码这里就不详细介绍了，有兴趣的读者可以参考Redis源码： 
-  * t_string.c中的appendCommand函数；
-  * biops.c中的setbitCommand函数；
-  * t_string.c中的getrangeCommand函数。
+    * t_string.c中的appendCommand函数；
+    * biops.c中的setbitCommand函数；
+    * t_string.c中的getrangeCommand函数。
 
 值得一提的是，append和setbit命令的实现中，都会最终调用到db.c中的dbUnshareStringValue函数，将string对象的内部编码转成OBJ_ENCODING_RAW的（只有这种编码的robj对象，其内部的sds 才能在后面自由追加新的内容），并解除可能存在的对象共享状态。这里面调用了前面提到的getDecodedObject。
 
+```c
     robj *dbUnshareStringValue(redisDb *db, robj *key, robj *o) {
         serverAssert(o->type == OBJ_STRING);
         if (o->refcount != 1 || o->encoding != OBJ_ENCODING_RAW) {
@@ -278,11 +290,13 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
         }
         return o;
     }
+```
 
 #### robj的引用计数操作
 
 将robj的引用计数加1和减1的操作，定义在object.c中：
 
+```c
     void incrRefCount(robj *o) {
         o->refcount++;
     }
@@ -303,6 +317,7 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
             o->refcount--;
         }
     }
+```
 
 我们特别关注一下将引用计数减1的操作decrRefCount。如果只剩下最后一个引用了（refcount已经是1了），那么在decrRefCount被调用后，整个robj将被释放。
 
