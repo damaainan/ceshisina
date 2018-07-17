@@ -62,7 +62,7 @@
     //4.提交事务   
     commit;/commit work;
 
-> 注：上面的begin/commit为事务的开始和结束，因为在前一步我们关闭了mysql的autocommit，所以需要手动控制事务的提交，在这里就不细表了。> 
+> 注：上面的begin/commit为事务的开始和结束，因为在前一步我们关闭了mysql的autocommit，所以需要手动控制事务的提交，在这里就不细表了。
 
 上面的第一步我们执行了一次查询操作：`select status from t_goods where id=1 for update;`   
 与普通查询不一样的是，我们使用了select…for update的方式，这样就通过数据库实现了悲观锁。此时在t_goods表中，id为1的 那条数据就被我们锁定了，其它的事务必须等本次事务提交之后才能执行。这样我们可以保证当前的数据不会被其它事务修改。
@@ -503,4 +503,4 @@ GoodsDaoTest测试类
 [16]: http://lib.csdn.net/base/softwaretest
 [17]: http://www.docin.com/p-16805970.html
 [18]: http://www.cnblogs.com/chenwenbiao/archive/2012/06/06/2537508.html
-[19]: http://img.blog.csdn.net/20160722111425844
+[19]: http://dl.iteye.com/upload/picture/pic/125402/22a9518f-e355-315f-8d66-d91af4fda723.jpg

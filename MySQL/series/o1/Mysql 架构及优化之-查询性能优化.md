@@ -218,9 +218,9 @@ select cname,pname,count(pname) from user by (cname pname with rollup )
 
 * 对一个表同时进行select 和 update
 
-[0]: /img/bVvHfb
-[1]: /img/bVvH1x
-[2]: /img/bVvDqa
-[3]: /img/bVwzvl
-[4]: /img/bVwzvn
-[5]: /img/bVwzzO
+[0]: ../img/bVvHfb.png
+[1]: ../img/bVvH1x.png
+[2]: ../img/bVvDqa.png
+[3]: ../img/bVwzvl.png
+[4]: ../img/bVwzvn.png
+[5]: ../img/bVwzzO.png

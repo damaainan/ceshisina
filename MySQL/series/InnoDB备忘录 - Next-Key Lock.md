@@ -5,7 +5,9 @@
 原文[http://zhongmingmao.me/2017/05/19/innodb-next-key-lock/][1]
 
 
-本文主要介绍 InnoDB 存储引擎的 Next-Key Lock## MVCC 
+本文主要介绍 InnoDB 存储引擎的 Next-Key Lock
+
+## MVCC 
 
 1. InnoDB支持 MVCC ，与之 MVCC 相对的是 LBCC
 1. MVCC中 读操作 分两类： Snapshot Read ( 不加锁 )和 Current Read （ 加锁 ）
@@ -16,7 +18,7 @@
 InnoDB支持4种事务隔离级别（ Isolation Level ） 
 
 隔离级别 | 描述 
--|-
+:-:|:-:
 `READ UNCOMMITTED` | 可以读取到其他事务中 `尚未提交` 的内容，生产环境中不会使用 
 `READ COMMITTED(RC)` | 可以读取到其他事务中 `已经提交` 的内容， `Current Read会加锁` ， `存在幻读现象` ， Oracle 和 SQL Server 的默认事务隔离级别为 `RC`
 `REPEATABLE READ(RR)` | 保证事务的 `隔离性` ， `Current Read会加锁` ，同时会加 Gap Lock ， 不存在幻读现象 ， `InnoDB` 的默认事务隔离级别为 `RR`

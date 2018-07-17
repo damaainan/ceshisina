@@ -15,7 +15,8 @@
 
 ## Throwable 
 
-为了统一两个异常分支， `Exception` 和 `Error` 都实现了一个全新的接口： `ThrowablePHP7` 中新的异常结构如下：
+为了统一两个异常分支， `Exception` 和 `Error` 都实现了一个全新的接口： `Throwable`  
+PHP7 中新的异常结构如下：
 
 ```
     interface Throwable

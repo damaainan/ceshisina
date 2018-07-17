@@ -98,7 +98,15 @@ MEMORY存储引擎将表中的数据存储到内存中，未查询和引用其�
 
 不同的存储引擎都有各自的特点，以适应不同的需求，如下表所示：
 
-**功 能****MYISAM****Memory****InnoDB****Archive** 存储限制 256TB RAM 64TB None 支持事物 No No Yes No 支持全文索引 Yes No No No 支持数索引 Yes Yes Yes No 支持哈希索引 No Yes No No 支持数据缓存 No N/A Yes No 支持外键 No No Yes No 
+**功 能** | **MYISAM** |  **Memory** | **InnoDB** |  **Archive** 
+-|-|-|-|-
+存储限制 | 256TB | RAM | 64TB | None 
+支持事物 | No | No | Yes | No 
+支持全文索引 | Yes | No | No | No 
+支持数索引 | Yes | Yes | Yes | No 
+支持哈希索引 | No | Yes | No | No 
+支持数据缓存 | No | N/A | Yes | No 
+支持外键 | No | No | Yes | No 
 
 如果要提供提交、回滚、崩溃恢复能力的事物安全（ACID兼容）能力，并要求实现并发控制，InnoDB是一个好的选择
 

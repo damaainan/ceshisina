@@ -71,7 +71,7 @@ possible_keys: idx_fk_customer_id
         Extra: NULL
 2 rows in set, 1 warning (0.01 sec)
 ```
-- select_type：select的类型，常见有SIMPLE（简单表）、PRIMARY（主查询）、UNION、SUBQUERY（子查询中的第一个SELECT）等。
+- select_type：select的类型，常见有S`IMPLE（简单表）`、`PRIMARY（主查询）`、`UNION、SUBQUERY（子查询中的第一个SELECT）`等。
 - table：输出结果集的表
 - type：在表中找到所需行的方式，也叫访问类型。性能为：`ALL(全表)<idnex(全索引)<range(索引范围扫描)<ref(非唯一索引或者唯一索引前缀)<eq_ref(唯一索引)<const,system(单表中最多只有一个匹配行)<NULL(不需访问表或索引)`
 	
@@ -248,6 +248,7 @@ mysql> select * from information_schema.optimizer_trace\G
 索引是数据库优化**最常用**也**是最要**方法之一，本节讨论MySQL索引分类、存储、使用的方法。
 ###索引存储分类
 索引是MySQL存储引擎层中实现的，不是在服务层。故每种引擎所用不一定完全相同，MySQL目前提供4中索引：
+
 - B-Tree索引：常见索引，大部分引擎支持。
 - HASH索引：Memory引擎支持。
 - R-Tree索引（空间索引）：为MyISAM的一个特殊索引类型，主要用于地理空间数据类型，使用较少。

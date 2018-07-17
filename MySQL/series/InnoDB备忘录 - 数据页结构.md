@@ -6,7 +6,9 @@ _原文_[http://zhongmingmao.me/2017/05/09/innodb-table-page-structure/][1]
 
  主题 [InnoDB][2]
 
-本文主要介绍 InnoDB 存储引擎的 数据页结构## 数据页结构 
+本文主要介绍 InnoDB 存储引擎的 数据页结构
+
+## 数据页结构 
 
 ![][3]
 

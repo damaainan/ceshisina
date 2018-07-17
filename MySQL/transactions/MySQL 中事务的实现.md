@@ -8,7 +8,7 @@
 
 ![Transaction-Basics][4]
 
-事务其实就是**并发控制的基本单位**；相信我们都知道，事务是一个序列操作，其中的操作要么都执行，要么都不执行，它是一个不可分割的工作单位；数据库事务的 ACID 四大特性是事务的基础，了解了 ACID 是如何实现的，我们也就清除了事务的实现，接下来我们将依次介绍数据库是如何实现这四个特性的。
+**事务其实就是`并发控制的基本单位`**；相信我们都知道，事务是一个序列操作，其中的操作要么都执行，要么都不执行，它是一个不可分割的工作单位；数据库事务的 ACID 四大特性是事务的基础，了解了 ACID 是如何实现的，我们也就清除了事务的实现，接下来我们将依次介绍数据库是如何实现这四个特性的。
 
 ## 原子性
 
@@ -22,7 +22,7 @@
 
 ### 回滚日志
 
-想要保证事务的原子性，就需要在异常发生时，对已经执行的操作进行**回滚**，而在 MySQL 中，恢复机制是通过_回滚日志_（undo log）实现的，所有事务进行的修改都会先记录到这个回滚日志中，然后在对数据库中的对应行进行写入。
+想要保证事务的原子性，就需要在异常发生时，对已经执行的操作进行**回滚**，而在 MySQL 中，恢复机制是通过**回滚日志**（undo log）实现的，所有事务进行的修改都会先记录到这个回滚日志中，然后在对数据库中的对应行进行写入。
 
 ![Transaction-Undo-Log][6]
 
@@ -46,7 +46,7 @@
 
 ![Nonatomitc-Transaction-State][9]
 
-> 事务的状态图以及状态的描述取自 [> Database System Concepts][10]>  一书中第 14 章的内容。
+> 事务的状态图以及状态的描述取自 [Database System Concepts][10] 一书中第 14 章的内容。
 
 * Active：事务的初始状态，表示事务正在执行；
 * Partially Commited：在最后一条语句执行之后；
@@ -66,7 +66,7 @@
 
 ![Nonrecoverable-Schedule][12]
 
-当 Transaction1 在执行的过程中对 id = 1 的用户进行了读写，但是没有将修改的内容进行提交或者回滚，在这时 Transaction2 对同样的数据进行了读操作并提交了事务；也就是说 Transaction2 是依赖于 Transaction1 的，当 Transaction1 由于一些错误需要回滚时，因为要保证事务的原子性，需要对 Transaction2 进行回滚，但是由于我们已经提交了 Transaction2，所以我们已经没有办法进行回滚操作，在这种问题下我们就发生了问题，[Database System Concepts][10] 一书中将这种现象称为_不可恢复安排_（Nonrecoverable Schedule），那什么情况下是可以恢复的呢？
+当 Transaction1 在执行的过程中对 id = 1 的用户进行了读写，但是没有将修改的内容进行提交或者回滚，在这时 Transaction2 对同样的数据进行了读操作并提交了事务；也就是说 Transaction2 是依赖于 Transaction1 的，当 Transaction1 由于一些错误需要回滚时，因为要保证事务的原子性，需要对 Transaction2 进行回滚，但是由于我们已经提交了 Transaction2，所以我们已经没有办法进行回滚操作，在这种问题下我们就发生了问题，[Database System Concepts][10] 一书中将这种现象称为**不可恢复安排**（Nonrecoverable Schedule），那什么情况下是可以恢复的呢？
 
 > A recoverable schedule is one where, for each pair of transactions Ti and Tj such that Tj reads a data item previously written by Ti , the commit operation of Ti appears before the commit operation of Tj .
 
@@ -127,10 +127,10 @@
 
 所以说数据库的隔离性和一致性其实是一个需要开发者去权衡的问题，为数据库提供什么样的隔离性层级也就决定了数据库的性能以及可以达到什么样的一致性；在 SQL 标准中定义了四种数据库的事务的隔离级别：READ UNCOMMITED、READ COMMITED、REPEATABLE READ 和 SERIALIZABLE；每个事务的隔离级别其实都比上一级多解决了一个问题：
 
-* RAED UNCOMMITED：使用查询语句不会加锁，可能会读到未提交的行（Dirty Read）；
-* READ COMMITED：只对记录加记录锁，而不会在记录之间加间隙锁，所以允许新的记录插入到被锁定记录的附近，所以再多次使用查询语句时，可能得到不同的结果（Non-Repeatable Read）；
-* REPEATABLE READ：多次读取同一范围的数据会返回第一次查询的快照，不会返回不同的数据行，但是可能发生幻读（Phantom Read）；
-* SERIALIZABLE：InnoDB 隐式地将全部的查询语句加上共享锁，解决了幻读的问题；
+* `RAED UNCOMMITED`：使用查询语句不会加锁，**`可能会读到未提交的行（Dirty Read）`**；
+* `READ COMMITED`：只对记录加记录锁，而不会在记录之间加间隙锁，所以允许新的记录插入到被锁定记录的附近，所以再多次使用查询语句时，**`可能得到不同的结果（Non-Repeatable Read）`**；
+* `REPEATABLE READ`：多次读取同一范围的数据会返回第一次查询的快照，不会返回不同的数据行，但是可能发生**`幻读（Phantom Read）`**；
+* `SERIALIZABLE`：InnoDB 隐式地将全部的查询语句加上共享锁，解决了幻读的问题；
 
 以上的所有的事务隔离级别都不允许脏写入（Dirty Write），也就是当前事务更新了另一个事务已经更新但是还未提交的数据，大部分的数据库中都使用了 READ COMMITED 作为默认的事务隔离级别，但是 MySQL 使用了 REPEATABLE READ 作为默认配置；从 RAED UNCOMMITED 到 SERIALIZABLE，随着事务隔离级别变得越来越严格，数据库对于并发执行事务的性能也逐渐下降。
 
@@ -156,7 +156,7 @@
 
 #### 时间戳
 
-除了锁，另一种实现事务的隔离性的方式就是通过时间戳，使用这种方式实现事务的数据库，例如 PostgreSQL 会为每一条记录保留两个字段；_读时间戳_中报错了所有访问该记录的事务中的最大时间戳，而记录行的_写时间戳_中保存了将记录改到当前值的事务的时间戳。
+除了锁，另一种实现事务的隔离性的方式就是通过时间戳，使用这种方式实现事务的数据库，例如 PostgreSQL 会为每一条记录保留两个字段；**读时间戳**中保存了所有访问该记录的事务中的最大时间戳，而记录行的 **写时间戳**中保存了将记录改到当前值的事务的时间戳。
 
 ![Timestamps-Record][24]
 

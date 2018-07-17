@@ -6,9 +6,8 @@ _原文_[http://zhongmingmao.me/2017/05/07/innodb-table-row-format/][1]
 
  主题 [InnoDB][2]
 
-本文主要介绍 InnoDB 存储引擎的行记录格式 ROW_FORMAT## 分类 
+本文主要介绍 InnoDB 存储引擎的行记录格式 ROW_FORMAT
 
-![][3]
 
 #### Named File Format 
 

@@ -29,7 +29,9 @@
        (a<b AND b=c) AND a=5
     -> b>5 AND b=c AND a=5
 
-**更多：** 其他方案* 索引使用常量表达式时只计算一次，所以尽可能使用产生const的查询方式（主键查询）
+**更多：** 其他方案
+
+* 索引使用常量表达式时只计算一次，所以尽可能使用产生const的查询方式（主键查询）
 * 对于MyISAM和MEMORY表来说，在一个单独的表上，如果使用COUNT(*)但是没有WHERE子句的话，那么就会直接从表的信息里面检索数据。当在一个表中用NOT NULL表达式的时候也是这么做的。
 * 发现无效的常量表达式。MySQL会及时发现无效SELECT语句，然后不返回数据。
 * WHERE查询中发现未使用GROUP BY或者聚合函数(比如COUNT(),MIN()等)，那么HAVING会与WHERE合并。
@@ -37,10 +39,11 @@
 * 优先读取常量表
     * 空表或者一个有一行的表。
     * WHERE子句在PRIMARY KEY或者UNIQUE INDEX上的表，其中索引和常量表达式作比较，并被定义为NOT NULL。
-
+```sql
     SELECT * FROM t WHERE primary_key = 1;
     SELECT * FROM t1,t2
       WHERE t1.primary_key= 1  AND t2.primary_key = t1.id;
+```
 * 关联查询时，MySQL会去尝试所有的可能性，从而发现最好的的组合方式。当ORDER BY和GROUP BY子句的列都位于同一个表时，该表将会第一个被链接。
 * 如果ORDER BY 和 GROUP BY 字段不同，或是除**join queue**中的第一个表之外其它含有ORDER BY 或 GROUP BY的表都会为其创建临时表
 * 如果使用了 SQL_SMALL_RESULT 选项，那么MySQL就会在内存中创建一个临时表。

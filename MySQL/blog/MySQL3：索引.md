@@ -17,7 +17,7 @@
 
 1、通过创建唯一索引，可以保证数据库表中每一行数据的唯一性
 
-**2、****可以大大加快数据的查询速度，这也是创建索引最主要的原因**
+**2、** **可以大大加快数据的查询速度，这也是创建索引最主要的原因**
 
 3、在实现数据的参考完整性方面，可以加速表和表之间的连接
 
@@ -116,23 +116,23 @@ MySQL的索引可以分为以下几类：
 
 解释下字段的意思：
 
-1、select_type行指定所使用的SELECT查询类型，这里值为SIMPLE，表示简单的SELECT，不使用UNION或者子查询。其他可能的取值有：PRIMARY、UNION、SUBQUERY等
+1、`select_type` 行指定所使用的SELECT查询类型，这里值为SIMPLE，表示简单的SELECT，不使用UNION或者子查询。其他可能的取值有：PRIMARY、UNION、SUBQUERY等
 
-2、table行指定数据库读取的数据表的名字，它们按照被读取的先后顺序排列
+2、`table` 行指定数据库读取的数据表的名字，它们按照被读取的先后顺序排列
 
-3、type行指定了本数据表与其他数据表之间的关联关系，可能的去只有system、const、eq_ref、ref、range、index和All
+3、`type` 行指定了本数据表与其他数据表之间的关联关系，可能的去只有system、const、eq_ref、ref、range、index和All
 
-4、possible_keys行给出了MySQL在搜索数据记录时可选用的各个索引
+4、`possible_keys` 行给出了MySQL在搜索数据记录时可选用的各个索引
 
-5、key行是MySQL使用的实际索引
+5、`key` 行是MySQL使用的实际索引
 
-6、key_len行给出了索引按字节计算的长度，key_len数值越小，表示越快
+6、`key_len` 行给出了索引按字节计算的长度，key_len数值越小，表示越快
 
-7、ref行给出了关联关系中另外一个数据表里的数据列的名字
+7、`ref` 行给出了关联关系中另外一个数据表里的数据列的名字
 
-8、rows行是MySQL在执行这个查询时预计会从这个数据表里读出的数据行的个数
+8、`rows` 行是MySQL在执行这个查询时预计会从这个数据表里读出的数据行的个数
 
-9、extra行提供了与关联操作有关的信息
+9、`extra` 行提供了与关联操作有关的信息
 
 看到，possible_keys和key的值都为year_publication，查询时使用了索引
 

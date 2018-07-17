@@ -14,17 +14,17 @@ ALTER TABLE tablename MODIFY [COLUMN] column_definition [FIRST | AFTER col_name]
 	
 ```
 ALTER TABLE tablename ADD [COLUMN] column_definition [FIRST | AFTER col_name]
-```	
+```
 - 删除表字段
 	
 ```
 ALTER TABLE tablename DROP [COLUMN] col_name
-```	
+```
 - 修改字段名
 	
 ```
 ALTER TABLE tablename CHANGE [COLUMN] old_col_name column_definition [FIRST | AFTER col_name]
-```	
+```
 > change和modify都可以修改表的定义，但change需写两次列名，优点是能改列名，modify不能。
 
 - 修改字段排列顺序，前面介绍的字段增加和修改语法都有一个可选项 `first|after column_name`，该选项用来修改字段在表中的位置。
@@ -35,13 +35,13 @@ ALTER TABLE tablename CHANGE [COLUMN] old_col_name column_definition [FIRST | AF
 	
 ```
 ALTER TABLE tablename RENAME [TO] new_tablename
-```	
+```
 ##DML语句
 - 插入记录(一次插入多条--批量插入，用逗号分隔)
 	
 ```
 INSERT INTO tablename(field1,field2,...,fieldn) VALUES(value1,value2,...,valuen) [,(value1,value2,...,valuen),...,(value1,value2,...,valuen)];
-```	
+```
 > 在插入大量记录时，批量插入的特性节省了很多的网络开销，提高了插入效率。
 
 - 更新记录 & 多表更新
@@ -76,17 +76,18 @@ SELECT [field1,field2,...,fieldn] fun_name
   - GROUP BY 表示要进行分类聚合的字段
   - WITH ROLLUP 表示是否对分类聚合后的结果汇总
   - HAVING 对分类结果进行条件过滤
-  >having对聚合结果进行条件过滤，where在聚合前对记录过滤，如逻辑允许，尽可能用where先过滤记录，结果集减少对聚合效率会有提高。
+  > having对聚合结果进行条件过滤，where在聚合前对记录过滤，如逻辑允许，尽可能用where先过滤记录，结果集减少对聚合效率会有提高。
 	
 - 连接查询
 	
 ```
 SELECT [filed1,...,filedn] FROM table1name [LEFT | RIGHT] JOIN table2name ON CONDITION
+```
 
 - 子查询
  	
  	查询时需要的条件是另一个select语句的结果，用子查询。子查询关键字主要包括in、not in、=、!=、exists、not exists等。
- 	> 在mysql4.1以前不支持子查询，需要用连接查询来实现子查询。表连接在多数情况下优于子查询。
+> 在mysql4.1以前不支持子查询，需要用连接查询来实现子查询。表连接在多数情况下优于子查询。
 
 - 联合查询
 ```
@@ -98,7 +99,7 @@ SELECT [filed1,...,filedn] FROM table1name [LEFT | RIGHT] JOIN table2name ON CON
 	SELECT * FROM tn
 ```
 	
-	> UNION和UNION ALL的主要区别是UNION ALL将结果集直接合并在一起，而UNION会进行一次DISTINCT。
+> UNION和UNION ALL的主要区别是UNION ALL将结果集直接合并在一起，而UNION会进行一次DISTINCT。
 
 ## DCL语句
 
@@ -111,7 +112,7 @@ SELECT [filed1,...,filedn] FROM table1name [LEFT | RIGHT] JOIN table2name ON CON
 REVOKE table ON tablename.* from 'USER'@'PASSWD'
 ```
 
-	> 注意使用mysql的帮助文档，即为`? content`。
+> 注意使用mysql的帮助文档，即为`? content`。
 	
 - 查询元数据信息
 	

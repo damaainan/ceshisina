@@ -304,9 +304,9 @@
 
 > 计划任务定期聚合函数查询 更新对应的字段
 
-[0]: /img/bVvxji
-[1]: /img/bVvxhS
-[2]: /img/bVvxkR
-[3]: /img/bVvxld
-[4]: /img/bVvzXs
-[5]: /img/bVvz9L
+[0]: ../img/bVvxji.png
+[1]: ../img/bVvxhS.png
+[2]: ../img/bVvxkR.png
+[3]: ../img/bVvxld.png
+[4]: ../img/bVvzXs.png
+[5]: ../img/bVvz9L.png

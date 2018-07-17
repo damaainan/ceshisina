@@ -143,7 +143,7 @@
            mysql提供了 inet_aton() inet_ntoa() 用于 ip地址和整数之前转换
 ```
 
-[0]: /img/bVvrW8
-[1]: /img/bVvrW5
-[2]: /img/bVvrXD
-[3]: /img/bVvrX4
+[0]: ../img/bVvrW8.png
+[1]: ../img/bVvrW5.png
+[2]: ../img/bVvrXD.png
+[3]: ../img/bVvrX4.png
