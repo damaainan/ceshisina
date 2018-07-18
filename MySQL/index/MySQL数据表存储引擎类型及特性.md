@@ -32,7 +32,7 @@ B树索引 | 支持 | 支持 | 支持 | 支持 | -
 
 * Myisam
 
-mysql默认存储引擎，在磁盘上存储成三个文件.frm(存储表定义).MYD(MYData存储数据)。MYI(MYIndex存储索引);
+mysql默认存储引擎，在磁盘上存储成三个文件`.frm(存储表定义)` `.MYD(MYData存储数据)` `.MYI(MYIndex存储索引)`;
 
 没有事务支持，不支持行锁外键，因此当insert、update会锁定整个表，效率会低一些，MyIASM中存储了行数，如果表的读操作远大于写且不需要事务，MyISAM优选。
 
@@ -48,13 +48,13 @@ mysql默认存储引擎，在磁盘上存储成三个文件.frm(存储表定义)
 
 * Innodb
 
-提供了对数据库ACID事务支持并实现SQL标准的四种隔离级别，提供行级锁和外键约束。Mysql运行时Innodb会在内存中建立缓冲池用于缓冲数据和索引，该引擎不支持fulltext类型索引且没有保存表的行数，select count(*) from table 血药扫全表。
+提供了对数据库ACID事务支持并实现SQL标准的四种隔离级别，提供行级锁和外键约束。Mysql运行时Innodb会在内存中建立缓冲池用于缓冲数据和索引，该引擎不支持fulltext类型索引且没有保存表的行数，select count(*) from table 需要扫全表。
 
 需要事务操作时Innodb首选，锁力度小，写操作不会锁定权标，所以并发高时Innodb引擎效率更高,
 
 相比Myisam写处理效率差一些会占用更多的磁盘空间保存数据和索引。
 
-索引
+#### 索引
 
 ![][4]
 

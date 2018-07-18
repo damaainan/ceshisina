@@ -15,7 +15,7 @@ MySQL是项目中常用的数据库，其中in查询也是很常用。最近项�
 
 ![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][2]
 
-    select*fromuserinfowhereidin(selectauthor_idfromartilcewheretype=1);
+    select * from userinfo where id in(select author_id from artilce where type = 1);
 
 大家第一眼看到上面的SQL时，可能都会觉得这是一个很简单的子查询。先把author_id查出来，再用in查询一下。
 
@@ -38,7 +38,7 @@ MySQL是项目中常用的数据库，其中in查询也是很常用。最近项�
 
 ![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][5]
 
-**33 秒****！****为什么会这么慢呢？**
+**33 秒**  **！**  **为什么会这么慢呢？**
 
 **三、问题原因**
 
@@ -90,13 +90,13 @@ https://dev.mysql.com/doc/refman/5.5/en/subquery-optimization.html
 
 > Subquery materialization ** using a temporary table avoids such rewrites and makes it possible to execute the subquery only once rather than once per row of the outer query** .
 
-> https://dev.mysql.com/doc/refman/5.6/en/subquery-materialization.html
+https://dev.mysql.com/doc/refman/5.6/en/subquery-materialization.html
 
-> 文章来自微信公众号：HULK一线技术杂谈
+文章来自微信公众号：HULK一线技术杂谈
 
-> 原文来自：[http://www.yunweipai.com/archives/13002.html][9]
+原文来自：[http://www.yunweipai.com/archives/13002.html][9]
 
-> 本文地址：[http://www.linuxprobe.com/mysql-in-subquery.html][0]
+本文地址：[http://www.linuxprobe.com/mysql-in-subquery.html][0]
 
 [0]: http://www.linuxprobe.com/mysql-in-subquery.html
 [1]: ./img/2017041-2.png

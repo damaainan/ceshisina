@@ -11,7 +11,7 @@
 
 group_name | id | user | host | db | command | time | info | state 
 -| - | - | - | - | - | - | - | -
-BASE | 1059712468 | xx | xx.xx.xx.xx | aea | Query | 34 | UPDATE approve SET operator = ‘0’, operator_name = ‘system’, comment = ‘离职’, status = ‘1’ WHERE ( id = ‘48311’) | updating 
+BASE | 1059712468 | xx | xx.xx.xx.xx | aea | Query | 34 | UPDATE approve SET operator = '0', operator_name = 'system', comment = '离职', status = '1' WHERE ( id = '48311') | updating 
 
 当第一次看到这个数据的时候，第一反应是可能是被受影响的SQL，没话时间关注，但是后面好几次的凌晨告警，就不得不对他进行深入分析
 
@@ -96,7 +96,7 @@ BASE | 1059712468 | xx | xx.xx.xx.xx | aea | Query | 34 | UPDATE approve SET ope
 
 * 锁相关排除
 
-    1.一开始，所有的故障排除全部来自监控系统和show processlist，然后查看锁的神器没有使用，就是`show engine innodb status \G`
+    1.一开始，所有的故障排除全部来自监控系统和`show processlist`，然后查看锁的神器没有使用，就是`show engine innodb status \G`
 
 ```    
     ---TRANSACTION 51055827249, ACTIVE 20 sec starting index read
@@ -169,10 +169,8 @@ digest sql count db dbgroup date 0c95e7f2105d7a3e655b8b4462251bf2 UPDATE approve
 ```
     正好验证我们的推论
     
-    
   4.手动模拟了这种情况，得到的现象和我们的故障一致，即问题原因以及找到
     
-
 * 问题解决
 
     1. 拿到开发的代码，发现是python的代码，并没有auto_commit的选项

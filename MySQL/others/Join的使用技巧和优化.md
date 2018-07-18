@@ -224,7 +224,7 @@ cnt <= 2 就代表该记录是某位员工的工作量最大两天之一。
 
 ## 4. join的实现原理
 
-join的实现是采用Nested Loop Join算法，就是通过驱动表的结果集作为循环基础数据，然后一条一条的通过该结果集中的数据作为过滤条件到下一个表中查询数据，然后合并结果。如果有多个join，则将前面的结果集作为循环数据，再一次作为循环条件到后一个表中查询数据。
+join的实现是采用**`Nested Loop Join算法`**，就是通过驱动表的结果集作为循环基础数据，然后一条一条的通过该结果集中的数据作为过滤条件到下一个表中查询数据，然后合并结果。如果有多个join，则将前面的结果集作为循环数据，再一次作为循环条件到后一个表中查询数据。
 
 比如我们以如下SQL语句为例：
 
@@ -242,11 +242,11 @@ EXPLAIN 连接查询
 
 从 **explain** 的输出看出，MySQL选择 **C** 作为驱动表， 
 
-首先通过 _Using Where_ 和 _Using join buffer_ 来匹配 **F** 中的内容，然后在其结果的基础上通过主键的索引 _PRIMARY,faculty_id_uindex_ 匹配到 **T** 表中的内容。 
+首先通过 **Using Where** 和 **Using join buffer** 来匹配 **F** 中的内容，然后在其结果的基础上通过主键的索引 **PRIMARY,faculty_id_uindex** 匹配到 **T** 表中的内容。 
 
 其过程类似于三次次嵌套的循环。
 
-需要说明的是， **C** 作为驱动表，通过 _Using Where_ 和 _Using join buffer_ 来匹配 **F** ，是因为 C.cust_name ，F.user_name 都没有加索引，要获取具体的内容只能通过对全表的数据进行where过滤才能获取，而 _Using join buffer_ 是指使用到了Cache(只有当join类型为 **ALL** ，`index`，`rang`或者是`index_merge`的时候才会使用`join buffer`)，记录已经查询的结果，提高效率。 
+需要说明的是， **C** 作为驱动表，通过 **Using Where** 和 **Using join buffer** 来匹配 **F** ，是因为 C.cust_name ，F.user_name 都没有加索引，要获取具体的内容只能通过对全表的数据进行where过滤才能获取，而 _Using join buffer_ 是指使用到了Cache(只有当join类型为 **ALL** ，`index`，`rang`或者是`index_merge`的时候才会使用`join buffer`)，记录已经查询的结果，提高效率。 
 
 而对于 **T** 和 **F** 之间通过T的主键T.id连接，所以join类型为 `eq_ref` ，也不用使用Using join buffer。 
 

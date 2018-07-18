@@ -103,7 +103,7 @@ or的两边都有存在可用的索引，该语句才能用索引。
 
 #### 四、mysql 中能够使用索引的典型应用
 
-> 测试库下载地址：[> https://downloads.mysql.com/d...][0]
+> 测试库下载地址：[https://downloads.mysql.com/d...][0]
 
 ##### 1. 匹配全值（match the full value）
 

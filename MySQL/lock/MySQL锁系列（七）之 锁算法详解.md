@@ -18,7 +18,7 @@
 
 * repeatable-read
     1. 使用的是next-key locking
-    2. next-key lock  =  record lock + Gap lock
+    2. **`next-key lock  =  record lock + Gap lock`**
     
 * read-committed
     1. 使用的是 record lock
@@ -31,14 +31,14 @@
 
 RR隔离级别
 
-    1. 锁是在索引上实现的  
-    2. 假设有一个key，有5条记录， 1，3，5，7，9.  如果where id<5 ， 那么锁住的区间不是（-∞，5），而是(-∞,1],(1,3],(3,5] 多个区间组合而成  
-    3. RR隔离级别使用的是：next-key lock算法，即：锁住 记录本身+区间
-    4. next-key lock 降级为 record lock的情况
-        如果是唯一索引，且查询条件得到的结果集是1条记录（等值，而不是范围），那么会降级为记录锁  
-        典型的案例：where primary_key = 1 (会降级), 而不是 where primary_key < 10 （由于返回的结果集不仅仅一条，那么不会降级）
-    5. 上锁，不仅仅对主键索引加锁，还需要对辅助索引加锁，这一点非常重要
-    
+1. 锁是在**`索引`**上实现的  
+2. 假设有一个key，有5条记录， 1，3，5，7，9.  如果where id<5 ， 那么锁住的区间不是（-∞，5），而是(-∞,1],(1,3],(3,5] 多个区间组合而成  
+3. RR隔离级别使用的是：`next-key lock算法`，即：锁住 **`记录本身+区间`**
+4. next-key lock 降级为 record lock的情况
+    如果是唯一索引，且查询条件得到的结果集是1条记录（等值，而不是范围），那么会降级为记录锁  
+    典型的案例：where primary_key = 1 (会降级), 而不是 where primary_key < 10 （由于返回的结果集不仅仅一条，那么不会降级）
+5. 上锁，不仅仅对主键索引加锁，还需要对辅助索引加锁，这一点非常重要
+
 
 ## 锁算法的案例剖析
 
@@ -989,14 +989,18 @@ RR 隔离级别
         多了一个插入意向锁 lock_mode X locks gap before rec insert intention
 ```
 
-* 总结Insert 操作的加锁流程
+### 总结Insert 操作的加锁流程
+
+```
     * insert的流程(没有唯一索引的情况)：insertN    
         1. 找到大于N的第一条记录M
-        2. 如果M上面没有gap ， next-key locking的话，可以插入  ， 否则等待  (对其next-rec加insert intension lock，由于有gap锁，所以等待)
+        2. 如果M上面没有gap ， next-key locking的话，可以插入  ， 
+            否则等待  (对其next-rec加insert intension lock，由于有gap锁，所以等待)
     
     * insert 的流程(有唯一索引的情况)： insert N
         1. 找到大于N的第一条记录M，以及前一条记录P
-        2. 如果M上面没有gap ， next-key locking的话，进入第三步骤  ， 否则等待(对其next-rec加insert intension lock，由于有gap锁，所以等待)
+        2. 如果M上面没有gap ， next-key locking的话，进入第三步骤  ， 
+            否则等待(对其next-rec加insert intension lock，由于有gap锁，所以等待)
         3. 检查p：
             判断p是否等于n：
                  如果不等: 则完成插入（结束）
@@ -1014,7 +1018,7 @@ RR 隔离级别
         3. Gap lock 是为了防止insert， insert intension lock 是为了insert并发更快，两者是有区别的  
         4. 什么情况下会出发insert intension lock ？
             当insert的记录M的 next-record 加了Gap lock才会发生，record lock并不会触发
-    
+```
 
 ## 实战案例
 

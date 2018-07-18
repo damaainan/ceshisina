@@ -362,20 +362,20 @@ MySQL 的 ALTER TABLE 操作的性能对于大表来说是个大问题。 MySQL 
    ALTER TABLE film
      ALTER COLUMN rental_duration SET DEFAULT 5;
 ```
-ALTER TABLE 允许使用 ALTER COLUMN、 MODIFY COLUMN 和 CHANGE COLUMN 语句修改列。这三种操作都是不一样的。 _有什么不一样呢？_
+ALTER TABLE 允许使用 ALTER COLUMN、 MODIFY COLUMN 和 CHANGE COLUMN 语句修改列。这三种操作都是不一样的。 **有什么不一样呢？**
 
-#### 1.5.1. 只修改 _.frm_ 文件
+#### 1.5.1. 只修改 **`.frm`** 文件
 
 下面的这些操作有可能不需要重建表：
 
 * 移除一个列的 AUTO_INCREMENT 属性；
 * 增加、移除，或更改 ENUM 和 SET 常量。
 
-基本的技术是为想要的表结构创建一个新的 _.frm_ 文件，然后用它替换掉已经存在的那张表的 _.frm_ 文件。步骤如下：
+基本的技术是为想要的表结构创建一个新的 **`.frm`** 文件，然后用它替换掉已经存在的那张表的 **`.frm`** 文件。步骤如下：
 
 1. 创建一张有相同结构的空表，并进行所需要的修改；
 1. 执行 FLUSH TABLES WITH READ LOCK。这将会关闭所有正在使用的表，并且禁止任何表被打开；
-1. 交换 _.frm_ 文件；
+1. 交换 **`.frm`** 文件；
 1. 执行 UNLOCK TABLES 来释放第2步的读锁。
 
 #### 1.5.2. 快速创建 MyISAM 索引

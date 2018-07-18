@@ -67,7 +67,7 @@ mysql> show variables like 'innodb_locks_unsafe_for_binlog';
 ```
 
 
-innodb_locks_unsafe_for_binlog：默认值为0，即启用gap lock。  
+**`innodb_locks_unsafe_for_binlog`**：默认值为0，即启用**`gap lock`**。  
 最主要的作用就是控制innodb是否对gap加锁。  
 但是，这一设置变更并不影响外键和唯一索引（含主键）对gap进行加锁的需要。  
 开启innodb_locks_unsafe_for_binlog的REPEATABLE-READ事务隔离级别，很大程度上已经蜕变成了READ-COMMITTED。
@@ -106,20 +106,20 @@ innodb_autoinc_lock_mode有3种配置模式：0、1、2，分别对应”传统�
 
 ### 1. 基本锁
 
-基本锁：共享锁(Shared Locks：S锁)与排他锁(Exclusive Locks：X锁)
+基本锁：**`共享锁(Shared Locks：S锁)`**与**`排他锁(Exclusive Locks：X锁)`**
 
 mysql允许拿到S锁的事务读一行，允许拿到X锁的事务更新或删除一行。  
 加了S锁的记录，允许其他事务再加S锁，不允许其他事务再加X锁；  
 加了X锁的记录，不允许其他事务再加S锁或者X锁。
 
 mysql对外提供加这两种锁的语法如下：  
-加S锁：select…lock in share mode  
-加X锁：select…for update
+加S锁：select … lock in share mode  
+加X锁：select … for update
 
 ### 2. 意向锁(Intention Locks)
 
 InnoDB为了支持多粒度(表锁与行锁)的锁并存，引入意向锁。  
-意向锁是表级锁，可分为意向共享锁(IS锁)和意向排他锁(IX锁)。
+意向锁是表级锁，可分为**`意向共享锁(IS锁)`**和**`意向排他锁(IX锁)`**。
 
 > InnoDB supports multiple granularity locking which permits coexistence of row-level locks and locks on entire tables. To make locking at multiple granularity levels practical, additional types of locks called intention locks are used. Intention locks are table-level locks in InnoDB that indicate which type of lock (shared or exclusive) a transaction will require later for a row in that table. There are two types of intention locks used in InnoDB (assume that transaction T has requested a lock of the indicated type on table t):  
 > Intention shared (IS): Transaction T intends to set S locks on individual rows in table t.  
@@ -160,12 +160,12 @@ IS | 冲突 | 兼容 | 兼容 | 兼容
 
 #### 间隙锁(Gap Locks)
 
-区间锁, 仅仅锁住一个索引区间(开区间)。  
+**`区间锁`**, 仅仅锁住一个索引区间(`开区间`)。  
 在索引记录之间的间隙中加锁，或者是在某一条索引记录之前或者之后加锁，并不包括该索引记录本身。
 
 #### next-key锁(Next-Key Locks)
 
-record lock + gap lock, 左开右闭区间。
+record lock + gap lock, **`左开右闭区间`**。
 
 > A next-key lock is a combination of a record lock on the index record and a gap lock on the gap before the index record.
 

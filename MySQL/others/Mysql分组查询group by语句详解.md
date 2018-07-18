@@ -1,7 +1,13 @@
 # [Mysql分组查询group by语句详解][0] 
 
+#### group by + group_concat()
+#### group by + 集合函数
+#### group by + having
+#### group by + with rollup
 
-(1) group by的含义:将查询结果按照1个或多个字段进行分组，字段值相同的为一组  
+--- 
+
+(1) group by的含义:将查询结果按照1个或多个字段进行分组，**`字段值相同的为一组`**  
 (2) group by可用于单个字段分组，也可用于多个字段分组
  
 ```sql
@@ -15,9 +21,9 @@
     |    4 | 1004 | Aric   |   15 | 男   | England     |
     +------+------+--------+------+------+-------------+
       
-    select * from employee **group****by** d_id,sex;
+    select * from employee  group by  d_id,sex;
           
-    select * from employee **group by** sex;
+    select * from employee  group by  sex;
         +------+------+--------+------+------+------------+
         | num  | d_id | name   | age  | sex  | homeaddr   |
         +------+------+--------+------+------+------------+
@@ -42,7 +48,7 @@
     | 男   |
     +------+
     
-    select sex,**group_concat(name)** from employee **group by** sex;
+    select sex, group_concat(name)  from employee  group by  sex;
     +------+--------------------+
     | sex  | group_concat(name) |
     +------+--------------------+
@@ -50,7 +56,7 @@
     | 男   | 张三,王五,Aric     |
     +------+--------------------+
     
-    select sex,**group_concat(d_id)** from employee **group by** sex;
+    select sex, group_concat(d_id)  from employee  group by  sex;
     +------+--------------------+
     | sex  | group_concat(d_id) |
     +------+--------------------+
@@ -72,7 +78,7 @@
     +------+-------------------+
       
     分别统计性别为男/女的人年龄平均值
-        select sex,**avg(age)** from employee **group by** sex;
+        select sex, avg(age)  from employee  group by  sex;
         +------+----------+
         | sex  | avg(age) |
         +------+----------+
@@ -81,7 +87,7 @@
         +------+----------+
           
     分别统计性别为男/女的人的个数
-        select sex,**count(sex)** from employee **group by** sex;
+        select sex, count(sex)  from employee  group by  sex;
         +------+------------+
         | sex  | count(sex) |
         +------+------------+
@@ -95,7 +101,7 @@
 (2) having作用和where一样，但having只能用于group by
 
 ```sql
-    select sex,count(sex) from employee **group by** sex **having**count(sex)>2;
+    select sex,count(sex) from employee  group by  sex  having count(sex)>2;
     +------+------------+
     | sex  | count(sex) |
     +------+------------+
@@ -107,7 +113,7 @@
 (1) with rollup的作用是：在最后新增一行，来记录当前列里所有记录的总和
 
 ```sql
-    select sex,count(age) from employee **group by** sex **with****rollup**;
+    select sex,count(age) from employee  group by  sex  with rollup ;
     +------+------------+
     | sex  | count(age) |
     +------+------------+
@@ -116,7 +122,7 @@
     | NULL |          4 |
     +------+------------+
     
-    select sex,group_concat(age) from employee **group by**sex **with****rollup**;
+    select sex,group_concat(age) from employee  group by sex  with rollup ;
     +------+-------------------+
     | sex  | group_concat(age) |
     +------+-------------------+

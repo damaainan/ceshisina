@@ -120,58 +120,58 @@ DESCRIBE 是 SHOW COLUMNS 的简写形式。
 #### 4.2.1. select_type- SIMPLE
 简单SELECT,不使用UNION或子查询等
 
-- PRIMARY
+- PRIMARY  
 查询中若包含任何复杂的子部分,最外层的select被标记为PRIMARY
 
-- UNION
+- UNION  
 UNION中的第二个或后面的SELECT语句
 
-- DEPENDENT UNION
+- DEPENDENT UNION  
 UNION中的第二个或后面的SELECT语句，取决于外面的查询
 
-- UNION RESULT
+- UNION RESULT  
 UNION的结果
 
-- SUBQUERY
+- SUBQUERY  
 子查询中的第一个SELECT
 
-- DEPENDENT SUBQUERY
+- DEPENDENT SUBQUERY  
 子查询中的第一个SELECT，取决于外面的查询
 
-- DERIVED
+- DERIVED  
 派生表的SELECT, FROM子句的子查询
 
-- MATERIALIZED
-- UNCACHEABLE SUBQUERY
+- MATERIALIZED  
+- UNCACHEABLE SUBQUERY  
 一个子查询的结果不能被缓存，必须重新评估外链接的第一行
 
-- UNCACHEABLE UNION
+- UNCACHEABLE UNION  
 ==== table#### 4.2.2. partitions
 
 #### 4.2.3. type- system
 当MySQL对查询某部分进行优化，并转换为一个常量时，使用这些类型访问。如将主键置于where列表中，MySQL就能将该查询转换为一个常量,system是const类型的特例，当查询的表只有一行的情况下，使用system
 
-- const
-- eq_ref
+- const  
+- eq_ref  
 类似ref，区别就在使用的索引是唯一索引，对于每个索引键值，表中只有一条记录匹配，简单来说，就是多表连接中使用primary key或者 unique key作为关联条件
 
-- ref
+- ref  
 表示上述表的连接匹配条件，即哪些列或常量被用于查找索引列上的值
 
-- fulltext
-- ref_or_null
+- fulltext  
+- ref_or_null  
 MySQL在优化过程中分解语句，执行时甚至不用访问表或索引，例如从一个索引列里选取最小值可以通过单独索引查找完成。
 
-- index_merge
-- unique_subquery
-- index_subquery
-- range
+- index_merge  
+- unique_subquery  
+- index_subquery  
+- range  
 只检索给定范围的行，使用一个索引来选择行
 
-- index
+- index  
 Full Index Scan，index与ALL区别为index类型只遍历索引树
 
-- ALL
+- ALL  
 Full Table Scan， MySQL将遍历全表以找到匹配的行
 
 #### 4.2.4. possible_keys
