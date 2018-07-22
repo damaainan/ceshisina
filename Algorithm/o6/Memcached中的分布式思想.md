@@ -157,12 +157,12 @@ php客户端分布式实现
 ```
 再次运行代码发现其结果如下
 
-onmpw => node4  
-jiyi => node4  
-onmpw_key => node3  
-jiyi_key => node3  
-www => node2  
-www_key => node3
+    onmpw => node4  
+    jiyi => node4  
+    onmpw_key => node3  
+    jiyi_key => node3  
+    www => node2  
+    www_key => node3
 
 我们看上面的结果，发现只有www_key命中了。像这种情况在添加节点的时候命中率降低，当添加Memcached服务器的时候缓存效率会瞬间降低，这时候负载会集中到数据库的服务器上面，从而有可能导致数据库由于瞬间压力过大而无法提供正常的服务。
 

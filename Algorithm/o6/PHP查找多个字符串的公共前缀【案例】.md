@@ -5,18 +5,18 @@ _发布时间：_ 2016-09-18 _作者：_ 迹忆 _浏览次数：_ 403
 本篇和大家分享一个小算法的应用——查找字符串数组的公共前缀：
 ```
 array(  
-    ‘abcdefg’,  
-    ‘abcdfio’,  
-    ‘abcdqle’  
+    'abcdefg',  
+    'abcdfio',  
+    'abcdqle'  
 )
 ```
-上面的数组字符串中，公共前缀为’abcd’。
+上面的数组字符串中，公共前缀为'abcd'。
 
 首先想到的是从第一个字符串的第一个字符开始，依次与其它字符串的字符比较，都相等的我们将其保存起来，直到有一个不相等就结束后续的比较。
 
 代码如下
 
-```
+```php
 function commonPrefix($arr){
          $count = strlen($arr[0]);
     $prefix = '';
@@ -57,7 +57,7 @@ array(
 
 部分代码如下：
 
-```
+```php
 foreach($arr as $val){
    if(!isset($val[$i]){
             $flag = false;
@@ -74,7 +74,7 @@ foreach($arr as $val){
 
 代码如下：
 
-```
+```php
 function commonPrefix($arr){
          $count = strlen($arr[0]);
 for($i = 0;$i<count($arr);$i++){
