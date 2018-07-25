@@ -373,32 +373,32 @@ SELECT
 	m.member_name,
 	m.phone_no,
 	CASE
-WHEN m.sex = '1' THEN
-	'男'
-WHEN m.sex = '2' THEN
-	'女'
-END sex,
- m.email,
- CASE
-WHEN m.member_level = '0' THEN
-	'游客'
-WHEN m.member_level = '1' THEN
-	'普卡'
-WHEN m.member_level = '2' THEN
-	'银卡'
-WHEN m.member_level = '3' THEN
-	'金卡'
-END member_level,
- m.registration_time,
- m.expiration_time,
- s. NAME,
- d.dealer_name,
- d.dealer_no,
- n.vin_code,
- n.carType,
- j.canUseScore,
- j1.usedScore,
- j2.sumScore
+		WHEN m.sex = '1' THEN
+			'男'
+		WHEN m.sex = '2' THEN
+			'女'
+		END sex,
+	 m.email,
+	 CASE
+		WHEN m.member_level = '0' THEN
+			'游客'
+		WHEN m.member_level = '1' THEN
+			'普卡'
+		WHEN m.member_level = '2' THEN
+			'银卡'
+		WHEN m.member_level = '3' THEN
+			'金卡'
+		END member_level,
+	 m.registration_time,
+	 m.expiration_time,
+	 s. NAME,
+	 d.dealer_name,
+	 d.dealer_no,
+	 n.vin_code,
+	 n.carType,
+	 j.canUseScore,
+	 j1.usedScore,
+	 j2.sumScore
 FROM
 	wcc_ch_member m
 LEFT JOIN (
