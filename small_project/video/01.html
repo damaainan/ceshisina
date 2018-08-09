@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>从摄像头展示视频</title>
+</head>
+<body>
+  <video id="video" width="500" height="500" autoplay></video>
+</body>
+<script>
+  var video = document.getElementById('video')
+  navigator.mediaDevices.getUserMedia({
+    audio: true,
+    video: true
+  }).then(stream => {
+    // 这里就要用到srcObject属性了，可以直接播放流资源
+    video.srcObject = stream
+  }).catch(err => {
+    console.log(err)  // 错误回调
+  })
+</script>
