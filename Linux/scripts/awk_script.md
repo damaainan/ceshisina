@@ -16,3 +16,9 @@ awk '!array[$1]++' file.txt 第一列去重
 添加引用
 
      ls | grep "第" | xargs -I[ sed -i '16s/^/> /' [
+
+批量用文件内容重命名
+
+    ls *.md | awk -F'[b.]' '{print $2}' | xargs -I[ awk 'NR==1{system("mv github[.md ["$2".md")}' "github"[.md
+
+    ls *b1.md | awk -F'[b.]' '{print $2}' | xargs -I[ awk 'NR==1{if(length($2) ==1){system("mv github[.md 0["$2".md")}else{system("mv github[.md ["$2".md")}}' "github"[.md
