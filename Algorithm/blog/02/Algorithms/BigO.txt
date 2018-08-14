@@ -1,0 +1,47 @@
+## !!! http://bigocheatsheet.com/ !!! ##
+## !!! https://gist.github.com/vovanmix/d2d033f8b38e25a038375849d0a30c88 !!! ##
+## !!! http://sandbox.runjs.cn/show/vsr4wsy7 !!! ##
+https://en.wikipedia.org/wiki/Sorting_algorithm#Comparison_of_algorithms
+
+// https://en.wikipedia.org/wiki/Exponentiation
+// https://en.wikipedia.org/wiki/Logarithm
+
+// http://stackoverflow.com/questions/2307283/what-does-olog-n-mean-exactly
+// http://science.slc.edu/~jmarshall/courses/2002/spring/cs50/BigO/
+// http://bigocheatsheet.com/
+// https://en.wikipedia.org/wiki/Best,_worst_and_average_case
+
+
+// https://www.google.com/search?q=big+o+complexity+video+course&oq=big+o+complexity+video+course&aqs=chrome..69i57.9775j0j4&sourceid=chrome&ie=UTF-8
+
+// http://www.cs.odu.edu/~price/cs451/Lectures/04mgmt/costest/costest_htsu3.html
+
+O describes how ( running time ) depends on a ( size ) of data it's working with
+O(1) - constant time
+O(log n) - never have to look at all of the input; They usually work by discarding large chunks of unexamined input with each step; divide-and-conquer, looking up people in a phone book
+O(n) - linear time (ex: loop through all items; more items = more work)
+O(n log n) - the better sort agorithms
+<--- (kinda a border of acceptance)
+O(n^2) - quadratic time (usually loop in a loop, like compare each value to all others; more items = double work)
+O(n!) or O(n · n!) - (Bogosort). Traveling salesman in brute force. The algorithm successively generates (random?) permutations of its input until it finds one that is sorted.
+O(n^n) - 
+
+different data structures have different operation costs
+
+Array operations:
+- direct indexing array[112] O(1)
+- searching array.find("hello") O(n)
+- sorting sort(array) O(n log n)
+immutable arrays are much more efficient (less overhead). better to create of fixed size ot convert to immutabale when it'll never change anymore
+
+http://bigocheatsheet.com/
+https://en.wikipedia.org/wiki/Sorting_algorithm#Comparison_of_algorithms
+
+Strings:
+- strings are usually immutable, and concatenation is a creating of a new string. Dangerous in loops
+- search for a subscring is demanding, especially with multichar wildcards
+
+
+In a basic question it's unnecessary to make a mathematically accurate result.
+For a recursion tree where each node is a call the worst time could be [a size of base (lowest level)] * [number of levels] * [complexity of each call]
+
