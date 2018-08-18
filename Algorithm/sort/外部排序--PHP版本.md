@@ -338,5 +338,5 @@ $first_data[$i] = (int)fgets($handle[$i]);
 [2]: https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2Fhuanghantao%2Fexternal-sort
 [3]: https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2Fabdimaye%2Fexternal-sort
 [4]: https://link.juejin.im?target=https%3A%2F%2Fwww.jianshu.com%2Fp%2Fdce6a43d4678
-[0]: https://img2.tuicool.com/YnENRjM.png 
-[1]: https://img2.tuicool.com/AjuEN3y.png 
+[0]: ./img/YnENRjM.png 
+[1]: ./img/AjuEN3y.png 

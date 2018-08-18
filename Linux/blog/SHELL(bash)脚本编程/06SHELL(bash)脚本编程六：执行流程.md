@@ -21,7 +21,8 @@ Readline还要保持命令提示符(`prompt`)的稳定(比如提示符的颜色)
 不像Readline那样需要实现各种功能，stdio的工作较为简单：缓冲文件内容并逐行提供输入给bash处理。
 ## 解析
 
-解析阶段的主要工作为：`词法分析`和`语法解析``词法分析`指分析器从Readline或其他输入获取字符行，根据`元字符`将它们分割成`word`，并根据上下文环境标记这些`word`(确定单词的类型)。`元字符`包括：
+解析阶段的主要工作为：`词法分析`和`语法解析``词法分析`指分析器从Readline或其他输入获取字符行，根据`元字符`将它们分割成`word`，并根据上下文环境标记这些`word`(确定单词的类型)。
+`元字符`包括：
 
 ```sh
 |  & ; ( ) < > space tab
@@ -164,4 +165,4 @@ bash中每种`复合命令`都使用一个C函数来实现，功能包括执行�
 
 [1]: https://segmentfault.com/a/1190000008141470#articleHeader0
 [2]: https://segmentfault.com/a/1190000008130200#articleHeader0
-[0]: https://segmentfault.com/img/bVIDr6
+[0]: ./bVIDr6.png
