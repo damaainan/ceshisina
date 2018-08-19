@@ -159,10 +159,10 @@ kopf监控插件
     discovery.zen.ping.unicast.hosts: [“192.168.90.201″,”192.168.90.202”] #单播（配置一台即可，生产可以使用组播方式）
 
 [0]: http://www.cloudstack.top/archives/107.html
-[3]: ../img/elk-01.png
+[3]: ./img/elk-01.png
 [4]: http://es-mon-1:9200/
-[5]: ../img/es-02.jpg
-[6]: ../img/es06.png
-[7]: ../img/es07.png
+[5]: ./img/es-02.jpg
+[6]: ./img/es06.png
+[7]: ./img/es07.png
 [8]: http://es_ip:9200/_plugin/kopf
-[9]: ../img/es-03.jpg
+[9]: ./img/es-03.jpg

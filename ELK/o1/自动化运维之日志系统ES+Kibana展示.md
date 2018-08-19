@@ -70,8 +70,8 @@ kibana展示Kibana数据从Elasticsearch存储里面获取,那么就需要Logsta
 运维最重要的如何收集日志,那么往下开启Logstash学习之旅
 
 [0]: http://www.cloudstack.top/archives/117.html
-[3]: ../img/k1.jpg
-[4]: ../img/k2.jpg
-[5]: ../img/k3.jpg
-[6]: ../img/k4.jpg
-[7]: ../img/k5.jpg
+[3]: ./img/k1.jpg
+[4]: ./img/k2.jpg
+[5]: ./img/k3.jpg
+[6]: ./img/k4.jpg
+[7]: ./img/k5.jpg

@@ -1096,5 +1096,5 @@ _待补充_
 
 
 [0]: https://book.douban.com/subject/26419771/
-[1]: ../img/query_execution_path.png
-[2]: ../img/related_query_lane.png
+[1]: ./img/query_execution_path.png
+[2]: ./img/related_query_lane.png

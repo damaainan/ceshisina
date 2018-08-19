@@ -435,8 +435,8 @@ output {
 [10]: http://wdxtub.com/2016/11/19/babel-log-analysis-platform-8/
 [11]: https://github.com/dpkp/kafka-python
 [12]: http://kafka.apache.org/documentation.html#topic-config
-[13]: ../img/14797818253620.jpg
-[14]: ../img/14797829019725.jpg
+[13]: ./img/14797818253620.jpg
+[14]: ./img/14797829019725.jpg
 [15]: http://kafka.apache.org/quickstart
 [16]: https://www.apache.org/dyn/closer.cgi?path=/kafka/0.10.1.0/kafka_2.11-0.10.1.0.tgz
 [17]: http://blog.csdn.net/LOUISLIAOXH/article/details/51567515

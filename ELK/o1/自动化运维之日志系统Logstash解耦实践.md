@@ -143,4 +143,4 @@ index=> "access_nginx_%{+YYYY.MM.dd}"
 
 [0]: http://www.cloudstack.top/archives/135.html
 
-[3]: ../img/es-05.jpg
+[3]: ./img/es-05.jpg

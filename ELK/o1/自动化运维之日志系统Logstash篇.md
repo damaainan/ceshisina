@@ -86,5 +86,5 @@ Logstash需要Java环境，所以直接使用yum安装。
     如果无法读取，可将/etc/init.d/logstash里USER和GROUP修改为root
 
 [0]: http://www.cloudstack.top/archives/125.html
-[3]: ../img/es08.png
-[4]: ../img/es-04.jpg
+[3]: ./img/es08.png
+[4]: ./img/es-04.jpg
