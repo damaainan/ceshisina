@@ -11,6 +11,7 @@
 
 由于Redis字典库有rehash机制，而且是渐进式的，所以迭代器操作可能会通过其他特殊方式来实现，以保证能遍历到所有数据。但是阅读完源码发现，其实这个迭代器是个受限的迭代器，实现方法也很简单。我们先看下其基础结构：
 
+```c
     typedef struct dictIterator {
         dict *d;
         long index;
@@ -19,9 +20,11 @@
         /* unsafe iterator fingerprint for misuse detection. */
         long long fingerprint;
     } dictIterator;
+```
 
 成员变量d指向迭代器处理的字典。index是dictht中table数组的下标。table是dict结构中dictht数组的下标，即标识ht[0]还是ht[1]。safe字段用于标识该迭代器是否为一个安全的迭代器。如果是，则可以在迭代过程中使用dictDelete、dictFind等方法；如果不是，则只能使用dictNext遍历方法。entry和nextEntry分别指向当前的元素和下一个元素。fingerprint是字典的指纹，我们可以先看下指纹算法的实现： 
 
+```c
     long long dictFingerprint(dict *d) {
         long long integers[6], hash = 0;
         int j;
@@ -53,11 +56,13 @@
         }
         return hash;
     }
+```
 
 可以见得，它使用了ht[0]和ht[1]的相关信息进行Hash运算，从而得到该字典的指纹。我们可以发现，如果dictht的table、size和used任意一个有变化，则指纹将被改变。这也就意味着，扩容、锁容、rehash、新增元素和删除元素都会改变指纹（除了修改元素内容）。
 
 生成一个迭代器的方法很简单，该字典库提供了两种方式：
 
+```c
     dictIterator *dictGetIterator(dict *d)
     {
         dictIterator *iter = zmalloc(sizeof(*iter));
@@ -77,6 +82,7 @@
         i->safe = 1;
         return i;
     }
+```
 
 然后我们看下遍历迭代器的操作。如果是初次迭代，则要查看是否是安全迭代器，如果是安全迭代器则让其对应的字典对象的iterators自增；如果不是则记录当前字典的指纹 
 
@@ -123,6 +129,7 @@
 
 遍历完成后，要调用下面方法释放迭代器。需要注意的是，如果是安全迭代器，就需要让其指向的字典的iterators自减以还原；如果不是，则需要检测前后字典的指纹是否一致 
 
+```c
     void dictReleaseIterator(dictIterator *iter)
     {
         if (!(iter->index == -1 && iter->table == 0)) {
@@ -133,6 +140,7 @@
         }
         zfree(iter);
     }
+```
 
 最后我们探讨下什么是安全迭代器。源码中我们看到如果safe为1，则让字典iterators自增，这样dict字典库中的操作就不会触发rehash渐进，从而在一定程度上（消除rehash影响，但是无法阻止用户删除元素）保证了字典结构的稳定。如果不是安全迭代器，则只能使用dictNext方法遍历元素，而像获取元素值的dictFetchValue方法都不能调用。因为dictFetchValue底层会调用_dictRehashStep让字典结构发生改变。 
 
@@ -142,6 +150,7 @@
 
 但是作者在源码说明中说安全迭代器在迭代过程中可以使用dictAdd方法，但是我觉得这个说法是错误的。因为dictAdd方法插入的元素可能在当前遍历的对象之前，这样就在之后的遍历中无法遍历到；也可能在当前遍历的对象之后，这样就在之后的遍历中可以遍历到。这样一种动作，两种可能结果的方式肯定是有问题的。我查了下该库在Redis中的应用，遍历操作不是为了获取值就是为了删除值，而没有增加元素的操作，如
 
+```c
     void clusterBlacklistCleanup(void) {
         dictIterator *di;
         dictEntry *de;
@@ -155,6 +164,7 @@
         }
         dictReleaseIterator(di);
     }
+```
 
 ## 高级遍历
 

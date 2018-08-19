@@ -26,3 +26,5 @@ awk '!array[$1]++' file.txt 第一列去重
 重命名带空格的文件  `注意双引号的位置`
 
     ls *.md | xargs -I[ awk -F'## ' 'NR==1{system("mv [ \""$2".md\"")}' [
+
+    ls *.md | xargs -I[ awk -F'## ' 'NR==1{print "["$2}' [ | awk -F'.md' '{system("mv "$1".md \""$1$2".md\"")}'
