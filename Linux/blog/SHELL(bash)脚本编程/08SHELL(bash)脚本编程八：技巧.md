@@ -84,13 +84,13 @@ done
 
 ```sh
 #!/bin/bash
-find /logs -name 'access_*.log'|xargs tee
+find /logs -name 'access_*.log' | xargs tee
 ```
 
 此方案巧妙的利用了命令`xargs`和`tee`将find找到的文件一次性清空。
 ### 3、分发
 
-假设要对一个较大文件分别给不同的程序处理，并收集处理结果。
+假设要对一个较大文件分别给不同的程序处理，并收集处理结果。  
 通常的处理的办法可能是串行的处理该文件，但如果各个程序需要较长的处理时间，串行处理将不能有效的利用机器的性能，如果不同的处理程序在后台并发运行，类似这样：`cat file|command1 &`，`cat file|command2 &`，`cat file|command3 &`...  
 
 这样处理能充分发挥服务器性能，但它的一个问题是，如果文件较大，对内存的消耗也会很大。
