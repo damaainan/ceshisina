@@ -6,16 +6,17 @@
 
 在上一篇中，我们提到另一种磁盘分区格式`GTP`也是`UEFI`标准的一部分。于是，当前计算机启动中，出现了两种不同的方式：`BIOS/MBR`和`UEFI/GTP`。
 
-在linux操作系统的世界中，同样在经历着变革，系统初始化软件`sysvinit`正逐渐被`systemd`取代。
+在linux操作系统的世界中，同样在经历着变革，系统初始化软件`sysvinit`正逐渐被`systemd`取代。   
 本文将主要讲述传统的`BIOS/MBR-->sysvinit`启动方式，同时，作为补充，也将简述`UEFI/GTP-->systemd`的启动方式。
 ## BIOS/MBR-->sysvinit
 ### 1、BIOS阶段
 
 系统加电后会立即读取BIOS中内容并执行，BIOS中程序的执行包括两个步骤：
 
-1）加电自检 **``POST``** (power-on self test)，主要负责检测系统外围设备(如CPU、内存、显卡、键盘鼠标等)是否正常。如果硬件出现问题，主板会发出不同含义的蜂鸣声，启动终止。如果没有问题，屏幕就会显示出CPU、内存、硬盘等信息。
+1）加电自检 **``POST`** (power-on self test)，主要负责检测系统外围设备(如CPU、内存、显卡、键盘鼠标等)是否正常。如果硬件出现问题，主板会发出不同含义的蜂鸣声，启动终止。如果没有问题，屏幕就会显示出CPU、内存、硬盘等信息。
 
 2）自检完成后，BIOS会执行一段程序来枚举本地设备(如光盘、U盘、硬盘、网络等，可以在BIOS中设置枚举顺序)寻找下一阶段的启动程序所在位置。BIOS会将控制权交给启动顺序(Boot Sequence)中排在第一位的设备，此时，计算机读取该设备中的最前面的512个字节，如果这512个字节的最后两个字节是0x55和0xAA(`Magic Number`)，表明这个设备可以用于启动；如果不是，表明该设备不能用于启动，控制权于是转交给启动顺序中的下一个设备。如上一篇所述，硬盘中的最前面的512字节即为`主引导记录 MBR`。
+
 ### 2、MBR阶段
 
 前一篇中我们描述过MBR的结构，其中包括446字节的`Bootloader`，64字节的`DPT`和2字节的`Magic Number`。
@@ -25,7 +26,7 @@
 
 1.5）由于stage2的代码(较大)存放在文件系统下的/boot分区中(或者/boot没有单独分区的/etc/)，因此识别stage2文件需要文件系统环境(此时还只能直接读取硬盘指定位置的内容，并不能识别文件系统)。stage1.5的作用就是为stage2提供文件系统环境，使系统能够找到位于文件系统中的stage2文件。
 
-2）stage2被载入内存并执行，它首先会解析grub的配置文件`menu.lst`即`/boot/grub/grub.conf`，该文件中指定了系统内核文件所处的位置，如果没有找到该文件，就会执行一个shell，等待用户手动指定内核文件的位置。此阶段的最终状态就是执行boot命令，将内核和initrd镜像载入内存，进而将控制权交给内核。
+2）stage2被载入内存并执行，它首先会解析grub的配置文件`menu.lst`即`/boot/grub/grub.conf`，该文件中指定了系统内核文件所处的位置，如果没有找到该文件，就会执行一个shell，等待用户手动指定内核文件的位置。此阶段的最终状态就是执行boot命令，将内核和initrd镜像载入内存，进而将控制权交给内核。   
 `grub.conf`内容(版本：GNU GRUB 0.97)：
 
 ```sh
@@ -56,6 +57,7 @@ title CentOS (2.6.18-398.el5)
 ### 3、内核阶段
 
 grub的stage2将initrd文件加载到内存中，内核于是开始执行initrd中的`init`文件，此文件是一个脚本，主要作用是加载各种存储介质相关的设备驱动程序。当所需的驱动程序加载完成后，会创建一个根设备，然后将根文件系统(`rootfs`)以只读的方式挂载。这一步结束后，释放未使用的内存，转换到真正的根文件系统中运行程序`/sbin/init`，启动系统PID为1的进程。此后系统的控制权就交给/sbin/init进程了。
+
 ### 4、init阶段
 
 当`init`进程接管了系统的控制权之后，它首先会读取`/etc/inittab`文件，此文件描述了在特定的`运行级别`(runlevel)下，init进程该如何初始化系统。
@@ -70,9 +72,9 @@ linux中定义了7种运行级别：
 5 表示图形界面模式
 6 表示重启
 ```
-`inittab`文件中指定了系统的默认运行级别，如`id:3:initdefault:`表示默认运行级别为3(多用户模式)。
-`init`进程根据`inittab`文件，运行一系列指定的初始化脚本：
-1）`/etc/rc.d/rc.sysinit`系统初始化脚本，它的作用包括设置主机名和默认网关、决定是否启用SELinux、加载用户自定义模块、根据文件`/etc/sysctl.conf`设置内核参数、设置raid及LVM等硬盘功能、重新以读写方式挂载根文件系统等等
+`inittab`文件中指定了系统的默认运行级别，如`id:3:initdefault:`表示默认运行级别为3(多用户模式)。  
+`init`进程根据`inittab`文件，运行一系列指定的初始化脚本：   
+1）`/etc/rc.d/rc.sysinit`系统初始化脚本，它的作用包括设置主机名和默认网关、决定是否启用SELinux、加载用户自定义模块、根据文件`/etc/sysctl.conf`设置内核参数、设置raid及LVM等硬盘功能、重新以读写方式挂载根文件系统等等  
 
 2）执行`/etc/rc.d/rc`文件，该文件确认由inittab指定的运行级别N，并启动相应级别下的服务(通过执行/etc/rc.d/rcN.d中的文件)，例如运行级别为3时，则先执行/etc/rc.d/rc3.d下以`K`开头的文件，然后执行以`S`开头的文件。这些文件都是指向/etc/init.d下的符号链接。以`K`开头的文件表示此运行级别下需要关闭的服务，以`S`开头的文件表示此运行级别下需要开启的服务。
 
@@ -83,6 +85,7 @@ linux中定义了7种运行级别：
 5）然后执行`/bin/login`程序用于接收和验证来自mingetty的用户名和密码。
 
 至此整个系统即启动完毕了
+
 ## UEFI/GTP-->systemd
 `UEFI`的出现是为了代替`BIOS`，同样，`GTP`和`systemd`也是为了弥补`MBR`和`sysvinit`的不足。和`BIOS`只负责POST和找到MBR不同，`UEFI`将贯穿系统加电到关机的整个过程。粗略划分，UEFI系统启动分为4个阶段：
 ### 1、UEFI初始化阶段
@@ -92,14 +95,17 @@ linux中定义了7种运行级别：
 2）`PEI`(EFI前期初始化)：为DXE准备执行环境，将需要传递到DXE的信息组成HOB(Handoff Block)列表，最终将控制权转交到DXE手中。
 
 3）`DXE`(驱动执行环境)：根据HOB列表初始化系统服务，然后遍历固件中的所有Driver，当驱动的依赖资源满足时，调度Dirver到执行队列执行，直到所有满足条件的Dirver都被加载。
+
 ### 2、操作系统加载器作为UEFI应用程序运行阶段
 
-1）`BDS`(启动设备选择)：初始化控制台设备，加载必要的设备驱动，根据系统设置加载和执行启动项，用户选中某个启动项（或系统进入默认的启动项）后，OS Loader启动，系统进入TSL阶段。
+1）`BDS`(启动设备选择)：初始化控制台设备，加载必要的设备驱动，根据系统设置加载和执行启动项，用户选中某个启动项（或系统进入默认的启动项）后，OS Loader启动，系统进入TSL阶段。   
 `UEFI`中程序能够识别存储介质上的分区信息和文件系统(如：fat32)，此时会将`/EFI/boot/grub2.efi`(位于GTP格式硬盘的一个分区ESP，安装时自动生成)作为UEFI应用程序运行。
 
 2）`TSL`(临时系统加载)：操作系统加载器(`OS Loader`也位于ESP分区)执行的第一阶段，在这一阶段OS Loader作为一个UEFI应用程序运行，系统资源仍然由UEFI内核控制。当启动服务的ExitBootServices()服务被调用后，系统进入`RT`(Run Time)阶段。
+
 ### 3、操作系统运行阶段
-`RT`(运行时)：系统的控制权从UEFI内核转交到OS Loader手中，UEFI占用的各种资源被回收到OS Loader，仅有UEFI运行时服务保留给OS Loader和OS使用。随着OS Loader的执行，OS最终取得对系统的控制权。
+`RT`(运行时)：系统的控制权从UEFI内核转交到OS Loader手中，UEFI占用的各种资源被回收到OS Loader，仅有UEFI运行时服务保留给OS Loader和OS使用。随着OS Loader的执行，OS最终取得对系统的控制权。  
+
 在`init`作为系统初始化程序时，服务是通过`/etc/rc.d/init.d`中的脚本来管理并且是顺序执行的，当使用`systemd`作为系统初始化程序后，这些脚本被`服务单元`替换，并尽可能的并行启动进程。
 
 在`systemd`中，一个单元配置文件可以描述如下内容之一：
@@ -117,7 +123,7 @@ linux中定义了7种运行级别：
 ```
 `systemd`为保持向下兼容性还保留了一些`init`命令和概念，但所对应的文件都是指向`systemd`对应命令或文件的符号链接：
 
-```sh
+```
 [root@centos7 temp]# ls -l /sbin/init 
 lrwxrwxrwx. 1 root root 22 1月  15 2016 /sbin/init -> ../lib/systemd/systemd
 [root@centos7 temp]# ls -l /usr/lib/systemd/system/runlevel*.target
@@ -131,7 +137,7 @@ lrwxrwxrwx. 1 root root 13 1月  15 2016 /usr/lib/systemd/system/runlevel6.targe
 ```
 `systemd`启动后执行的第一个目标是`default.target`，但实际上default.target是指向graphical.target的符号链接。
 
-```sh
+```
 [root@centos7 temp]# ls -l /usr/lib/systemd/system/default.target
 lrwxrwxrwx. 1 root root 16 1月  15 2016 /usr/lib/systemd/system/default.target -> graphical.target
 [root@centos7 temp]# cat /usr/lib/systemd/system/graphical.target
@@ -153,12 +159,13 @@ AllowIsolate=yes
 ```
 
 其中`Requires`行指明了本单元的依赖关系(其他各项意义可以通过命令`man systemd.unit`查看)，顺着此文件，可以找到需要执行的单元：`multi-user.target`、`basic.target`、`sysinit.target`、`local-fs.target swap.target`、`local-fs-pre.target`。
+
 ### 4、关机阶段
 `AL`(After-life)：当系统硬件或操作系统出现严重错误不能继续正常运行时，固件会尝试修复错误，这时系统进入AL期。UEFI标准并没有定义此阶段的行为和规范。系统供应商可以自行定义。
 ## 相关命令
 ### init
 
-**`1、`init``** 
+**1、`init`** 
 `init`除了在系统初始化时起的重要作用外，还可以用来执行关机、重启、切换运行级别的作用：
 
 ```sh
@@ -170,16 +177,17 @@ init 6
 init 1
 ```
 
-**`2、`runlevel``**  显示运行级别
+**2、`runlevel`**  显示运行级别
 
-```sh
+```
 [root@centos7 temp]# runlevel 
 N 3
 [root@centos7 temp]# 
 ```
 
 输出中`N`表示当前运行级别，如果系统启动后切换过运行级别，则输出类似于`3 5`表示之前运行级别为3，现在的运行级别为5。
- **`3、`halt``reboot``poweroff``shutdown``** 
+
+**3、`halt` `reboot` `poweroff` `shutdown`** 
 这几个命令的作用就是关机或重启系统，通常只使用`shutdown`就可以了：
 
 ```sh
@@ -193,7 +201,7 @@ shutdown -c
 shutdown -fr +30
 ```
 
-**`4、`chkconfig``**  更新或查询服务的运行级别信息
+**4、`chkconfig`**  更新或查询服务的运行级别信息
 
 ```sh
 #列出服务(还会列出xinetd管理的服务)
@@ -204,7 +212,7 @@ chkconfig --add httpd
 chkconfig --level 235 httpd on
 ```
 
-**`5、`service``**  运行服务脚本(服务脚本位于/etc/init.d内，service本身也是脚本，位于/sbin内)
+**5、`service`**  运行服务脚本(服务脚本位于/etc/init.d内，service本身也是脚本，位于/sbin内)
 
 ```sh
 #列出所有服务状态
@@ -223,7 +231,7 @@ service nginx reload
 ### systemd
 `systemd`并不是一个命令，而是一组命令，涉及到系统管理的方方面面。
 
-**`1、`systemctl``**  控制systemd系统和管理服务
+**1、`systemctl`**  控制systemd系统和管理服务
 
 ```sh
 systemctl [OPTIONS...] COMMAND [NAME...]
@@ -284,9 +292,9 @@ systemctl list-unit-files --type=target
 
 还有许多其他选项，这里就不一一列举了。
 
-**`2、`systemd-analyze``**  查看启动用时
+**2、`systemd-analyze`**  查看启动用时
 
-```sh
+```
 [root@centos7 ~]# systemd-analyze 
 Startup finished in 730ms (kernel) + 1.904s (initrd) + 9.909s (userspace) = 12.544s
 ```
@@ -308,10 +316,10 @@ Startup finished in 730ms (kernel) + 1.904s (initrd) + 9.909s (userspace) = 12.5
 [root@centos7 ~]# systemd-analyze dump
 ```
 
-**`3、`systemd-cgls``**  递归显示控制组(`Cgroups`)信息
+**3、`systemd-cgls`**  递归显示控制组(`Cgroups`)信息   
 linux内核从版本2.6.24开始，引入了一个叫做`控制组`(control groups)的特性，是用于限制、记录、隔离进程组（process groups）所使用的物理资源（如：cpu,memory,IO等等）的机制。关于Cgroups的内容本文不再展开。
 
-```sh
+```
 [root@centos7 ~]# systemd-cgls 
 ├─1 /usr/lib/systemd/systemd --switched-root --system --deserialize 21
 ├─user.slice
@@ -324,10 +332,10 @@ linux内核从版本2.6.24开始，引入了一个叫做`控制组`(control grou
 ....
 ```
 
-**`4、`systemd-cgtop``**  显示各控制组的使用量(CPU,内存,IO)
+**4、`systemd-cgtop`**  显示各控制组的使用量(CPU,内存,IO)
 显示效果类似命令`top`
 
-```sh
+```
 [root@centos7 ~]# systemd-cgtop
 Path                                                Tasks   %CPU   Memory  Input/s Output/s
 
@@ -340,7 +348,7 @@ Path                                                Tasks   %CPU   Memory  Input
 ....
 ```
 
-**`5、`systemd-loginctl``**  控制systemd登录管理
+**5、`systemd-loginctl`**  控制systemd登录管理
 此命令是命令`loginctl`的符号链接
 
 ```sh
@@ -376,9 +384,9 @@ Linger=no
 [root@centos7 ~]#
 ```
 
-**`6、`timedatectl``**  系统时间和日期控制
+**6、`timedatectl`**  系统时间和日期控制
 
-```sh
+```
 [root@centos7 ~]# timedatectl 
       Local time: 三 2016-12-21 13:47:31 CST
   Universal time: 三 2016-12-21 05:47:31 UTC
@@ -402,7 +410,7 @@ Africa/Asmara
 [root@centos7 ~]# timedatectl set-timezone America/New_York
 ```
 
-**`7、`hostnamectl``**  系统主机名控制
+**7、`hostnamectl`**  系统主机名控制
 
 ```sh
 #状态
@@ -436,7 +444,7 @@ Africa/Asmara
 
 以上systemd相关所有命令(除systemd-cgls和systemd-cgtop外)，都可以使用选项`-H`指定远程基于systemd的主机(使用ssh协议)：
 
-```sh
+```
 [root@centos7 ~]# hostnamectl -H 10.0.1.252
    Static hostname: idc-v-71252
          Icon name: computer-vm

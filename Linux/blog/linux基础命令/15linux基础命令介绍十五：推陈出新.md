@@ -23,13 +23,13 @@ tunnel    表示IP隧道
 ....
 ```
 
-对象名可以是全称或简写格式，比如`address`可以简写为`addr`或`a`。
+对象名可以是全称或简写格式，比如`address`可以简写为`addr`或`a`。   
 `COMMAND`设置针对指定对象执行的操作，它和对象的类型有关。
 ### address
 
 如显示网卡`ens33`的信息：
 
-```sh
+```
 [root@centos7 ~]# ip addr show ens33
 3: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
     link/ether 00:50:56:a4:a9:16 brd ff:ff:ff:ff:ff:ff
@@ -41,7 +41,7 @@ tunnel    表示IP隧道
 
 选项`-s`表示输出更多的信息
 
-```sh
+```
 [root@centos7 ~]# ip -s addr show ens33
 3: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
     link/ether 00:50:56:a4:a9:16 brd ff:ff:ff:ff:ff:ff
@@ -57,7 +57,7 @@ tunnel    表示IP隧道
 
 为`ens33`增加一个新地址
 
-```sh
+```
 [root@centos7 ~]# ip addr add 192.168.0.193/24 dev ens33
 [root@centos7 ~]# ip a sh ens33
 3: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
@@ -75,7 +75,7 @@ tunnel    表示IP隧道
 
 如查看arp表项(neighbour可以简写为neigh或n)
 
-```sh
+```
 [root@centos7 ~]# ip neigh
 172.20.71.253 dev ens32 lladdr 68:8f:84:03:71:e6 STALE
 10.0.1.102 dev ens33 lladdr 00:50:56:a4:18:9a STALE
@@ -85,9 +85,10 @@ tunnel    表示IP隧道
 10.0.1.252 dev ens33 lladdr 00:50:56:a4:65:71 STALE
 ```
 `neighbour`可以使用的COMMAND包括`add`添加、`change`修改、`replace`替换、`delete`删除、`flush`清除等。
+
 如在设备ens33上为地址10.0.1.253添加一个永久的ARP条目：
 
-```sh
+```
 [root@centos7 ~]# ip nei add 10.0.1.253 lladdr 78:A3:51:14:F7:98 dev ens33 nud permanent
 [root@centos7 ~]# ip nei show dev ens33
 10.0.1.103 lladdr 00:1c:7f:3b:da:b0 STALE
@@ -101,7 +102,7 @@ tunnel    表示IP隧道
 
 如更改ens33的MTU(最大传输单元)的值为1600
 
-```sh
+```
 [root@centos7 ~]# ip link set dev ens33 mtu 1600
 [root@centos7 ~]# ip link show dev ens33        
 3: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1600 qdisc pfifo_fast state UP mode DEFAULT qlen 1000
@@ -110,7 +111,7 @@ tunnel    表示IP隧道
 
 关闭设备ens32
 
-```sh
+```
 [root@centos7 ~]# ip link set dev ens32 down 
 [root@centos7 ~]# ip li ls dev ens32
 2: ens32: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT qlen 1000
@@ -119,7 +120,7 @@ tunnel    表示IP隧道
 
 创建一个关联到ens32的网桥
 
-```sh
+```
 [root@centos7 ~]# ip link add link ens32 name br1 type bridge
 [root@centos7 ~]# ip link show dev br1
 8: br1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT 
@@ -135,7 +136,7 @@ tunnel    表示IP隧道
 
 如显示路由表(这里使用了命令`column -t`对输出进行了格式化)
 
-```sh
+```
 [root@centos7 ~]# ip route show|column -t
 default          via  10.0.1.103       dev    ens33   proto  static  metric  100
 10.0.1.0/24      dev  ens33            proto  kernel  scope  link    src     10.0.1.254     metric  100
@@ -145,7 +146,7 @@ default          via  10.0.1.103       dev    ens33   proto  static  metric  100
 
 如添加一条到192.168.0.0/16下一跳是10.0.1.101的路由
 
-```sh
+```
 [root@centos7 ~]# ip route add 192.168.0.0/16 via 10.0.1.101 dev ens33
 [root@centos7 ~]# ip route show|column -t
 default          via  10.0.1.103       dev    ens33   proto  static  metric  100
@@ -158,24 +159,28 @@ default          via  10.0.1.103       dev    ens33   proto  static  metric  100
 ```
 
 还可以使用`change`、`replace`等表示改变/替换原有路由条目。
+
 如获取单条路由信息
 
-```sh
+```
 [root@centos7 ~]# ip rou get 10.0.1.0/24
 broadcast 10.0.1.0 dev ens33  src 10.0.1.254 
     cache <local,brd>
 ```
-## 2、`ss````sh
-ss [options] [FILTER]
-```
-`ss`命令可以用来获取socket统计信息，它可以显示和`netstat`类似的内容。但`ss`的优势在于它能够显示更多详细的有关TCP和连接状态的信息，而且比netstat更高效。当服务器的socket连接数量变得非常大时，无论是使用netstat命令还是直接`cat /proc/net/tcp`，执行速度都会很慢。`ss`命令利用了TCP协议栈中`tcp_diag`，`tcp_diag`是一个用于分析统计的模块，可以获得linux内核的第一手信息，这确保了ss的快捷高效。
-选项`-a`表示显示所有连接状态信息
-选项`-t`表示显示TCP sockets
-选项`-u`表示显示UDP sockets
-选项`-n`表示不转换数字为服务名
-选项`-p`表示显示进程
+## 2、`ss`
 
 ```sh
+ss [options] [FILTER]
+
+```
+`ss`命令可以用来获取socket统计信息，它可以显示和`netstat`类似的内容。但`ss`的优势在于它能够显示更多详细的有关TCP和连接状态的信息，而且比netstat更高效。当服务器的socket连接数量变得非常大时，无论是使用netstat命令还是直接`cat /proc/net/tcp`，执行速度都会很慢。`ss`命令利用了TCP协议栈中`tcp_diag`，`tcp_diag`是一个用于分析统计的模块，可以获得linux内核的第一手信息，这确保了ss的快捷高效。   
+选项`-a`表示显示所有连接状态信息   
+选项`-t`表示显示TCP sockets   
+选项`-u`表示显示UDP sockets   
+选项`-n`表示不转换数字为服务名   
+选项`-p`表示显示进程   
+
+```
 [root@centos7 ~]# ss -antp|column -t
 State   Recv-Q  Send-Q  Local Address:Port      Peer Address:Port
 LISTEN  0       128     *:22                    *:*                   users:(("sshd",pid=1355,fd=3))
@@ -189,7 +194,7 @@ LISTEN  0       100     ::1:25                  :::*                  users:(("m
 
 选项`-l`表示只显示监听状态的sockets
 
-```sh
+```
 [root@centos7 ~]# ss -lt|column -t
 State   Recv-Q  Send-Q  Local Address:Port  Peer Address:Port
 LISTEN  0       128     *:ssh               *:*
@@ -201,7 +206,7 @@ LISTEN  0       100     ::1:smtp            :::*
 
 选项`-s`表示显示汇总信息
 
-```sh
+```
 [root@centos7 ~]# ss -s
 Total: 270 (kernel 575)
 TCP:   8 (estab 1, closed 1, orphaned 0, synrecv 0, timewait 0/0), ports 0
@@ -215,7 +220,7 @@ INET      9         3         6
 FRAG      0         0         0 
 ```
 
-还可以使用`state STATE-FILTER [EXPRESSION]`指定过滤格式
+还可以使用`state STATE-FILTER [EXPRESSION]`指定过滤格式   
 如显示源或目的端口为8080，状态为`established`的连接：
 
 ```sh
@@ -227,12 +232,14 @@ ss state established '( dport = :8080 or sport = :8080 )'
 ```sh
 ss state fin-wait-1 '( sport = :http or sport = :https )' dst 193.233.7/24
 ```
-## 3、`journalctl````sh
+## 3、`journalctl`
+
+```sh
 journalctl [OPTIONS...] [MATCHES...]
 ```
 
-在基于`systemd`的系统中，可以使用一个新工具`Journal`代替原来的系统服务`Syslog`来记录日志。关于`Journal`优越性就不在这里叙述了，我们来直接看它怎么使用。
-`Journal`服务的配置文件是`/etc/systemd/journald.conf`，在默认配置中，`Journal`日志保存在目录`/run/log/journal`内(tmpfs内存文件系统)，系统重启将不会保留，可以手动将日志刷到(通过命令`journalctl --flush`)磁盘文件系统上(`/var/log/journal`内)。
+在基于`systemd`的系统中，可以使用一个新工具`Journal`代替原来的系统服务`Syslog`来记录日志。关于`Journal`优越性就不在这里叙述了，我们来直接看它怎么使用。   
+`Journal`服务的配置文件是`/etc/systemd/journald.conf`，在默认配置中，`Journal`日志保存在目录`/run/log/journal`内(tmpfs内存文件系统)，系统重启将不会保留，可以手动将日志刷到(通过命令`journalctl --flush`)磁盘文件系统上(`/var/log/journal`内)。   
 `Journal`服务随系统启动而启动，默认会记录从开机到关机全过程的内核和应用程序日志
 
 ```sh
@@ -254,9 +261,9 @@ journalctl [OPTIONS...] [MATCHES...]
 12月 20 11:15:22 centos7 systemd-journal[539]: Runtime journal is using 8.0M (max allowed 391.1M, trying to leave 586.7M free of 3.8G available → current limit 391.1M).
 ```
 
-当命令`journalctl`不带任何选项时会分页显示系统的所有日志(从本次开机到现在时间)
-选项`-k`表示显示内核kernel日志
-选项`-u UNIT`表示显示指定服务单元UNIT的日志
+当命令`journalctl`不带任何选项时会分页显示系统的所有日志(从本次开机到现在时间)  
+选项`-k`表示显示内核kernel日志  
+选项`-u UNIT`表示显示指定服务单元UNIT的日志   
 
 ```sh
 #如上一篇中配置的计时器(ping252.timer)和服务(ping252.service)日志
@@ -278,10 +285,10 @@ journalctl [OPTIONS...] [MATCHES...]
 ....
 ```
 
-选项`-r`表示反向输出日志(从当前时间到本次开机)
+选项`-r`表示反向输出日志(从当前时间到本次开机)   
 选项`-n N`表示输出最新的N行日志
 
-```sh
+```
 [root@centos7 ~]# journalctl -n 5 -u ping252
 -- Logs begin at 二 2016-12-20 11:15:19 CST, end at 二 2016-12-27 20:48:54 CST. --
 12月 23 17:27:12 centos7 systemd[1]: Starting 252...
@@ -291,7 +298,7 @@ journalctl [OPTIONS...] [MATCHES...]
 12月 23 17:31:12 centos7 systemd[1]: Starting 252...
 ```
 
-选项`-f`表示显示最新的10行日志并继续等待输出新日志(类似于命令`tail -f`)
+选项`-f`表示显示最新的10行日志并继续等待输出新日志(类似于命令`tail -f`)   
 选项`-p n`表示过滤输出指定级别的日志，其中n的值可以是：
 
 ```sh
@@ -307,7 +314,7 @@ journalctl [OPTIONS...] [MATCHES...]
 
 如
 
-```sh
+```
 [root@centos7 ~]# journalctl -u ping252 -p 3
 -- Logs begin at 二 2016-12-20 11:15:19 CST, end at 二 2016-12-27 21:13:34 CST. --
 12月 23 14:28:28 centos7 systemd[11428]: Failed at step EXEC spawning /root/temp/ping252.sh: Exec format error
@@ -327,15 +334,15 @@ journalctl [OPTIONS...] [MATCHES...]
 
 选项`--disk-usage`表示显示日志磁盘占用量
 
-```sh
+```
 [root@centos7 ~]# journalctl --disk-usage
 Archived and active journals take up 104.8M on disk.
 ```
 
-选项`--vacuum-size=`用于设置日志最大磁盘使用量（值可以使用K、M、G、T等后缀）。
+选项`--vacuum-size=`用于设置日志最大磁盘使用量（值可以使用K、M、G、T等后缀）。    
 选项`--vacuum-time=`用于清除指定时间之前的日志（可以使用"s", "m", "h", "days", "weeks", "months", "years" 等后缀）
 
-```sh
+```
 [root@centos7 ~]# journalctl --vacuum-time="1 days"
 Deleted archived journal /run/log/journal/9......2e.journal (48.0M).
 Deleted archived journal /run/log/journal/9......a1.journal (48.8M).
@@ -357,10 +364,13 @@ json-pretty 将日志项按照JSON数据结构格式化， 但是每个字段一
 json-sse 将日志项按照JSON数据结构格式化，每条日志一行，但是用大括号包围。
 cat 仅显示日志的实际内容， 而不显示与此日志相关的任何元数据(包括时间戳)。
 ```
-## 4、`firewall-cmd`同`iptables`一样，`firewalld`也通过内核的netfilter来实现防火墙功能([netfilter的简介][0])，比`iptables`先进的地方在于，`firewalld`可以动态修改单条规则，而不需要像iptables那样，在修改了规则之后必须全部刷新才可以生效。而且`firewalld`在使用上更人性化，不需要理解netfilter的原理也能实现大部分功能。
+## 4、`firewall-cmd`
+
+同`iptables`一样，`firewalld`也通过内核的netfilter来实现防火墙功能([netfilter的简介][0])，比`iptables`先进的地方在于，`firewalld`可以动态修改单条规则，而不需要像iptables那样，在修改了规则之后必须全部刷新才可以生效。而且`firewalld`在使用上更人性化，不需要理解netfilter的原理也能实现大部分功能。
+
 `firewalld`需要开启守护进程，查看防火墙服务状态：
 
-```sh
+```
 [root@idc-v-71252 ~]# systemctl status firewalld
 ● firewalld.service - firewalld - dynamic firewall daemon
    Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
@@ -375,7 +385,7 @@ cat 仅显示日志的实际内容， 而不显示与此日志相关的任何元
 
 或者通过自身的`firewall-cmd`查看
 
-```sh
+```
 [root@centos7 ~]# firewall-cmd --stat
 running
 [root@centos7 ~]# 
@@ -387,13 +397,13 @@ running
 2、/usr/lib/firewalld
 ```
 
-使用时的规则是这样的：当需要一个文件时，`firewalld`会首先到第一个目录中查找，如果可以找到，那么就直接使用，否则会继续到第二个目录中查找。不推荐在目录`/usr/lib/firewalld`中直接修改配置文件，最好是在`/usr/lib/firewalld`中复制一份配置文件到`/etc/firewalld`的相应目录中，然后进行修改。这样，在恢复默认配置时，直接删除`/etc/firewalld`中的文件即可。
-`firewalld`中引入了两个概念：`service`(服务)和`zone`(区域)。
+使用时的规则是这样的：当需要一个文件时，`firewalld`会首先到第一个目录中查找，如果可以找到，那么就直接使用，否则会继续到第二个目录中查找。不推荐在目录`/usr/lib/firewalld`中直接修改配置文件，最好是在`/usr/lib/firewalld`中复制一份配置文件到`/etc/firewalld`的相应目录中，然后进行修改。这样，在恢复默认配置时，直接删除`/etc/firewalld`中的文件即可。   
+`firewalld`中引入了两个概念：`service`(服务)和`zone`(区域)。  
 `service`通用配置文件(位于目录`/usr/lib/firewalld/services`内)中定义了服务与端口的映射，`firewalld`在使用时可以直接引用服务名而不是像`iptables`那样引用端口号(就像DNS服务将域名和IP地址做了映射)；
 
 默认时`firewalld`提供了九个`zone`配置文件，位于`/usr/lib/firewalld/zones`中：
 
-```sh
+```
 [root@centos7 ~]# ls /usr/lib/firewalld/zones
 block.xml  dmz.xml  drop.xml  external.xml  home.xml  internal.xml  public.xml  trusted.xml  work.xml
 ```
@@ -407,10 +417,11 @@ block.xml  dmz.xml  drop.xml  external.xml  home.xml  internal.xml  public.xml  
 ```
 
 这三个优先级按顺序依次降低，也就是说如果按照`source`可以找到就不会再按`interface`去查找，如果前两个都找不到才会使用第三个。
+
 ### zone
 `public.xml`内容：
 
-```sh
+```
 [root@centos7 ~]# cat /usr/lib/firewalld/zones/public.xml 
 <?xml version="1.0" encoding="utf-8"?>
 <zone>
@@ -469,7 +480,7 @@ firewall-cmd [--permanent] [--zone=zone] --remove-source=source[/mask]
 
 如将源地址192.168.0.0/16添加至默认zone
 
-```sh
+```
 [root@centos7 zones]# firewall-cmd --add-source=192.168.0.0/16
 success
 [root@centos7 zones]# firewall-cmd --list-sources
@@ -512,7 +523,7 @@ firewall-cmd [--permanent] [--zone=zone] --remove-interface=interface
 
 如将ens32移除出默认zone
 
-```sh
+```
 [root@centos7 zones]# firewall-cmd --list-interfaces
 ens32 ens33
 [root@centos7 zones]# 
@@ -547,7 +558,7 @@ firewall-cmd --get-service
 
 如增加http服务到默认zone
 
-```sh
+```
 [root@centos7 zones]# firewall-cmd --add-service=http
 success
 [root@centos7 zones]# firewall-cmd --remove-service=http
@@ -576,7 +587,7 @@ firewall-cmd [--permanent] [--zone=zone] --query-port=portid[-portid]/protocol
 
 如限时10秒允许80端口的访问
 
-```sh
+```
 [root@centos7 zones]# firewall-cmd --add-port=80/tcp --timeout=10
 success
 [root@centos7 zones]# 
@@ -604,7 +615,7 @@ firewall-cmd [--permanent] [--zone=zone] --query-icmp-block=icmptype
 
 如禁止ping
 
-```sh
+```
 [root@centos7 zones]# firewall-cmd --add-icmp-block=echo-request
 success
 #在另一台机器ping本机：
@@ -656,7 +667,7 @@ firewall-cmd [--permanent] [--zone=zone] --query-forward-port=FORWARD
 
 如将80端口接收到的请求转发到本机的8080端口(如需转发至其他地址则添加`:to-addr=address[/mask]`)：
 
-```sh
+```
 [root@centos7 zones]# firewall-cmd --add-forward-port=port=80:proto=tcp:toport=8080
 success
 [root@centos7 zones]# firewall-cmd --list-forward-ports
@@ -689,7 +700,7 @@ success
 </zone>
 ```
 
-这里的`rule`就相当于使用`iptables`时的一条规则。
+这里的`rule`就相当于使用`iptables`时的一条规则。   
 命令
 
 ```sh
@@ -701,7 +712,7 @@ firewall-cmd [--permanent] [--zone=zone] --query-rich-rule='rule'
 
 如源地址为192.168.10.0/24的http连接都drop掉：
 
-```sh
+```
 [root@centos7 zones]# firewall-cmd --add-rich-rule='rule family="ipv4" source address="192.168.10.0/24" service name="http" drop'
 success
 [root@centos7 zones]# firewall-cmd --query-rich-rule='rule family="ipv4" source address="192.168.10.0/24" service name="http" drop'
@@ -725,10 +736,11 @@ success
 
 其中最重要的配置项是`port`，表示将端口绑定到指定服务，当该端口收到包时即表示对该服务的请求，防火墙从而到对应的zone中去查找规则，判断是否放行。
 
-一个service中可以配置多个port项，单个port项中可以配置单个端口，也可以是一个端口段，比如port=80-85表示80到85之间的端口号。
-`destination`表示根据目的地址绑定服务，可以是ipv4地址也可以是ipv6地址，可以使用掩码。
-`module`用来设置netfilter连接跟踪模块
+一个service中可以配置多个port项，单个port项中可以配置单个端口，也可以是一个端口段，比如port=80-85表示80到85之间的端口号。   
+`destination`表示根据目的地址绑定服务，可以是ipv4地址也可以是ipv6地址，可以使用掩码。  
+`module`用来设置netfilter连接跟踪模块   
 `firewall-cmd`提供了两个选项用于创建和删除service，`--new-service`和`--delete-service`。不过直接编辑xml文件是更好的选择。
+
 ### direct
 
 直接使用防火墙的过滤规则，配置文件为`/etc/firewalld/direct.xml`(可以手动创建或通过命令生成)，文件结构如下：
@@ -803,7 +815,7 @@ firewall-cmd --reload
 
 在实际生产环境中如果防火墙规则只是由root设定的话，最好将`firewall-cmd`(此文件为python脚本)的权限限制为只有root能执行：
 
-```sh
+```
 [root@centos7 ~]# ls -l /usr/bin/firewall-cmd
 -rwxr-xr-x. 1 root root 62012 11月 20 2015 /usr/bin/firewall-cmd
 [root@centos7 ~]# file /usr/bin/firewall-cmd

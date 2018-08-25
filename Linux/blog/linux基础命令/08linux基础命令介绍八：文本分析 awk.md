@@ -7,50 +7,50 @@
 ```sh
 awk [options] 'pattern {action}' file...
 ```
-`awk`的工作过程是这样的：按行读取输入(标准输入或文件)，对于符合模式`pattern`的行，执行`action`。当`pattern`省略时表示匹配任何字符串；当`action`省略时表示执行`'{print}'`；它们不可以同时省略。
+`awk`的工作过程是这样的：按行读取输入(标准输入或文件)，对于符合模式`pattern`的行，执行`action`。当`pattern`省略时表示匹配任何字符串；当`action`省略时表示执行`'{print}'`；它们不可以同时省略。  
 每一行输入，对`awk`来说都是一条记录(`record`)，`awk`使用`$0`来引用当前记录：
 
-```sh
+```
 [root@centos7 ~]# head -1 /etc/passwd | awk '{print $0}'
 root:x:0:0:root:/root:/bin/bash
 ```
 
-例子中将命令`head -1 /etc/passwd`作为`awk`的输入，`awk`省略了`pattern`，`action`为`print $0`，意为打印当前记录。
+例子中将命令`head -1 /etc/passwd`作为`awk`的输入，`awk`省略了`pattern`，`action`为`print $0`，意为打印当前记录。   
 对于每条记录，`awk`使用分隔符将其分割成列，第一列用`$1`表示，第二列用`$2`表示...最后一列用`$NF`表示
 
-选项`-F`表示指定分隔符
+选项`-F`表示指定分隔符  
 如输出文件`/etc/passwd`第一行第一列(用户名)和最后一列(登录shell)：
 
-```sh
+```
 [root@centos7 ~]# head -1 /etc/passwd | awk -F: '{print $1,$NF}'
 root /bin/bash
 ```
 
-当没有指定分隔符时，使用一到多个`blank`(空白字符，由空格键或TAB键产生)作为分隔符。输出的分隔符默认为空格。
+当没有指定分隔符时，使用一到多个`blank`(空白字符，由空格键或TAB键产生)作为分隔符。输出的分隔符默认为空格。  
 如输出命令`ls -l *`的结果中，文件大小和文件名：
 
-```sh
+```
 [root@centos7 temp]# ls -l * | awk '{print $5,$NF}'
 13 b.txt
 58 c.txt
 12 d.txt
 0 e.txt
 0 f.txt
-24 test.sh
+24 test.
 [root@centos7 temp]# 
 ```
 
 还可以对任意列进行过滤：
 
-```sh
+```
 [root@centos7 temp]# ls -l *|awk '$5>20 && $NF ~ /txt$/'
 -rw-r--r-- 1 nobody nobody 58 11月 16 16:34 c.txt
 ```
 
-其中`$5>20`表示第五列的值大于20；`&&`表示逻辑与；`$NF ~ /txt$/`中，`~`表示匹配，符号`//`内部是正则表达式。这里省略了`action`，整条awk语句表示打印文件大小大于20字节并且文件名以txt结尾的行。
+其中`$5>20`表示第五列的值大于20；`&&`表示逻辑与；`$NF ~ /txt$/`中，`~`表示匹配，符号`//`内部是正则表达式。这里省略了`action`，整条awk语句表示打印文件大小大于20字节并且文件名以txt结尾的行。   
 `awk`用`NR`表示行号
 
-```sh
+```
 [root@centos7 temp]# awk '/^root/ || NR==2' /etc/passwd
 root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/bin:/sbin/nologin
@@ -59,10 +59,10 @@ bin:x:1:1:bin:/bin:/sbin/nologin
 
 例子中`||`表示逻辑或，语句表示：输出文件`/etc/passwd`中以root开头的行或者第二行。
 
-在一些情况下，使用`awk`过滤甚至比使用`grep`更灵活
+在一些情况下，使用`awk`过滤甚至比使用`grep`更灵活  
 如获得`ifconfig`的输出中网卡名及其对应的mtu值
 
-```sh
+```
 [root@idc-v-71253 ~]# ifconfig|awk '/^\S/{print $1"\t"$NF}'
 ens32:  1500
 ens33:  1500
@@ -87,7 +87,7 @@ FILENAME    当前输入文件的名字
 ```
 `awk`中还可以使用自定义变量，如将网卡名赋值给变量a，然后输出网卡名及其对应的`RX bytes`的值(注意不同模式匹配及其action的写法)：
 
-```sh
+```
 [root@idc-v-71253 ~]# ifconfig|awk '/^\S/{a=$1}/RX p/{print a,$5}'
 ens32: 999477100
 ens33: 1663197120
@@ -106,7 +106,7 @@ size name
 total 82
 [root@centos7 temp]#
 ```
-`awk`还支持数组，数组的索引都被视为字符串(即关联数组)，可以使用`for`循环遍历数组元素
+`awk`还支持数组，数组的索引都被视为字符串(即关联数组)，可以使用`for`循环遍历数组元素   
 如输出文件`/etc/passwd`中各种登录shell及其总数量
 
 ```sh
@@ -130,7 +130,7 @@ total 82
 ```
 `pattern`之间可以用逗号分隔，表示从匹配第一个模式开始直到匹配第二个模式
 
-```sh
+```
 [root@centos7 ~]# awk '/^root/,/^adm/' /etc/passwd       
 root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/bin:/sbin/nologin
@@ -138,7 +138,7 @@ daemon:x:2:2:daemon:/sbin:/sbin/nologin
 adm:x:3:4:adm:/var/adm:/sbin/nologin
 ```
 
-还支持三目操作符`pattern1 ? pattern2 : pattern3`，表示判断pattern1是否匹配，true则匹配pattern2，false则匹配pattern3，pattern也可以是类似C语言的表达式。
+还支持三目操作符`pattern1 ? pattern2 : pattern3`，表示判断pattern1是否匹配，true则匹配pattern2，false则匹配pattern3，pattern也可以是类似C语言的表达式。  
 如判断文件`/etc/passwd`中UID大于500的登录shell是否为/bin/bash，是则输出整行，否则输出UID为0的行：
 
 ```sh
@@ -206,14 +206,14 @@ BEGIN{
 内建函数
 `length()`获得字符串长度
 
-```sh
+```
 [root@centos7 temp]# awk -F: '{if(length($1)>=16)print}' /etc/passwd 
 systemd-bus-proxy:x:999:997:systemd Bus Proxy:/:/sbin/nologin
 [root@centos7 temp]#
 ```
 `split()`将字符串按分隔符分隔，并保存至数组
 
-```sh
+```
 [root@centos7 temp]# head -1 /etc/passwd|awk '{split($0,arr,/:/);for(i=1;i<=length(arr);i++) print arr[i]}'
 root
 x
@@ -221,7 +221,7 @@ x
 0
 root
 /root
-/bin/bash
+/bin/ba
 [root@centos7 temp]# 
 ```
 `getline`从输入(可以是管道、另一个文件或当前文件的下一行)中获得记录，赋值给变量或重置某些环境变量
@@ -278,14 +278,14 @@ cindy
 ```
 `sub(regex,substr,string)`替换字符串string(省略时为$0)中首个出现匹配正则regex的子串substr
 
-```sh
+```
 [root@centos7 temp]# echo 178278 world|awk 'sub(/[0-9]+/,"hello")'
 hello world
 [root@centos7 temp]#
 ```
 `gsub(regex,substr,string)`与sub()类似，但不止替换第一个，而是全局替换
 
-```sh
+```
 [root@centos7 temp]# head -n5 /etc/passwd|awk '{gsub(/[0-9]+/,"----");print $0}'     
 root:x:----:----:root:/root:/bin/bash
 bin:x:----:----:bin:/bin:/sbin/nologin
@@ -295,14 +295,14 @@ lp:x:----:----:lp:/var/spool/lpd:/sbin/nologin
 ```
 `substr(str,n,m)`切割字符串str，从第n个字符开始，切割m个。如果m省略，则到结尾
 
-```sh
+```
 [root@centos7 temp]# echo "hello,世界！"|awk '{print substr($0,8,1)}'
 界
 [root@centos7 temp]#
 ```
 `tolower(str)`和`toupper(str)`表示大小写转换
 
-```sh
+```
 [root@centos7 temp]# echo "hello,世界！"|awk '{A=toupper($0);print A}'
 HELLO,世界！
 [root@centos7 temp]#
@@ -317,7 +317,7 @@ success
 ```
 `match(str,regex)`返回字符串str中匹配正则regex的位置
 
-```sh
+```
 [root@centos7 temp]# awk 'BEGIN{A=match("abc.f.11.12.1.98",/[0-9]{1,3}\./);print A}'
 7
 [root@centos7 temp]# 

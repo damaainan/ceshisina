@@ -10,7 +10,7 @@ wget [option]... [URL]...
 ```
 `wget`是一个非交互的下载器，支持HTTP, HTTPS和FTP协议，也可以使用代理。所谓'非交互'意思是说，可以在一个系统中启动一个`wget`下载任务，然后退出系统，`wget`会在完成下载(或出现异常)之后才退出，不需要用户参与。
 
-```sh
+```
 [root@centos7 temp]# wget http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-6/v6.0.47/bin/apache-tomcat-6.0.47.tar.gz
 --2016-11-15 12:16:24--  http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-6/v6.0.47/bin/apache-tomcat-6.0.47.tar.gz
 正在解析主机 mirrors.tuna.tsinghua.edu.cn (mirrors.tuna.tsinghua.edu.cn)... 166.111.206.63, 2402:f000:1:416:166:111:206:63
@@ -25,25 +25,26 @@ wget [option]... [URL]...
 
 ```
 
-命令的执行会经过域名解析、建立连接、发送请求、保存文件等过程，`wget`还会显示下载进度条，包括下载百分比、大小、速度、用时。下载完成后显示完成时间、保存文件名、下载大小/总大小。
-选项`-q`表示禁止输出
-选项`-b`表示后台执行
-选项`-r`表示递归下载
-选项`-o logfile`表示将输出保存到文件logfile中
-选项`-i file`表示从file中读取URL并进行下载
-选项`-O file`表示下载文件保存至file
-选项`-c`断点续传，当下载一个大文件时使用此选项，如果碰到网络故障，可以从已经下载的部分开始继续下载未完成的部分。
-选项`--limit-rate=amount`下载限速，amount可以以k,m等为后缀表示速率为KB/s和MB/s。
-选项`--user-agent`指定用户代理
-选项`--user`和选项`--password`指定用户和密码
-选项`--load-cookies file`和选项`--save-cookies file`分别表示使用和保存文件中的cookies。
-选项`--accept list`和选项`--reject list`表示接受或排除list中所列文件。list中用逗号分隔每个文件名的后缀。注意如果list中包含shell通配符(`*``?``[...]`)，将作为一个模式匹配，而不是文件后缀名。
+命令的执行会经过域名解析、建立连接、发送请求、保存文件等过程，`wget`还会显示下载进度条，包括下载百分比、大小、速度、用时。下载完成后显示完成时间、保存文件名、下载大小/总大小。  
+选项`-q`表示禁止输出  
+选项`-b`表示后台执行  
+选项`-r`表示递归下载  
+选项`-o logfile`表示将输出保存到文件logfile中  
+选项`-i file`表示从file中读取URL并进行下载  
+选项`-O file`表示下载文件保存至file  
+选项`-c`断点续传，当下载一个大文件时使用此选项，如果碰到网络故障，可以从已经下载的部分开始继续下载未完成的部分。  
+选项`--limit-rate=amount`下载限速，amount可以以k,m等为后缀表示速率为KB/s和MB/s。  
+选项`--user-agent`指定用户代理  
+选项`--user`和选项`--password`指定用户和密码  
+选项`--load-cookies file`和选项`--save-cookies file`分别表示使用和保存文件中的cookies。  
+选项`--accept list`和选项`--reject list`表示接受或排除list中所列文件。list中用逗号分隔每个文件名的后缀。注意如果list中包含shell通配符(`*` `?` `[...]`)，将作为一个模式匹配，而不是文件后缀名。
+
 ### 2、`curl`网络数据传输工具
 
 ```sh
 curl [options] [URL...]
 ```
-`curl`同样也可以做为文件下载工具，和`wget`相比，`curl`支持更多的协议，在指定下载URL时支持序列或集合。但`curl`不支持递归下载。
+`curl`同样也可以做为文件下载工具，和`wget`相比，`curl`支持更多的协议，在指定下载URL时支持序列或集合。但`curl`不支持递归下载。  
 `curl`的URL可以表示成如下格式：
 
 ```sh
@@ -60,16 +61,16 @@ http://www.letters.com/file[a-z:2].txt
 http://any.org/archive[1996-1999]/vol[1-4]/part{a,b,c}.html
 ```
 
-选项`-C offset`表示从断点(offset)的位置继续传输，其中offset是个数字，单位为bytes。使用`-C -`时，`curl`会自动在给定的文件中找出断点。
-选项`-o file`表示下载文件保存至file(注意wget使用的是`-O`)
-选项`-O`表示保存为文件的原始名字
-选项`-s`忽略下载进度显示
-选项`--limit-rate speed`指定下载速度，默认单位为bytes/s，可以使用k/K,m/M,g/G后缀。
-还可以指定许多其他下载相关的选项，这里不再一一介绍。
-当`curl`没有其他选项时，会将页面内容输出至标准输出。
-选项`-I`表示只获得HTTP头信息：
+选项`-C offset`表示从断点(offset)的位置继续传输，其中offset是个数字，单位为bytes。使用`-C -`时，`curl`会自动在给定的文件中找出断点。  
+选项`-o file`表示下载文件保存至file(注意wget使用的是`-O`)  
+选项`-O`表示保存为文件的原始名字  
+选项`-s`忽略下载进度显示  
+选项`--limit-rate speed`指定下载速度，默认单位为bytes/s，可以使用k/K,m/M,g/G后缀。  
+还可以指定许多其他下载相关的选项，这里不再一一介绍。  
+当`curl`没有其他选项时，会将页面内容输出至标准输出。  
+选项`-I`表示只获得HTTP头信息：  
 
-```sh
+```
 [root@centos7 ~]# curl -I www.baidu.com
 HTTP/1.1 200 OK
 Server: bfe/1.0.8.18
@@ -97,10 +98,10 @@ Accept-Ranges: bytes
 [root@centos7 ~]#
 ```
 
-选项`-X METHOD`指定http请求方法
-选项`-L`当指定的URL被重定向时(http状态码为3xx)，使用`-L`会使`curl`重新发送请求至新地址。
-选项`-d`指定发送数据
-这些选项在操作一个远程http API时会很有用
+选项`-X METHOD`指定http请求方法   
+选项`-L`当指定的URL被重定向时(http状态码为3xx)，使用`-L`会使`curl`重新发送请求至新地址。   
+选项`-d`指定发送数据   
+这些选项在操作一个远程http API时会很有用   
 
 ```sh
 #删除peer2
@@ -147,10 +148,10 @@ rsync [OPTION...] SRC... [USER@]HOST::DEST
 rsync [OPTION...] SRC... rsync://[USER@]HOST[:PORT]/DEST
 ```
 
-选项`-r`表示递归
-选项`-v`表示显示详细信息
-选项`-a`表示保持文件所有属性并且递归地传输文件
-如使用ssh将本地`/root/temp`目录及其内容同步至10.0.1.253的`/root/temp`：
+选项`-r`表示递归  
+选项`-v`表示显示详细信息  
+选项`-a`表示保持文件所有属性并且递归地传输文件  
+如使用ssh将本地`/root/temp`目录及其内容同步至10.0.1.253的`/root/temp`：  
 
 ```sh
 #注意源和目的主机都需要有rsync命令
@@ -171,11 +172,11 @@ sent 2468 bytes  received 167 bytes  5270.00 bytes/sec
 total size is 2013  speedup is 0.76
 ```
 
-命令的执行开始会在源端(此例中的本机：发送端)创建文件列表(file list)，在创建的过程中会将文件列表发送至目的端(此例中的10.0.1.253：接收端)。发送完成之后，接收端对文件列表进行计算处理，保留接收端不存在的或变化的文件，创建新文件列表，然后发送回源端；发送端收到新文件列表后开始进行传输。
-返回结果中显示了发送的文件以及一些汇总信息。
-如执行完上述命令后更新其中一个文件，然后再次执行同步：
+命令的执行开始会在源端(此例中的本机：发送端)创建文件列表(file list)，在创建的过程中会将文件列表发送至目的端(此例中的10.0.1.253：接收端)。发送完成之后，接收端对文件列表进行计算处理，保留接收端不存在的或变化的文件，创建新文件列表，然后发送回源端；发送端收到新文件列表后开始进行传输。  
+返回结果中显示了发送的文件以及一些汇总信息。  
+如执行完上述命令后更新其中一个文件，然后再次执行同步：  
 
-```sh
+```
 [root@centos7 temp]# echo "hello world" >> d.txt 
 [root@centos7 temp]# rsync -av . root@10.0.1.253:/root/temp
 sending incremental file list
@@ -188,7 +189,7 @@ total size is 2025  speedup is 9.04
 这次只有变化了的文件才被传输。
 选项`--delete`会将接收端存在但发送端不存在的文件删除：
 
-```sh
+```
 [root@centos7 temp]# rm -f test
 [root@centos7 temp]# rsync -av --delete . root@10.0.1.253:/root/temp
 sending incremental file list
@@ -199,21 +200,21 @@ sent 132 bytes  received 15 bytes  98.00 bytes/sec
 total size is 2015  speedup is 13.71
 ```
 
-选项`--exclude=PATTERN`排除符合模式PATTERN的文件不传输(同tar命令，例子见[这里][1])
-选项`--exclude-from=FILE`排除符合文件FILE内模式(一行一个PATTERN)的文件不传输
-选项`--include=PATTERN`和`--include-from=FILE`同理，表示包含某模式的文件才被传输
-选项`-z`表示将文件压缩之后再传输。(即使使用此选项，有些文件默认时也不会被压缩，如某些gz jpg mp4 avi zip等结尾的文件)
-默认时，`rsync`会将部分传输的文件(如连接被中断导致文件没有传输完)删除。
-选项`--partial`会保留这些部分传输的文件
-选项`--progress`会打印出每个文件传输的状态信息，类似于：
+选项`--exclude=PATTERN`排除符合模式PATTERN的文件不传输(同tar命令，例子见[这里][1])  
+选项`--exclude-from=FILE`排除符合文件FILE内模式(一行一个PATTERN)的文件不传输  
+选项`--include=PATTERN`和`--include-from=FILE`同理，表示包含某模式的文件才被传输  
+选项`-z`表示将文件压缩之后再传输。(即使使用此选项，有些文件默认时也不会被压缩，如某些gz jpg mp4 avi zip等结尾的文件)  
+默认时，`rsync`会将部分传输的文件(如连接被中断导致文件没有传输完)删除。  
+选项`--partial`会保留这些部分传输的文件  
+选项`--progress`会打印出每个文件传输的状态信息，类似于：  
 
 ```sh
 782448  63%  110.64kB/s    0:00:04 #这里文件已被传输了63%
 ```
 
-选项`-P`等同于选项`--partial`和`--progress`。
-当使用daemon模式时，服务端使用默认配置文件`/etc/rsyncd.conf`和密码文件`/etc/rsyncd.secrets`(可选)。(如不存在可手动创建)
-配置文件的格式：
+选项`-P`等同于选项`--partial`和`--progress`。  
+当使用daemon模式时，服务端使用默认配置文件`/etc/rsyncd.conf`和密码文件`/etc/rsyncd.secrets`(可选)。(如不存在可手动创建)  
+配置文件的格式：  
 
 ```sh
 /etc/rsyncd.conf的内容由两部分组成，模块(modules)和参数(parameters)；
@@ -253,7 +254,7 @@ dont compress = *.gz *.tgz *.zip *.z *.bz2 #指定特定后缀名的文件在传
 
 我们在10.0.1.253这台机器上的配置文件中写入了上述内容，然后把它作为rsync服务端启动起来：
 
-```sh
+```
 [root@idc-v-71253 temp]# rsync --daemon
 [root@idc-v-71253 temp]# ls -l /var/run/rsyncd.pid
 -rw-r--r-- 1 root root 6 11月 16 14:03 /var/run/rsyncd.pid
@@ -268,12 +269,12 @@ Nov 16 14:03:44 idc-v-71253 rsyncd[29623]: rsyncd version 3.0.9 starting, listen
 #改变模块中path所指定的目录的权限以使它和全局参数uid，gid一致
 ```
 
-然后，我们就可以使用rsync服务器来传输文件了。注意服务端防火墙允许对TCP 873端口的连接，本文后面有对防火墙的描述。
+然后，我们就可以使用rsync服务器来传输文件了。注意服务端防火墙允许对TCP 873端口的连接，本文后面有对防火墙的描述。  
 如在10.0.1.254上拉取(pull)：
 
-```sh
+```
 [root@centos7 temp]# ls
-b.txt  c.txt  d.txt  e.txt  file  f.txt  test.sh
+b.txt  c.txt  d.txt  e.txt  file  f.txt  test.
 [root@centos7 temp]# rm -rf *
 [root@centos7 temp]# rsync -avP --delete 10.0.1.253::temp ./  #注意书写格式与使用ssh时的不同
 receiving incremental file list
@@ -299,7 +300,7 @@ total size is 2028  speedup is 0.77
 
 或者推送(push)：
 
-```sh
+```
 [root@centos7 temp]# echo 'BLOG ADDRESS IS "https://segmentfault.com/blog/learnning"' >> c.txt   
 [root@centos7 temp]# rm -f file
 [root@centos7 temp]# rsync -avP --delete . rsync://10.0.1.253/temp #注意格式
@@ -329,7 +330,7 @@ susan:654321
 
 在客户端(10.0.1.254)：
 
-```sh
+```
 [root@centos7 temp]# touch /etc/tridge.pass
 [root@centos7 temp]# echo 123456 > /etc/tridge.pass 
 [root@centos7 temp]# touch /etc/susan.pass
@@ -337,10 +338,10 @@ susan:654321
 [root@centos7 temp]# chmod 600 /etc/tridge.pass /etc/susan.pass
 ```
 
-客户端同步时需要使用选项`--password-file`指定所用密码文件
+客户端同步时需要使用选项`--password-file`指定所用密码文件  
 PULL：
 
-```sh
+```
 [root@centos7 temp]# rsync -avP --delete --password-file=/etc/tridge.pass rsync://tridge@10.0.1.253/cvs /data/cvs #注意格式
 receiving incremental file list
 A/a.txt
@@ -359,7 +360,7 @@ total size is 34632  speedup is 0.39
 
 PUSH：
 
-```sh
+```
 [root@centos7 temp]# echo "baby on the way..." | tee -a /data/cvs/A/*
 baby on the way...
 [root@centos7 temp]# rm -rf /data/cvs/B
@@ -401,8 +402,9 @@ rsync -avz foo:src/bar/ /data/tmp
 ```
 
 配置文件中还可以设置其他参数如设置监听端口、指定日志文件、指定允许客户端列表等等，可使用命令`man rsyncd.conf`自行查看。
+
 ### 4、`iptables`防火墙设置(注：基于linux2.6内核)
-`iptables`通过定义一系列的规则利用内核的`netfilter`对每个网络包进行过滤。用户可以定义多种规则，实现对系统的防护。
+`iptables`通过定义一系列的规则利用内核的`netfilter`对每个网络包进行过滤。用户可以定义多种规则，实现对系统的防护。  
 首先我们先看一下一个网络数据包是怎样在系统中流转的，再来说明`netfilter`在哪些位置起作用：
 
 ```sh
@@ -424,31 +426,31 @@ rsync -avz foo:src/bar/ /data/tmp
 6）链路层将包组装成帧，发送至至网卡的send队列。
 7）网卡将帧组织成二进制比特流发送至物理媒体上(网线)。
 ```
-`netfilter`在5个位置放置了关卡
-
-`PREROUTING`(入站网络层错误检测之后，路由选择之前)
-`INPUT`(入站路由选择后，交给传输层处理之前)
-`FORWARD`(入站路由选择后，进行转发之前；然后到达POSTROUTING)
-`OUTPUT`(出站路由选择之前)
-`POSTROUTING`(出站路由选择之后)
-
-这5个位置即对应了`iptables`的5个规则链,如图所示：
+`netfilter`在5个位置放置了关卡  
+  
+`PREROUTING`(入站网络层错误检测之后，路由选择之前)  
+`INPUT`(入站路由选择后，交给传输层处理之前)  
+`FORWARD`(入站路由选择后，进行转发之前；然后到达POSTROUTING)  
+`OUTPUT`(出站路由选择之前)  
+`POSTROUTING`(出站路由选择之后)  
+  
+这5个位置即对应了`iptables`的5个规则链,如图所示：  
 
 
 ![][0] 
 
-对于如何处理数据包，iptables还定义了如下4张不同功能的表：
+对于如何处理数据包，iptables还定义了如下4张不同功能的表：  
+  
+1、`raw`决定数据包是否被状态跟踪机制处理  
+可以作用的位置：OUTPUT、PREROUTING  
+2、`mangle`修改数据包的服务类型、TTL、并且可以配置路由实现QOS  
+可以作用的位置：PREROUTING、POSTROUTING、INPUT、OUTPUT、FORWARD  
+3、`nat`用于网络地址转换  
+可以作用的位置：PREROUTING、POSTROUTING、OUTPUT  
+4、`filter`过滤数据包   
+可以作用的位置：INPUT、FORWARD、OUTPUT  
 
-1、`raw`决定数据包是否被状态跟踪机制处理
-可以作用的位置：OUTPUT、PREROUTING
-2、`mangle`修改数据包的服务类型、TTL、并且可以配置路由实现QOS
-可以作用的位置：PREROUTING、POSTROUTING、INPUT、OUTPUT、FORWARD
-3、`nat`用于网络地址转换
-可以作用的位置：PREROUTING、POSTROUTING、OUTPUT
-4、`filter`过滤数据包 
-可以作用的位置：INPUT、FORWARD、OUTPUT
-
-同一位置的不同表处理的优先级为 raw->mangle->nat->filter，但各表的使用频度正好相反，filter表最常用(也是`iptables`不使用选项`-t`指定表时的默认表)，raw表极少使用。
+同一位置的不同表处理的优先级为 raw->mangle->nat->filter，但各表的使用频度正好相反，filter表最常用(也是`iptables`不使用选项`-t`指定表时的默认表)，raw表极少使用。  
 
 ```sh
 #语法
@@ -504,9 +506,9 @@ QUEUE  将数据包移交到用户空间
 
 EXTENSIONS包含两种，一种是target扩展，表示对数据包做某种处理；一种是使用选项`-m`构成的匹配扩展，表示指定某种匹配方式。
 
-target扩展
-`DNAT`对数据包进行目的地址转换，接受选项`--to-destination`(只能用于nat表，PREROUTING和OUTPUT链)
-`SNAT`对数据包进行源地址转换，接受选项`--to-source`(只能用于nat表，POSTROUTING和INPUT链)
+target扩展  
+`DNAT`对数据包进行目的地址转换，接受选项`--to-destination`(只能用于nat表，PREROUTING和OUTPUT链)  
+`SNAT`对数据包进行源地址转换，接受选项`--to-source`(只能用于nat表，POSTROUTING和INPUT链)  
 如
 
 ```sh
@@ -515,9 +517,9 @@ iptables -t nat -A PREROUTING -p tcp -i eth1 -d 221.226.x.x --dport 80 -j DNAT -
 #将源地址为192.168.5.16，源端口为80的数据包做SNAT，使源地址变为221.226.x.x
 iptables -t nat -A POSTROUTING -p tcp -o eth1 -s 192.168.5.16 --sport 80 -j SNAT --to-source 221.226.x.x
 ```
-`LOG`对匹配包进行日志记录
-`REJECT`同DROP一样丢弃包，但返回错误信息。(只能用于INPUT、FORWARD和OUTPUT链)
-`REDIRECT`重定向匹配包(只能用于nat表，PREROUTING和OUTPUT链)
+`LOG`对匹配包进行日志记录  
+`REJECT`同DROP一样丢弃包，但返回错误信息。(只能用于INPUT、FORWARD和OUTPUT链)   
+`REDIRECT`重定向匹配包(只能用于nat表，PREROUTING和OUTPUT链)  
 
 ```sh
 #将目标端口8888的重定向至本机443端口
@@ -525,7 +527,7 @@ iptables -t nat -A PREROUTING  -p tcp --dport 8888 -j REDIRECT --to 443
 
 ```
 
-匹配扩展
+匹配扩展  
 `icmp`匹配icmp协议，接受选项`--icmp-type`指定icmp类型
 
 ```sh
@@ -601,4 +603,4 @@ iptables-restore </etc/sysocnfig/iptables.rule
 由于mangle表和raw表很少使用，就没有举相关的例子，另外，如果允许linux主机进行转发(FORWARD)，需要设置内核参数：`echo 1 > /proc/sys/net/ipv4/ip_forward`(临时)，或`sysctl -w net.ipv4.ip_forward=1 &>/dev/null`(永久)。iptables的规则定义较复杂，还有许多选项没有在例子中使用到，读者可以自行man。
 
 [1]: https://segmentfault.com/a/1190000007354176#articleHeader6
-[0]: ../img/bVFNZI.png
+[0]: ./img/bVFNZI.png

@@ -2,13 +2,13 @@
 
 来源：[https://segmentfault.com/a/1190000007813224](https://segmentfault.com/a/1190000007813224)
 
-linux中软件包的管理随着系统发行版本的不同而不同，RPM和DPKG为最常见的两类软件包管理工具，分别应用于基于rpm软件包的linux发行版和基于deb软件包的linux发行版。
+linux中软件包的管理随着系统发行版本的不同而不同，RPM和DPKG为最常见的两类软件包管理工具，分别应用于基于rpm软件包的linux发行版和基于deb软件包的linux发行版。  
 本文只描述RPM的使用方法，另一种命令不同，但用法类似，就不做介绍了。
 ### 1、`rpm`RPM包管理器
 
 选项`-q`表示查询系统安装的软件包
 
-```sh
+```
 [root@centos7 ~]# rpm -q sudo
 sudo-1.8.6p7-16.el7.x86_64
 [root@centos7 ~]# rpm -q nginx
@@ -18,7 +18,7 @@ sudo-1.8.6p7-16.el7.x86_64
 
 选项`-a`表示查询所有安装的rpm包
 
-```sh
+```
 [root@centos7 ~]# rpm -qa|grep vim
 vim-filesystem-7.4.160-1.el7.x86_64
 vim-common-7.4.160-1.el7.x86_64
@@ -29,7 +29,7 @@ vim-minimal-7.4.160-1.el7.x86_64
 
 选项`-f file`表示查询文件所属软件包
 
-```sh
+```
 [root@centos7 ~]# rpm -qf /usr/bin/ls
 coreutils-8.22-15.el7.x86_64
 [root@centos7 ~]#
@@ -37,7 +37,7 @@ coreutils-8.22-15.el7.x86_64
 
 选项`-c`表示查询软件包的配置文件
 
-```sh
+```
 [root@centos7 ~]# rpm -qc sudo
 /etc/pam.d/sudo
 /etc/pam.d/sudo-i
@@ -49,7 +49,7 @@ coreutils-8.22-15.el7.x86_64
 
 选项`-e`表示卸载软件包
 
-```sh
+```
 [root@centos7 ~]# rpm -e sudo
 警告：/etc/sudoers 已另存为 /etc/sudoers.rpmsave
 [root@centos7 ~]# rpm -q sudo
@@ -72,7 +72,7 @@ coreutils-8.22-15.el7.x86_64
 
 有很多软件并不是只有一个rpm包，它们之间有各种各样的依赖关系，当安装(或卸载)时，需要将所有依赖的包都安装(或卸载)之后才能安装(或卸载)成功
 
-```sh
+```
 [root@centos7 tmp]# rpm -e vim-common
 错误：依赖检测失败：
     vim-common = 2:7.4.160-1.el7 被 (已安裝) vim-enhanced-2:7.4.160-1.el7.x86_64 需要
@@ -80,7 +80,7 @@ coreutils-8.22-15.el7.x86_64
 
 选项`--nodeps`表示忽略依赖关系
 
-```sh
+```
 [root@centos7 tmp]# rpm -q vim-common
 vim-common-7.4.160-1.el7.x86_64
 [root@centos7 tmp]# rpm -e --nodeps vim-common
@@ -91,7 +91,7 @@ vim-common-7.4.160-1.el7.x86_64
 
 选项`-U`表示对软件包升级
 
-```sh
+```
 [root@centos7 tmp]# rpm -q wget
 wget-1.14-10.el7_0.1.x86_64
 [root@centos7 tmp]# rpm -Uvh wget-1.14-13.el7.x86_64.rpm 
@@ -108,10 +108,10 @@ wget-1.14-13.el7.x86_64
 ```sh
 yum [options] [command] [package ...]
 ```
-`yum`是一个基于rpm的交互式软件包管理器。yum在安装软件时并不需要像rpm那样手动查找安装，它在工作时会搜索源中的rpm包，并自动解决依赖关系，自动下载并安装。yum默认源配置文件位于目录`/etc/yum.repos.d`内。
+`yum`是一个基于rpm的交互式软件包管理器。yum在安装软件时并不需要像rpm那样手动查找安装，它在工作时会搜索源中的rpm包，并自动解决依赖关系，自动下载并安装。yum默认源配置文件位于目录`/etc/yum.repos.d`内。  
 命令`install`表示安装
 
-```sh
+```
 [root@centos7 ~]# yum install vim-common
 已加载插件：fastestmirror
 Loading mirror speeds from cached hostfile
@@ -148,15 +148,15 @@ Running transaction
 完毕！
 ```
 
-命令`check-update`表示检查更新
-命令`update`表示升级
-命令`search`表示搜索软件包
-命令`list`表示列出可用软件包
-命令`remove`表示卸载
-命令`clean`表示清除yum缓存目录内容
-选项`-y`表示在所有需要交互式确认的地方默认输入yes
-当`yum`源中没有所需要安装的包时，会报`没有可用软件包`的错误。此时可以通过添加新的yum源来解决
-如centos7中安装nginx：
+命令`check-update`表示检查更新  
+命令`update`表示升级  
+命令`search`表示搜索软件包  
+命令`list`表示列出可用软件包  
+命令`remove`表示卸载  
+命令`clean`表示清除yum缓存目录内容  
+选项`-y`表示在所有需要交互式确认的地方默认输入yes  
+当`yum`源中没有所需要安装的包时，会报`没有可用软件包`的错误。此时可以通过添加新的yum源来解决  
+如centos7中安装nginx：  
 
 ```sh
 #安装repo
@@ -170,7 +170,7 @@ Running transaction
 
 此时/etc/yum.repos.d中增加了一个新文件nginx.repo
 
-```sh
+```
 [root@centos7 tmp]# cat /etc/yum.repos.d/nginx.repo 
 # nginx.repo
 
@@ -181,11 +181,11 @@ gpgcheck=0  #是否检查key，0表示不检查
 enabled=1   #这里等于0表示不启用baseurl，为1表示启用baseurl
 ```
 
-现在就可以通过命令`yum install -y nginx`安装nginx了
-当服务器没有网络可用时，还能够设置本地yum源。此时需要手动配置repo文件
+现在就可以通过命令`yum install -y nginx`安装nginx了  
+当服务器没有网络可用时，还能够设置本地yum源。此时需要手动配置repo文件   
 首先将安装光盘或ios文件挂载至系统(关于挂载的更多内容请看[这一篇][0])
 
-```sh
+```
 [root@centos7 tmp]# mount CentOS-7-x86_64-DVD-1611.iso /media
 mount: /dev/loop2 写保护，将以只读方式挂载
 [root@centos7 tmp]# 
@@ -233,17 +233,17 @@ tar zxf nginx-1.9.6.tar.gz
 
 **`3、配置`** 
 
-```sh
+```
 [root@idc-v-71252 src]# cd nginx-1.9.6
 [root@idc-v-71252 nginx-1.9.6]# ./configure --prefix=/usr/local/nginx
 ```
 
-这里配置选项`--prefix=/usr/local/nginx`表示指定nginx的安装路径为/usr/local/nginx。
-可以执行`./configure --help`查看有哪些配置参数，此步骤的执行会检查系统是否符合编译要求。如果报错，很多情况下是因为少了一些编译工具，可以使用yum安装这些工具(当然也可以装源码)。
-在本例中报错：`./configure: error: the HTTP rewrite module requires the PCRE library.`。
+这里配置选项`--prefix=/usr/local/nginx`表示指定nginx的安装路径为/usr/local/nginx。  
+可以执行`./configure --help`查看有哪些配置参数，此步骤的执行会检查系统是否符合编译要求。如果报错，很多情况下是因为少了一些编译工具，可以使用yum安装这些工具(当然也可以装源码)。  
+在本例中报错：`./configure: error: the HTTP rewrite module requires the PCRE library.`。  
 说明少了pcre库，查看一下系统：
 
-```sh
+```
 [root@idc-v-71252 nginx-1.9.6]# rpm -qa pcre
 pcre-8.32-15.el7.x86_64
 [root@idc-v-71252 nginx-1.9.6]#
@@ -251,22 +251,22 @@ pcre-8.32-15.el7.x86_64
 
 系统有pcre安装，但没有devel包，使用yum安装
 
-```sh
+```
 [root@idc-v-71252 nginx-1.9.6]# yum install pcre-devel -y
 ```
 
 再次执行configure发现报错变了：`./configure: error: the HTTP gzip module requires the zlib library.`重复上述操作直到所需软件都安装完毕，之后再次执行`./configure --prefix=/usr/local/nginx`**`4、编译`** 
 
-```sh
+```
 [root@idc-v-71252 nginx-1.9.6]# make -j8
 ```
 
-使用`make`进行编译，选项`-j`表示指定并发执行的数量，这里指定了和系统逻辑CPU数(可以使用命令`grep -c "^processor" /proc/cpuinfo`查看逻辑CPU数)相同的并发数。
+使用`make`进行编译，选项`-j`表示指定并发执行的数量，这里指定了和系统逻辑CPU数(可以使用命令`grep -c "^processor" /proc/cpuinfo`查看逻辑CPU数)相同的并发数。   
 此步骤也可能会出现报错，一般也是因为缺少包，仔细阅读报错信息，一般都不难解决。
 
 **`5、安装`** 
 
-```sh
+```
 [root@idc-v-71252 nginx-1.9.6]# make install
 ```
 

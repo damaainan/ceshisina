@@ -13,3 +13,5 @@ Vim编辑器 http://upload-images.jianshu.io/upload_images/1608648-6a3729b22db16
 Linux磁盘管理 http://upload-images.jianshu.io/upload_images/1608648-c459f7e8d5cf6292.png
 Bash基础特性 http://upload-images.jianshu.io/upload_images/1608648-252b524ba191558f.png
 Bash编程入门 http://upload-images.jianshu.io/upload_images/1608648-07de4c5c4914da1d.png
+
+来自 [https://www.jianshu.com/u/f10ba18d93d4](https://www.jianshu.com/u/f10ba18d93d4)
