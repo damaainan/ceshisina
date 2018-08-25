@@ -10,9 +10,9 @@
 
 1、区分命令，使用type
 
-2、查找命令位置，使用which、whereis、type（优先使用whereis）
+2、查找命令位置，使用which、whereis、type（优先使用`whereis`）
 
-3、通过文件名称查找，优先使用locate，找不到时，updatedb
+3、通过文件名称查找，优先使用locate，找不到时，`updatedb`
 
 4、其他查找条件、或者因数据库文件未更新，使用whereis、locate查找不到时，使用find
 

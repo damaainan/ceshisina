@@ -113,7 +113,7 @@ grep 命令的 `-i` 参数在查找时忽略字符的大小写。
     linuxtechi:x:1001:1001::/home/linuxtechi:/bin/bash
     nextstep4it@localhost:~$
 ```
-### 例11 使用 -e 参数查找多个模式 
+### 例11 使用 `-e` 参数查找多个模式 
 
 例如，我想在一条 grep 命令中查找 linuxtechi 和 root 单词，使用 `-e` 参数，我们可以查找多个模式。 
 
@@ -148,19 +148,19 @@ grep 命令的 `-i` 参数在查找时忽略字符的大小写。
 
 ### 例14 输出匹配指定模式行的前或者后面N行
 
-* 使用 -B 参数输出匹配行的前 4 行 
+* 使用 `-B` 参数输出匹配行的前 4 行 
 
 ```shell
     root@Linux-world:~# grep -B 4 "games" /etc/passwd
 ```
 ![][6]
-* 使用 -A 参数输出匹配行的后 4 行 
+* 使用 `-A` 参数输出匹配行的后 4 行 
 
 ```shell
     root@Linux-world:~# grep -A 4 "games" /etc/passwd
 ```
 ![][7]
-* 使用 -C 参数输出匹配行的前后各 4 行 
+* 使用 `-C` 参数输出匹配行的前后各 4 行 
 
 ```shell
     root@Linux-world:~# grep -C 4 "games" /etc/passwd

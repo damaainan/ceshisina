@@ -26,7 +26,7 @@ UDP(User Datagram Protocol 用户数据包协议)是一个简单的面向数据�
 
 
 **> 说明**  
-_>  由于IP层已经把IP数据包分配给TCP或UDP（根据IP首部中协议字段值），因此TCP端口号由TCP来查看，而UDP端口号由UDP来查看。TCP端口号与UDP端口号是相互独立的。_
+>  由于IP层已经把IP数据包分配给TCP或UDP（根据IP首部中协议字段值），因此TCP端口号由TCP来查看，而UDP端口号由UDP来查看。TCP端口号与UDP端口号是相互独立的。
 
 ## 三、IP分片
 
@@ -46,17 +46,17 @@ _>  由于IP层已经把IP数据包分配给TCP或UDP（根据IP首部中协议�
 抓包，执行如下PHP代码：
 
 ```php
-    <?php
-    $handle = stream_socket_client("udp://110.12.15.10:9999", $errno, $errstr);
-    if( !$handle ){    
-          die("ERROR: {$errno} - {$errstr}\n");
-    }
-    $str = 'start';
-    for($i=0;$i<500;$i++){    
-          $str .= 'abcdefjhijklmnopkrstuvwxyz1234567890';
-    }
-    $str .= 'end';
-    fwrite($handle, $str."\n");
+<?php
+$handle = stream_socket_client("udp://110.12.15.10:9999", $errno, $errstr);
+if( !$handle ){    
+      die("ERROR: {$errno} - {$errstr}\n");
+}
+$str = 'start';
+for($i=0;$i<500;$i++){    
+      $str .= 'abcdefjhijklmnopkrstuvwxyz1234567890';
+}
+$str .= 'end';
+fwrite($handle, $str."\n");
 ```
 ![][4]
 

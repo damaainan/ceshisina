@@ -247,12 +247,12 @@ find . -type f -mtime +3 -name "*.txt" -exec cp {} old \;
 
 
 [9]: https://github.com/guobinhit/cg-blog/blob/master/articles/linux/LINUX_README.md
-[0]: https://img2.tuicool.com/vQZVraI.png
-[1]: https://img1.tuicool.com/e2uaMbM.png
-[2]: https://img1.tuicool.com/a2aeYzn.png
-[3]: https://img0.tuicool.com/z2ENBrI.png
-[4]: https://img2.tuicool.com/eyEFVjr.png
-[5]: https://img2.tuicool.com/r2QFZ3Y.png
-[6]: https://img0.tuicool.com/EVvENbu.png
-[7]: https://img1.tuicool.com/A3IbauI.png
-[8]: https://img0.tuicool.com/Irmqmye.png
+[0]: ../img/vQZVraI.png
+[1]: ../img/e2uaMbM.png
+[2]: ../img/a2aeYzn.png
+[3]: ../img/z2ENBrI.png
+[4]: ../img/eyEFVjr.png
+[5]: ../img/r2QFZ3Y.png
+[6]: ../img/EVvENbu.png
+[7]: ../img/A3IbauI.png
+[8]: ../img/Irmqmye.png

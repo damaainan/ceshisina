@@ -53,11 +53,11 @@ Usage: grep [OPTION]... PATTERN [FILE]...
 
 示例：
 
-#### 1） 输出b文件中在a文件相同的行
+#### 1） **`输出b文件中在a文件相同的行`**
 
     # grep -f a b
 
-#### 2） 输出b文件中在a文件不同的行
+#### 2） `输出b文件中在a文件不同的行`
 
     # grep -v -f a b
 
@@ -85,7 +85,7 @@ Usage: grep [OPTION]... PATTERN [FILE]...
     is
     is
 
-#### 7） 输出匹配的前五个结果
+#### 7） `输出匹配的前五个结果`
 
     # seq 1 20  |grep -m 5 -E '[0-9]{2}'
     10
@@ -94,7 +94,7 @@ Usage: grep [OPTION]... PATTERN [FILE]...
     13
     14
 
-#### 8）统计匹配多少行
+#### 8）`统计匹配多少行`
 
     # seq 1 20  |grep -c -E '[0-9]{2}'
     11
@@ -153,7 +153,7 @@ Usage: grep [OPTION]... PATTERN [FILE]...
     7
     8
 
-#### 19） 打印匹配结果及前3行
+#### 19） `打印匹配结果及前3行`
 
     # seq 1 10 |grep 5 -B 3
     2

@@ -38,7 +38,7 @@
     
     make install
 
-> 注意：这将把 > sar>  以及其他的 > systat>  工具放在 > /usr/local/bin>  目录下。
+> 注意：这将把 sar 以及其他的 systat 工具放在 /usr/local/bin 目录下。
 
 一旦安装完成后，可以使用 sar -V 命令查看 sar 版本。
 
@@ -80,7 +80,7 @@
 
 如果你是通过源码安装的，sa1 和 sa2 的默认位置为 /usr/local/lib/sa。如果你使用包管理器安装（如 yum, up2date, 或者 apt-get），可能位于 /usr/lib/sa/sa1 和 /usr/lib/sa/sa2。
 
-> 为了理解定时任务，请读 [> Linux Crontab: 15 Awesome Cron Job Examples][8]> 。
+> 为了理解定时任务，请读 [Linux Crontab: 15 Awesome Cron Job Examples][8]。
 
 ### /usr/local/lib/sa/sa1
 

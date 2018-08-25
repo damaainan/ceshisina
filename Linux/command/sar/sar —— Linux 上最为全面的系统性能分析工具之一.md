@@ -463,4 +463,4 @@ Linux 2.6.32-696.13.2.el6.x86_64 (upfor163) 2018年04月25日 _x86_64_ (2 CPU)
 
 [1]: https://link.jianshu.com?t=https%3A%2F%2Fshockerli.net%2Fpost%2Flinux-tool-sar%2F
 [2]: https://link.jianshu.com?t=https%3A%2F%2Fshockerli.net%2Fpost%2Flinux-tool-sar%2F
-[0]: https://img1.tuicool.com/MJvYjif.jpg
+[0]: ../img/MJvYjif.jpg
