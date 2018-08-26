@@ -81,6 +81,7 @@ session的原理图如下：
 
 使用session的第一步，我们要打开session，使用session_start(),然后我们给创建的session添加一个变量，我们假设为demo1,值为default ,代码如下：
 
+```php
     <?php
     /**
      * Created by PhpStorm.
@@ -89,7 +90,7 @@ session的原理图如下：
     session_start();// 打开session
     $_SESSION["demo1"] = "default";
     ?>
-    
+```
 
 执行效果如下：
 
@@ -113,6 +114,7 @@ s:7 表示的是类型为string类型，长度为7个长度的字符串
 
 代码如下：
 
+```php
     <?php
     /**
      * Created by PhpStorm.
@@ -123,12 +125,13 @@ s:7 表示的是类型为string类型，长度为7个长度的字符串
     //session的销毁
     unset($_SESSION);
     ?>
-    
+```
 
 这一个相当于没有删除session文件，但是使得即使有对应的PHPSESSID也无法获取到相应的session
 
 session_destroy()相对来说比较彻底，直接删除对应的session文件
 
+```php
     <?php
     /**
      * Created by PhpStorm.
@@ -140,7 +143,7 @@ session_destroy()相对来说比较彻底，直接删除对应的session文件
     //session的销毁
     session_destroy();
     ?>
-    
+```
 
 运行的效果如下：
 
@@ -154,6 +157,7 @@ session_destroy()相对来说比较彻底，直接删除对应的session文件
 
 设置的示例代码：
 
+```php
     <?php
     /**
      * Created by PhpStorm.
@@ -163,7 +167,7 @@ session_destroy()相对来说比较彻底，直接删除对应的session文件
     $_SESSION["demo1"] = "default_1";
     setCookie(session_name(),session_id(),time()-1000);
     ?>
-    
+```
 
 在设置cookie的时候，我们为了程序的安全性，我们应该要禁止JS可以对cookie进行重写，所以需要设置HTTP ONLY，具体的设置方法在Php.ini中找到session.cookie_httponly
 
@@ -173,6 +177,7 @@ session_destroy()相对来说比较彻底，直接删除对应的session文件
 
 在使用session的时候，虽然会从浏览器把PHPSESSID传给后端，但是这个课程不需要人为的去参与。我们只需要保证HTTPONLY被设置就行了。下面是完整的代码：
 
+```php
     <?php
     /**
      * Created by PhpStorm.
@@ -188,7 +193,7 @@ session_destroy()相对来说比较彻底，直接删除对应的session文件
     }
     
     ?>
-    
+```
 
  session的一些相关注意事项
 
@@ -209,12 +214,12 @@ session_destroy()相对来说比较彻底，直接删除对应的session文件
 
 [1]: http://www.cnblogs.com/st-leslie/p/8016951.html
 
-[4]: https://img1.tuicool.com/zYBFN3Q.gif
-[5]: https://img2.tuicool.com/yQraYn2.gif
-[6]: https://img1.tuicool.com/euimu22.gif
-[7]: https://img1.tuicool.com/BJV3qmn.gif
-[8]: https://img2.tuicool.com/uiA7Bna.gif
-[9]: https://img1.tuicool.com/FfUzaiz.gif
-[10]: https://img1.tuicool.com/vErEVjb.gif
-[11]: https://img0.tuicool.com/rAruuyI.gif
+[4]: ../img/zYBFN3Q.gif
+[5]: ../img/yQraYn2.gif
+[6]: ../img/euimu22.gif
+[7]: ../img/BJV3qmn.gif
+[8]: ../img/uiA7Bna.gif
+[9]: ../img/FfUzaiz.gif
+[10]: ../img/vErEVjb.gif
+[11]: ../img/rAruuyI.gif
 [12]: http://blog.51cto.com/cmdschool/1714757

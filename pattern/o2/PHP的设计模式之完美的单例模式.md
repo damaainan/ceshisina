@@ -71,7 +71,7 @@ OK，这段代码看起很完美了，有注释，有格式的，没什么问题
 ```
 这是时候的输出就会变成：**bool(false)**  然后就可以达到，只要继承这个单例模式，那么它的子类也是单例模式。就可以达到完美复用的作用，不用每次需要单例模式都去写那么多重复代码了。 注意上面的方法**只有在PHP 5.3中才能使用**，对于之前版本的PHP，还是老老实实为每个单例类写一个getInstance()方法吧。
 
-[0]: /hel12he/article/details/43562547
+[0]: http://blog.csdn.net/hel12he/article/details/43562547
 [1]: http://www.csdn.net/tag/api
 [2]: http://www.csdn.net/tag/%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f
 [3]: http://www.csdn.net/tag/PHP%e5%8d%95%e4%be%8b%e6%a8%a1%e5%bc%8f

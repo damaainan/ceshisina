@@ -397,38 +397,38 @@ REPERATABLE READ 和 READ UNCOMMITED 其实是矛盾的，如果保证了前者�
 [1]: http://draveness.me/tag/MySQL
 [2]: http://draveness.me/tag/InnoDB
 [3]: http://draveness.me/tag/Database
-[4]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/mysql.png
+[4]: ./img/mysql.png
 [5]: https://book.douban.com/subject/24708143/
-[6]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Database%20-%20Instance.jpg
-[7]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Logical-View-of-MySQL-Architecture.jpg
+[6]: ./img/Database%20-%20Instance.jpg
+[7]: ./img/Logical-View-of-MySQL-Architecture.jpg
 [8]: https://en.wikipedia.org/wiki/InnoDB
 [9]: https://en.wikipedia.org/wiki/MyISAM
-[10]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Tablespace-segment-extent-page-row.jpg
-[11]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Relation%20Between%20Page%20Size%20-%20Extent%20Size.png
-[12]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/frm-and-ibd-file.jpg
-[13]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/frm-file-hex.png
+[10]: ./img/Tablespace-segment-extent-page-row.jpg
+[11]: ./img/Relation%20Between%20Page%20Size%20-%20Extent%20Size.png
+[12]: ./img/frm-and-ibd-file.jpg
+[13]: ./img/frm-file-hex.png
 [14]: https://dev.mysql.com/doc/internals/en/frm-file-format.html
-[15]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Antelope-Barracuda-Row-Format.jpg
-[16]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/COMPACT-And-REDUNDANT-Row-Format.jpg
-[17]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Row-Overflow.jpg
-[18]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Row-Overflow-in-Barracuda.jpg
+[15]: ./img/Antelope-Barracuda-Row-Format.jpg
+[16]: ./img/COMPACT-And-REDUNDANT-Row-Format.jpg
+[17]: ./img/Row-Overflow.jpg
+[18]: ./img/Row-Overflow-in-Barracuda.jpg
 [19]: https://dev.mysql.com/doc/internals/en/innodb-record-structure.html
-[20]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/InnoDB-B-Tree-Node.jpg
-[21]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Infimum-Rows-Supremum.jpg
-[22]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/B+Tree.jpg
-[23]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Clustered-Index.jpg
-[24]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Secondary-Index.jpg
-[25]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Clustered-Secondary-Index.jpg
+[20]: ./img/InnoDB-B-Tree-Node.jpg
+[21]: ./img/Infimum-Rows-Supremum.jpg
+[22]: ./img/B+Tree.jpg
+[23]: ./img/Clustered-Index.jpg
+[24]: ./img/Secondary-Index.jpg
+[25]: ./img/Clustered-Secondary-Index.jpg
 [26]: %E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E4%B8%8E%E4%BC%98%E5%8C%96
-[27]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Optimistic-Pessimistic-Locks.jpg
-[28]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Shared-Exclusive-Lock.jpg
-[29]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Lock-Type-Compatibility-Matrix.jpg
-[30]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Deadlocks.jpg
-[31]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Transaction-Isolation-Matrix.jpg
-[32]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Read-Uncommited-Dirty-Read.jpg
-[33]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Read-Commited-Non-Repeatable-Read.jpg
-[34]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Repeatable-Read-Phantom-Read.jpg
-[35]: https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Repeatable-with-Next-Key-Lock.jpg
+[27]: ./img/Optimistic-Pessimistic-Locks.jpg
+[28]: ./img/Shared-Exclusive-Lock.jpg
+[29]: ./img/Lock-Type-Compatibility-Matrix.jpg
+[30]: ./img/Deadlocks.jpg
+[31]: ./img/Transaction-Isolation-Matrix.jpg
+[32]: ./img/Read-Uncommited-Dirty-Read.jpg
+[33]: ./img/Read-Commited-Non-Repeatable-Read.jpg
+[34]: ./img/Repeatable-Read-Phantom-Read.jpg
+[35]: ./img/Repeatable-with-Next-Key-Lock.jpg
 [36]: https://book.douban.com/subject/23008813/
 [37]: https://book.douban.com/subject/26419771/
 [38]: https://dev.mysql.com/doc/
@@ -442,3 +442,33 @@ REPERATABLE READ 和 READ UNCOMMITED 其实是矛盾的，如果保证了前者�
 [46]: http://www.cnblogs.com/Bob-FD/p/3352216.html
 [47]: https://en.wikipedia.org/wiki/Optimistic_concurrency_control
 [48]: http://www.cnblogs.com/zhoujinyi/p/3437475.html
+
+
+<!-- 
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/mysql.png
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Database%20-%20Instance.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Logical-View-of-MySQL-Architecture.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Tablespace-segment-extent-page-row.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Relation%20Between%20Page%20Size%20-%20Extent%20Size.png
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/frm-and-ibd-file.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/frm-file-hex.png
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Antelope-Barracuda-Row-Format.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/COMPACT-And-REDUNDANT-Row-Format.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Row-Overflow.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Row-Overflow-in-Barracuda.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/InnoDB-B-Tree-Node.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Infimum-Rows-Supremum.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/B+Tree.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Clustered-Index.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Secondary-Index.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Clustered-Secondary-Index.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Optimistic-Pessimistic-Locks.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Shared-Exclusive-Lock.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Lock-Type-Compatibility-Matrix.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Deadlocks.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Transaction-Isolation-Matrix.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Read-Uncommited-Dirty-Read.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Read-Commited-Non-Repeatable-Read.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Repeatable-Read-Phantom-Read.jpg
+https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Repeatable-with-Next-Key-Lock.jpg
+ -->

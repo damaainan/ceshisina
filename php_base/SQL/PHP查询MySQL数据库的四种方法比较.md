@@ -8,7 +8,7 @@
 
 我把文章和Tag取出来，放到工具里面，自动添加内链。
 
-[![image](http://img.lingdonge.com/images/2012/09/989c_image_thumb.png "image")](http://img.lingdonge.com/images/2012/09/a5ad_image.png)
+![](../img/a5ad_image.png)
 
 还是切入正题。下面代码转自其它博客。
 

@@ -252,8 +252,8 @@ query()方法详解：
 ```
 
 [1]: http://www.cnblogs.com/8013-cmf/p/8303222.html
-[3]: https://img1.tuicool.com/2Qj6Zrv.png
-[4]: https://img0.tuicool.com/7ZVNb2Y.png
-[5]: https://img0.tuicool.com/fiQb6nR.png
-[6]: https://img0.tuicool.com/yeeiuai.png
-[7]: https://img0.tuicool.com/miIZF32.png
+[3]: ../img/2Qj6Zrv.png
+[4]: ../img/7ZVNb2Y.png
+[5]: ../img/fiQb6nR.png
+[6]: ../img/yeeiuai.png
+[7]: ../img/miIZF32.png
