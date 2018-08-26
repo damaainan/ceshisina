@@ -75,7 +75,7 @@ log_format 的格式可以变成这样：
 
 假如只想查看某些位：
 
-tail -f access.log | awk -F '^A' '{if($6》1) print $3″|"$4}'
+    tail -f access.log | awk -F '^A' '{if($6》1) print $3″|"$4}'
 
 查找 502 错误最 多的 URL：
 

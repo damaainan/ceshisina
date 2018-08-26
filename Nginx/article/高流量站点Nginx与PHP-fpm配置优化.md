@@ -80,7 +80,7 @@ upstream backend {
  
 #### 以下是两个来自php-fpm.conf的进程池：
 
-```
+```xml
 <section name="pool">
 
     <value name="name">www1</value>
@@ -238,7 +238,7 @@ server_names_hash_bucket_size 100;
  
 ### 9. /etc/sysctl.conf调优
 
-```
+```cfg
 # Recycle Zombie connections
 net.inet.tcp.fast_finwait2_recycle=1
 net.inet.tcp.maxtcptw=200000
@@ -288,7 +288,7 @@ net.inet.udp.blackhole=1
  
 确认安装了NGINX的stub_status模块。该模块默认并不会编译进NGINX，所以可能你需要重新编译NGINX -
 
-```nginx
+```sh
 ./configure --with-http_ssl_module --with-http_stub_status_module --without-mail_pop3_module
 --without-mail_imap_module --without-mail_smtp_module
 make install BATCH=yes

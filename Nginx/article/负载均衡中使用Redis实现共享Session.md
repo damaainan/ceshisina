@@ -1,5 +1,4 @@
-## [
-](https://segmentfault.com/a/1190000011558000)
+## [负载均衡中使用Redis实现共享Session](https://segmentfault.com/a/1190000011558000)
 
 > 最近在研究Web架构方面的知识，包括数据库读写分离，Redis缓存和队列，集群，以及负载均衡（LVS），今天就来先学习下我在负载均衡中遇到的问题，那就是session共享的问题。
 

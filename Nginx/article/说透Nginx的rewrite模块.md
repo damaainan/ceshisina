@@ -4,29 +4,19 @@
 
 时间 2018-04-18 09:34:00
 
-
 rewrite模块即`ngx_http_rewrite_module`模块，主要功能是改写请求URI，是Nginx默认安装的模块。rewrite模块会根据PCRE正则匹配重写URI，然后发起内部跳转再匹配location，或者直接做30x重定向返回客户端。
-
 
 ## rewrite指令的工作原理
 
 rewrite模块的指令有break, if, return, rewrite, set等。rewrite指令所执行的顺序如下：
 
-
-
 * 首先在server上下文中依照顺序执行rewrite模块指令；
 * 如果server中行了rewrite重写，那么以新URI发起内部跳转，直接匹配location，不会再执行server里的rewrite指令，然后    
-
-* 新URI直接匹配location
-* 如果匹配上某个location，那么其中的rewrite模块指令同样依照顺序执行
-* 如果再次导致URI的rewrite，那么再一次进行内部跳转去匹配location，但跳转的总次数不能超过10次
+    * 新URI直接匹配location
+    * 如果匹配上某个location，那么其中的rewrite模块指令同样依照顺序执行
+    * 如果再次导致URI的rewrite，那么再一次进行内部跳转去匹配location，但跳转的总次数不能超过10次
       
-
-
-  
-
 ## rewrite
-
 
 基本语法： rewrite regex replacement [flag];
 
@@ -136,7 +126,7 @@ location /download/ {
 * 当condition为变量`$var`本身时，当且仅当变量值为空字符或者0时，条件为false，其余情况皆为 true    
 * 变量`$var`通过"="或者"!="与字符串相比较，即`$var = xxx`或者`$var != xxx`
 * 匹配一个正则表达式
-* `-f``-d``-e``-x`等检验文件或者目录属性或者存在与否的运算符    
+* `-f` `-d` `-e` `-x`等检验文件或者目录属性或者存在与否的运算符    
   
 
 #### 正则匹配
@@ -158,14 +148,11 @@ Reg 中可以捕获变量，当其中包含有 } 或者 ; 时需要用双引号�
 
 另外，对于 4. 检验文件存在或者属性的情况，具体说来也分为以下几种：
 
-
-
 * -f /path/to 检验文件是否存在；!-f /path/to 检验文件是否不存在
 * -d /path/to/ 检验目录是否存在；!-d /path/to/ 检验目录是否不存在
 * -e /path/to/ 检验文件或者目录或者链接是否存在；!-e /path/to/ 检验文件或者目录或者链接是否不存在
 * -x /path/to 检验文件是否为可执行文件；!-x /path/to 检验文件是否为不可执行文件
   
-
 #### if 指令举例
 
 ```nginx
@@ -199,7 +186,6 @@ if ($invalid_referer) {
 }
 ```
 
-
 ## return
 
 
@@ -212,7 +198,6 @@ if ($invalid_referer) {
 return的参数有四种形式：
 
 
-
 * `return code`此时，响应内容就是nginx所默认的，比如503 Service Temporarily Unavailable； 如果是444那就直接关闭TCP连接，也可以是其他值(644等)，但是没啥意义    
 * `return code text`因为要带响应内容，因此code不能是具有跳转功能的30x    
 * `return code URL`此时URI可以为URI做内部跳转，也可以是具有“      [http://”或者“https://”等协议的绝对URL，直接返回客户端，而code是30x(301][0]
@@ -220,9 +205,7 @@ return的参数有四种形式：
 * `return URL`此时code默认为302，而URL必须是带“      [http://”等协议的绝对URL][1]
     
   
-
 ## set
-
 
 基本语法：set $variable value;
 
@@ -236,9 +219,7 @@ set $var = $http_x_forwarded_for;
 
 注意：在Nginx中，除非特殊说明，大部分地方字符串的不需要引号括住，字符串和变量的拼接也不需要引号
 
-
 ## rewrite_log
-
 
 基本语法：rewrite_log on | off;
 
@@ -247,7 +228,6 @@ set $var = $http_x_forwarded_for;
 如果开启 on，那么当发生rewrite时，会产生一个notice级别的日志；否则不会产生任何日志。默认情况下是不产生的，但在调试的时候可以将其置为on。
 
 以上这些指令，基本涵盖了rewrite模块的所有应用，在需要改写请求URI，或者做跳转时非常有用。
-
 
 
 [0]: http://%E2%80%9D%E6%88%96%E8%80%85%E2%80%9Chttps//%E2%80%9D%E7%AD%89%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%BB%9D%E5%AF%B9URL%EF%BC%8C%E7%9B%B4%E6%8E%A5%E8%BF%94%E5%9B%9E%E5%AE%A2%E6%88%B7%E7%AB%AF%EF%BC%8C%E8%80%8Ccode%E6%98%AF30x(301

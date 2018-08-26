@@ -28,3 +28,36 @@ awk '!array[$1]++' file.txt 第一列去重
     ls *.md | xargs -I[ awk -F'## ' 'NR==1{system("mv [ \""$2".md\"")}' [
 
     ls *.md | xargs -I[ awk -F'## ' 'NR==1{print "["$2}' [ | awk -F'.md' '{system("mv "$1".md \""$1$2".md\"")}'
+
+#### 批量修改文件名及语言标识
+
+```sh
+sed -i 's@~~~@```@' *.md 
+
+# 加序号
+
+awk -F"[" '{print $2}' toc.md | awk -F']' '{print FNR"**"$1}' | awk -F'**' '{system("mv \""$2".md\" \""$1""$2".md\"")}'
+```
+
+
+```sh 
+#!/bin/bash
+# echo $IFS
+
+# 改变奇数行的语言标志
+
+MY_SAVEIFS=$IFS  # 改变分隔符
+# IFS=$(echo -en "\n\b")  
+IFS=$'\n'  
+# echo $IFS
+for i in `ls *.md`
+do
+    # echo $i
+    name=$i
+    echo $name
+    awk '/```/{i++;if(i%2==1)print NR}' "${name}" | xargs -I[ sed -i '[s@```@```c@' "${name}"
+done
+
+IFS=$MY_SAVEIFS  
+# echo $IFS
+```

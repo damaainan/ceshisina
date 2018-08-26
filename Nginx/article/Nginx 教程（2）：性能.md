@@ -350,7 +350,7 @@ HTTP 所依赖的 TCP 协议需要执行三次握手来启动连接。这意味�
 Nginx 提供了几个指令来调整 keepalive 设置。这些可以分为两类：
 
 * 在客户端和 nginx 之间 keep-alive
-
+```nginx
     keepalive_disable msie6;        # disable selected browsers.
      
     # The number of requests a client can make over a single keepalive connection. The default is 100, but a much higher value can be especially useful for testing with a load‑generation tool, which generally sends a large number of requests from a single client.
@@ -358,10 +358,11 @@ Nginx 提供了几个指令来调整 keepalive 设置。这些可以分为两类
      
     # How long an idle keepalive connection remains open.
     keepalive_timeout 60;
-    
+```
 
 * 在 nginx 和上游服务器之间 keep-alive
 
+```nginx
     upstream backend {
         # The number of idle keepalive connections to an upstream server that remain open for each worker process
         keepalive 16;
@@ -374,7 +375,7 @@ Nginx 提供了几个指令来调整 keepalive 设置。这些可以分为两类
         proxy_set_header Connection "";
       }
     }
-    
+```
 
 就这些了。
 

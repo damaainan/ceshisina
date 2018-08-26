@@ -49,6 +49,7 @@ server {
 * Context：server，location，if
 
  **`示例：`** ` rewrite ^(.*)$ /pages/main.html break; `
+
 * regex（正则）
 
 Linux中 **`pcregrep`** 命令可以用来测试正则表达式。
@@ -66,7 +67,7 @@ Linux中 **`pcregrep`** 命令可以用来测试正则表达式。
 | {n,} | 重复n次或更多次 |
 | [c] | 匹配单个字符c |
 | [a-z] | 匹配a-z小写字母的任意一个 |
-| \ | 转移字符 |
+| \ | 转义字符 |
 | ( ) | 用于匹配()之间的内容，通过`$1`、`$2`调用 |
 
 * flag
@@ -96,11 +97,9 @@ location / {
 ```
 
 * 优先级
-
-
-* 执行server块的rewrite指令
-* 执行location匹配
-* 执行选中的location中的rewrite
+    * 执行server块的rewrite指令
+    * 执行location匹配
+    * 执行选中的location中的rewrite
 
 ## 三、Nginx的高级模块
 #### 1. secure_link_module模块
@@ -113,20 +112,15 @@ location / {
 
 * 配置语法
 
-
 * secure_link
-
-
-* 配置语法：secure_link expression;
-* 默认：无
-* Context：http，server，location
+    * 配置语法：secure_link expression;
+    * 默认：无
+    * Context：http，server，location
 
 * secure_link_md5
-
-
-* 配置语法：secure_link_md5 expression;
-* 默认：无
-* Context：http，server，location
+    * 配置语法：secure_link_md5 expression;
+    * 默认：无
+    * Context：http，server，location
 
  **`简单配置实例：`** 
 
@@ -169,26 +163,18 @@ echo "http://${servername}${download_file}?md5=${res}&expires=${time_num}"
 `yum install nginx-module-geoip`
 
 * 使用场景：
-
-
-* 区别国内外做HTTP访问规则
-* 区别国内城市地域做HTTP访问规则
+    * 区别国内外做HTTP访问规则
+    * 区别国内城市地域做HTTP访问规则
 
 * 使用步骤：
-
-
-* 安装geoip：`yum install nginx-module-geoip`，安装完成查看/etc/nginx/module目录下，如果有对应的so文件，则说明安装成功
-* 在/etc/nginx/nginx.conf配置文件开头加入
-
-
-* `load_module "modules/ngx_http_geoip_module.so";`
-* `load_module "modules/ngx_stream_geoip_module.so";`
+    * 安装geoip：`yum install nginx-module-geoip`，安装完成查看/etc/nginx/module目录下，如果有对应的so文件，则说明安装成功
+    * 在/etc/nginx/nginx.conf配置文件开头加入
+        * `load_module "modules/ngx_http_geoip_module.so";`
+        * `load_module "modules/ngx_stream_geoip_module.so";`
 
 * 下载地域分区文件：
-
-
-* `wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz`
-* `wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz`
+    * `wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz`
+    * `wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz`
 
 * 使用`gunzip`命令解压下载下来的文件
 
@@ -208,10 +194,8 @@ server{
 #### 1、为什么需要HTTPS
 
 * 原因：HTTP不安全
-
-
-* 传输数据被中间人盗用、信息泄露
-* 数据内容劫持、篡改
+    * 传输数据被中间人盗用、信息泄露
+    * 数据内容劫持、篡改
 
 #### 2、HTTPS协议的实现
 
@@ -220,14 +204,12 @@ server{
 * 对称加密和非对称加密
 * HTTPS加密协议原理
 * 客户端在使用HTTPS方式与Web服务器通信的步骤
-
-
-* 客户使用https的URL访问Web服务器，要求与Web服务器建立SSL连接
-* Web服务器收到客户端请求后，会将网站的证书信息（证书中包含公钥）传送一份给客户端
-* 客户端的浏览器与Web服务器开始协商SSL连接的安全等级，也就是信息加密的等级
-* 客户端的浏览器根据双方同意的安全等级，建立会话密钥，然后利用网站的公钥将会话密钥加密，并传送给网站
-* Web服务器利用自己的私钥解密出会话密钥
-* Web服务器利用会话密钥加密与客户端之间的通信
+    * 客户使用https的URL访问Web服务器，要求与Web服务器建立SSL连接
+    * Web服务器收到客户端请求后，会将网站的证书信息（证书中包含公钥）传送一份给客户端
+    * 客户端的浏览器与Web服务器开始协商SSL连接的安全等级，也就是信息加密的等级
+    * 客户端的浏览器根据双方同意的安全等级，建立会话密钥，然后利用网站的公钥将会话密钥加密，并传送给网站
+    * Web服务器利用自己的私钥解密出会话密钥
+    * Web服务器利用会话密钥加密与客户端之间的通信
 
  **`通信原理图：`** 
 
@@ -236,53 +218,41 @@ server{
 #### 3、证书签名生成
  **`准备步骤：`** 
 
-
 * 确认openssl有无安装，`openssl version`
 * nginx有无编译http-ssl-module，`nginx -V`
 
  **`生成自签证书步骤：`** 
 
-
 * 生成key密钥
-
-* `openssl genrsa -idea -out ronaldo.key 1024`
-
+    * `openssl genrsa -idea -out ronaldo.key 1024`
 
 * 生成证书签名请求文件（csr文件）
-
-
-* `openssl req -new -key ronaldo.key -out ronaldo.csr`
-* 当提示输入 A challenge password时，表示ca文件需要更改的另外一个密码，直接回车即可。
+    * `openssl req -new -key ronaldo.key -out ronaldo.csr`
+    * 当提示输入 A challenge password时，表示ca文件需要更改的另外一个密码，直接回车即可。
 
 打包上面两个步骤生成的文件发送给签名机构即可完成证书签名
-* 生成证书签名文件（CA文件）
 
-* openssl x509 -req -days 3650 -in ronaldo.csr -signkey ronaldo.key -out ronaldo.crt
+* 生成证书签名文件（CA文件）
+    * `openssl x509 -req -days 3650 -in ronaldo.csr -signkey ronaldo.key -out ronaldo.crt`
 
 
  **`配置语法：`** 
 
 
 * ssl
-
-
-* 配置语法：ssl on | off;
-* 默认：ssl off;
-* Context：http，server
+    * 配置语法：ssl on | off;
+    * 默认：ssl off;
+    * Context：http，server
 
 * ssl_certificate（crt文件所在位置）
-
-
-* 配置语法：ssl_certificate file;
-* 默认：无
-* Context：http，server
+    * 配置语法：ssl_certificate file;
+    * 默认：无
+    * Context：http，server
 
 * ssl_certificate_key（key文件所在位置）
-
-
-* 配置语法：ssl_certificate_key file;
-* 默认：无
-* Context：http，server
+    * 配置语法：ssl_certificate_key file;
+    * 默认：无
+    * Context：http，server
 
  **`简单示例：`** 
 
@@ -311,11 +281,9 @@ server {
 #### 4、配置苹果要求的证书
 
 * 服务器所有的连接使用TLS1.2以上的版本（openssl 1.0.2）
-
-
-* 版本：`openssl version`
-* 自签证书加密签名算法类型以及公钥位数：`openssl x509 -noout -text -in ./ronaldo.crt`
-* 升级openssl的脚本
+    * 版本：`openssl version`
+    * 自签证书加密签名算法类型以及公钥位数：`openssl x509 -noout -text -in ./ronaldo.crt`
+    * 升级openssl的脚本
 
 ```
 #!/bin/bash
@@ -352,13 +320,10 @@ openssl version -a
 
 
 * 激活keepalive长链接
-
-* 在配置文件写入：`keepalive_timeout 100`
-
+    * 在配置文件写入：`keepalive_timeout 100`
 
 * 设置ssl session缓存
-
-* 在配置文件写入：`ssl_session_cache shared:SSL:10m`
+    * 在配置文件写入：`ssl_session_cache shared:SSL:10m`
 
 ## 五、Nginx与Lua的开发
 
@@ -382,29 +347,26 @@ print("Hello world")
 
 
 * 注释
-
-
-* - - 行注释
-* - -[[块注释- -]]
+    * - - 行注释
+    * - -[[块注释- -]]
 
 * 变量
-
-
-* a = 'alon123"'
-* a = "alon123""
-* a = '97lo1004923"'
-* a = [[alo
-* 123"]]
-* 上述是同一个意思，第三点用的是ASCII表
+    * a = 'alon123"'
+    * a = "alon123""
+    * a = '97lo1004923"'
+    * a = [[alo
+    * 123"]]
+    * 上述是同一个意思，第三点用的是ASCII表
 
  **`注意：`** 
-Lua数值类型只有double类型
-Lua布尔类型只有nil和false是false，数字0、空字符串都是true
-Lua中的变量如果没有特殊说明，全是全局变量；如果希望是局部变量，签名加个local
-Lua没有++或是+=这样的操作
-~=：不等于
-..：字符串拼接
-io库的分别从stdin和stdout读写的read和write函数
+Lua数值类型只有double类型  
+Lua布尔类型只有nil和false是false，数字0、空字符串都是true  
+Lua中的变量如果没有特殊说明，全是全局变量；如果希望是局部变量，签名加个local  
+Lua没有++或是+=这样的操作  
+~=：不等于  
+..：字符串拼接  
+io库的分别从stdin和stdout读写的read和write函数  
+
 * while循环语句
 
 ```lua
@@ -441,12 +403,10 @@ end
 #### 2、Nginx + Lua环境
 
 * 所需下载以及安装：
-
-
-* LuaJIT
-* ngx_devel_kit和lua-nginx-module
-* 重新编译Nginx
-* 详细的下载和安装步骤参见：
+    * LuaJIT
+    * ngx_devel_kit和lua-nginx-module
+    * 重新编译Nginx
+    * 详细的下载和安装步骤参见：
 
 #### 3、Nginx调用lua模块指令
 

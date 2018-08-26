@@ -64,28 +64,13 @@ Nginx是一款轻量级的Web 服务器/反向代理服务器及电子邮件（I
 
 ### 2.2 nginx实现反向代理
 
-nigix代理是基于 ngx_http_proxy 模块实现的。该模块有很多配置选项，如： 
+nigix代理是基于 **`ngx_http_proxy`** 模块实现的。该模块有很多配置选项，如： 
 
-proxy_pass
-
-指定将请求代理至server的URL路径。
-
-proxy_set_header
-
-将发送至server的报文的某首部进行重写。
-
-proxy_send_timeout
-
-在连接断开之前两次发送到server的最大间隔时长；过了这么长时间后端还是没有收到数据，连接会被关闭。
-
-proxy_read_timeout
-
-是从后端读取数据的超时时间，两次读取操作的时间间隔如果大于这个值，和后端的连接会被关闭。
-
-proxy_connect_timeout
-
-是和后端建立连接的超时时间。
-
+`proxy_pass`  指定将请求代理至server的URL路径。   
+`proxy_set_header`  将发送至server的报文的某首部进行重写。   
+`proxy_send_timeout`  在连接断开之前两次发送到server的最大间隔时长；过了这么长时间后端还是没有收到数据，连接会被关闭。   
+`proxy_read_timeout`  是从后端读取数据的超时时间，两次读取操作的时间间隔如果大于这个值，和后端的连接会被关闭。   
+`proxy_connect_timeout`  是和后端建立连接的超时时间。   
 接下来，我们就来仔细说说重点的配置选项：
 
 #### 2.2.1 proxy_pass 配置 
@@ -96,15 +81,19 @@ proxy_connect_timeout
 
 语法如下：
 
+```nginx
     location /uri {
-        proxy_pass http://ip:port/newuri/;        //location的/uri将被替换为/newuri
+        proxy_pass http://ip:port/newuri/;        # location的/uri将被替换为/newuri
     }
+```
 
 举例如下：
 
+```nginx
     location /mobi {
-        proxy_pass http://172.17.251.66/mobile/;        //将/mobi 的请求跳转到新服务器上/mobile目录下
+        proxy_pass http://172.17.251.66/mobile/;        # 将/mobi 的请求跳转到新服务器上/mobile目录下
     }
+```
 
 在这里，我们需要注意的是， http://ip:port/newuri; ，这个地方最后面加不加 / 意义是不同的。 
 
@@ -112,9 +101,11 @@ proxy_connect_timeout
 
 如果我们不加 / ，则是将新路径当做其上级目录，访问的是新路径下的原路径。举例如下： 
 
+```nginx
     location /mobi {
-        proxy_pass http://172.17.251.66/mobile;        //将/mobi 的请求跳转到新服务器上/mobile/mobi目录下
+        proxy_pass http://172.17.251.66/mobile;        # 将/mobi 的请求跳转到新服务器上/mobile/mobi目录下
     }
+```
 
 2）转换url 
 
@@ -124,9 +115,11 @@ proxy_connect_timeout
 
 举例如下：
 
+```nginx
     location ~ ^/mobile {
         proxy_pass http://172.17.251.66;
     }
+```
 
 这段代码的意思是，只要有 /mobile 的网址，会直接转到 http://172.17.251.66/mobile 下。 
 
@@ -136,14 +129,16 @@ proxy_connect_timeout
 
 如果在location中使用的URL重定向，那么nginx将使用重定向后的URI处理请求，而不再考虑之前定义的URI。
 
+```nginx
     location /youxi{
         rewrite ^(.*)$ /mobile/$1 break;
         proxy_pass http://172.17.251.66;
     }
+```
 
-这段代码的意思就是，只要你访问的是带 /youxi 的页面，就会自动重定向到 http://172.16.100.1/mobile/$1 上。 $1 指的是 ^(.*)$ 中括号内的部分。这样就实现了整个url的重定向。 
+这段代码的意思就是，只要你访问的是带 /youxi 的页面，就会自动重定向到 `http://172.16.100.1/mobile/$1` 上。 `$1` 指的是 `^(.*)$` 中**`括号内`**的部分。这样就实现了整个url的重定向。 
 
-在这里，我们也来详细说说 ngx_http_rewrite_module 模块，这是一个非常好用的模块。 
+在这里，我们也来详细说说 `ngx_http_rewrite_module` 模块，这是一个非常好用的模块。 
 
 #### 2.2.1.1 ngx_http_rewrite_module 模块 
 
@@ -163,15 +158,15 @@ proxy_connect_timeout
 
 下面我们来说一说 flag 的具体选项： 
 
-[flag] ： 
+##### [flag] ： 
 
-last ：重写完成后停止对当前URI在当前location中后续的其它重写操作，而后对新的URI启动 **新一轮（从第一个开始）** 重写检查；提前重启新一轮循环。 
+`last` ：重写完成后停止对当前URI在当前location中后续的其它重写操作，而后对新的URI启动 **新一轮（从第一个开始）** 重写检查；提前重启新一轮循环。 
 
-break ：重写完成后 **停止** 对当前URI在当前location中后续的其它重写操作，而后 **直接跳转** 至重写规则配置块之后的其它配置； **结束循环** ，建议在location中使用。 
+`break` ：重写完成后 **停止** 对当前URI在当前location中后续的其它重写操作，而后 **直接跳转** 至重写规则配置块之后的其它配置； **结束循环** ，建议在location中使用。 
 
-redirect ： **临时重定向** ，重写完成后以临时重定向方式直接返回重写后生成的新URI给客户端，由客户端重新发起请求； **不能以http://或https://开头** ，使用相对路径，状态码： 302。 
+`redirect` ： **临时重定向** ，重写完成后以临时重定向方式直接返回重写后生成的新URI给客户端，由客户端重新发起请求； **不能以http://或https://开头** ，使用相对路径，状态码： 302。 
 
-permanent ：重写完成后以 **永久重定向** 方式直接返回重写后生成的新URI给客户端，由客户端重新发起请求，状态码：301。 
+`permanent` ：重写完成后以 **永久重定向** 方式直接返回重写后生成的新URI给客户端，由客户端重新发起请求，状态码：301。 
 
 由下图我们可以更清楚的看出跳转到的位置：
 
@@ -193,17 +188,17 @@ proxy_set_header 用于将发送至server的报文的某首部进行重写。常
 
 语法如下：
 
-    proxy_set_header Host $host;            //目的主机地址
-    proxy_set_header X-REMOTE-IP $remote_addr;      //上一跳地址
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;    //客户端主机地址
+    proxy_set_header Host $host;            # 目的主机地址
+    proxy_set_header X-REMOTE-IP $remote_addr;      # 上一跳地址
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;    # 客户端主机地址
 
 原有请求报文中如果存在 X-Forwared-For 首部， 则将 client_addr 以逗号分隔补原有值后， 否则则直接添加此首部； 
 
 ### 2.3 nginx实现负载均衡
 
-nginx负载均衡是 ngx_http_upstream_module 模块的功能， 需要在配置文件 http块 上下文中定义 upstream块 ， 指定一组负载均衡的后端服务器， 然后在上面讲到的 proxy_pass 中引用， 就可以反向代理时实现负载均衡了。 
+nginx负载均衡是 **`ngx_http_upstream_module`** 模块的功能， 需要在配置文件 http块 上下文中定义 upstream块 ， 指定一组负载均衡的后端服务器， 然后在上面讲到的 `proxy_pass` 中引用， 就可以反向代理时实现负载均衡了。 
 
-需要注意的是： ngx_http_upstream 段要在 server 段前面，要定义在 http 段中。 
+需要注意的是： `ngx_http_upstream` 段要在 server 段前面，要定义在 http 段中。 
 
 语法如下：
 
@@ -211,29 +206,30 @@ nginx负载均衡是 ngx_http_upstream_module 模块的功能， 需要在配置
 
 接着，我们来看一看选项：
 
-paramerters ： 
+`paramerters` ： 
 
-weight ： 负载均衡策略权重， 默认为1； 
+`weight` ： 负载均衡策略权重， 默认为1； 
 
-max_fails ： 在一定时间内（这个时间在fail_timeout参数中设置） 检查这个服务器是否可用时产生的最多失败请求数 
+`max_fails` ： 在一定时间内（这个时间在fail_timeout参数中设置） 检查这个服务器是否可用时产生的最多失败请求数 
 
-fail_timeout ： 在经历了 max_fails 次失败后， 暂停服务的时间。 max_fails 可以和 fail_timeout 一起使用， 进行对后端服务器的健康状态检查； 
+`fail_timeout` ： 在经历了 max_fails 次失败后， 暂停服务的时间。 max_fails 可以和 fail_timeout 一起使用， 进行对后端服务器的健康状态检查； 
 
-backup ： 当所有后端服务器都宕机时， 可以指定代理服务器自身作为备份， 对外提供维护提示页面； 
+`backup` ： 当所有后端服务器都宕机时， 可以指定代理服务器自身作为备份， 对外提供维护提示页面； 
 
-down ： 永久不可用。 
+`down` ： 永久不可用。 
 
-需要注意一下的是： max_fails 和 fail_timeout 是配对使用的，前者是定义在一定时间内检查这个服务器是否连接可用时产生的最多失败请求的次数，后者是规定这个时间，并且这个时间也是在经过前者的失败次数后，暂停服务的时间。 
+需要注意一下的是： `max_fails` 和 `fail_timeout` 是配对使用的，前者是定义在一定时间内检查这个服务器是否连接可用时产生的最多失败请求的次数，后者是规定这个时间，并且这个时间也是在经过前者的失败次数后，暂停服务的时间。 
 
 示例：
 
     max_fails=3
-        fail_timeout=10s
+    fail_timeout=10s
 
 意思就是 10秒内失败3次，则暂停服务10秒。
 
 举例：
 
+```nginx
     upstream dynamic {
         server backend1.example.com weight=5;
         server backend2.example.com:8080 max_fails=3; fail_timeout=5s ;
@@ -241,6 +237,7 @@ down ： 永久不可用。
         server backup1.example.com:8080 backup;
         server backup2.example.com:8080 backup;
     }
+```
 
 当然，我们还有一个专业的健康检测模块 nginx_upstream_check_module-master ，可以根据需要使用。 
 
@@ -275,7 +272,7 @@ proxy_next_upstream指定检查策略，默认为返回超时为失败）和 fai
 2、编译安装 tengine首先，我们要安装依赖的包和包组：
 
     yum install pcre-devel  openssl-devel -y
-        yum groupinstall "development tools" -y
+    yum groupinstall "development tools" -y
 
 安装完成后，我们进入这个目录：
 
@@ -284,7 +281,7 @@ proxy_next_upstream指定检查策略，默认为返回超时为失败）和 fai
 然后，我们就可以进行编译安装了：
 
     ./configure --prefix=/usr/local/tengine
-        make && make install
+    make && make install
 
 3、修改配置文件 
 
@@ -294,6 +291,7 @@ proxy_next_upstream指定检查策略，默认为返回超时为失败）和 fai
 
 http 段，添加如下内容： 
 
+```nginx
     upstream server-cluster{
             server 172.17.77.77:80;
             server 172.17.252.111:80;
@@ -311,11 +309,13 @@ http 段，添加如下内容：
             check_http_send "HEAD / HTTP/1.0\r\n\r\n";
             check_http_expect_alive http_2xx http_3xx;
     }
+```
 
 server 段，添加如下内容： 
 
+```nginx
     location /stats {
-            check_status;      //定义一个web监听页面
+            check_status;      # 定义一个web监听页面
     }
     //以下部分用来实现动静分离
     location ~* .jpg|.png|.gif|.jpeg$ {
@@ -327,9 +327,11 @@ server 段，添加如下内容：
     location / {
             proxy_pass http://server-cluster;
     }
+```
 
 如果有下面这一段，我们需要把它注释掉：
 
+```nginx
     location ~ \.php$ {
         root           html;
         fastcgi_pass   127.0.0.1:9000;
@@ -337,6 +339,7 @@ server 段，添加如下内容：
         fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         include        fastcgi_params;
     }
+```
 
 这样，我们的配置文件就修改完成了。
 
@@ -355,7 +358,7 @@ centos7里的启动脚本在 /usr/lib/systemd/system/nginx.service
 在centos6中，我们如果之前使用 yum 安装过 nginx ，我们就可以复制一个 nginx 的服务脚本，改名为 tengine ，并设置开机自启，具体操作如下： 
 
     cp /etc/init.d/nginx /etc/init.d/tengine
-        vim /etc/init.d/tengine
+    vim /etc/init.d/tengine
 
 4、测试 
 
@@ -409,7 +412,7 @@ Nginx实现缓存是通过代理缓存 pxory_cache ， 这也是 ngx_http_proxy_
 
 #### 4.3.1 proxy_cache_path
 
-proxy_cache_path定义一个完整的缓存空间，指定缓存数据的磁盘路径、索引存放的内存空间以及一些其他参数，如缓存删除策略。
+`proxy_cache_path`定义一个完整的缓存空间，指定缓存数据的磁盘路径、索引存放的内存空间以及一些其他参数，如缓存删除策略。
 
 注意：该选项只能定义在http块上下文中。 
 
@@ -431,14 +434,14 @@ inactive ：在inactive指定的时间内，未被访问的缓存数据将从缓
 
 proxy_cache 用来引用上面 proxy_cache_path 定义的缓存空间， 现时打开缓存功能， 如下： 
 
-    　　proxy_cache web；             //引用上面定义上的缓存空间， 同一缓存空间可以在几个地方使用
+    proxy_cache web；             //引用上面定义上的缓存空间， 同一缓存空间可以在几个地方使用
 
 #### 4.3.3 proxy_cache_valid
 
 proxy_cache_valid 设置不同响应代码的缓存时间， 如： 
 
     proxy_cache_valid 200 302 10m;
-        proxy_cache_valid 404 1m;
+    proxy_cache_valid 404 1m;
 
 ### 4.4 配置nginx缓存实例
 
@@ -446,6 +449,7 @@ proxy_cache_valid 设置不同响应代码的缓存时间， 如：
 
 定义一个完整的缓存空间；缓存数据存储在/data/cache目录中；配置在该目录下再分两层目录；名称为web(proxy_cache引用)；10m内存空间大小；最大缓存数据磁盘空间的大小；10分钟未被访问的缓存数据将从缓存中删除
 
+```nginx
     http {
     
         proxy_cache_path /data/cache levels=1:2 keys_zone=web:10m max_size=1G inactive=10m;
@@ -455,15 +459,16 @@ proxy_cache_valid 设置不同响应代码的缓存时间， 如：
             server_name localhost;
             #charset koi8-r;
             #access_log logs/host.access.log main;
-            add_header Magedu-Cache "$upstream_cache_status form $server_addr";　　　　//给请求响应增加一个头部信息，表示从服务器上返回的cache状态怎么样（有没有命中）
+            add_header Magedu-Cache "$upstream_cache_status form $server_addr";　　　　#给请求响应增加一个头部信息，表示从服务器上返回的cache状态怎么样（有没有命中）
             location / {
-                proxy_pass http://webserver;　　　　//引用上面定义的upstream负载均衡组
-                proxy_cache web;　　　　//引用上面定义上的缓存空间，同一缓存空间可以在几个地方使用
+                proxy_pass http://webserver;　　　　#引用上面定义的upstream负载均衡组
+                proxy_cache web;　　　　#引用上面定义上的缓存空间，同一缓存空间可以在几个地方使用
                 proxy_cache_valid 200 302 10m;
-                proxy_cache_valid 404 1m;　　　　//对代码200和302的响应设置10分钟的缓存，对代码404的响应设置为1分钟;
+                proxy_cache_valid 404 1m;　　　　#对代码200和302的响应设置10分钟的缓存，对代码404的响应设置为1分钟;
             }
         }
     }
+```
 
 ## 五、memcached
 
@@ -487,39 +492,36 @@ Memcached 简洁而强大。它的简洁设计便于快速开发，减轻开发�
 
 memcached 的配置文件与我们常见服务的配置文件不同，他的配置文件非常简单，配置文件为 /etc/sysconfig/memcached 。我们来看一下里面的东西： 
 
-PORT="11211" #端口
-
-USER="memcached" #启动用户
-
-MAXCONN="1024" #最大连接
-
-CACHESIZE="64" #缓存空间大小
+    PORT="11211" #端口
+    USER="memcached" #启动用户
+    MAXCONN="1024" #最大连接
+    CACHESIZE="64" #缓存空间大小
 
 配置文件里只有常用的一些设置，我们可以直接通过修改文件来更改配置，也可以等到我们启动服务的时候添加下面的选项来更改配置：
 
--d 指定memcached进程作为一个守护进程启动 
+`-d` 指定memcached进程作为一个守护进程启动 
 
--m <num> 指定分配给memcached使用的内存，单位是MB，默认为64； 
+`-m <num>` 指定分配给memcached使用的内存，单位是MB，默认为64； 
 
--u <username> 运行memcached的用户 
+`-u <username>` 运行memcached的用户 
 
--l <ip_addr> 监听的服务器IP地址，如果有多个地址的话，使用逗号分隔，格式可以为“IP地址:端口号”，例如： -l 指定192.168.0.184:19830,192.168.0.195:13542；端口号也可以通过 -p 选项指定 
+`-l <ip_addr>` 监听的服务器IP地址，如果有多个地址的话，使用逗号分隔，格式可以为“IP地址:端口号”，例如： -l 指定192.168.0.184:19830,192.168.0.195:13542；端口号也可以通过 -p 选项指定 
 
--p <num> Listen on TCP port , the default is port 11211.
+`-p <num>` Listen on TCP port , the default is port 11211.
 
--c <num> 设置最大运行的并发连接数，默认是1024 
+`-c <num>` 设置最大运行的并发连接数，默认是1024 
 
--R <num> 为避免客户端饿死（starvation），对连续达到的客户端请求数设置一个限额，如果超过该设置，会选择另一个连接来处理请求，默认为20 
+`-R <num>` 为避免客户端饿死（starvation），对连续达到的客户端请求数设置一个限额，如果超过该设置，会选择另一个连接来处理请求，默认为20 
 
--k 设置锁定所有分页的内存，对于大缓存应用场景，谨慎使用该选项 
+`-k` 设置锁定所有分页的内存，对于大缓存应用场景，谨慎使用该选项 
 
--P 保存memcached进程的pid文件 
+`-P` 保存memcached进程的pid文件 
 
--s <file> 指定Memcached用于监听的UNIX socket文件 
+`-s <file>` 指定Memcached用于监听的UNIX socket文件 
 
--a <perms> 设置-s选项指定的UNIX socket文件的权限 
+`-a <perms>` 设置-s选项指定的UNIX socket文件的权限 
 
--U <num> Listen on UDP port , the default is port 11211, 0 is off. 
+`-U <num>` Listen on UDP port , the default is port 11211, 0 is off. 
 
 我们来开启服务：
 
@@ -670,6 +672,8 @@ value 是一个需要存储的数据。数据需要与上述选项执行命令�
 接下来，给大家提供一个简单的 php 测试 memcache 的小脚本： 
 
     vim /data/web/memcached.php
+
+```php
     <?php
     $mem = new Memcache;
     $mem->connect("172.17.77.77", 11211); #连接Memcached，ip是你做实验机器的ip
@@ -683,6 +687,7 @@ value 是一个需要存储的数据。数据需要与上述选项执行命令�
     $get_result = $mem->get('magedu'); #获取testkey的值
     echo "$get_result is from memcached server.";
     ?>
+```
 
 然后我们就可以去访问了：
 

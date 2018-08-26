@@ -53,8 +53,6 @@ Nginx运行时进程需要有用户和组的支持，用以实现对网站文件
  
 ```
 ./configure \ --prefix=/usr/local/nginx \ --user=nginx \ --group=nginx \ --with-http_stub_status_module
-
-
 ```
  
 ### 2.修改nginx配置文件指定用户与组
@@ -95,8 +93,6 @@ vim /usr/local/nginx/conf/nginx.conf
  
 ```
 location ~.(gif|jpg|jepg|png|bmp|ico)$ { root html; expires 1d; }
-
-
 ```
  
 ![][6]
@@ -229,8 +225,6 @@ vim /usr/local/nginx/conf/nginx.conf
  
 ```
 gzip on; gzip_buffers 4 64k; gzip_http_version 1.1; gzip_comp_level 2; gzip_min_length 1k; gzip_vary on; gzip_types text/plain text/javascript application/x-javascript text/css text/xml application/xml application/xml+rss text/jpg text/png;
-
-
 ```
  
 ### 2.重启nginx

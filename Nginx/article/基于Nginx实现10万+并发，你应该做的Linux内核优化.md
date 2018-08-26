@@ -8,7 +8,7 @@
   
 首先，你需要修改 `/etc/sysctl.conf` 来更改内核参数。  
 
-```  
+```cfg
 fs.file-max = 999999  
 #表示单个进程最大可以打开的句柄数；  
   
@@ -52,7 +52,7 @@ net.core.wmem_max = 12582912
 
 注意：以上的四个参数，需要根据业务逻辑和实际的硬件成本来综合考虑；  
 
-```
+```cfg
 net.ipv4.tcp_syncookies = 1  
 #与性能无关。用于解决TCP的SYN攻击。  
   
@@ -71,7 +71,7 @@ net.ipv4.tcp_max_orphans=262114
 
 为了方便使用，下方不带注释的可以直接复制  
 
-```
+```cfg
 fs.file-max = 999999  
 net.ipv4.tcp_tw_reuse = 1  
 ner.ipv4.tcp_keepalive_time = 600  
