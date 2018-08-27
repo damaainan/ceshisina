@@ -62,10 +62,7 @@ print_r(array_reduce(array_map($square, $array), 'add')); //-> 285
  
 例如是上面的例子中使用的 array_map ，好处在于它不可变，也就是说不会改变原始数组的内容，使用不可变变量进行编码好处如下：
  
-
-
 * 程序出现异常的主要原因之一是对象的状态无意中改变，或者其引用变为空。不可变对象可以传递给任何函数，它们的状态将始终保持不变。 
-
 * 不可变的数据结构在共享内存多线程应用程序中非常重要。在本书中，我们不会多谈关于并发处理的问题，因为 PHP 进程大部分是孤立运行的。现在，无论是否设计并行性，无状态对象都是在许多常见PHP部署中广泛使用的模式。例如，作为最佳实践，Symfony 服务（或服务对象）应该始终是无状态的。一个服务不应该持续任何状态，并提供一组临时函数，它们将处理它所在的域，执行某种业务逻辑的计算，并返回结果。 
  
 
@@ -96,9 +93,7 @@ if (<some condition>) {
   
 关于高阶函数和闭包本书都会提到，高阶函数被定义为可以接受其他函数作为参数或返回其他函数的函数。当然函数可以分配给变量。
  
-PHP 中的函数可以像对象一样进行操作。事实上，如果你要检查一个函数的类型，你会发现它们是 [Closure][2]
- 
-的实例。将一个函数赋予给一个变量这个在实际应用中很常见。例如下面的例子
+PHP 中的函数可以像对象一样进行操作。事实上，如果你要检查一个函数的类型，你会发现它们是 [Closure][2]的实例。将一个函数赋予给一个变量这个在实际应用中很常见。例如下面的例子
  
  
  
@@ -277,7 +272,7 @@ $validatableContainer('is_numeric')->map(addTo(40)); // output-> 40
  
 关于这本书的详细内容和例子戳链接 [Functional PHP][5] ，关于 函数式编程的 composer 包  [Functional PHP: Functional primitives for PHP][6]
  
-```php
+```json
 {
     "require": {
         "lstrojny/functional-php": "~1.2"
@@ -288,11 +283,10 @@ $validatableContainer('is_numeric')->map(addTo(40)); // output-> 40
 本质上这本书我还没有看完，翻译起来很多地方确实词不达意，我还是根据实际的举例逐个去理解的，此文章后续还会继续补充和追加学习心得。 Go PHP!
  
 
-
 [1]: https://www.reallyli.xin/pdf/Functional-PHP.pdf
 [2]: http://php.net/manual/en/class.closure.php
 [3]: http://www.golaravel.com/post/magic-methods-and-magic-constants-in-php/
 [4]: https://wiki.php.net/rfc/arrow_functions
 [5]: https://leanpub.com/functional-php/read_full
 [6]: https://github.com/lstrojny/functional-php
-[0]: https://img2.tuicool.com/r2QRreF.png
+[0]: ../img/r2QRreF.png

@@ -40,6 +40,7 @@ SOAP消息不能包含XML处理指令
 
 可选的Fault元素，提供有关在处理此消息所发生的错误的信息
 
+```xml
     <?xml version="1.0"?>
     <soap:Envelope
         xmlns:soap="http://www.w3.org/2001/12/soap-envelope"
@@ -59,7 +60,7 @@ SOAP消息不能包含XML处理指令
               </soap:Fault>
         </soap:Body>
     </soap:Envelope>
-     
+```
     
 
 1、SOAP Envelope元素,SOAP消息的根元素，可把XML文档定义为SOAP消息
@@ -70,14 +71,13 @@ SOAP消息不能包含XML处理指令
 
 4、可选的SOAP Header元素可包含有关SOAP消息的应用程序专用信息。如果Header元素被提供，则它必须是Envelope元素的第一个子元素
 
+```xml
     <soap:Header>
        <m:Trans xmlns:m="http://www.w3schools.com/transaction/"
         soap:mustUnderstand="1">234 #表示处理此头部的接受者必须认可此元素，假如此元素接受者无法认可此元素，则在处理此头部时必须失效
        </m:Trans>
     </soap:Heaser>
-     
-     
-    
+```
 
 SOAP在默认命名空间中定义了3个属性：actor，mustUnderstand，encodingStyle。这些被定义在SOAP头部的属性可定义容器如何对SOAP消息进行处理。soap:mustUnderstand=”0/1″
 
@@ -114,6 +114,7 @@ WSDL： WSDL 指网络服务描述语言 (Web Services Description Language)，W
 
 ## 基本结构 
 
+```xml
     <definitions>
         <types>
            definition of types........
@@ -128,7 +129,7 @@ WSDL： WSDL 指网络服务描述语言 (Web Services Description Language)，W
            definition of a binding....
         </binding>
     </definitions>
-     
+```
     
 
 一个WSDL文档通常包含7个重要的元素，即types、import、message、portType、operation、binding、service元素。这些元素嵌套在definitions元素中，definitions是WSDL文档的根元素。
@@ -145,6 +146,7 @@ WSDL： WSDL 指网络服务描述语言 (Web Services Description Language)，W
 
 http://cardpay.shengpay.com/api-acquire-channel/services/receiveOrderService?wsdl
 
+```xml
     <?xml version="1.0" encoding="utf-8"?>
      
     <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.sdo.com/mas/api/receive/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ReceiveOrderAPIExplorterService" targetNamespace="http://www.sdo.com/mas/api/receive/">  
@@ -303,5 +305,6 @@ http://cardpay.shengpay.com/api-acquire-channel/services/receiveOrderService?wsd
         </wsdl:port> 
       </wsdl:service> 
     </wsdl:definitions>
+```
 
 [1]: https://www.congcong.us/post/soap_wsdl.html

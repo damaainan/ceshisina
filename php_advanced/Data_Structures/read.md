@@ -8,7 +8,7 @@ PHP 扩展 Data Structures 的基本使用和解读
 
 Collection---  
 Deque---双端队列  
-Hashable---  
+Hashable---哈希表  
 Map---映射  
 Pair---对  
 PriorityQueue---优先队列  

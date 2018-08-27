@@ -92,7 +92,7 @@ $greeting = function() use ($user) {
 // Greet the user
 $greeting(); // Returns "Hello Philip"
 ```
-从上面的例子能看到，在 Closure 定义中，通过 use 语句传递了 $user 变量, 所以 Closure 内部能够访问到 $user 。但是如果在 Closure 作用域内修改变量 $user 的值，并不会修改父作用域的 $user 值。如果希望修改父作用域的 $user，可以传递变量的引用 &$user 给 Closure 。
+从上面的例子能看到，在 Closure 定义中，通过 `use` 语句传递了 `$user` 变量, 所以 Closure 内部能够访问到 $user 。但是如果在 Closure 作用域内修改变量 $user 的值，并不会修改父作用域的 $user 值。如果希望修改父作用域的 $user，可以传递变量的引用 &$user 给 Closure 。
 
     
 ```php
@@ -149,11 +149,8 @@ array_walk($users, function ($name) {
 });
 
 // Returns
-
 // -> Hello John
-
 // -> Hello Jane
-
 // -> ..
 ```
 同样的，可通过 use 语句把父作用变量传递到 Closure 中。

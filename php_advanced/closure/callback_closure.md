@@ -42,8 +42,8 @@ PHP中将一个函数赋值给一个变量的方式有四种：
 其callback应如下：
 
     $callback = function(&$val, $key[, $arg]){    
-                doSomething($val);
-            }
+        doSomething($val);
+    }
 
 array_walk返回执行是否成功，是一个 布尔值 。对$value添加引用符号可以在函数内改变$value值，以达到改变$vars数组的效果。由于其$callback对参数数量要求为两项，array_walk不能传入strtolower/array_filter之类的$callback,若想实现类似功能，可以使用接下来要说的array_map()。
 
@@ -58,8 +58,8 @@ array_walk返回执行是否成功，是一个 布尔值 。对$value添加引�
 其$callback类似于：
 
     $callback = function($var){
-                　　return true or false;         
-                }
+    　　return true or false;         
+    }
 
 array_filter会 过滤掉$callback执行时返回为false 的项目，array_filter返回过滤完成后的数组。
 
@@ -70,8 +70,8 @@ array_filter会 过滤掉$callback执行时返回为false 的项目，array_filt
 其$callback类似于：
 
     $callback = function($var_a[, $var_b...]){
-                doSomething($var_a, $var_b);
-            }
+        doSomething($var_a, $var_b);
+    }
 
 返回$var_as经过callback处理后的数组（会改变原数组）；如果有多个数组的时候将两个数组同样顺序的项目传入处理，执行次数为参数数组中项目最多的个数；
 

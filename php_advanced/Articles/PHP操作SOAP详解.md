@@ -50,6 +50,7 @@ php.ini 开启扩展
 
 ## 服务端示例 
 
+```php
     <?php
     Class RobotInfo
     {
@@ -65,11 +66,12 @@ php.ini 开启扩展
     $s = new SoapServer(, array("location" => "http://localhost/server.php", "uri" => "server.php"));
     $s->setClass("RobotInfo");
     $s->handle();
-     
+```
     
 
 ## 客户端示例 
 
+```php
     <?php
     try {
         //wsdl方式
@@ -86,6 +88,6 @@ php.ini 开启扩展
     } catch (Exception $e) {
         echo $e->getMessage();
     }
-
+```
 
 [1]: https://www.congcong.us/post/php_soap_server_client.html
