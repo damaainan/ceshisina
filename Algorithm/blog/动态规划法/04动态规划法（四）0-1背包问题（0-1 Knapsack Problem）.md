@@ -168,5 +168,5 @@ Chosen items: [5, 3, 2]
   未完待续~~
  **` 注意： `** 本人现已开通两个微信公众号： 用Python做数学（微信号为：python_math）以及轻松学会Python爬虫（微信号为：easy_web_scrape）， 欢迎大家关注哦~~
 
-[0]: https://images2018.cnblogs.com/blog/1219272/201806/1219272-20180604123036993-1764395840.png
+[0]: ./1764395840.png
 [100]: https://mp.csdn.net/postedit/80513522

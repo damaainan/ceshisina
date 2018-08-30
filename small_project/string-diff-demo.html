@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>使用动态规划 实现字符级Diff & Patch</title>
+    <!-- https://juejin.im/post/5a82f7016fb9a063475f82f0 -->
+</head>
+
+<body>
+    <input id="str1">
+    <input id="str2">
+    <p id="result"></p>
+    <script>
+    // solving 'longest common sequence' problem using dynamic programming
+    // will return lcs, and ses (shortest edit script) for the two string arguments
+    function dp_lcs(str1, str2) {
+        var len1 = str1.length
+        var len2 = str2.length
+        var lcsLengths = initMatrix(len1, len2)
+
+        fill(lcsLengths, str1, str2)
+
+        var info = backtrack(lcsLengths, str1, str2)
+        return info
+    }
+
+    function backtrack(matrix, str1, str2) {
+        var lcs = []
+        var ses = []
+
+        // an internal function to fetch element from matrix
+        function ref(m, x, y) {
+            var t = m[x]
+            if (t === undefined) {
+                return undefined
+            } else {
+                t = t[y]
+                if (t === undefined) {
+                    return undefined
+                } else {
+                    return t
+                }
+            }
+        }
+
+        function walk(x, y) {
+            var top = ref(matrix, x - 1, y)
+            var left = ref(matrix, x, y - 1)
+            var topLeft = ref(matrix, x - 1, y - 1)
+            var focus = ref(matrix, x, y)
+
+            // base case when top boundary is reached, can only backtrack leftward
+            // this case implies that some heading letters in str1 need to be deleted to form str2
+            if (top === undefined && topLeft === undefined && left !== undefined && focus !== undefined) {
+                ses.push({
+                    op: 'delete',
+                    index: y
+                })
+                return walk(x, y - 1)
+                // base case when left boundary is reached, can only backtrack upward
+                // this case implies that some letters need to be added before the head of str1 to form str2
+            } else if (top !== undefined && topLeft === undefined && left === undefined && focus !== undefined) {
+                ses.push({
+                    op: 'insertBefore',
+                    index: x,
+                    element: str2[x - 1]
+                })
+                return walk(x - 1, y)
+                // base case when top left corner is reached
+                // this case marks the end of backtracking
+            } else if (top === undefined && topLeft === undefined && left === undefined && focus !== undefined) {
+                lcs.reverse()
+                lcs = lcs.join('')
+                ses.reverse()
+                return {
+                    lcs,
+                    ses
+                }
+                // recursive case when free to move in the matrix
+                // a leftward move stands for deletion
+                // a upward move stands for insertion
+                // a top-leftward move stands for no-operation, and the letter the backtracker is on will be included in the lcs
+            } else {
+                if (top == left && top == topLeft && focus - topLeft == 1) {
+                    lcs.push(str1[y - 1])
+                    return walk(x - 1, y - 1)
+                } else {
+                    if (top == focus) {
+                        ses.push({
+                            op: 'insert',
+                            index: y,
+                            element: str2[x - 1]
+                        })
+                        return walk(x - 1, y)
+                    } else {
+                        ses.push({
+                            op: 'delete',
+                            index: y
+                        })
+                        return walk(x, y - 1)
+                    }
+                }
+            }
+        }
+
+        var len1 = matrix.length - 1
+        var len2 = matrix[0].length - 1
+        return walk(len1, len2)
+    }
+
+    function fill(matrix, str1, str2) {
+        var i = 1,
+            j = 1
+        var len1 = str1.length
+        var len2 = str2.length
+        while (i <= len2) {
+            matrix[i][j] = getSolution(matrix, i, j, str1, str2)
+            j++
+            if (j >= len1 + 1) {
+                j = 1
+                i++
+            }
+        }
+    }
+
+    function getSolution(matrix, i, j, str1, str2) {
+        var char1 = str1[j - 1]
+        var char2 = str2[i - 1]
+
+        var leftTop = matrix[i - 1][j - 1]
+        var top = matrix[i - 1][j]
+        var left = matrix[i][j - 1]
+
+        if (char1 == char2 && top == left) {
+            return leftTop + 1
+        } else {
+            return Math.max(left, top)
+        }
+    }
+
+    function initMatrix(a, b) {
+        var row = new Array(a + 1)
+        row[0] = 0
+        var matrix = new Array(b + 1)
+        for (var i = 0; i < b + 1; i++) {
+            matrix[i] = row.slice()
+        }
+        matrix[0].fill(0)
+        return matrix
+    }
+
+    // apply edit scripts to string to transform it into target string
+    function patch(str, edits) {
+        // convert every letter in str into nodes to patch
+        str = str.split('').map(c => {
+            return {
+                value: c,
+                head: [],
+                trail: [],
+                delete: false
+            }
+        })
+        for (var i = 0; i < edits.length; i++) {
+            var { op, index, element } = edits[i]
+            if (op == 'delete') {
+                // a placeholder for letter to be deleted
+                str[index - 1].delete = true
+            } else if (op == 'insert') {
+                // append letter to be added into the letter right before
+                str[index - 1].trail.push(element)
+            } else if (op == 'insertBefore') {
+                // append letter to be added into the letter right after
+                if (str[0] === undefined) {
+                    str[0] = { head: [] }
+                }
+                str[0].head.push(element)
+            }
+        }
+
+        // resolve the str (which now has an hirearchical structure) into a flat string as result
+        var result = ''
+        for (var i = 0; i < str.length; i++) {
+            var node = str[i]
+            if (node.head) {
+                result += node.head.join('')
+            }
+            if (node.delete == false) {
+                result += node.value
+            }
+
+            if (node.trail) {
+                result += node.trail.join('')
+            }
+        }
+        return result
+    }
+
+    // accept source string and edits, and return
+    // a string representation of DOM, showing the diff using text decoration and background color
+    function visualize(str, edits) {
+        str = str.split('').map(e => {
+            return {
+                value: e,
+                flag: 0, // 0 for normal text node, 1 for an text node to insert, 2 for a text node to delete
+                head: [],
+                trail: []
+            }
+        })
+
+        // apply edits
+        for (var i = 0; i < edits.length; i++) {
+            var { op, index, element } = edits[i]
+            if (op == 'delete') {
+                // a placeholder for letter to be deleted
+                str[index - 1].flag = 2
+            } else if (op == 'insert') {
+                // append letter to be added into the letter right before
+                str[index - 1].trail.push({
+                    value: element,
+                    flag: 1
+                })
+            } else if (op == 'insertBefore') {
+                // append letter to be added into the letter right after
+                if (str[0] === undefined) {
+                    str[0] = { head: [] }
+                }
+                str[0].head.push({
+                    value: element,
+                    flag: 1
+                })
+            }
+        }
+
+        // flatten str into one dimensional node array
+        var arr = []
+        for (var i = 0; i < str.length; i++) {
+            var node = str[i]
+            if (node.head) {
+                arr = arr.concat(node.head)
+            }
+            if (node.value !== undefined) {
+                arr.push(node)
+            }
+
+            if (node.trail) {
+                arr = arr.concat(node.trail)
+            }
+        }
+
+        // map the node array into dom string
+        arr = arr.map(node => {
+            return `<span style="${stylize(node.flag)}">${node.value}</span>`
+        })
+
+        return arr.join('')
+    }
+
+    // return CSS inline style attribute value for flag
+    function stylize(flag) {
+        switch (flag) {
+            case 0:
+                {
+                    return ''
+                    break
+                }
+            case 1:
+                {
+                    return 'background-color:lightgreen;'
+                    break
+                }
+            case 2:
+                {
+                    return 'background-color:lightsalmon;text-decoration:line-through'
+                }
+        }
+    }
+    </script>
+    <script>
+    // main
+    var s1 = document.querySelector('#str1')
+    var s2 = document.querySelector('#str2')
+
+    s1.oninput = render
+    s2.oninput = render
+
+    function render() {
+        var str1 = s1.value
+        var str2 = s2.value
+
+        var { ses } = dp_lcs(str1, str2)
+        var dom = visualize(str1, ses)
+        document.querySelector('#result').innerHTML = dom
+    }
+    </script>
+</body>
+
+</html>
