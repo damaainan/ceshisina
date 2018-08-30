@@ -5,7 +5,6 @@
 原文[https://segmentfault.com/a/1190000012357409][1]
 
 
-
 ### 说明
 
 目前 [RC3][3] 中， [PHP 7.2][4] 计划于11月30日发布。新版本将提供新的特性，功能和改进，使我们能够编写更好的代码。在这篇文章中，我将介绍一些PHP 7.2中最有趣的语言特性。 
@@ -16,17 +15,19 @@
 
 例如下面这个例子：
 
-    class MyClass {
-        public $var = 'Hello World';
-    }
-    
-    $myclass = new MyClass;
-    
-    function test(MyClass $myclass){
-        return $myclass->var;
-    }
-    
-    echo test($myclass);
+```php
+class MyClass {
+    public $var = 'Hello World';
+}
+
+$myclass = new MyClass;
+
+function test(MyClass $myclass){
+    return $myclass->var;
+}
+
+echo test($myclass);
+```
 
 在这个代码中，测试函数需要MyClass的一个实例。不正确的数据类型将导致以下致命错误：
 
@@ -34,27 +35,29 @@
 
 由于PHP 7.2 [类型提示][6] 可以与对象数据类型一起使用，并且这种改进允许声明通用对象作为函数或方法的参数。这里是一个例子： 
 
-    class MyClass {
-        public $var = '';
-    }
-    
-    class FirstChild extends MyClass {
-        public $var = 'My name is Jim';
-    }
-    class SecondChild extends MyClass {
-        public $var = 'My name is John';
-    }
-    
-    $firstchild = new FirstChild;
-    $secondchild = new SecondChild;
-    
-    function test(object $arg) {
-        return $arg->var;
-    }
-    
-    echo test($firstchild);
-    
-    echo test($secondchild);
+```php
+class MyClass {
+    public $var = '';
+}
+
+class FirstChild extends MyClass {
+    public $var = 'My name is Jim';
+}
+class SecondChild extends MyClass {
+    public $var = 'My name is John';
+}
+
+$firstchild = new FirstChild;
+$secondchild = new SecondChild;
+
+function test(object $arg) {
+    return $arg->var;
+}
+
+echo test($firstchild);
+
+echo test($secondchild);
+```
 
 在这个例子中，我们调用了两次测试函数，每次调用都传递一个不同的对象。在以前的PHP版本中这是不可能的。
 
@@ -70,17 +73,19 @@ Docker命令
 
 从PHP 7.2开始，我们被允许为对象数据类型使用返回类型声明。这里是一个例子：
 
-    class MyClass {
-        public $var = 'Hello World';
-    }
-    
-    $myclass = new MyClass;
-    
-    function test(MyClass $arg) : object {
-        return $arg;
-    }
-    
-    echo test($myclass)->var;
+```php
+class MyClass {
+    public $var = 'Hello World';
+}
+
+$myclass = new MyClass;
+
+function test(MyClass $arg) : object {
+    return $arg;
+}
+
+echo test($myclass)->var;
+```
 
 以前的PHP版本会导致以下致命错误：
 
@@ -94,14 +99,16 @@ PHP目前不允许子类和它们的父类或接口之间的参数类型有任�
 
 考虑下面的代码：
 
-    <?php
-    class MyClass {
-        public function myFunction(array $myarray) { /* ... */ }
-    }
-    
-    class MyChildClass extends MyClass {
-        public function myFunction($myarray) { /* ... */ }
-    }
+```php
+<?php
+class MyClass {
+    public function myFunction(array $myarray) { /* ... */ }
+}
+
+class MyChildClass extends MyClass {
+    public function myFunction($myarray) { /* ... */ }
+}
+```
 
 这里我们省略了子类中的参数类型。在PHP 7.0中，这段代码会产生以下警告：
 
@@ -139,8 +146,10 @@ PHP目前不允许子类和它们的父类或接口之间的参数类型有任�
 
 这里是一个例子：
 
-    $options = ['memory_cost' => 1<<11, 'time_cost' => 4, 'threads' => 2];
-    password_hash('password', PASSWORD_ARGON2I, $options);
+```php
+$options = ['memory_cost' => 1<<11, 'time_cost' => 4, 'threads' => 2];
+password_hash('password', PASSWORD_ARGON2I, $options);
+```
 
 有关更多信息，请参阅 [Argon2密码哈希][15] 。 
 
@@ -152,11 +161,11 @@ PHP目前不允许子类和它们的父类或接口之间的参数类型有任�
 
 以下是PHP 8.0 不推荐使用的 [函数和功能列表][21] ，不晚于PHP 8.0： 
 
-该__autoload功能已被取代由 [spl_autoload_register][22] 在PHP 5.1。现在，在编译期间遇到弃用通知。 
+该`__autoload`功能已被取代由 [`spl_autoload_register`][22] 在PHP 5.1。现在，在编译期间遇到弃用通知。 
 
-在$ php_errormsg中时，抛出一个非致命错误变量是在局部范围内创建。由于应该使用PHP 7.2 [error_get_last][23] 和 [error_clear_last][24] 。 
+在`$php_errormsg`中时，抛出一个非致命错误变量是在局部范围内创建。由于应该使用PHP 7.2 [`error_get_last`][23] 和 [`error_clear_last`][24] 。 
 
-create_function()允许创建一个带有生成函数名称的函数，一系列参数和正文代码作为参数提供。由于安全问题和性能不佳，已将其标记为已弃用，并鼓励使用附件。
+`create_function()`允许创建一个带有生成函数名称的函数，一系列参数和正文代码作为参数提供。由于安全问题和性能不佳，已将其标记为已弃用，并鼓励使用附件。
 
 已将 mbstring.func_overload ini设置为非零值已被标记为已弃用。
 
@@ -164,9 +173,9 @@ create_function()允许创建一个带有生成函数名称的函数，一系列
 
 如果提供了第二个参数， [parse_str()][25] 会将查询字符串解析为数组，如果不使用，则解析为本地符号表。由于出于安全原因 [不鼓励][26] 在函数范围内设置变量，使用不带第二个参数的 parse_str() 将抛出弃用通知。 
 
-gmp_random() 被认为是平台相关的，将被弃用。使用 [gmp_random_bits()][27] 和 [gmp_random_rage()][28] 来代替。 
+`gmp_random()` 被认为是平台相关的，将被弃用。使用 [gmp_random_bits()][27] 和 [gmp_random_rage()][28] 来代替。 
 
-each() 被用来像 foreach() 那样迭代一个数组，但是 foreach() 有几个原因是可取的，包括快10倍。现在，在循环的第一个呼叫中将会抛弃。
+`each()` 被用来像 `foreach()` 那样迭代一个数组，但是 foreach() 有几个原因是可取的，包括快10倍。现在，在循环的第一个呼叫中将会抛弃。
 
 所述断言函数检查给定的断言，并采取适当的行动，如果结果是FALSE。带有字符串参数的 assert() 的使用现在已被弃用，因为它会打开一个 RCE 漏洞。该 [zend.assertion][29] INI 选项可用于防止断言表达式的评价。 
 
