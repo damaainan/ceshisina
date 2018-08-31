@@ -12,13 +12,8 @@ php.net RFC 频道已经公布了 PHP 7.3 的 Heredoc 和 Nowdoc 语法更新，
   
 Heredoc 和 Nowdoc 有非常严格的语法，有些时候这令很多开发者避而远之，因为他们在代码中看起来非常丑陋，令代码的可读性降低。本次的更新针对此问题，对语法做出了以下两个更改：
  
-
- 
 * 支持闭合标记符的缩进； 
 * 不再强制闭合标记符的换行； 
-  
- 
- 
  
 从 PHP 7.2 的当前实现来看， 就像这个简单的例子：
  
@@ -30,7 +25,6 @@ bar
 EOT;
 }
 ```
- 
 在 7.3 版本中，以下形式是可用的：
  
 ```php
@@ -77,7 +71,6 @@ b
 c
 END, 'd e f'];
 ```
- 
 ## Heredoc 和 Nowdoc 的背景
  
 Nowdoc 从 PHP 5.3.0 版本开始支持，他和 Heredoc 的不同之处，仅是双引号和单引号的差别。 Nowdoc 在开始标记周围添加了单引号，则没有解析：
@@ -113,8 +106,6 @@ Heredocs 和 Nowdocs 的改进将会让你的 PHP 代码更加具有可读性，
  
 更多现代化 PHP 知识，请前往 [Laravel / PHP 知识社区][5]
  
-
-
 [1]: https://en.wikipedia.org/wiki/Here_document
 [2]: https://wiki.php.net/rfc/flexible_heredoc_nowdoc_syntaxes
 [3]: https://php.net/manual/en/language.types.string.php#language.types.string.syntax.heredoc

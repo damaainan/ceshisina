@@ -114,16 +114,17 @@ PHP 7使用新的Zend Engine 3.0将应用程序性能提高近两倍，内存消
 
 它用来比较两个表达式。当第一个表达式分别小于，等于或大于第二个表达式时，它返回-1,0或1。字符串比较ASCII
 
+```php
     //integer comparison
        print( 1 <=> 1);print("<br/>");
        print( 1 <=> 2);print("<br/>");
        print( 2 <=> 1);print("<br/>");
     
     // output
-        0
-        -1
-        1
-
+        // 0
+        // -1
+        // 1
+```
 #### 常量数组
 
 使用define（）函数定义数组常量。在PHP 5.6中，只能使用const关键字来定义它们。

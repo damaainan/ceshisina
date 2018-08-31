@@ -12,7 +12,7 @@ Carbon 使处理日期和时间更加简单。
 
 * 使用 composer 安装，composer require nesbot/carbon。
 * 在 composer.json 里添加
-```
+```json
     {
        "require": {
           "nesbot/carbon": "~1.18"
@@ -21,7 +21,7 @@ Carbon 使处理日期和时间更加简单。
 ```
 * 执行 composer install
 * 没有使用 composer
-```
+```php
     <?php
     require 'path/to/Carbon.php';
     

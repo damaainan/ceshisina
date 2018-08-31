@@ -83,6 +83,7 @@ _经 phpass 0.3 测试_，在存入数据库之前进行哈希保护用户密码
 
 #### 示例
 
+```php
     <?php
     // Include phpass 库
     require_once('phpass-03/PasswordHash.php')
@@ -100,6 +101,7 @@ _经 phpass 0.3 测试_，在存入数据库之前进行哈希保护用户密码
     
     $hasher->CheckPassword('my super cool password', $hashedPassword);  // true
     ?>
+```
 
 #### 陷阱
 
@@ -121,6 +123,7 @@ _经 phpass 0.3 测试_，在存入数据库之前进行哈希保护用户密码
 
 #### 示例
 
+```php
     <?php
     try{
         // 新建一个数据库连接
@@ -166,6 +169,7 @@ _经 phpass 0.3 测试_，在存入数据库之前进行哈希保护用户密码
         print($ex->getMessage());
     }
     ?>
+```
 
 #### 陷阱
 
@@ -213,6 +217,7 @@ PHP 提供了若干方式来自动加载包含还未加载的类的文件。 老
 
 #### 示例
 
+```php
     <?php
     // 首先，定义你的自动载入的函数
     function MyAutoload($className){
@@ -227,6 +232,7 @@ PHP 提供了若干方式来自动加载包含还未加载的类的文件。 老
     // 在本例中，假定在 MyClass.php 文件中定义了 MyClass 类。
     $var = new MyClass();
     ?>
+```
 
 #### 进一步阅读
 
@@ -263,6 +269,7 @@ PHP 提供了若干方式来自动加载包含还未加载的类的文件。 老
 
 #### 示例
 
+```php
     <?php
     // 来看看这两种方法如何处理 namespaces
     namespace MiddleEarth\Creatures\Dwarves;
@@ -290,6 +297,7 @@ PHP 提供了若干方式来自动加载包含还未加载的类的文件。 老
         define('SHOW_ELVISH_DEGREES', 200); // 编译错误: 在类内不能使用 define()
     }
     ?>
+```
 
 _小插曲_：当我看到第一行的 MiddleEarth 还没有感觉到什么，再往下看到 Mordor 时，震惊了。**OneRing**，**OneRing**，**OneRingggggg**！
 
@@ -329,6 +337,7 @@ APC 也提供了对于你的脚本透明的类似于 memcached 的功能。 与�
 
 #### 示例
 
+```php
     <?php
     // Store some values in the APC cache.  We can optionally pass a time-to-live, 
     // but in this example the values will live forever until they're garbage-collected by APC.
@@ -347,6 +356,7 @@ APC 也提供了对于你的脚本透明的类似于 memcached 的功能。 与�
     
     apc_delete('username-958'); // This key will no longer be available.
     ?>
+```
 
 #### 陷阱
 
@@ -428,13 +438,14 @@ PHP有两种使用不同的方式来使用正则表达式：PCRE（Perl兼容表
 
 接下来配置 Aapache 虚拟主机将 PHP 请求路由到 PHP-FPM 进程。将如下配置语句放入 Apache 配置文件（在 Ubuntu 12.04 上默认配置文件是 /etc/apache2/sites-available/default）。
 
+```apache
     <VirtualHost *:80>
         AddHandler php5-fcgi .php
         Action php5-fcgi /php5-fcgi
         Alias /php5-fcgi /usr/lib/cgi-bin/php5-fcgi
         FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -host 127.0.0.1:9000 -idle-timeout 120 -pass-header Authorization
     </VirtualHost>
-    
+```
 
 最后，重启 Apache 和 FPM 进程：
 
@@ -463,6 +474,7 @@ Email 是一组网络协议，比 PHP 的历史还曲折。完全可以说发送
 
 #### 示例
 
+```php
     <?php
     // Include the PHPMailer library
     require_once('phpmailer-5.1/class.phpmailer.php');
@@ -493,6 +505,7 @@ Email 是一组网络协议，比 PHP 的历史还曲折。完全可以说发送
     // All done!
     $mailer->Send();
     ?>
+```
 
 ## 验证邮件地址
 
@@ -502,6 +515,7 @@ Web 应用可能需要做的一件常见任务是检测用户是否输入了一�
 
 #### 示例
 
+```php
     <?php
     filter_var('sgamgee@example.com', FILTER_VALIDATE_EMAIL);
     //Returns "sgamgee@example.com". This is a valid email address.
@@ -509,6 +523,7 @@ Web 应用可能需要做的一件常见任务是检测用户是否输入了一�
     filter_var('sauron@mordor', FILTER_VALIDATE_EMAIL);
     // Returns boolean false! This is *not* a valid email address.
     ?>
+```
 
 #### 进一步阅读
 
@@ -543,6 +558,7 @@ htmlentities() 不同于类似功能的函数[htmlspecialchars()][85]， 它会�
 
 #### 示例
 
+```php
     <?php
     // Oh no!  The user has submitted malicious HTML, and we have to display it in our web app!
     $evilHtml = '<div onclick="xss();">Mua-ha-ha!  Twiddling my evil mustache...</div>';
@@ -553,6 +569,7 @@ htmlentities() 不同于类似功能的函数[htmlspecialchars()][85]， 它会�
     $safeHtml = htmlentities($evilHtml, ENT_QUOTES, 'UTF-8');
     // $safeHtml is now fully escaped HTML.  You can output $safeHtml to your users without fear!
     ?>
+```
 
 #### 对于复杂需求的净化
 
@@ -566,6 +583,7 @@ HTML Purifier 相比 [strip_tags()][83] 是有优势的， 因为它在净化 HT
 
 #### 示例
 
+```php
     <?php
     // Include the HTML Purifier library
     require_once('htmlpurifier-4.4.0/HTMLPurifier.auto.php');
@@ -579,6 +597,7 @@ HTML Purifier 相比 [strip_tags()][83] 是有优势的， 因为它在净化 HT
     $safeHtml = $purifier->purify($evilHtml);
     // $safeHtml is now sanitized.  You can output $safeHtml to your users without fear!
     ?>
+```
 
 #### 陷阱
 
@@ -630,6 +649,7 @@ PHP 中的 UTF-8 糟透了。原谅我的用词。
 
 #### 示例
 
+```php
     <?php
     // Tell PHP that we're using UTF-8 strings until the end of the script
     mb_internal_encoding('UTF-8');
@@ -684,6 +704,7 @@ PHP 中的 UTF-8 糟透了。原谅我的用词。
             ?>
         </body>
     </html>
+```
 
 #### 进一步阅读
 
@@ -703,6 +724,7 @@ PHP 中的 UTF-8 糟透了。原谅我的用词。
 
 #### 示例
 
+```php
     <?php
     // Construct a new UTC date.  Always specify UTC unless you really know what you're doing!
     $date = new DateTime('2011-05-04 05:00:00', new DateTimeZone('UTC'));
@@ -730,6 +752,7 @@ PHP 中的 UTF-8 糟透了。原谅我的用词。
     
     echo('The 2nd date is ' . $difference['days'] . ' later than 1st date.');
     ?>
+```
 
 #### 陷阱
 
@@ -753,6 +776,7 @@ PHP 宽松的类型系统提供了许多不同的方法来检测一个变量的�
 
 #### 示例
 
+```php
     <?php
     $x = 0;
     $y = null;
@@ -778,6 +802,7 @@ PHP 宽松的类型系统提供了许多不同的方法来检测一个变量的�
     if(strpos('abc', 'a') !== false)
         print('Found it for real this time!');
     ?>
+```
 
 #### 陷阱
 

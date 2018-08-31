@@ -1,0 +1,4 @@
+
+    ls | xargs -I[ awk -F'# ' 'NR==1{print "["$2}' [ | awk -F'.md' '{system("mv "$1".md \""$1""$2".md\"")}'
+
+[https://www.tuicool.com/sites/q22mEzq](https://www.tuicool.com/sites/q22mEzq)
