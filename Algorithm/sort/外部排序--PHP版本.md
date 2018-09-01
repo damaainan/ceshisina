@@ -317,6 +317,7 @@ $first_data[$i] = (int)fgets($handle[$i]);
 下面是我的测试数据：
  
  ![][1]
+
 （我对一个46兆左右的数据进行排序，使用的内存限制是1兆）
  
 可以看出，耗时为185秒左右，也就是3分钟左右。
@@ -324,6 +325,8 @@ $first_data[$i] = (int)fgets($handle[$i]);
 好了，外部排序大致就是这样了，其实还是有很大的优化空间的，特别是在归并的过程中，可以使用胜者树，败者树来进行优化。有时间我会补充。
  
 [获得源码][2]
+
+**`external-sort`**
  
 更多PHP知识，可以关注我的个人博客
  
@@ -335,8 +338,8 @@ $first_data[$i] = (int)fgets($handle[$i]);
  
 
 
-[2]: https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2Fhuanghantao%2Fexternal-sort
-[3]: https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2Fabdimaye%2Fexternal-sort
-[4]: https://link.juejin.im?target=https%3A%2F%2Fwww.jianshu.com%2Fp%2Fdce6a43d4678
+[2]: https://github.com/huanghantao/external-sort
+[3]: https://github.com/abdimaye/external-sort
+[4]: https://www.jianshu.com/p/dce6a43d4678
 [0]: ./img/YnENRjM.png 
 [1]: ./img/AjuEN3y.png 

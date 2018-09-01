@@ -40,8 +40,8 @@ function Shellsort($arr)
             //以增量为步幅进行查看
             for( $j=$i-$gap; $j>=0 && $arr[$j+$gap] < $arr[$j]; $j -= $gap)   // gap 分组的每个序列 相同位置元素的大小
             {
-                swap($arr[$j],$arr[$j+$gap]);  // 替换两个 相隔 $gap 的元素
-                // $arr[$j]=[ $arr[$j+$gap] , $arr[$j+$gap] = $arr[$j] ][0]
+                swap($arr[$j],$arr[$j+$gap]);  // 替换两个 相隔 $gap 的元素 4.1350209712982
+                // $arr[$j]=[ $arr[$j+$gap] , $arr[$j+$gap] = $arr[$j] ][0]; // 0.18511009216309
             }
         }
     }

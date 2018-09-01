@@ -1,6 +1,5 @@
-<?php 
-header("Content-type:text/html; Charset=utf-8");
-
+<?php
+// header("Content-type:text/html; Charset=utf-8");
 
 $arr = [];
 
@@ -13,10 +12,11 @@ for ($i = 0; $i < 5000; $i++) {
  * @param $a
  * @param $b
  */
-function swap(&$a,&$b){
+function swap(&$a, &$b)
+{
     $temp = $b;
-    $b = $a;
-    $a = $temp;
+    $b    = $a;
+    $a    = $temp;
 }
 
 // 6 鸡尾酒排序法
@@ -26,20 +26,21 @@ function swap(&$a,&$b){
  * @param $arr
  * @return mixed
  */
-function Cocktailsort($arr) {
-    $arr_len  =count($arr);
+function Cocktailsort($arr)
+{
+    $arr_len = count($arr);
 
-    for($i = 0 ; $i < ($arr_len/2) ; $i ++){
+    for ($i = 0; $i < ($arr_len / 2); $i++) {
         //将最小值排到队尾
-        for( $j = $i ; $j < ( $arr_len - $i - 1 ) ; $j ++ ){
-            if($arr[$j] < $arr[$j + 1] ){
-                swap($arr[$j],$arr[$j + 1]);
+        for ($j = $i; $j < ($arr_len - $i - 1); $j++) {
+            if ($arr[$j] < $arr[$j + 1]) {
+                swap($arr[$j], $arr[$j + 1]);
             }
         }
         //将最大值排到队头
-        for($j = $arr_len - 1 - ($i + 1); $j > $i ; $j --){
-            if($arr[$j] > $arr[$j - 1]){
-                swap($arr[$j],$arr[$j - 1]);
+        for ($j = $arr_len - 1 - ($i + 1); $j > $i; $j--) {
+            if ($arr[$j] > $arr[$j - 1]) {
+                swap($arr[$j], $arr[$j - 1]);
             }
         }
     }

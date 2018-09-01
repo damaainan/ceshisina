@@ -2,8 +2,8 @@
 header("Content-type:text/html; Charset=utf-8");
 $arr = [];
 
-for ($i = 0; $i < 5000; $i++) {
-    $arr[] = rand(1, 10000);
+for ($i = 0; $i < 50000; $i++) {
+    $arr[] = rand(1, 100000);
 }
 
 //3 选择排序

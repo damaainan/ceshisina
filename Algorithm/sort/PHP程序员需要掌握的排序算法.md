@@ -9,20 +9,20 @@
 [![3945EDD1-8893-416D-8BB1-901F9AC42F80](./img/3945EDD1-8893-416D-8BB1-901F9AC42F80.jpg)](./img/3945EDD1-8893-416D-8BB1-901F9AC42F80.jpg)
 
 ```php
-    <?php
-    function bubbleSort(&$arr = array()){
-        $cnt = count($arr);
-        for($i = 0; $i < $cnt - 1; $i++)
-        {
-            for($j = $i; $j < $cnt-1; $j++){
-                if($arr[$j] > $arr[$j+1]){
-                    $tmp = $arr[$j];
-                    $arr[$j] = $arr[$j+1];
-                    $arr[$j+1] = $tmp;
-                }
+<?php
+function bubbleSort(&$arr = array()){
+    $cnt = count($arr);
+    for($i = 0; $i < $cnt - 1; $i++)
+    {
+        for($j = $i; $j < $cnt-1; $j++){
+            if($arr[$j] > $arr[$j+1]){
+                $tmp = $arr[$j];
+                $arr[$j] = $arr[$j+1];
+                $arr[$j+1] = $tmp;
             }
         }
     }
+}
 ```
 
 复杂度  
@@ -38,25 +38,25 @@ Space Complexity : O(1)
 [![7264ACFE-1BEF-4A21-99B1-C69CD29C428A](./img/7264ACFE-1BEF-4A21-99B1-C69CD29C428A.jpg)](./img/7264ACFE-1BEF-4A21-99B1-C69CD29C428A.jpg)
 
 ```php
-    <?php
-    function selectSort($arr = array())
-    {
-        $cnt = count($arr);
-        for($i = 0; $i < $cnt; $i ++){
-            $k = $i;
-            for($j = $i+1; $j < $cnt; $j++){
-                if($arr[$k] > $arr[$j]){
-                    $k = $j;
-                }
-            }
-            if($k != $i){
-                $tmp = $arr[$i];
-                $arr[$i] = $arr[$k];
-                $arr[$k] = $tmp;
+<?php
+function selectSort($arr = array())
+{
+    $cnt = count($arr);
+    for($i = 0; $i < $cnt; $i ++){
+        $k = $i;
+        for($j = $i+1; $j < $cnt; $j++){
+            if($arr[$k] > $arr[$j]){
+                $k = $j;
             }
         }
-        return $arr;
+        if($k != $i){
+            $tmp = $arr[$i];
+            $arr[$i] = $arr[$k];
+            $arr[$k] = $tmp;
+        }
     }
+    return $arr;
+}
 ```
 
 复杂度  
@@ -72,20 +72,20 @@ Space Complexity : O(1)
 [![B5C3ADC7-B903-4BE4-9DC3-1D098BD6B8BF](./img/B5C3ADC7-B903-4BE4-9DC3-1D098BD6B8BF.jpg)](./img/B5C3ADC7-B903-4BE4-9DC3-1D098BD6B8BF.jpg)
 
 ```php
-    <?php
-    function insertSort($arr = array()){
-        $cnt = count($arr);
-        for($i = 0; $i < $cnt; $i++){
-            $j = $i-1;
-            $crt_val = $arr[$i];
-            while($j > -1 && $arr[$j] > $crt_val) {
-                $arr[$j + 1] = $arr[$j];
-                $j--;
-            }
-            $arr[$j+1] = $crt_val;
+<?php
+function insertSort($arr = array()){
+    $cnt = count($arr);
+    for($i = 0; $i < $cnt; $i++){
+        $j = $i-1;
+        $crt_val = $arr[$i];
+        while($j > -1 && $arr[$j] > $crt_val) {
+            $arr[$j + 1] = $arr[$j];
+            $j--;
         }
-        return $arr;
+        $arr[$j+1] = $crt_val;
     }
+    return $arr;
+}
 ```
 
 复杂度  
@@ -110,28 +110,28 @@ Space Complexity : O(1)
 4.如此往复实现排序。
 
 ```php
-    <?php
-    function shellSort(&$arr, $n)
+<?php
+function shellSort(&$arr, $n)
+{
+    for ($gap = intval($n / 2); $gap > 0; $gap = intval($gap/2))
     {
-        for ($gap = intval($n / 2); $gap > 0; $gap = intval($gap/2))
+        for ($i = 0; $i < $gap; $i++)
         {
-            for ($i = 0; $i < $gap; $i++)
-            {
-                for ($j = $i + $gap; $j < $n; $j += $gap)
-                    if ($arr[$j] < $arr[$j - $gap])
+            for ($j = $i + $gap; $j < $n; $j += $gap)
+                if ($arr[$j] < $arr[$j - $gap])
+                {
+                    $temp = $arr[$j];
+                    $k = $j - $gap;
+                    while ($k >= 0 && $arr[$k] > $temp)
                     {
-                        $temp = $arr[$j];
-                        $k = $j - $gap;
-                        while ($k >= 0 && $arr[$k] > $temp)
-                        {
-                            $arr[$k + $gap] = $arr[$k];
-                            $k -= $gap;
-                        }
-                        $arr[$k + $gap] = $temp;
+                        $arr[$k + $gap] = $arr[$k];
+                        $k -= $gap;
                     }
-            }
+                    $arr[$k + $gap] = $temp;
+                }
         }
     }
+}
 ```
 
 复杂度  
@@ -148,32 +148,32 @@ Space Complexity :
 ![][2]
 
 ```php
-    <?php
-    function quickSort(&$arr, $left, $right)
-    {
-        if($left < $right){
-            $i = $left;
-            $j = $right;
-            $pivot = $arr[$left];
-            while($i < $j){
-                while($i < $j && $arr[$j] >= $pivot){
-                    $j--;
-                }
-                if($i < $j){
-                    $arr[$i++] = $arr[$j];
-                }
-                while($i < $j && $arr[$i] < $pivot){
-                    $i++;
-                }
-                if($i < $j){
-                    $arr[$j--] = $arr[$i];
-                }
+<?php
+function quickSort(&$arr, $left, $right)
+{
+    if($left < $right){
+        $i = $left;
+        $j = $right;
+        $pivot = $arr[$left];
+        while($i < $j){
+            while($i < $j && $arr[$j] >= $pivot){
+                $j--;
             }
-            $arr[$i] = $pivot;
-            quick_sort($arr, $left, $i-1);
-            quick_sort($arr, $i+1, $right);
+            if($i < $j){
+                $arr[$i++] = $arr[$j];
+            }
+            while($i < $j && $arr[$i] < $pivot){
+                $i++;
+            }
+            if($i < $j){
+                $arr[$j--] = $arr[$i];
+            }
         }
+        $arr[$i] = $pivot;
+        quick_sort($arr, $left, $i-1);
+        quick_sort($arr, $i+1, $right);
     }
+}
 ```
 
 - - -
@@ -189,49 +189,49 @@ Space Complexity :
 ![][4]
 
 ```php
-    <?php
-    function mergeSort($numlist)
+<?php
+function mergeSort($numlist)
+{
+    if(count($numlist) <= 1 ) return $numlist;
+    //两个子序列的分割点
+    $mid = count($numlist) / 2;
+    //得到左右两个子序列
+    $left = array_slice($numlist, 0, $mid);
+    $right = array_slice($numlist, $mid);
+    $left = mergeSort($left);
+    $right = mergeSort($right);
+    return merge($left, $right);
+}
+function merge($left, $right)
+{
+    $result=array();
+    $leftIndex=0;
+    $rightIndex=0;
+    $leftCnt = count($left);
+    $rightCnt = count($right);
+    while($leftIndex< $leftCnt && $rightIndex<$rightCnt)
     {
-        if(count($numlist) <= 1 ) return $numlist;
-        //两个子序列的分割点
-        $mid = count($numlist) / 2;
-        //得到左右两个子序列
-        $left = array_slice($numlist, 0, $mid);
-        $right = array_slice($numlist, $mid);
-        $left = mergeSort($left);
-        $right = mergeSort($right);
-        return merge($left, $right);
-    }
-    function merge($left, $right)
-    {
-        $result=array();
-        $leftIndex=0;
-        $rightIndex=0;
-        $leftCnt = count($left);
-        $rightCnt = count($right);
-        while($leftIndex< $leftCnt && $rightIndex<$rightCnt)
-        {
-            if($left[$leftIndex]>$right[$rightIndex])
-            {
-                $result[]=$right[$rightIndex];
-                $rightIndex++;
-            } else {
-                $result[]=$left[$leftIndex];
-                $leftIndex++;
-            }
-        }
-        while($leftIndex<$leftCnt)
-        {
-            $result[]=$left[$leftIndex];
-            $leftIndex++;
-        }
-        while($rightIndex<$rightCnt)
+        if($left[$leftIndex]>$right[$rightIndex])
         {
             $result[]=$right[$rightIndex];
             $rightIndex++;
+        } else {
+            $result[]=$left[$leftIndex];
+            $leftIndex++;
         }
-        return $result;
     }
+    while($leftIndex<$leftCnt)
+    {
+        $result[]=$left[$leftIndex];
+        $leftIndex++;
+    }
+    while($rightIndex<$rightCnt)
+    {
+        $result[]=$right[$rightIndex];
+        $rightIndex++;
+    }
+    return $result;
+}
 ```
 
 复杂度  

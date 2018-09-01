@@ -85,8 +85,8 @@ function demo($arr){
 
 $merge_start_time = microtime(true);
 
-$merge_sort = al_merge_sort($arr);  //0.83085012435913
-// $merge_sort = mergeSort($arr);  // 1.1510128974915
+// $merge_sort = al_merge_sort($arr);  //0.83085012435913
+$merge_sort = mergeSort($arr);  // 1.1510128974915
 // $merge_sort = demo($arr); // 时间最短   0.54874610900879
 
 $merge_end_time = microtime(true);
