@@ -33,7 +33,7 @@ function Shellsort($arr)
     // 第二层 
     // 第三层 比较根据 gap 分组的每个序列 相同位置元素的大小
 
-    for($gap=floor($n/2);$gap>0;$gap=floor($gap/=2)) // gap 取 数组长度的一般，向下取整，并且大于 0
+    for($gap=floor($n/2);$gap>0;$gap=floor($gap/=2)) // gap 取 数组长度的一半，向下取整，并且大于 0
     {
         for($i=$gap;$i<$n;++$i) //根据增量循环   从 $gap 直到最后
         {

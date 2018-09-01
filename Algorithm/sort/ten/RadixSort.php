@@ -62,4 +62,4 @@ $countsort_need_time = $countsort_end_time - $countsort_start_time;
 
 print_r(" LSD基数排序耗时:" . $countsort_need_time . "<br />");
 
-//  LSD基数排序耗时:0.065402984619141
+//  LSD基数排序耗时:0.0056970119476318

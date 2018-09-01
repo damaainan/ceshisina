@@ -264,16 +264,16 @@ private static function partition(&$arr,$l,$r) {
 
 
 [13]: https://zh.wikipedia.org/wiki/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F
-[0]: ../img/bV5sdO.png
-[1]: ../img/bV5sdS.png
-[2]: ../img/bV5kuX.png
-[3]: ../img/bV5smd.png
-[4]: ../img/bV5sml.png
-[5]: ../img/bV5kVk.png
-[6]: ../img/bV5lhI.png
-[7]: ../img/bV5sdO.png
-[8]: ../img/bV5sdS.png
-[9]: ../img/bV5sdS.png
-[10]: ../img/bV5sdO.png
-[11]: ../img/bV5sdO.png
-[12]: ../img/bV5sdS.png
+[0]: ./img/bV5sdO.png
+[1]: ./img/bV5sdS.png
+[2]: ./img/bV5kuX.png
+[3]: ./img/bV5smd.png
+[4]: ./img/bV5sml.png
+[5]: ./img/bV5kVk.png
+[6]: ./img/bV5lhI.png
+[7]: ./img/bV5sdO.png
+[8]: ./img/bV5sdS.png
+[9]: ./img/bV5sdS.png
+[10]: ./img/bV5sdO.png
+[11]: ./img/bV5sdO.png
+[12]: ./img/bV5sdS.png

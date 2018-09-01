@@ -1,5 +1,5 @@
 <?php
-
+// 深度优先
 class TreeNode
 {
     public $data     = null;

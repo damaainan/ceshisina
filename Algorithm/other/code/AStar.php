@@ -123,3 +123,8 @@ class AStar
         return abs($this->_end - $point);
     }
 }
+
+$a = new AStar();
+$a->set(5,5,16);
+$r = $a->search(3,1);
+var_dump($r);

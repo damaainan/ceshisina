@@ -1,7 +1,5 @@
 <?php
 
-
-
 //0-1背包贪心算法问题
 class tanxin
 {
@@ -26,7 +24,7 @@ function display($x)
     $len = count($x);
     foreach ($x as $val) {
         echo $val->weight, ' ', $val->price;
-        echo '<br>';
+        echo "\r\n";
     }
 }
 //按照价格和重量比排序
@@ -59,7 +57,7 @@ function tanxin($x, $totalweight = 50)
         }
     }
     if ($i < $len) {
-        $allprice += $x[$i]->price * ($totalweight / $x[$i]->weight);
+        $allprice += intval($x[$i]->price * ($totalweight / $x[$i]->weight));
     }
 
     return $allprice;

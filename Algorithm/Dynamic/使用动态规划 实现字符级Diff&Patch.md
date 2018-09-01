@@ -63,11 +63,8 @@ demo地址： [string-diff-demo.herokuapp.com][1]
  
 经过三个阶段后，矩阵会变成类似下图的形式。
  
- <figure> 
-  
-
 ![][0] 
- </figure> 
+
 图中是字符串A为"abcabba"，字符串B为"cbabac"时，使用动态规划求解LCS和SES形成的矩阵。由此矩阵我们可以得出以下关于两个字符串之间的LCS和SES的相关答案：
  
  

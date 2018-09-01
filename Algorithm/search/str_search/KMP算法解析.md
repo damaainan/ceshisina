@@ -115,8 +115,7 @@ KMP算法是一个很精妙的字符串算法，个人认为这个算法十分�
 我们用js代码实现以下这个算法，这里我们规定如果字符串只有一位，如a，其返回值也是-1，作为递归的终止条件。代码如下所示：
 
  
-```
-
+```js
 function next(N, j) {
     if (j == 0) return -1               // 递归终止条件
     var i = next(N, j-1)                // 获取上一位next
@@ -132,8 +131,7 @@ function next(N, j) {
 我们来看一下这段代码有没有可以精简之处，情况1实际上与情况2是重复的，我们在while循环里已经做了这样的判断，所以我们可以将这个if-else分支剪掉合并成一个，如下所示：
 
  
-```
-
+```js
 function next(N, j) {
     if (j == 0) return -1           // 递归终止条件
     var i = next(N, j-1)            // 获取上一位next
@@ -148,8 +146,7 @@ function next(N, j) {
 于是我们直接修改递归函数如下，开辟一个数组保存递归的结果：
 
  
-```
-
+```js
 function getnext(N) {
     var next = [-1]
     ,   n = N.length
@@ -173,13 +170,14 @@ function getnext(N) {
 
 所以我们可以把循环改成这样：
 
+```js
     var i = -1    
     for (; j < n; j++) {
         while (N[i+1] != N[j] && i >= 0) i = next[i]
         if (N[i+1] == N[j]) i++     // 情况1、2
         next[j] = i                 // 情况3
     }
-
+```
 大功告成！这样我们就得出了可以求取模式值数组next的函数，那么在具体的匹配过程中怎样进行呢？
 
 [回到顶部][6]
@@ -189,8 +187,7 @@ function getnext(N) {
 经过上面的努力我们求取了next数组——next[i]保存的是N[0...i]的最长首尾匹配位置。在进行字符串匹配的时候，我们在N[j+1]位不匹配时，只需要回溯到N[next[j]+1]位进行匹配即可。这里的证明我们已经在第二节中给出，所以这里直接按照证明写出程序：
 
  
-```
-
+```js
 function kmp(M, N) {
     var next = getnext(N)
     ,    match = []
