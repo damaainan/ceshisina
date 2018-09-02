@@ -8,7 +8,7 @@ Python从语言层面支持[装饰器](http://www.liaoxuefeng.com/wiki/001431608
 接下来介绍PHP里实现的例子。
 
 装饰器理解起来比较简单，但实现起来代码会比较多。
-![](http://images2015.cnblogs.com/blog/663847/201706/663847-20170624171646773-1474083001.png)
+![](../img/1474083001.png)
 
 在装饰模式中的角色有：
 
@@ -39,7 +39,7 @@ interface IResponse
 ```
 
 `App`类需要继承`IResponse`：
-```
+```php
 namespace Yjc;
 
 use Yjc\Decorator\Json;
@@ -113,7 +113,7 @@ class Json extends Decorator
 `Xml`、`Template`的实现请查看源码。
 
 通过修改`App`类里的`output`方法实现不同格式的输出。测试代码：
-```
+```php
 namespace App;
 
 use Yjc\App;

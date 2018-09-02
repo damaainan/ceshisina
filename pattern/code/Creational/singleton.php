@@ -38,4 +38,3 @@ class Mysql {
 
 //只能这样取得实例，不能new 和 clone
 $mysql = Mysql::getInstance();
-?>

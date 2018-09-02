@@ -5,7 +5,7 @@
 相比简单工厂，创建对象这件事不再交由一个类来创建：把简单工厂拆分，每个产品由专门的一个简单工厂来实现，每个简单工厂实现工厂接口类。这样实现在同一等级结构中，支持增加任意产品。
 
 工厂方法UML图：  
-![](http://images2015.cnblogs.com/blog/663847/201706/663847-20170625090418757-842506804.png)
+![](../img/842506804.png)
 
 
 简单工厂需要有4个角色：
@@ -27,7 +27,7 @@ interface ICar
 ```
 
 具体产品实现：
-```
+```php
 namespace Yjc\SimpleFactory;
 
 class Benz implements ICar
@@ -58,7 +58,7 @@ interface IFactory
 ```
 
 具体工厂实现：
-```
+```php
 namespace Yjc\Factory;
 
 class FactoryBenz implements IFactory

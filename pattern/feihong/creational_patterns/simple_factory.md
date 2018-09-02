@@ -4,7 +4,7 @@
 也就是使用的时候通过传参来确定生成不同的对象。
 
 简单工厂UML图：  
-![](http://images2015.cnblogs.com/blog/663847/201706/663847-20170625084348116-1798368462.png)
+![](../img/1798368462.png)
 
 简单工厂需要有3个角色：
 
@@ -26,7 +26,7 @@ interface ICar
 ```
 
 具体产品实现：
-```
+```php
 namespace Yjc\SimpleFactory;
 
 class Benz implements ICar

@@ -69,20 +69,20 @@
 上面的匹配结果  
 按照上面的location写法，以下的匹配示例成立：
 
-* / -> config A  
+* `/ -> config A`  
 精确完全匹配，即使/index.html也匹配不了
-* /downloads/download.html -> config B  
+* `/downloads/download.html -> config B`  
 匹配B以后，往下没有任何匹配，采用B
-* /images/1.gif -> configuration D  
+* `/images/1.gif -> configuration D`  
 匹配到F，往下匹配到D，停止往下
-* /images/abc/def -> config D  
+* `/images/abc/def -> config D`  
 最长匹配到G，往下匹配D，停止往下  
 你可以看到 任何以/images/开头的都会匹配到D并停止，FG写在这里是没有任何意义的，H是永远轮不到的，这里只是为了说明匹配顺序
-* /documents/document.html -> config C  
+* `/documents/document.html -> config C`  
 匹配到C，往下没有任何匹配，采用C
-* /documents/1.jpg -> configuration E  
+* `/documents/1.jpg -> configuration E`  
 匹配到C，往下正则匹配到E
-* /documents/Abc.jpg -> config CC  
+* `/documents/Abc.jpg -> config CC`  
 最长匹配到C，往下正则顺序匹配到CC，不会往下到E
 
 ### 实际使用建议

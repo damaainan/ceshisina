@@ -9,3 +9,7 @@
 - 创建模式(Creational Patterns)：用于创建对象从而将某个对象从实现中解耦合。
 - 架构模式(Structural Patterns)：用于在不同的对象之间构造大的对象结构。
 - 行为模式(Behavioral Patterns)：用于在不同的对象之间管理算法、关系以及职责。
+
+[https://www.cnblogs.com/52fhy/category/604746.html](https://www.cnblogs.com/52fhy/category/604746.html)
+
+[https://github.com/52fhy/design_patterns](https://github.com/52fhy/design_patterns)

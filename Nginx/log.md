@@ -42,6 +42,7 @@ error_log的第一个参数，定义了输出的文件名。
     
     set $buf = (ngx_log_memory_buf_t *) $log->wdata
     dump binary memory debug_log.txt $buf->start $buf->end
+
 * /dev/null，忽略错误日志，相当于是关闭了错误日志。
 
 error_log指令的第二个参数，定义了输出日志的级别，默认值为 error 。官方文档对级别的定义比较简单，如下说明来自于文章 [Configuring the Nginx Error Log and Access Log][5]
@@ -70,12 +71,13 @@ nginx提供了 access_log 指令来实现访问日志的输出文件和级别。
 
 官方文档中给出的配置样例
 
+```nginx
     log_format compression '$remote_addr - $remote_user [$time_local] '
                            '"$request" $status $bytes_sent '
                            '"$http_referer" "$http_user_agent" "$gzip_ratio"';
     
     access_log /spool/logs/nginx-access.log compression buffer=32k;
-    
+```
 
 关键指令有 log_format 和 access_log 。 
 
