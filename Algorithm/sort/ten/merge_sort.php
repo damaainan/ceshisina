@@ -1,5 +1,4 @@
 <?php 
-header("Content-type:text/html; Charset=utf-8");
 $arr = [];
 
 for ($i = 0; $i < 5000; $i++) {
