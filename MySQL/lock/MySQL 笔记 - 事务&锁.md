@@ -70,14 +70,14 @@ MVCC 可以看做是行锁的一个变种，在很多情况下 MVCC 可以避免
 MVCC 解决幻读的时候使用了间隙锁，也就是 next-key lock，这部分就要先从 InnoDB 的三种行锁说起：
  
  
-* Record Lock：单个行记录上的锁，锁住的是索引 
-* Gap Lock：区间锁，锁定一个区间范围，但不包括记录本身，开区间 
-* Next-Key Lock：间隙锁，Record Lock + Gap Lock 
+* `Record Lock`：`单个行记录上的锁`，锁住的是索引 
+* `Gap Lock`：**区间锁**，锁定一个区间范围，但不包括记录本身，开区间 
+* `Next-Key Lock`：**间隙锁**，Record Lock + Gap Lock 
  
  
 举个简单的例子，
  
-```
+```sql
 select id from user where id > 15 and id < 30
 ```
  

@@ -30,13 +30,14 @@
 
 **1如果不采用锁，那么操作方法如下：**  
 
-    //1.查询出商品信息   
+```sql
+    -- 1.查询出商品信息   
     select status from t_goods where id=1;   
-    //2.根据商品信息生成订单   
+    -- 2.根据商品信息生成订单   
     insert into t_orders (id,goods_id) values (null,1);   
-    //3.修改商品status为2   
+    -- 3.修改商品status为2   
     update t_goods set status=2;
-
+```
 **上面这种场景在高并发访问的情况下很可能会出现问题。**  
 前面已经提到，只有当goods status为1时才能对该商品下单，上面第一步操作中，查询出来的商品status为1。但是当我们执行第三步Update操作的时候，有可能出现其他人先一步对商品下单把goods status修改为2了，但是我们并不知道数据已经被修改了，这样就可能造成同一个商品被下单2次，使得数据不一致。所以说这种方式是不安全的。
 
@@ -51,28 +52,29 @@
 
 设置完autocommit后，我们就可以执行我们的正常业务了。具体如下：   
 
-    //0.开始事务   
-    begin;/begin work;/start transaction; (三者选一就可以)   
-    //1.查询出商品信息   
-    select status from t_goods where id=1 **for update**;   
-    //2.根据商品信息生成订单   
+```sql
+    -- 0.开始事务   
+    begin; -- begin work; -- start transaction; (三者选一就可以)   
+    -- 1.查询出商品信息   
+    select status from t_goods where id=1 for update;   
+    -- 2.根据商品信息生成订单   
     insert into t_orders (id,goods_id) values (null,1);   
-    //3.修改商品status为2   
+    -- 3.修改商品status为2   
     update t_goods set status=2;   
-    //4.提交事务   
-    commit;/commit work;
-
+    -- 4.提交事务   
+    commit; -- commit work;
+```
 > 注：上面的begin/commit为事务的开始和结束，因为在前一步我们关闭了mysql的autocommit，所以需要手动控制事务的提交，在这里就不细表了。
 
 上面的第一步我们执行了一次查询操作：`select status from t_goods where id=1 for update;`   
 与普通查询不一样的是，我们使用了select…for update的方式，这样就通过数据库实现了悲观锁。此时在t_goods表中，id为1的 那条数据就被我们锁定了，其它的事务必须等本次事务提交之后才能执行。这样我们可以保证当前的数据不会被其它事务修改。
 
-> 注：需要注意的是，在事务中，只有SELECT … FOR UPDATE 或LOCK IN SHARE MODE 同一笔数据时会等待其它事务结束后才执行，一般SELECT … 则不受此影响。
+> 注：需要注意的是，在事务中，只有`SELECT … FOR UPDATE` 或`LOCK IN SHARE MODE` 同一笔数据时会等待其它事务结束后才执行，一般SELECT … 则不受此影响。
 
 拿上面的实例来说，当我执行`select status from t_goods where id=1 for update;`后。我在另外的事务中如果再次执行`select status from t_goods where id=1 for update;`则第二个事务会一直等待第一个事务的提交，此时第二个查询处于阻塞的状态，但是如果我是在第二个事务中执行`select status from t_goods where id=1;`则能正常查询出数据，不会受第一个事务的影响。
 
-**补充：MySQL select…for update的Row Lock与Table Lock**  
-上面我们提到，使用select…for update会把数据给锁住，不过我们需要注意一些锁的级别，MySQL **`InnoDB默认Row-Level Lock`**，所以只有「明确」地指定主键，MySQL 才会执行Row lock (只锁住被选取的数据) ，否则MySQL 将会执行Table Lock (将整个数据表单给锁住)。
+**补充：`MySQL select…for update`的`Row Lock`与`Table Lock`**  
+上面我们提到，使用`select…for update`会把数据给锁住，不过我们需要注意一些锁的级别，MySQL **`InnoDB默认Row-Level Lock`**，所以只有「明确」地指定主键，MySQL 才会执行Row lock (只锁住被选取的数据) ，否则MySQL 将会执行Table Lock (将整个数据表单给锁住)。
 
 - - -
 
@@ -112,28 +114,30 @@ console1：查询出结果，但是把该条数据锁定了
 ```
 
 console2：查询被阻塞
-
+```sql
     mysql> select * from t_goods where id=1 for update;  
-
+```
 console2：如果console1长时间未提交，则会报错
 
+```sql
     mysql> select * from t_goods where id=1 for update;  
     ERROR 1205 : Lock wait timeout exceeded; try restarting transaction  
-
-
+```
 
 **例2: (明确指定主键，若查无此数据，无lock)**  
 console1：查询结果为空
 
+```sql
     mysql> select * from t_goods where id=3 for update;  
     Empty set  
-
+```
 
 console2：查询结果为空，查询无阻塞，说明console1没有对数据执行锁定
 
+```sql
     mysql> select * from t_goods where id=3 for update;  
     Empty set  
-
+```
 
 - - -
 
@@ -153,15 +157,15 @@ console1：查询name=道具 的数据，查询正常
 ```
 
 console2：查询name=装备 的数据，查询阻塞，说明console1把表给锁住了
-
+```sql
     mysql> select * from t_goods where name='装备' for update;  
-
+```
 
 console2：若console1长时间未提交，则查询返回为空
-
+```sql
     mysql> select * from t_goods where name='装备' for update;  
     Query OK, -1 rows affected  
-
+```
 
 - - -
 
@@ -185,9 +189,9 @@ console1：查询正常
 ```
 
 console2：查询被阻塞，说明console1把表给锁住了
-
+```sql
     mysql> select * from t_goods where id>1 for update; 
-
+```
 
 - - -
 
@@ -210,15 +214,15 @@ console1：
 ```
 
 console2：查询被阻塞，说明console1把表给锁住了
-
+```sql
     mysql> select * from t_goods where id<>2 for update;  
-
+```
 
 console1：提交事务
-
+```sql
     mysql> commit;  
     Query OK, 0 rows affected  
-
+```
 
 console2：console1事务提交后，console2查询结果正常
 
@@ -270,10 +274,10 @@ console1：
 ```
 
 console2：查询status=1的数据时阻塞，超时后返回为空，说明数据被console1锁定了
-
+```sql
     mysql> select * from t_goods where status=1 for update;  
     Query OK, -1 rows affected  
-
+```
 
 console2：查询status=2的数据，能正常查询，说明console1只锁住了行，未锁表
 
@@ -292,16 +296,16 @@ console2：查询status=2的数据，能正常查询，说明console1只锁住�
 
 **例7: (明确指定索引，若查无此数据，无lock)**  
 console1：查询status=3的数据，返回空数据
-
+```sql
     mysql> select * from t_goods where status=3 for update;  
     Empty set  
-
+```
 
 console2：查询status=3的数据，返回空数据
-
+```sql
     mysql> select * from t_goods where status=3 for update;  
     Empty set  
-
+```
 
 以上就是关于我对数据库悲观锁的理解和总结，有不对的地方欢迎拍砖，下一次会带来数据库乐观锁的总结和实践
 
@@ -333,15 +337,16 @@ MySQL事务与锁定命令：[http://www.docin.com/p-16805970.html][17]
 
 下单操作包括3步骤：   
 1.查询出商品信息   
-
+```sql
     select (status,status,version) from t_goods where id=#{id}   
+```
 2.根据商品信息生成订单   
 3.修改商品status为2   
-
+```sql
     update t_goods   
     set status=2,version=version+1   
     where id=#{id} and version=#{version};
-
+```
 那么为了使用乐观锁，我们首先修改t_goods表，增加一个version字段，数据默认version值为1。   
 t_goods表初始数据如下：
 
@@ -418,6 +423,7 @@ GoodsDao
 
 mapper.xml
 
+```xml
     <update id="updateGoodsUseCAS" parameterType="Goods">  
         <![CDATA[ 
             update t_goods 
@@ -425,7 +431,7 @@ mapper.xml
             where id=#{id} and version=#{version} 
         ]]>  
     </update>  
-
+```
 
 GoodsDaoTest测试类
 ```java
@@ -477,11 +483,11 @@ GoodsDaoTest测试类
 ```
 
 我们可以看到 id为1的数据version已经在第一次更新时修改为2了。所以我们更新good2时update where条件已经不匹配了，所以更新不会成功，具体sql如下：
-
+```sql
     update t_goods   
     set status=2,version=version+1  
     where id=#{id} and version=#{version};  
-
+```
 
 这样我们就实现了乐观锁
 
@@ -489,11 +495,6 @@ GoodsDaoTest测试类
 </font>
 
 [0]: /wwh578867817/article/details/51993084
-[1]: http://www.csdn.net/tag/mysql
-[2]: http://www.csdn.net/tag/%e6%95%b0%e6%8d%ae%e5%ba%93
-[3]: http://www.csdn.net/tag/%e4%b9%90%e8%a7%82%e9%94%81
-[4]: http://www.csdn.net/tag/%e6%82%b2%e8%a7%82%e9%94%81
-[5]: http://www.csdn.net/tag/%e6%95%b0%e6%8d%ae
 [10]: #
 [11]: #t0
 [12]: #t1
@@ -503,4 +504,4 @@ GoodsDaoTest测试类
 [16]: http://lib.csdn.net/base/softwaretest
 [17]: http://www.docin.com/p-16805970.html
 [18]: http://www.cnblogs.com/chenwenbiao/archive/2012/06/06/2537508.html
-[19]: http://dl.iteye.com/upload/picture/pic/125402/22a9518f-e355-315f-8d66-d91af4fda723.jpg
+[19]: ./img/22a9518f-e355-315f-8d66-d91af4fda723.jpg

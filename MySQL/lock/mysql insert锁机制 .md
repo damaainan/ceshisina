@@ -469,9 +469,9 @@ Record lock, heap no 5 PHYSICAL RECORD: n_fields 4; compact format; info bits 0
 
 ### 1. 查看事务隔离级别
 
-SELECT @@global.tx_isolation;  
-SELECT @@session.tx_isolation;  
-SELECT @@tx_isolation;
+    SELECT @@global.tx_isolation;  
+    SELECT @@session.tx_isolation;  
+    SELECT @@tx_isolation;
 
 ### 2. 设置隔离级别
 
@@ -480,17 +480,17 @@ SET [SESSION | GLOBAL] TRANSACTION ISOLATION LEVEL {READ UNCOMMITTED | READ COMM
 
 ### 3. 查看auto_increment机制模式
 
-show variables like ‘innodb_autoinc_lock_mode’;
+    show variables like ‘innodb_autoinc_lock_mode’;
 
 ### 4. 查看表状态
 
-show table status like ‘plan_branch’\G;  
-show table status from test like ‘plan_branch’\G;
+    show table status like ‘plan_branch’\G;  
+    show table status from test like ‘plan_branch’\G;
 
 ### 5. 查看SQL性能
 
-show profiles  
-show profile for query 1;
+    show profiles  
+    show profile for query 1;
 
 ### 6. 查看当前最新事务ID
 
@@ -499,13 +499,13 @@ show engine innodb status\G;
 
 ### 7. 查看事务锁等待状态情况
 
-select _from information_schema.innodb_locks;  
-select_ from information_schema.innodb_lock_waits;  
-select * from information_schema.innodb_trx;
+    select from information_schema.innodb_locks;  
+    select from information_schema.innodb_lock_waits;  
+    select * from information_schema.innodb_trx;
 
 ### 8. 查看innodb状态(包含最近的死锁日志)
 
-show engine innodb status;
+    show engine innodb status;
 
 ## 八、参考文档
 

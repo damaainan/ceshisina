@@ -59,8 +59,6 @@ Innodb中行级锁作用于索引之上，如果没有索引，则只能够锁�
 SELECT c1 FROM t WHERE c1=10 FOR UPDATE
 ```
  
- 
- 
 这条语句将会在`c1`值为10这条记录的索引加锁，阻止其它事务的插入，更新和删除操作。 即使`c1`不存在索引，Innodb也会创建一个隐藏的`clustered index`，并用其作为锁的依据。
  
 ### Next-key Locks
@@ -76,8 +74,6 @@ Next-key锁是记录锁和Gap锁的结合，锁住了记录和记录之前的一
 (20, positive infinity)
 ```
  
- 
- 
 ### Intention Locks
  
 Intention Locks(意向锁)是MySQL为了支持不同粒度的锁而设计的一种 **`表级别锁(但不是通常认为的表锁)`**  ，它表示了表之后将被加上哪种行级锁。意向锁的分类如下：
@@ -86,23 +82,16 @@ Intention Locks(意向锁)是MySQL为了支持不同粒度的锁而设计的一�
 * **`Intention Shared Lock，意向共享锁(IS)`**  ，表示事务将要在表上加共享锁，规则是在表中申请某些行的共享锁之前，必须先申请`IS`锁。  
 * **`Intention Exclusive Lock，意向排他锁(IX)`**  ，表示事务将要在标上加排他锁，规则是在表中申请某些行的排他锁之前，必须先申请`IX`锁。  
  
- 
   
 ```sql
 SELECT ... LOCK IN SHARE MODE
 ```
  
- 
- 
 该语句将会在表上加`IS`锁，同时在对应的记录上加上`S`锁。
- 
   
 ```sql
 SELECT ... FOR UPDATE
 ```
- 
- 
- 
 该语句将会在标上加上`IX`锁，同时在对应的记录上加上`X`锁。
  
 #### 表级锁的兼容性矩阵：
@@ -126,7 +115,6 @@ Insert Intention Locks也就是插入意向锁，但它其实是一种GAP锁，�
 ### AUTO-INC Locks
  
 AUTO-INC锁是一种特殊的表级别锁，主要处理表中带有自增列的情况。实际上是为了保证自增的正确性，所以有了这种锁。
- 
 
 
 [2]: http://tech.meituan.com/innodb-lock.html

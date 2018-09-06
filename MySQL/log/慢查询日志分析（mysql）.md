@@ -89,7 +89,7 @@
  
 个人觉的pt-query-digest分析报告比mysqldumpslow好用。`pt-query-digest`可以不仅可以分析slowlog，还可以分析binlog，generallog等。
  
-下载安装 https://www.percona.com/downloads/percona-toolkit/LATEST/
+下载安装 <https://www.percona.com/downloads/percona-toolkit/LATEST/>
  
 在windows下，下载tar.gz包，解压之后，使用perl命令运行
  

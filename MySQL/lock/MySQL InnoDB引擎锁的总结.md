@@ -68,9 +68,7 @@ InnoDB 实现了两种类型的行锁，共享锁（S）与排他锁（X）。�
  
 ## 查看锁情况 
  
-  
-   
-```LANG
+```sql
 mysql> show status like 'innodb_row_lock%';
 +-------------------------------+--------+
 | Variable_name                 | Value  |
@@ -82,13 +80,7 @@ mysql> show status like 'innodb_row_lock%';
 | Innodb_row_lock_waits         | 12     |
 +-------------------------------+--------+
 5 rows in set (0.05 sec)
-
-
 ```
- 
-  
- 
- 
  
 上面的语句能够展示当前系统锁的情况，当系统锁争用比较严重的时候，`Innodb_row_lock_waits`和`Innodb_row_lock_time_avg`的值会比较高。上面的数据是由于我做实验导致的。大家可以检查下自己的系统。
  
@@ -101,10 +93,8 @@ InnoDB行锁是通过索引上的索引项来实现的，这一点ＭySQL与Orac
 在实际应用中，要特别注意InnoDB行锁的这一特性，不然的话，可能导致大量的锁冲突，从而影响并发性能。
  
 这里我们实际演示一下，一来让大家了解如何测试锁情况，二来这样用例子也许更容易说明问题。表结构如下：
- 
-  
    
-```LANG
+```sql
 Create Table: CREATE TABLE `tb_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL DEFAULT '',
@@ -112,13 +102,7 @@ Create Table: CREATE TABLE `tb_user` (
   `money` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8
-
-
 ```
- 
-  
- 
- 
  
 ![][1]
  
@@ -126,7 +110,6 @@ Create Table: CREATE TABLE `tb_user` (
  
 有些文章说只有表没有索引才会锁表，通过上面的实验，我觉得是不准确的。
  
-
 
 [0]: ./img/FjMZ3a6.png 
 [1]: ./img/QBJZZrE.png 

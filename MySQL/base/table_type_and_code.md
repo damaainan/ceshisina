@@ -8,7 +8,7 @@
 
 创建表时指定存储引擎：
 
-```
+```sql
 create table ai(
 	i bigint(20) NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY(i)

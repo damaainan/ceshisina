@@ -90,13 +90,17 @@ Query OK, 4 rows affected (0.00 sec)
 
 ```
  
-删除了id>=6的记录后，重启MySQL服务，如下所示，测试结果为id =10, 那么为什么出现不同的两个结果呢？这个是因为InnoDB存储引擎中，自增主键没有持久化，而是放在内存中，关于自增主键的分配，是由InnoDB数据字典内部一个计数器来决定的，而该计数器只在内存中维护，并不会持久化到磁盘中。当数据库重启时，该计数器会通过SELECT MAX(ID) FROM TEST FOR UPDATE这样的SQL语句来初始化（不同表对应不同的SQL语句）, 其实这是一个bug来着, 对应的链接地址为：https://bugs.mysql.com/bug.php?id=199，直到MySQL 8.0 ，才将自增主键的计数器持久化到redo log中。每次计数器发生改变，都会将其写入到redo log中。如果数据库发生重启，InnoDB会根据redo log中的计数器信息来初始化其内存值。 而对应与MySIAM存储引擎，自增主键的最大值存放在数据文件当中，每次重启MySQL服务都不会影响其值变化。
+删除了id>=6的记录后，重启MySQL服务，如下所示，测试结果为id =10, 那么为什么出现不同的两个结果呢？
+
+这个是因为InnoDB存储引擎中，**`自增主键没有持久化`**，而是放在内存中，关于自增主键的分配，是由InnoDB数据字典内部一个计数器来决定的，而该计数器只在内存中维护，并不会持久化到磁盘中。当数据库重启时，该计数器会通过`SELECT MAX(ID) FROM TEST FOR UPDATE`这样的SQL语句来初始化（不同表对应不同的SQL语句）, 其实这是一个bug来着, 对应的链接地址为：<https://bugs.mysql.com/bug.php?id=199>，直到MySQL 8.0 ，才**将自增主键的计数器持久化到`redo log`中**。
+
+每次计数器发生改变，都会将其写入到`redo log`中。如果数据库发生重启，InnoDB会根据`redo log`中的计数器信息来初始化其内存值。 而对应与MySIAM存储引擎，自增主键的最大值存放在数据文件当中，每次重启MySQL服务都不会影响其值变化。
  
 ![][1]
  
- ** 自增列细节特性   ** 
+#### 自增列细节特性   
  
-1：SQL模式的NO_AUTO_VALUE_ON_ZERO值影响AUTO_INCREMENT列的行为。
+#### 1：SQL模式的`NO_AUTO_VALUE_ON_ZERO值`影响`AUTO_INCREMENT`列的行为。
  
 ```sql
 mysql> drop table if exists test;
@@ -152,7 +156,9 @@ mysql>
 
 ```
  
-2：如果把一个NULL值插入到一个AUTO_INCREMENT数据列里去，MySQL将自动生成下一个序列编号。如下所示，这个语法对于熟悉SQL Server中自增字段的人来来看，简直就是不可思议的事情。
+#### 2：如果把一个NULL值插入到一个AUTO_INCREMENT数据列里去，MySQL将自动生成下一个序列编号。
+
+如下所示，这个语法对于熟悉SQL Server中自增字段的人来来看，简直就是不可思议的事情。
  
 ```sql
 mysql> drop table if exists test;
@@ -175,9 +181,9 @@ mysql> select * from test;
 
 ```
  
-3：获取当前自增列的值
+#### 3：获取当前自增列的值
  
- <font face="宋体">        获取当前自增列的值，可以使用          <font face="宋体"> LAST_INSERT_ID函数，注意，这个是一个系统函数，   可   获得自增列自动生成的最后一个值。但该函数只与服务器的本次会话过程中生成的值有关。如果在与服务器的本次会话中尚未生成AUTO_INCREMENT值，则该函数返回0   
+获取当前自增列的值，可以使用 `LAST_INSERT_ID` 函数，注意，这个是一个系统函数，可获得自增列自动生成的最后一个值。但该函数只与服务器的本次会话过程中生成的值有关。如果在与服务器的本次会话中尚未生成`AUTO_INCREMENT`值，则该函数返回0   
  
 ```sql
 mysql> select last_insert_id();
@@ -211,11 +217,11 @@ mysql> select * from test;
 
 ```
  
-如果要获取自增列的下一个值，那么可以使用show create table tablename查看。如下截图所示
+如果要获取自增列的下一个值，那么可以使用`show create table tablename`查看。如下截图所示
  
 ![][2]
  
-4：自增列跳号
+#### 4：自增列跳号
  
 MySQL中，自增字段可以跳号：可以插入一条指定自增列值的记录（即使插入的值大于自增列的最大值），如下所示，当前自增列最大值为1，我插入一个200的值，然后就会以200为基础继续自增，而且我还可以继续插入ID=100的记录，无需任何额外设置。
  
@@ -271,7 +277,7 @@ mysql> select * from test;
 
 ```
  
-另外一个是关于自增列逻辑跳号问题，在一个事务里面，使用遇到事务回滚，自增列就会跳号，如下所示，id从201 跳到 203了。
+另外一个是关于自增列逻辑跳号问题，**在一个事务里面，使用遇到`事务回滚`，自增列就会`跳号`**，如下所示，**id从201 跳到 203了**。
  
 ```sql
 mysql> begin;
@@ -313,9 +319,9 @@ mysql> select * from test;
 
 ```
  
-当然，无论MySQL还是其他关系型数据库，都会遇到这种逻辑跳号的情况，例如ORACLE的序列也会存在这种逻辑跳号问题。为提高自增列的生成效率，都将生成自增值的操作设计为非事务性操作，表现为当事务回滚时，事务中生成的自增值不会被回滚。
+当然，无论MySQL还是其他关系型数据库，都会遇到这种**`逻辑跳号`**的情况，例如ORACLE的序列也会存在这种逻辑跳号问题。为提高自增列的生成效率，都将生成自增值的操作设计为非事务性操作，表现为当事务回滚时，事务中生成的自增值不会被回滚。
  
-5：truncate table操作会引起自增列从头开始计数
+#### 5：`truncate table`操作会引起自增列从头开始计数
  
 ```sql
 mysql> truncate table test;
@@ -337,7 +343,7 @@ mysql>
 
 ```
  
-6：修改AUTO_INCREMENT的值来修改自增起始值。
+#### 6：修改AUTO_INCREMENT的值来修改自增起始值。
  
 ```sql
 mysql> select * from test;
@@ -371,13 +377,13 @@ mysql> select * from test;
  
  ** 参考资料：   ** 
  
-http://www.cnblogs.com/TeyGao/p/9279390.html
+<http://www.cnblogs.com/TeyGao/p/9279390.html>
  
-https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html
+<https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html>
  
- [https://dev.mysql.com/doc/refman/5.7/en/innodb-auto-increment-handling.html][3] 
+[https://dev.mysql.com/doc/refman/5.7/en/innodb-auto-increment-handling.html][3] 
  
-http://www.cnblogs.com/yangzumin/p/3756583.html
+<http://www.cnblogs.com/yangzumin/p/3756583.html>
  
 
 

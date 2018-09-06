@@ -523,7 +523,10 @@ over()子句是对数据行按照指定列进行开窗(划分窗口)，开窗后
 回顾全文，不难发现MySQL、MariaDB对SQL的扩展实现了不少标准SQL中不允许的语法。能够实现这样的行为，是因为MySQL/mariadb总是通过获取一个随机行的行为保证结果满足关系模型的范式要求。也正因为这样，使得看上去mysql/mariadb的语法和标准SQL的语法没什么大区别，连逻辑执行顺序都基本一致，但它们却会对其他子句产生连带反应，导致最终的执行结果不一致。   
 虽然实际编写SQL语句的过程中，无需去在意这其中的为什么，但我个人觉得，理解它们很有帮助，毕竟关系型数据库的本质在于关系模型和集合模型。而且在我自己的体会中，在深入学习SQL的过程中，经常会感受到SQL和关系、集合之间的联系，这种感受可能不会立刻被自己发现，但回首一想，还真是那么回事。   
   
-[ 回到Linux系列文章大纲：http://www.cnblogs.com/f-ck-need-u/p/7048359.html ][10]  [ 回到网站架构系列文章大纲：http://www.cnblogs.com/f-ck-need-u/p/7576137.html ][11]  [ 回到数据库系列文章大纲：http://www.cnblogs.com/f-ck-need-u/p/7586194.html ][12]   [ 转载请注明出处：http://www.cnblogs.com/f-ck-need-u/p/8656828.html ][13]       
+[回到Linux系列文章大纲：http://www.cnblogs.com/f-ck-need-u/p/7048359.html][10]  
+[回到网站架构系列文章大纲：http://www.cnblogs.com/f-ck-need-u/p/7576137.html][11]  
+[回到数据库系列文章大纲：http://www.cnblogs.com/f-ck-need-u/p/7586194.html][12]   
+[转载请注明出处：http://www.cnblogs.com/f-ck-need-u/p/8656828.html][13]       
  
  
 注：若您觉得这篇文章还不错请点击右下角推荐，您的支持能激发作者更大的写作热情，非常感谢！   

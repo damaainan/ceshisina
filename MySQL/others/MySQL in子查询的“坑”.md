@@ -9,11 +9,11 @@ MySQL是项目中常用的数据库，其中in查询也是很常用。最近项�
 
 **1. userinfo 表**
 
-![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][1]
+![][1]
 
 **2. article 表**
 
-![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][2]
+![][2]
 
     select * from userinfo where id in(select author_id from artilce where type = 1);
 
@@ -28,15 +28,15 @@ MySQL是项目中常用的数据库，其中in查询也是很常用。最近项�
 
     mysql> select count(*) from userinfo;
 
-![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][3]
+![][3]
 
     mysql> select count(*) from article;
 
-![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][4]
+![][4]
 
     mysql> select id,username from userinfo where id in (select author_id from article where type = 1);
 
-![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][5]
+![][5]
 
 **33 秒**  **！**  **为什么会这么慢呢？**
 
@@ -44,7 +44,7 @@ MySQL是项目中常用的数据库，其中in查询也是很常用。最近项�
 
 官方文档解释：in 子句在查询的时候有时会被转换为 exists 的方式来执行，变成逐条记录进行遍历（版本 5.5 中存在，5.6 中已做优化）。
 
-![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][6]
+![][6]
 
 参考：
 
@@ -60,7 +60,7 @@ https://dev.mysql.com/doc/refman/5.5/en/subquery-optimization.html
     
     (select author_id from article where type = 1) as tb);
 
-![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][7]
+![][7]
 
 **2. 使用 join**
 
@@ -68,7 +68,7 @@ https://dev.mysql.com/doc/refman/5.5/en/subquery-optimization.html
     
     where a.id = b.author_id and b.type = 1;
 
-![记踩到 MySQL in 子查询的“坑”记踩到 MySQL in 子查询的“坑”][8]
+![][8]
 
 **五、补充**
 
