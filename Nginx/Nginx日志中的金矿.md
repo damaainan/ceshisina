@@ -10,19 +10,20 @@
 
 Nginx中的每条记录是一个单独的请求，可能是某个页面或静态资源的访问，也可能是某个API的调用。通过几条简单的命令，了解一下系统的访问压力：
 
-        // 请求总数   
-        less main.log | wc -l
-        1080577       
-        // 平均每秒的请求数
-        less main.log | awk '{sec=substr($4,2,20);reqs++;reqsBySec[sec]++;} END{print reqs/length(reqsBySec)}'
-        14.0963       
-        // 峰值每秒请求数
-        less main.log | awk '{sec=substr($4,2,20);requests[sec]++;} END{for(s in requests){printf("%s %s\n", requests[s],s)}}' | sort -nr | head -n 3
-        Page Visits  Response Size  Time Spent/req  Moment
-        182 10/Apr/2016:12:53:20  
-        161 10/Apr/2016:12:54:53
-        160 10/Apr/2016:10:47:23
-
+```sh
+# 请求总数   
+less main.log | wc -l
+# 1080577       
+# 平均每秒的请求数
+less main.log | awk '{sec=substr($4,2,20);reqs++;reqsBySec[sec]++;} END{print reqs/length(reqsBySec)}'
+# 14.0963       
+# 峰值每秒请求数
+less main.log | awk '{sec=substr($4,2,20);requests[sec]++;} END{for(s in requests){printf("%s %s\n", requests[s],s)}}' | sort -nr | head -n 3
+# Page Visits  Response Size  Time Spent/req  Moment
+# 182 10/Apr/2016:12:53:20  
+# 161 10/Apr/2016:12:54:53
+# 160 10/Apr/2016:10:47:23
+```
 请求总数、平均每秒请求数、峰值请求数，可以大体了解系统压力，作为系统扩容、性能及压力测试时的直接参考。查询特定的URL，比如下单页面，了解每天的下单状况，导出CSV格式，或使用可视化工具，更直观地了解一段时间内的请求、下单数据：
 
 ![][11]
@@ -30,10 +31,11 @@ Nginx中的每条记录是一个单独的请求，可能是某个页面或静态
 
 备注：本文使用awk命令处理，与Nginx日志的格式有关，如果您格式不同，请酌情修改命令。本文所用的Nginx日志格式：
 
+```nginx
     $remote_addr - $remote_user [$time_local] "$request" 
     $status  $body_bytes_sent $request_time $upstream_response_time 
     $upstream_addr "$http_referer" "$http_user_agent" "$http_x_forwarded_for"';
-
+```
 示例：
 
     42.100.52.XX - - [10/Apr/2016:07:29:58 +0800] "GET /index 
@@ -50,9 +52,9 @@ Nginx日志如果开启，除了请求时间，一般会包含响应时间、页
 
 对一般网站来说，带宽是最珍贵的资源，可能一不小心，某些资源如文件、图片就占用了大量的带宽，执行命令检查一下：
 
-    less static.log | awk 'url=$7; requests[url]++;bytes[url]+=$10} 
-    END{for(url in requests){printf("%sMB %sKB/req %s %s\n", bytes[url] / 
-    1024 / 1024, bytes[url] /requests[url] / 1024, requests[url], url)}}' | sort -nr | head -n 15
+```sh
+less static.log | awk 'url=$7; requests[url]++;bytes[url]+=$10} END{for(url in requests){printf("%sMB %sKB/req %s %s\n", bytes[url] / 1024 / 1024, bytes[url] /requests[url] / 1024, requests[url], url)}}' | sort -nr | head -n 15
+```
 
 ![][18]
 
@@ -62,19 +64,20 @@ Nginx日志如果开启，除了请求时间，一般会包含响应时间、页
 
 与之相比，后台调用、API接口等通常消耗更多的CPU资源，按照一贯“先衡量、再优化”的思路，可以根据响应时间大体了解某个URL占用的CPU时间：
 
-    less main.log | awk '{url=$7; times[url]++} END{for(url in times){printf("%s %s\n", times[url], url)}}' | sort -nr | more`
-        40404 /page/a?from=index
-        1074 /categories/food
-        572 /api/orders/1234.json
+```sh
+less main.log | awk '{url=$7; times[url]++} END{for(url in times){printf("%s %s\n", times[url], url)}}' | sort -nr | more
+```
+    40404 /page/a?from=index
+    1074 /categories/food
+    572 /api/orders/1234.json
 
 不对，发现一个问题：由于拥有服务号、App、PC浏览器等多种前端，并且使用不规范，URL的格式可能乱七八糟。比如`/page/a`页面，有的带有.html后缀，有的未带，有的请求路径则带有参数；分类页/categories/food带有`slug`等信息；订单、详情或个人中心的URL路径则有`ID`等标记...。
 
 借助sed命令，通过三个方法对URL格式进行归一化处理：去掉所有的参数；去掉`.html`及`.json`后缀；把数字替换为`*`。可以得到更准确的统计结果，：
 
-    less main.log | awk '{print $7}' |sed -re 's/(.*)\?.*/\1/g' -e 
-    's/(.*)\..*/\1/g' -e 's:/[0-9]+:/*:g' | awk '{requests[$1]++;time[$1]
-    +=$2} END{for(url in requests){printf("%smin %ss/req %s %s\n", time
-    [url] / 60, time[url] /requests[url], requests[url], url)}}' | sort -nr | head -n 50
+```sh
+less main.log | awk '{print $7}' |sed -re 's/(.*)\?.*/\1/g' -e 's/(.*)\..*/\1/g' -e 's:/[0-9]+:/*:g' | awk '{requests[$1]++;time[$1]+=$2} END{for(url in requests){printf("%smin %ss/req %s %s\n", time[url] / 60, time[url] /requests[url], requests[url], url)}}' | sort -nr | head -n 50
+```
 
 ![][19]
 
@@ -92,13 +95,12 @@ Nginx日志如果开启，除了请求时间，一般会包含响应时间、页
 
 第一步：是不是用户的网络状况不好？根据既往的经验，如果只有少量的请求较慢，而前后其他IP的请求都较快，通常是用户手机或网络状况不佳引起的。最简单的方法，统计慢查询所占比例：
 
-    less main.log | awk -v limit=2 '{min=substr($4,2,17);reqs[min]
-    ++;if($11>limit){slowReqs[min]++}} END{for(m in slowReqs){printf("%s
-     %s %s%s %s\n", m, slowReqs[m]/reqs[m] * 100, "%", slowReqs[m], reqs
-    [m])}}' | more
-        10/Apr/2016:12:51 0.367% 7 1905
-        10/Apr/2016:12:52 0.638% 12 1882
-        10/Apr/2016:12:53 0.548% 14 2554
+```sh
+less main.log | awk -v limit=2 '{min=substr($4,2,17);reqs[min]++;if($11>limit){slowReqs[min]++}} END{for(m in slowReqs){printf("%s %s %s%s %s\n", m, slowReqs[m]/reqs[m] * 100, "%", slowReqs[m], reqs[m])}}' | more
+```
+    10/Apr/2016:12:51 0.367% 7 1905
+    10/Apr/2016:12:52 0.638% 12 1882
+    10/Apr/2016:12:53 0.548% 14 2554
 
 慢查询所占比例极低，再根据用户手机型号、访问时间、访问页面等信息看能否定位到指定的请求，结合前后不同用户的请求，就可以确定是否用户的网络状况不好了。
 
@@ -106,25 +108,22 @@ Nginx日志如果开启，除了请求时间，一般会包含响应时间、页
 
 我们遇到过类似问题，平均响应时间90ms，还算正常，但某台服务器明显变慢，平均响应时间达到了200ms，影响了部分用户的访问体验。
 
-    less main.log | awk '{upServer=$13;upTime=$12;if(upServer == 
-    "-"){upServer="Nginx"};if(upTime == "-"){upTime=0};upTimes[upServer]
-    +=upTime;count[upServer]++;totalCount++;} END{for(server in upTimes)
-    {printf("%s %s%s %ss %s\n", count[server], count[server]/totalCount * 
-    100, "%", upTimes[server]/count[server], server)}}' | sort -nr
-
+```sh
+less main.log | awk '{upServer=$13;upTime=$12;if(upServer == "-"){upServer="Nginx"};if(upTime == "-"){upTime=0};upTimes[upServer]+=upTime;count[upServer]++;totalCount++;} END{for(server in upTimes){printf("%s %s%s %ss %s\n", count[server], count[server]/totalCount * 100, "%", upTimes[server]/count[server], server)}}' | sort -nr
+```
 ![][20]
 
 不幸，市场部此次推广活动，访问压力增大，所有服务器都在变慢，更可能是应用系统的性能达到了瓶颈。如果此时带宽都没跑满，在硬件扩容之前，考虑优化重点API、缓存、静态化策略吧，达到一个基本的要求：“优化系统，让瓶颈落到带宽上”。
 
 第三步：应用系统没有瓶颈，是带宽的问题？快速查看一下每秒的流量：
-
-    less main.log | awk '{second=substr($4,2,20);bytes[second]+=$10;}
-     END{for(s in bytes){printf("%sKB %s\n", bytes[s]/1024, s)}}' | more`
-        1949.95KB 10/Apr/2016:12:53:15
-        2819.1KB 10/Apr/2016:12:53:16
-        3463.64KB 10/Apr/2016:12:53:17
-        3419.21KB 10/Apr/2016:12:53:18
-        2851.37KB 10/Apr/2016:12:53:19
+```sh
+less main.log | awk '{second=substr($4,2,20);bytes[second]+=$10;}END{for(s in bytes){printf("%sKB %s\n", bytes[s]/1024, s)}}' | more`
+```
+    1949.95KB 10/Apr/2016:12:53:15
+    2819.1KB 10/Apr/2016:12:53:16
+    3463.64KB 10/Apr/2016:12:53:17
+    3419.21KB 10/Apr/2016:12:53:18
+    2851.37KB 10/Apr/2016:12:53:19
 
 峰值带宽接近出口带宽最大值了，幸福的烦恼，利用前面介绍的不同URL的带宽统计，做定向优化，或者加带宽吧。
 
@@ -132,10 +131,9 @@ Nginx日志如果开启，除了请求时间，一般会包含响应时间、页
 
 SEO团队抱怨优化了那么久，为什么页面索引量和排名上不去。打印出不同爬虫的请求频次（$http_user_agent），或者查看某个特定的页面，最近有没有被爬虫爬过：
 
-    less main.log | egrep 'spider|bot' | awk '{name=$17;if(index
-    ($15,"spider")>0){name=$15};spiders[name]++} END{for(name in spiders)
-    {printf("%s %s\n",spiders[name], name)}}' | sort -nr
-
+```sh
+less main.log | egrep 'spider|bot' | awk '{name=$17;if(index($15,"spider")>0){name=$15};spiders[name]++} END{for(name in spiders){printf("%s %s\n",spiders[name], name)}}' | sort -nr
+```
 ![][21]
 
 数据告诉我们，页面索引量上不去，不一定是某个爬虫未检索到页面，更多的是其他原因。

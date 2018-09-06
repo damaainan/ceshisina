@@ -19,57 +19,57 @@ pc、mobile 一个地址有两套页面，需要在后端根据浏览器的 user
 ### lua demo 脚本
 
 ```lua
-    -- 判断是否是手机浏览器
-    function isMobile(userAgent)
-        -- 99% 前三个都能匹配上吧
-        local mobile = {
-            "phone", "android", "mobile", "itouch", "ipod", "symbian", "htc", "palmos", "blackberry", "opera mini", "windows ce", "nokia", "fennec",
-            "hiptop", "kindle", "mot", "webos", "samsung", "sonyericsson", "wap", "avantgo", "eudoraweb", "minimo", "netfront", "teleca"
-        }
-        userAgent = string.lower(userAgent)
-    
-        for i, v in ipairs(mobile) do
-            if string.match(userAgent, v) then
-                return true
-            end
-        end
-    
-        return false
-    end
-    
-    -- 根据id + 浏览器类型展示活动页面
-    function showPromotionHtml(id, isMobile)
-        local path = "/data/www/mengkang/demo/promotion/"
-        local filename
-    
-        if isMobile then
-            path = path .. "mobile"
-        else
-            path = path .. "pc"
-        end
-    
-        filename = path .. "/" .. id .. ".html"
-    
-        if file_exists(filename) then
-            local file = io.open(filename,"r")
-            io.input(file)
-            print(io.read("*a"))
-            io.close(file)
-        else
-            print("文件不存在: " .. string.gsub(filename, "/data/www/mengkang/demo", ""))
+-- 判断是否是手机浏览器
+function isMobile(userAgent)
+    -- 99% 前三个都能匹配上吧
+    local mobile = {
+        "phone", "android", "mobile", "itouch", "ipod", "symbian", "htc", "palmos", "blackberry", "opera mini", "windows ce", "nokia", "fennec",
+        "hiptop", "kindle", "mot", "webos", "samsung", "sonyericsson", "wap", "avantgo", "eudoraweb", "minimo", "netfront", "teleca"
+    }
+    userAgent = string.lower(userAgent)
+
+    for i, v in ipairs(mobile) do
+        if string.match(userAgent, v) then
+            return true
         end
     end
-    
-    -- 判断文件是否存在
-    function file_exists(path)
-        local file = io.open(path, "rb")
-        if file then file:close() end
-        return file ~= nil
+
+    return false
+end
+
+-- 根据id + 浏览器类型展示活动页面
+function showPromotionHtml(id, isMobile)
+    local path = "/data/www/mengkang/demo/promotion/"
+    local filename
+
+    if isMobile then
+        path = path .. "mobile"
+    else
+        path = path .. "pc"
     end
-    
-    local id = 1
-    local userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
-    showPromotionHtml(id, isMobile(userAgent))
+
+    filename = path .. "/" .. id .. ".html"
+
+    if file_exists(filename) then
+        local file = io.open(filename,"r")
+        io.input(file)
+        print(io.read("*a"))
+        io.close(file)
+    else
+        print("文件不存在: " .. string.gsub(filename, "/data/www/mengkang/demo", ""))
+    end
+end
+
+-- 判断文件是否存在
+function file_exists(path)
+    local file = io.open(path, "rb")
+    if file then file:close() end
+    return file ~= nil
+end
+
+local id = 1
+local userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+showPromotionHtml(id, isMobile(userAgent))
     
 ```
 
@@ -90,75 +90,75 @@ pc、mobile 一个地址有两套页面，需要在后端根据浏览器的 user
 ### 稍微调整适配 nginx lua 模块
 
 ```lua
-    -- 判断是否是手机浏览器
-    function isMobile(userAgent)
-        -- 99% 前三个都能匹配上吧
-        local mobile = {
-            "phone", "android", "mobile", "itouch", "ipod", "symbian", "htc", "palmos", "blackberry", "opera mini", "windows ce", "nokia", "fennec",
-            "hiptop", "kindle", "mot", "webos", "samsung", "sonyericsson", "wap", "avantgo", "eudoraweb", "minimo", "netfront", "teleca"
-        }
-        userAgent = string.lower(userAgent)
-    
-        for i, v in ipairs(mobile) do
-            if string.match(userAgent, v) then
-                return true
-            end
-        end
-    
-        return false
-    end
-    
-    -- 根据id + 浏览器类型展示活动页面
-    function showPromotionHtml(id, isMobile)
-        local path = "/data/www/mengkang/demo/promotion/"
-        local filename
-    
-        if isMobile then
-            path = path .. "mobile"
-        else
-            path = path .. "pc"
-        end
-    
-        filename = path .. "/" .. id .. ".html"
-    
-        if file_exists(filename) then
-            local file = io.open(filename,"r")
-            io.input(file)
-            ngx.say(io.read("*a"))
-            io.close(file)
-        else
-            ngx.say("file not found : " .. string.gsub(filename, "/data/www/mengkang/demo", ""))
+-- 判断是否是手机浏览器
+function isMobile(userAgent)
+    -- 99% 前三个都能匹配上吧
+    local mobile = {
+        "phone", "android", "mobile", "itouch", "ipod", "symbian", "htc", "palmos", "blackberry", "opera mini", "windows ce", "nokia", "fennec",
+        "hiptop", "kindle", "mot", "webos", "samsung", "sonyericsson", "wap", "avantgo", "eudoraweb", "minimo", "netfront", "teleca"
+    }
+    userAgent = string.lower(userAgent)
+
+    for i, v in ipairs(mobile) do
+        if string.match(userAgent, v) then
+            return true
         end
     end
-    
-    -- 判断文件是否存在
-    function file_exists(path)
-        local file = io.open(path, "rb")
-        if file then file:close() end
-        return file ~= nil
+
+    return false
+end
+
+-- 根据id + 浏览器类型展示活动页面
+function showPromotionHtml(id, isMobile)
+    local path = "/data/www/mengkang/demo/promotion/"
+    local filename
+
+    if isMobile then
+        path = path .. "mobile"
+    else
+        path = path .. "pc"
     end
-    
-    local id = ngx.var.id
-    local userAgent = ngx.req.get_headers().user_agent
-    showPromotionHtml(id, isMobile(userAgent))
+
+    filename = path .. "/" .. id .. ".html"
+
+    if file_exists(filename) then
+        local file = io.open(filename,"r")
+        io.input(file)
+        ngx.say(io.read("*a"))
+        io.close(file)
+    else
+        ngx.say("file not found : " .. string.gsub(filename, "/data/www/mengkang/demo", ""))
+    end
+end
+
+-- 判断文件是否存在
+function file_exists(path)
+    local file = io.open(path, "rb")
+    if file then file:close() end
+    return file ~= nil
+end
+
+local id = ngx.var.id
+local userAgent = ngx.req.get_headers().user_agent
+showPromotionHtml(id, isMobile(userAgent))
     
 ```
 
 ### nginx 配置
 
 ```nginx
-    server
+server
+{
+    listen       80;
+    server_name mengkang.net
+
+    location ~ /promotion/(\d+)
     {
-        listen       80;
-        server_name mengkang.net
-    
-        location ~ /promotion/(\d+)
-        {
-            set $id $1;
-            default_type "text/html";
-            content_by_lua_file /data/www/lua/1.lua;
-        }
+        set $id $1;
+        default_type "text/html";
+        content_by_lua_file /data/www/lua/1.lua;
     }
+}
 ```
 
 nginx 单独安装 `lua` 模块也行，使用 `openresty` 也可以。单独安装参考：[https://mengkang.net/994.html][0]
@@ -179,50 +179,50 @@ nginx 单独安装 `lua` 模块也行，使用 `openresty` 也可以。单独安
 #### php 代码
 
 ```php
-    <?php
-    header("Content-type:text/html;charset=utf-8");
-    header_remove('x-powered-by');
-    ini_set('display_errors', 'Off');
-    
-    function getId(){
-        $uri = $_SERVER["REQUEST_URI"];
-        $tmp = explode("?",$uri);
-        $uri = $tmp[0];
-        $uri = trim($uri,"/");
-        $tmp = explode("/",$uri);
-        return intval(array_pop($tmp));
+<?php
+header("Content-type:text/html;charset=utf-8");
+header_remove('x-powered-by');
+ini_set('display_errors', 'Off');
+
+function getId(){
+    $uri = $_SERVER["REQUEST_URI"];
+    $tmp = explode("?",$uri);
+    $uri = $tmp[0];
+    $uri = trim($uri,"/");
+    $tmp = explode("/",$uri);
+    return intval(array_pop($tmp));
+}
+
+function isMobile()
+{
+    $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower ( $_SERVER['HTTP_USER_AGENT'] ) : '';
+
+    if ( preg_match ( "/phone|itouch|ipod|symbian|android|htc_|htc-|palmos|blackberry|opera mini|windows ce|nokia|fennec|hiptop|kindle|mot |mot-|webos\/|samsung|sonyericsson|mobile|pda;|avantgo|eudoraweb|minimo|netfront|nintendo/", $user_agent ) ) {
+        return true;
     }
-    
-    function isMobile()
-    {
-        $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower ( $_SERVER['HTTP_USER_AGENT'] ) : '';
-    
-        if ( preg_match ( "/phone|itouch|ipod|symbian|android|htc_|htc-|palmos|blackberry|opera mini|windows ce|nokia|fennec|hiptop|kindle|mot |mot-|webos\/|samsung|sonyericsson|mobile|pda;|avantgo|eudoraweb|minimo|netfront|nintendo/", $user_agent ) ) {
-            return true;
-        }
-    
-        return false;
-    }
-    
-    $id = getId();
-    
-    $isMobile = isMobile();
-    
-    
-    if ($isMobile){
-        $filename = __DIR__."/promotion/mobile/".$id.".html";
-    }else{
-        $filename = __DIR__."/promotion/pc/".$id.".html";
-    }
-    
-    
-    if (file_exists($filename)) {
-        echo file_get_contents($filename);
-    }else{
-        echo "file not found : /promotion/pc/".$id.".html";
-    }
-    
-    exit;
+
+    return false;
+}
+
+$id = getId();
+
+$isMobile = isMobile();
+
+
+if ($isMobile){
+    $filename = __DIR__."/promotion/mobile/".$id.".html";
+}else{
+    $filename = __DIR__."/promotion/pc/".$id.".html";
+}
+
+
+if (file_exists($filename)) {
+    echo file_get_contents($filename);
+}else{
+    echo "file not found : /promotion/pc/".$id.".html";
+}
+
+exit;
 ```
 
 也就是说访问  
@@ -238,12 +238,13 @@ nginx 单独安装 `lua` 模块也行，使用 `openresty` 也可以。单独安
 > php 版本：7.0.11  
 > php-fpm 配置 
 
+```cfg
     pm = dynamic
     pm.max_children = 10
     pm.start_servers = 4
     pm.min_spare_servers = 4
     pm.max_spare_servers = 10
-    
+```
 
 #### php 压测结果
 

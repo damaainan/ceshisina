@@ -208,7 +208,7 @@ server {
         internal;
         health_check interval=5s uri=/test.php match=statusok;
         proxy_set_header HOST www.example.com;
-        proxy_pass http://my_upstream
+        proxy_pass http://my_upstream;
     }
 }
 
@@ -363,42 +363,43 @@ $ curl -s http://localhost:80/api/1/http/upstreams/backend/servers/
  
 ```json
 {
-      "backup": false,
-      "down": false,
-      "fail_timeout": "10s",
-      "id": 0,
-      "max_conns": 250,
-      "max_fails": 1,
-      "route": "",
-      "server": "10.10.10.2:220",
-      "slow_start": "0s",
-      "weight": 1
-      },
-      {
-      "backup": false,
-      "down": false,
-      "fail_timeout": "10s",
-      "id": 1,
-      "max_conns": 150,
-      "max_fails": 1,
-      "route": "",
-      "server": "10.10.10.4:220",
-      "slow_start": "0s",
-      "weight": 1
-      },
-      {
-      "backup": false,
-      "down": false,
-      "fail_timeout": "10s",
-      "id": 2,
-      "max_conns": 200,
-      "max_fails": 1,
-      "route": "",
-      "server": "192.168.78.66:80",
-      "slow_start": "0s",
-      "weight": 200
-      }
-  }
+{
+    "backup": false,
+    "down": false,
+    "fail_timeout": "10s",
+    "id": 0,
+    "max_conns": 250,
+    "max_fails": 1,
+    "route": "",
+    "server": "10.10.10.2:220",
+    "slow_start": "0s",
+    "weight": 1
+},
+{
+    "backup": false,
+    "down": false,
+    "fail_timeout": "10s",
+    "id": 1,
+    "max_conns": 150,
+    "max_fails": 1,
+    "route": "",
+    "server": "10.10.10.4:220",
+    "slow_start": "0s",
+    "weight": 1
+},
+{
+    "backup": false,
+    "down": false,
+    "fail_timeout": "10s",
+    "id": 2,
+    "max_conns": 200,
+    "max_fails": 1,
+    "route": "",
+    "server": "192.168.78.66:80",
+    "slow_start": "0s",
+    "weight": 200
+}
+}
 ```
  
 ## 配置的最佳实践

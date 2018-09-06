@@ -93,28 +93,28 @@ Nginx 里面所发生的事情跟这个情况是很相似的。当读取一个�
 配置项非常简单：
 
 ```nginx
-    worker_processes 16;
-    
-    events {
-        accept_mutex off;
-    }
-    
-    http {
-        include mime.types;
-        default_type application/octet-stream;
-    
-        access_log off;
-        sendfile on;
-        sendfile_max_chunk 512k;
-    
-        server {
-            listen 8000;
-    
-            location / {
-                root /storage;
-            }
+worker_processes 16;
+
+events {
+    accept_mutex off;
+}
+
+http {
+    include mime.types;
+    default_type application/octet-stream;
+
+    access_log off;
+    sendfile on;
+    sendfile_max_chunk 512k;
+
+    server {
+        listen 8000;
+
+        location / {
+            root /storage;
         }
     }
+}
 ```
 
 就像你看到的那样，为了得到更好的性能，我们对一些配置做了调整： [logging][24] 和 [accept_mutex][25] 被关掉了, [sendfile][26] 打开了， [sendfile_max_chunk][27] 也设置了。最后一个指令可以减少阻塞 sendfile 调用的最大花费时间，因为 Nginx 不会一次性发送整个文件，而是分成 512KB 的小块。 
@@ -193,10 +193,10 @@ Nginx 里面所发生的事情跟这个情况是很相似的。当读取一个�
 是时候把线程池放进来啦。为了加入我们只需要添加 [aio][29] thread 指令到 location 中。 
 
 ```nginx
-    location / {
-        root /storage;
-        aio threads;
-    }
+location / {
+    root /storage;
+    aio threads;
+}
 ```
 
 然后让 Nginx 去读取这个配置项。
@@ -317,23 +317,23 @@ Nginx 里面所发生的事情跟这个情况是很相似的。当读取一个�
 你可能早就注意到了，带着 [thread_pool][35] 指令，你可以配置线程的数量，队列的最大长度，还有特定的线程池的名称。最后一个提示就是，你可以配置多个独立的线程池，并在你配置项的不同地方去使用，针对不同的目的： 
 
 ```nginx
-    # in the 'main' context
-    thread_pool one threads=128 max_queue=0;
-    thread_pool two threads=32;
-    
-    http {
-        server {
-            location /one {
-                aio threads=one;
-            }
-    
-            location /two {
-                aio threads=two;
-            }
-    
+# in the 'main' context
+thread_pool one threads=128 max_queue=0;
+thread_pool two threads=32;
+
+http {
+    server {
+        location /one {
+            aio threads=one;
         }
-        # ...
+
+        location /two {
+            aio threads=two;
+        }
+
     }
+    # ...
+}
 ```
 
 如果 **max_queue** 没有指定，默认值是 65536。如图所示，你也可以配置 **max_queue** 到 0。这种情况下线程池只能处理所配置的线程一样多的任务; 队列中不会有等待的任务。 
@@ -343,39 +343,39 @@ Nginx 里面所发生的事情跟这个情况是很相似的。当读取一个�
 你的其中一个选项是调整 RAID 阵列，这种方式有它自己的优缺点。现在你既然有 Nginx，那么你可以用另一种方式了：
 
 ```nginx
-    # 我们假定每个硬盘在这些目录中挂载
-    # /mnt/disk1, /mnt/disk2, or /mnt/disk3
-    
-    # in the 'main' context
-    thread_pool pool_1 threads=16;
-    thread_pool pool_2 threads=16;
-    thread_pool pool_3 threads=16;
-    
-    http {
-        proxy_cache_path /mnt/disk1 levels=1:2 keys_zone=cache_1:256m max_size=1024G
-                         use_temp_path=off;
-        proxy_cache_path /mnt/disk2 levels=1:2 keys_zone=cache_2:256m max_size=1024G
-                         use_temp_path=off;
-        proxy_cache_path /mnt/disk3 levels=1:2 keys_zone=cache_3:256m max_size=1024G
-                         use_temp_path=off;
-    
-        split_clients $request_uri $disk {
-            33.3%     1;
-            33.3%     2;
-            *         3;
-        }
-    
-        server {
-            # ...
-            location / {
-                proxy_pass http://backend;
-                proxy_cache_key $request_uri;
-                proxy_cache cache_$disk;
-                aio threads=pool_$disk;
-                sendfile on;
-            }
+# 我们假定每个硬盘在这些目录中挂载
+# /mnt/disk1, /mnt/disk2, or /mnt/disk3
+
+# in the 'main' context
+thread_pool pool_1 threads=16;
+thread_pool pool_2 threads=16;
+thread_pool pool_3 threads=16;
+
+http {
+    proxy_cache_path /mnt/disk1 levels=1:2 keys_zone=cache_1:256m max_size=1024G
+                     use_temp_path=off;
+    proxy_cache_path /mnt/disk2 levels=1:2 keys_zone=cache_2:256m max_size=1024G
+                     use_temp_path=off;
+    proxy_cache_path /mnt/disk3 levels=1:2 keys_zone=cache_3:256m max_size=1024G
+                     use_temp_path=off;
+
+    split_clients $request_uri $disk {
+        33.3%     1;
+        33.3%     2;
+        *         3;
+    }
+
+    server {
+        # ...
+        location / {
+            proxy_pass http://backend;
+            proxy_cache_key $request_uri;
+            proxy_cache cache_$disk;
+            aio threads=pool_$disk;
+            sendfile on;
         }
     }
+}
 ```
 
 在这份配置文件中， **thread_pool** 指令为每个硬盘定义了一个专有独立的线程池。添加了 [proxy_cache_path][36] 指令为每个硬盘定义了专有，独立的缓存。 

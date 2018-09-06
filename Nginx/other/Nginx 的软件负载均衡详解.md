@@ -86,17 +86,17 @@ backend出错会涉及到两个参数，`max_fails=1` `fail_timeout=10s`;意味�
 
 通过周期性地向backend发送特殊的请求，并期盼收到特殊的响应，可以用以确认backend是健康可用的状态。通过health_check可以做出这个配置。
 ```nginx
-    match server_ok {
-        status 200-399;
-        header Content-Type = text/html;
-        body !~ "maintenance mode";
+match server_ok {
+    status 200-399;
+    header Content-Type = text/html;
+    body !~ "maintenance mode";
+}
+server {
+    location / {
+        proxy_pass http://backend;
+        health_check interval=10 fails=3 passes=2 match=server_ok;
     }
-    server {
-        location / {
-            proxy_pass http://backend;
-            health_check interval=10 fails=3 passes=2 match=server_ok;
-        }
-    }
+}
 ```
 
 上面的health_check是必须的，后面的参数都是可选的。尤其是后面的match参数，可以自定义服务器健康的条件，包括返回状态码、头部信息、返回body等，这些条件是&&与关系。默认情况下Nginx会相隔interval的间隔向backend group发送一个”/“的请求，如果超时或者返回非2xx/3xx的响应码，则认为对应的backend是unhealthy的，那么Nginx会停止向其发送request直到下次改backend再次通过检查。
@@ -107,23 +107,24 @@ backend出错会涉及到两个参数，`max_fails=1` `fail_timeout=10s`;意味�
 
 Nginx的backend group中的主机可以配置成域名的形式，如果在域名的后面添加resolve参数，那么Nginx会周期性的解析这个域名，当域名解析的结果发生变化的时候会自动生效而不用重启。
 
-    http {
-        resolver 10.0.0.1 valid=300s ipv6=off;
-        resolver_timeout 10s;
-        server {
-            location / {
-                proxy_pass http://backend;
-            }
-        }
-        upstream backend {
-            zone backend 32k;
-            least_conn;
-            ...
-            server backend1.example.com resolve;
-            server backend2.example.com resolve;
+```nginx
+http {
+    resolver 10.0.0.1 valid=300s ipv6=off;
+    resolver_timeout 10s;
+    server {
+        location / {
+            proxy_pass http://backend;
         }
     }
-    
+    upstream backend {
+        zone backend 32k;
+        least_conn;
+        ...
+        server backend1.example.com resolve;
+        server backend2.example.com resolve;
+    }
+}
+```
 
 如果域名解析的结果含有多个IP地址，这些IP地址都会保存到配置文件中去，并且这些IP都参与到自动负载均衡。
 

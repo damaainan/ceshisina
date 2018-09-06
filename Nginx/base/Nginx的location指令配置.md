@@ -24,17 +24,17 @@ location [ 限定符 ] 规则uri { 指令集 }
 
 #### 1. 对限定符为`=`的规则执行完全匹配  
 
-完全匹配例：location = index.php {}，那么仅有请求：http://domain/index.php才能匹配，http://domain/index.phpp或http://domain/iindex.php这种均无法匹配。
+完全匹配例：`location = index.php {}`，那么仅有请求：`http://domain/index.php`才能匹配，`http://domain/index.phpp`或`http://domain/iindex.php`这种均无法匹配。
 
 
 #### 2. 对限定符为`^~`或没有限定符规则执行前缀匹配。  
 
-前缀匹配例：location /abc {}或location ^~ /abc {}，那么请求：http://domain/abcd、http://domain/abc.php这种均能匹配。
+前缀匹配例：`location /abc {}`或`location ^~ /abc {}`，那么请求：`http://domain/abcd`、`http://domain/abc.php`这种均能匹配。
 
 
 #### 3. 对限定符为`~`或`~*`的规则执行正则匹配。  
 
-正则匹配例：location ~ .php$ {}，那么请求：http://domain/abc.php、http://domain/abcd.php这种均可以匹配。
+正则匹配例：`location ~ .php$ {}`，那么请求：`http://domain/abc.php`、`http://domain/abcd.php`这种均可以匹配。
 
 
 ## location的查找过程
@@ -139,7 +139,7 @@ server {
 
 ## 最后附上伪代码用以描述整个过程
 
-```nginx
+```
 location = findLocation();
 if (location != null) {
     runLocationCmdSet();

@@ -4,8 +4,6 @@
 
 来源：[https://www.jianshu.com/p/e37a2ed4f68d](https://www.jianshu.com/p/e37a2ed4f68d)
 
-
-            
 -----
 
 ### 配置文件解析
@@ -198,12 +196,7 @@ server {
 
 验证结果：
 
-
 ![][0]
-
-
-image.png
-
 
 可以看到，我在浏览器中使用localhost打开了百度的首页...
 
@@ -299,9 +292,7 @@ upstream ip_hash_strategy {
 
 ```
 
-
 * iphash 算法:ip是基本的点分十进制，将ip的前三个端作为参数加入hash函数。这样做的目的是保证ip地址前三位相同的用户经过hash计算将分配到相同的后端server。作者的这个考虑是极为可取的，因此ip地址前三位相同通常意味着来着同一个局域网或者相邻区域，使用相同的后端服务让nginx在一定程度上更具有一致性。
-
 
 ### 其他负载均衡策略
 
@@ -318,7 +309,6 @@ upstream fair_strategy {
     server glmapper.net:8081; # 应用服务器2
     fair; 
 } 
-
 ```
 
 5、url_hash（第三方）

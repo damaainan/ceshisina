@@ -2,8 +2,6 @@
 
 作者 张洋 | 发布于 2011-10-18 
 
-[Nginx][1][Memcache][2][缓存][3][高性能][4][Openresty][5]
-
 为了提高性能，几乎所有互联网应用都有缓存机制，其中[Memcache][6]是使用非常广泛的一个分布式缓存系统。众所周知，LAMP是非常经典的Web架构方式，但是随着[Nginx][7]的成熟，越来越多的系统开始转型为LNMP（Linux+Nginx+MySQL+PHP with fpm），这是因为Nginx采用基于事件机制的I/O多路复用思想设计，在高并发情况下其性能远远优于默认采用prefork模式的Apache，另外，相对于Apache，Nginx更轻量，同时拥有大量优秀的扩展模块，使得在Nginx上可以实现一些美妙的功能。
 
 传统上，PHP中使用memcache的方法是使用[php-memcache][8]或[php-memached][9]扩展操作memcache，然而在Nginx上有构建更高效缓存机制的方法，本文将首先介绍这种机制，然后介绍具体的操作步骤方法，最后将对这种机制和传统的PHP操作memcache的性能进行一个benchmark。 
@@ -145,8 +143,6 @@ location /xxxx {
 
 这一组我们不开启缓存，PHP程序非常简单：
 
-    
-
     <?php
     phpinfo();
     ?>
@@ -198,11 +194,6 @@ echo $output;
 如果你的系统也构建在LNMP上（或LAMP）上，不妨使用本文提到的方法替代传统的缓存策略，尽情享受性能上的提升。
 
 [0]: http://blog.codinglabs.org/articles/nginx-memc-and-srcache.html
-[1]: http://blog.codinglabs.org/tag.html#Nginx
-[2]: http://blog.codinglabs.org/tag.html#Memcache
-[3]: http://blog.codinglabs.org/tag.html#缓存
-[4]: http://blog.codinglabs.org/tag.html#高性能
-[5]: http://blog.codinglabs.org/tag.html#Openresty
 [6]: http://memcached.org
 [7]: http://wiki.nginx.org/
 [8]: http://pecl.php.net/package/memcache

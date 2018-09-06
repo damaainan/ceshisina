@@ -91,8 +91,11 @@ ps aux | grep nginx
 vim /usr/local/nginx/conf/nginx.conf
 ```
  
-```
-location ~.(gif|jpg|jepg|png|bmp|ico)$ { root html; expires 1d; }
+```nginx
+location ~.(gif|jpg|jepg|png|bmp|ico)$ { 
+    root html; 
+    expires 1d; 
+}
 ```
  
 ![][6]
@@ -116,25 +119,26 @@ Nginx通过nginx的信号控制功能脚本来实现日志的自动切割，并�
 ```
 vim /opt/fenge.sh
 ```
+
+```sh
+#!/bin/bash
  
-    #!/bin/bash
-     
-    #Filename:fenge.sh
-     
-    d=$(date -d "-1 day" "+%Y%m%d") #显示一天前的时间
-     
-    logs_path="/var/log/nginx"
-     
-    pid_path="/usr/local/nginx/logs/nginx.pid"
-     
-    [ -d $logs_path ] || mkdir -p $logs_path
-     
-    mv /usr/local/nginx/logs/access.log ${logs_path}/test.com-access.log-$d
-     
-    kill -USR1 $(cat $pid_path) #创建新日志文件
-     
-    find $logs_path -mtime +30 | xargs rm -rf #删除30天前的日志文件
+#Filename:fenge.sh
  
+d=$(date -d "-1 day" "+%Y%m%d") #显示一天前的时间
+ 
+logs_path="/var/log/nginx"
+ 
+pid_path="/usr/local/nginx/logs/nginx.pid"
+ 
+[ -d $logs_path ] || mkdir -p $logs_path
+ 
+mv /usr/local/nginx/logs/access.log ${logs_path}/test.com-access.log-$d
+ 
+kill -USR1 $(cat $pid_path) #创建新日志文件
+ 
+find $logs_path -mtime +30 | xargs rm -rf #删除30天前的日志文件
+```
 ### 2. 为脚本赋予执行权限
  
 ```
@@ -223,8 +227,14 @@ Nginx服务器将输出内容压缩后进行传输，以节约网站的带宽，
 vim /usr/local/nginx/conf/nginx.conf
 ```
  
-```
-gzip on; gzip_buffers 4 64k; gzip_http_version 1.1; gzip_comp_level 2; gzip_min_length 1k; gzip_vary on; gzip_types text/plain text/javascript application/x-javascript text/css text/xml application/xml application/xml+rss text/jpg text/png;
+```nginx
+gzip on; 
+gzip_buffers 4 64k; 
+gzip_http_version 1.1; 
+gzip_comp_level 2; 
+gzip_min_length 1k; 
+gzip_vary on; 
+gzip_types text/plain text/javascript application/x-javascript text/css text/xml application/xml application/xml+rss text/jpg text/png;
 ```
  
 ### 2.重启nginx
@@ -251,20 +261,15 @@ curl -I  -H "Accept-Encoding: gzip, deflate" 192.168.100.26/
 vim /usr/local/nginx/conf/nginx.conf
 ```
  
- 
-    location ~ .(jpg|gif|swf)$ { 
+```nginx
+location ~ .(jpg|gif|swf)$ { 
     #匹配.jpg 、.gif 、或 .swf结尾的文件
     .abc.com abc.com; #信任域名站点 
-     
-     
     if ( $invalid_referer ) {
-     
-    rewrite ^/ http://www.abc.com/error.png ; #重写返回error.png
-     
+        rewrite ^/ http://www.abc.com/error.png ; #重写返回error.png
     }
-     
-    }
- 
+}
+```
 ### 2.重启nginx
  
 ```
@@ -285,18 +290,14 @@ Nginx的PHP解析功能实现是由FPM处理的，为了提高PHP的处理速度
 vi php-fpm.conf
 ```
  
-    pid = run/php-fpm.pid
-     
-    pm = dynamic #动态方式
-     
-    pm.max_children=20 #最大启动进程数量为20个
-     
-    pm.start_servers = 5 #初始启动时进程为5个
-     
-    pm.min_spare_servers = 2 #最小空闲进程数为2个
-     
-    pm.max_spare_servers = 8 #最大空闲进程数为8个
- 
+```cfg
+pid = run/php-fpm.pid
+pm = dynamic #动态方式
+pm.max_children=20 #最大启动进程数量为20个
+pm.start_servers = 5 #初始启动时进程为5个
+pm.min_spare_servers = 2 #最小空闲进程数为2个
+pm.max_spare_servers = 8 #最大空闲进程数为8个
+```
 
 [0]: ../img/MfyE7rB.png 
 [1]: ../img/u6b2iqn.png 

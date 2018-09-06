@@ -302,5 +302,5 @@ make install BATCH=yes
 
 [2]: http://www.softwareprojects.com/resources/programming/t-optimizing-nginx-and-php-fpm-for-high-traffic-sites-2081.html
 [3]: https://github.com/youngsterxyf/
-[0]: https://img0.tuicool.com/viI3Mba.png!web
-[1]: https://img1.tuicool.com/QZRfumR.jpg!web
+[0]: https://img0.tuicool.com/viI3Mba.png
+[1]: https://img1.tuicool.com/QZRfumR.jpg

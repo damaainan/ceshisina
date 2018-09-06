@@ -32,12 +32,12 @@ Nginx+Telegraf+Influxdb+Grafana
 
 修改Nginx配置文件：在Server章节中增加：
 ```nginx
-    location /nginx-status {
-           allow 127.0.0.1; //允许的IP
-           deny all;
-           stub_status on;
-           access_log off;
-    }
+  location /nginx-status {
+         allow 127.0.0.1; //允许的IP
+         deny all;
+         stub_status on;
+         access_log off;
+  }
 ```
 
 Reload 重启Nginx，查看Nginx-Status

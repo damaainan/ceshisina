@@ -4,8 +4,6 @@
 
 时间 2018-02-18 00:28:48
 
-
-
 #### 一、常用设置
 
 1､日志格式
@@ -31,7 +29,6 @@ proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 3､全局变量
 
 ```
-
 $args #这个变量等于请求行中的参数。
 $content_length #请求头中的Content-length字段。
 $content_type #请求头中的Content-Type字段。
@@ -55,10 +52,7 @@ $server_port #请求到达服务器的端口号。
 $request_uri #包含请求参数的原始URI，不包含主机名，如：”/foo/bar.php?arg=baz”。
 $uri #不带请求参数的当前URI，$uri不包含主机名，如”/foo/bar.html”。
 $document_uri #与$uri相同。
-
-
 ```
-
 
 #### 二、Rewrite规则
 
@@ -66,18 +60,16 @@ $document_uri #与$uri相同。
 
 flag标记（rewrite指令的最后一项参数）：
 
-`1.last   last是终止当前location的rewrite检测,但会继续重试location匹配并处理区块中的rewrite规则。`  
+1.`last`  last是终止当前location的rewrite检测,但会继续重试location匹配并处理区块中的rewrite规则。  
 
-`2.break  break是终止当前location的rewrite检测,而且不再进行location匹配。`  
+2.`break`  break是终止当前location的rewrite检测,而且不再进行location匹配。  
 
-`3.redirect  返回302临时重定向，浏览器地址会显示跳转后的URL地址。`  
+3.`redirect`  返回302临时重定向，浏览器地址会显示跳转后的URL地址。  
 
-`4.permanent  返回301永久重定向，浏览器地址会显示跳转后的URL地址。`  
+4.`permanent`  返回301永久重定向，浏览器地址会显示跳转后的URL地址。  
 
 例：
 
-  
- 
 ```nginx
 # 正则匹配
 location ~ ^/(a|bb|ccc)/ {
@@ -87,13 +79,11 @@ location ~ ^/(a|bb|ccc)/ {
 
 ```
 
-  
 #### 三、反向代理的路由策略
 
 Location的配置：
 
 语法：
-
  
 ```nginx
 
@@ -113,17 +103,12 @@ location [=|~|~*|^~] /uri/ {…}
 
  `/ 通用匹配，任何请求都会匹配，通常放着配置的最后。`    
 
-匹配优先级：
+#### 匹配优先级：
 
-    
-      `= > ^~ > ~, ~* > 空`              
-
-      `全匹配 > 路径匹配 > 正则匹配 > 字符串匹配`              
-
-       
+`=` > `^~` > `~, ~*` > `空`              
+`全匹配` > `路径匹配` > `正则匹配` > `字符串匹配`              
 
 示例：
-
    
 ```nginx
 # 字符串匹配
@@ -149,9 +134,4 @@ location / {
 }
 
 ```
-
-    
-
-  
-
 

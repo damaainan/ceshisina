@@ -59,14 +59,14 @@ http {
 
 ## 最少连接算法
 
-即Least Connections这种算法。最少连接，顾名思义，就是当下谁的连接数最少请求就然该谁来处理。这是一种相对公平的方式，防止某些服务器负载过重，将请求分配到相对“清闲”的服务器上去。基本的配置如下：
+即`Least Connections`这种算法。**`最少连接`**，顾名思义，就是当下谁的连接数最少请求就然该谁来处理。这是一种相对公平的方式，防止某些服务器负载过重，将请求分配到相对“清闲”的服务器上去。基本的配置如下：
 
 ```nginx
 upstream myapp1 {
-        least_conn;
-        server srv1.example.com;
-        server srv2.example.com;
-        server srv3.example.com;
+    least_conn;
+    server srv1.example.com;
+    server srv2.example.com;
+    server srv3.example.com;
 }
 ```
 
@@ -76,9 +76,9 @@ upstream myapp1 {
 ## Session一致性问题
 
 
-如果负载均衡采用round-robin或者least-connected算法，同一个客户端发送过来的不同请求就有可能被不同的server处理，这种情形下就不能保证两次请求session的一致性。
+如果负载均衡采用`round-robin`或者`least-connected`算法，同一个客户端发送过来的不同请求就有可能被不同的server处理，这种情形下就不能保证两次请求session的一致性。
 
-为了解决这个问题，可以采用第三种负载均衡的算法，那就是ip-hash。有了IP哈希，将客户端的IP和服务器组列表的几个服务器之间建立一种对应关系，那么每个客户端的每次请求就只能被分配到一台server上面，从而保证session的一致性。ip-hash的方式配置如下：
+为了解决这个问题，可以采用第三种负载均衡的算法，那就是`ip-hash`。有了`IP哈希`，将客户端的IP和服务器组列表的几个服务器之间建立一种对应关系，那么每个客户端的每次请求就只能被分配到一台server上面，从而保证session的一致性。`ip-hash`的方式配置如下：
 
 ```nginx
 upstream myapp1 {
@@ -95,9 +95,9 @@ upstream myapp1 {
 
 ```nginx
 upstream myapp1 {
-        server srv1.example.com weight=3;
-        server srv2.example.com;
-        server srv3.example.com;
+    server srv1.example.com weight=3;
+    server srv2.example.com;
+    server srv3.example.com;
 }
 ```
 
@@ -107,11 +107,11 @@ upstream myapp1 {
 
 反向代理的各种实现(如http/https/FastCGI)还可以对各个server做健康检查。如果请求一个server错误(如返回500，究竟如何才为“失效”，在Nginx Plus中做了扩展)，nginx就将这个server标记为失效的，在接下来一段时间的请求中就会避免选择这台server。究竟这端时间要多长才合适？有max_fails和fail_timeout参数来定义。
 
-* `max_fails`默认是1，表示在fail_timeout时间内，有多少次对某个server的访问失败，就算作这台server的正式失效(你总要给人家多表现几次的机会撒)，默认情况下就是1次；      
+* `max_fails`默认是1，表示在`fail_timeout`时间内，有多少次对某个server的访问失败，就算作这台server的正式失效(你总要给人家多表现几次的机会撒)，默认情况下就是1次；      
 
 * `fail_timeout`默认是10s，有两层含义，一就是为max_fails指令限定一个时间范围，二就是如果server已经被标记为失效，那么过了这个时间后，你就应该分配个请求去试探下这个server，是否已经可用了（你总的给人家重新做人的机会）。如果还是不可用，那么此server继续被标记为失效的server，如果已经可用了那么就重新标记为活跃，在接下来的请求中，继续按照round-robin/ip-hash等算法和权重给它分配请求，和平常无异。      
 
 
-除了这些指令之外proxy_next_upstream, backup, down, 和 keepalive 也针对负载均衡功能做了不同的限定。
+除了这些指令之外`proxy_next_upstream`, `backup`, `down`, 和 `keepalive` 也针对负载均衡功能做了不同的限定。
 
 以上这些功能是基本是Nginx的免费版本提供的，其实负载均衡里可以说的话题还多着呢。我们下篇文章中谈谈Nginx Plus提供的更为丰富的负载均衡的功能。

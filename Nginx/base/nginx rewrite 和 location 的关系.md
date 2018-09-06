@@ -14,9 +14,8 @@ ngx_http_rewrite_module 模块用来使用正则表达式（PCRE）改变请求�
 
 * 首先顺序执行server块中的rewrite模块指令，得到rewrite后的请求URI
 * 然后循环执行如下指令
-```
+
 > 如果没有遇到中断循环标志，此循环最多执行10次，但是我们可以使用break指令来中断rewrite后的新一轮的循环
-```
 
 (1). 依据rewrite后的请求URI，匹配定义的 location 块
 
@@ -25,13 +24,11 @@ ngx_http_rewrite_module 模块用来使用正则表达式（PCRE）改变请求�
 
 ## 指令
 
-
 ### break
 
 > Context: server, location, if
 
-
-停止执行 ngx_http_rewrite_module 的指令集，但是其他模块指令是不受影响的
+停止执行 `ngx_http_rewrite_module` 的指令集，但是其他模块指令是不受影响的
 
 例子说明
 
@@ -112,7 +109,7 @@ if ( !-f $filename ) {
 
 > Context: server, location, if
 
-```nginx
+```
 return code [text];
 return code URL;
 return URL;
@@ -149,9 +146,10 @@ location = /redirect {
 
 > Context: server, location, if
 
-```nginx
+```
 rewrite regex replacement [flag];
 ```
+
 `rewrite`指令是使用指定的正则表达式`regex`来匹配请求的`urI`，如果匹配成功，则使用`replacement`更改`URI`。`rewrite`指令按照它们在配置文件中出现的顺序执行。可以使用`flag`标志来终止指令的进一步处理。如果替换字符串`replacement`以`http：//`，`https：//`或`$ scheme`开头，则停止处理后续内容，并直接重定向返回给客户端。
 
 第一种情况 重写的字符串 带`http://`
@@ -186,17 +184,13 @@ location / {
 
 #### rewrite 的四个 flag
 
-* `last`
-
+* `last`  
 停止处理当前的`ngx_http_rewrite_module`的指令集，并开始搜索与更改后的`URI`相匹配的`location`;    
-* `break`
-
+* `break`  
 停止处理当前的`ngx_http_rewrite_module`指令集，就像上面说的`break`指令一样;    
-* `redirect`
-
+* `redirect`  
 返回302临时重定向。    
-* `permanent`
-
+* `permanent`   
 返回301永久重定向。    
 
 ```nginx
@@ -220,13 +214,11 @@ location = /test3 {
 # /test3
 ```
 
-
 #### last 与 break 的区别
 
+`last` 和 `break`一样 它们都会终止此 `location` 中其他它`rewrite`模块指令的执行，
 
-last 和 break一样 它们都会终止此 location 中其他它rewrite模块指令的执行，
-
-但是 last 立即发起新一轮的 location 匹配 而 break 则不会
+但是 `last` 立即发起新一轮的 `location` 匹配 而 `break` 则不会
 
 ```nginx
 location / {
@@ -265,11 +257,9 @@ location / {
 # 代理到 百度产品大全页面 https://www.baidu.com/more/index.html;
 ```
 
-
 #### 友情提醒下
 
 此处提一下 在上面的代码中即使将`proxy_pass`放在 带有`break`的`rewrite`上面它也是会执行的，这就要扯到`nginx`的执行流程了。大家有兴趣可以了解下。
-
 
 #### rewrite 后的请求参数
 
@@ -280,17 +270,15 @@ location / {
 rewrite ^/users/(.*)$ /show?user=$1? last;
 ```
 
-
 ### rewrite_log
 
 > Context: http, server, location, if
 
 开启或者关闭`rewrite`模块指令执行的日志，如果开启，则重写将记录下`notice`等级的日志到`nginx`的`error_log`中，默认为关闭`off`
 
-```nginx
+```
 Syntax:    rewrite_log on | off;
 ```
-
 
 ### set
 
@@ -309,7 +297,6 @@ location / {
 # curl 127.0.0.1:8080/test
 # response ok host is 127.0.0.1 uri is /test
 ```
-
 
 ### uninitialized_variable_warn
 

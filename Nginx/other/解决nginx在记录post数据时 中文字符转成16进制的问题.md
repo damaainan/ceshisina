@@ -9,10 +9,7 @@ nginx 在获取post数据时候，如果是中文，则转换成16进制显示�
 ![][1]
 
 
-
-Paste_Image.png
-
-日志格式为： log_format postdata '$remote_addr | $request_body | $resp_body';此篇文章记录下解决此次问题的过程。
+日志格式为： `log_format postdata '$remote_addr | $request_body | $resp_body';`此篇文章记录下解决此次问题的过程。
 
 ## 2. 软件版本
 
@@ -32,8 +29,6 @@ Paste_Image.png
 此次搜索关键字： nginx log 中文 16进制
 
 ![][12]
-
-Paste_Image.png
 
 出处：[https://groups.google.com/forum/#!topic/openresty/PYvvfj5RKCg][3]
 
@@ -55,9 +50,6 @@ Paste_Image.png
 ![][4]
 
 
-
-Paste_Image.png
-
 来自： [http://navyaijm.blog.51cto.com/4647068/1082169][5]
 
 从这里面获得了：
@@ -73,9 +65,6 @@ Paste_Image.png
 ![][6]
 
 
-
-Paste_Image.png
-
 来自： [http://mailman.nginx.org/pipermail/nginx/2008-January/003051.html][7]
 
 从这里面获得了：
@@ -88,75 +77,75 @@ Paste_Image.png
 随即关键字变成了： nginx ngx_http_log_escape通过搜索发现了下列的源码解释
 
 ```c
-    static uintptr_t
-    ngx_http_log_escape(u_char *dst, u_char *src, size_t size)
-    {
-        ngx_uint_t      n;
-        /* 这是十六进制字符表 */
-        static u_char   hex[] = "0123456789ABCDEF";
-    
-        /* 这是ASCII码表，每一位表示一个符号，其中值为1表示此符号需要转换，值为0表示不需要转换 */
-        static uint32_t   escape[] = {
-            0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
-    
-                        /* ?>=< ;:98 7654 3210  /.-, +*)( '&%$ #"!  */
-            0x00000004, /* 0000 0000 0000 0000  0000 0000 0000 0100 */
-    
-                        /* _^]\ [ZYX WVUT SRQP  ONML KJIH GFED CBA@ */
-            0x10000000, /* 0001 0000 0000 0000  0000 0000 0000 0000 */
-    
-                        /*  ~}| {zyx wvut srqp  onml kjih gfed cba` */
-            0x80000000, /* 1000 0000 0000 0000  0000 0000 0000 0000 */
-    
-            0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
-            0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
-            0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
-            0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
-        };
-    
-    
-        if (dst == NULL) {
-    
-            /* find the number of the characters to be escaped */
-    
-            n = 0;
-    
-            while (size) {
-                if (escape[*src >> 5] & (1 << (*src & 0x1f))) {
-                    n++;
-                }
-                src++;
-                size--;
-            }
-    
-            return (uintptr_t) n;
-            /* 返回需要转换的字符总数*/
-        }
-    
+static uintptr_t
+ngx_http_log_escape(u_char *dst, u_char *src, size_t size)
+{
+    ngx_uint_t      n;
+    /* 这是十六进制字符表 */
+    static u_char   hex[] = "0123456789ABCDEF";
+
+    /* 这是ASCII码表，每一位表示一个符号，其中值为1表示此符号需要转换，值为0表示不需要转换 */
+    static uint32_t   escape[] = {
+        0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
+
+                    /* ?>=< ;:98 7654 3210  /.-, +*)( '&%$ #"!  */
+        0x00000004, /* 0000 0000 0000 0000  0000 0000 0000 0100 */
+
+                    /* _^]\ [ZYX WVUT SRQP  ONML KJIH GFED CBA@ */
+        0x10000000, /* 0001 0000 0000 0000  0000 0000 0000 0000 */
+
+                    /*  ~}| {zyx wvut srqp  onml kjih gfed cba` */
+        0x80000000, /* 1000 0000 0000 0000  0000 0000 0000 0000 */
+
+        0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
+        0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
+        0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
+        0xffffffff, /* 1111 1111 1111 1111  1111 1111 1111 1111 */
+    };
+
+
+    if (dst == NULL) {
+
+        /* find the number of the characters to be escaped */
+
+        n = 0;
+
         while (size) {
-             /* escape[*src >> 5],escape每一行保存了32个符号，
-             所以右移5位，即除以32就找到src对应的字符保存在escape的行，
-             (1 << (*src & 0x1f))此符号在escape一行中的位置，
-             相&结果就是判断src符号位是否为1，需不需要转换 */
             if (escape[*src >> 5] & (1 << (*src & 0x1f))) {
-                *dst++ = '\\';
-                *dst++ = 'x';
-                /* 一个字符占一个字节8位，每4位转成一个16进制表示 */
-                /* 高4位转换成16进制 */
-                *dst++ = hex[*src >> 4];
-                /* 低4位转换成16进制*/
-                *dst++ = hex[*src & 0xf];
-                src++;
-    
-            } else {
-                /* 不需要转换的字符直接赋值 */
-                *dst++ = *src++;
+                n++;
             }
+            src++;
             size--;
         }
-    
-        return (uintptr_t) dst;
+
+        return (uintptr_t) n;
+        /* 返回需要转换的字符总数*/
     }
+
+    while (size) {
+         /* escape[*src >> 5],escape每一行保存了32个符号，
+         所以右移5位，即除以32就找到src对应的字符保存在escape的行，
+         (1 << (*src & 0x1f))此符号在escape一行中的位置，
+         相&结果就是判断src符号位是否为1，需不需要转换 */
+        if (escape[*src >> 5] & (1 << (*src & 0x1f))) {
+            *dst++ = '\\';
+            *dst++ = 'x';
+            /* 一个字符占一个字节8位，每4位转成一个16进制表示 */
+            /* 高4位转换成16进制 */
+            *dst++ = hex[*src >> 4];
+            /* 低4位转换成16进制*/
+            *dst++ = hex[*src & 0xf];
+            src++;
+
+        } else {
+            /* 不需要转换的字符直接赋值 */
+            *dst++ = *src++;
+        }
+        size--;
+    }
+
+    return (uintptr_t) dst;
+}
 ```
 感谢大神：[http://blog.csdn.net/l09711/article/details/46712325][8]
 
@@ -169,31 +158,23 @@ Paste_Image.png
 ![][9]
 
 
-
-Paste_Image.png
-
 然后重新编译，安装nginx
 
+```
     ./configure   --prefix=/usr/local/nginx   --user=nginx   --group=nginx   --with-http_ssl_module   --with-http_flv_module   --with-http_stub_status_module   --with-http_gzip_static_module   --with-http_realip_module   --http-client-body-temp-path=/var/tmp/nginx/client/   --http-proxy-temp-path=/var/tmp/nginx/proxy/   --http-fastcgi-temp-path=/var/tmp/nginx/fcgi/   --http-uwsgi-temp-path=/var/tmp/nginx/uwsgi   --http-scgi-temp-path=/var/tmp/nginx/scgi   --with-pcre --add-module=../lua-nginx-module-0.10.7
      /usr/local/nginx/sbin/nginx -s stop
     make -j2 && make install
     /usr/local/nginx/sbin/nginx
+```
 
 再次post 数据到nginx里
 
 ![][10]
 
-
-
-Paste_Image.png
-
 查看日志会发现中文不在转换16进制了。
 
 ![][11]
 
-
-
-Paste_Image.png
 
 第1-2行，是没有修改源码前，向nginx url post数据，中文被转换成16进制。  
 第3-5行，修改源码后，中文就不会转换为16进制了。也没有什么乱码。

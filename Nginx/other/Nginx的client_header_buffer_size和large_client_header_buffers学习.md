@@ -165,7 +165,7 @@ nginx成功处理该长url请求。
 
 这里从client_header_buffer_size指令入手，先查看这个指令的定义部分：
 
-```
+```c
 { ngx_string("client_header_buffer_size"),
   NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,              //可以定义在http{}或server{}中，需要携带一个参数
   ngx_conf_set_size_slot,                                           //参数意义为size，使用nginx预定义的解析size参数方法解析
@@ -178,14 +178,14 @@ src/http/ngx_http_core_module.c
 
 由定义看到，我们在server{}中解析到的值会和http{}中的值做一次merge，作为该server{}下的最终值。查看merge相关的逻辑：
 
-```
+```c
 ngx_conf_merge_size_value(conf->client_header_buffer_size,        //conf代表server{}，prev代表http{}
                           prev->client_header_buffer_size, 1024); 
 
 src/http/ngx_http_core_module.c
 ```
 
-```
+```c
 #define ngx_conf_merge_size_value(conf, prev, default)                       \
     if (conf == NGX_CONF_UNSET_SIZE) {                                       \
         conf = (prev == NGX_CONF_UNSET_SIZE) ? default : prev;               \

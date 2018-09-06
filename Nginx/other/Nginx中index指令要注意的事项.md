@@ -111,7 +111,7 @@ if (find) {
 
 为了印证对index指令的理解，我重新编译nginx，并将error_log级别设置为debug，分析www.vmc7.com请求，输出如下：
 
-```nginx
+```
 2014/07/30 17:41:11 [debug] 31021#0: *1096 rewrite phase: 0
 2014/07/30 17:41:11 [debug] 31021#0: *1096 test location: "/index.php"
 2014/07/30 17:41:11 [debug] 31021#0: *1096 using configuration ""

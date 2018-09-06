@@ -29,13 +29,13 @@ X-Real-Port          客户端或上一级端口
 X-Forwarded-For      包含了客户端和各级代理ip的完整ip链路
 ```
  
-其中X-Real-IP是必需的，后两项选填。当只存在一级nginx代理的时候X-Real-IP和X-Forwarded-For是一致的，而当存在多级代理的时候，X-Forwarded-For 就变成了如下形式
+其中`X-Real-IP`是必需的，后两项选填。当只存在一级nginx代理的时候`X-Real-IP`和`X-Forwarded-For`是一致的，而当存在多级代理的时候，`X-Forwarded-For` 就变成了如下形式
 
 ```
 X-Forwarded-For: 客户端ip， 一级代理ip， 二级代理ip...
 ```
  
-在获取客户端ip的过程中虽然X-Forwarded-For是选填的，但是个人建议还是保留这，以便出现安全问题的时候，可以根据日志文件回溯来源。
+在获取客户端ip的过程中虽然`X-Forwarded-For`是选填的，但是个人建议还是保留这，以便出现安全问题的时候，可以根据日志文件回溯来源。
  
 ### 有个坑～
  
@@ -45,7 +45,7 @@ X-Forwarded-For: 客户端ip， 一级代理ip， 二级代理ip...
 proxy_set_header Host $host;
 ```
  
-首先这个header并不是必需的，其次这个header host和proxy_pass转发产生的hostheader会出现冲突，导致接口502的情况。但是这个配置更新后，nginx重启包括使用nginx -t进行测试也不会报错，这个值得大家注意一下。
+首先这个header并不是必需的，其次这个header host和`proxy_pass`转发产生的hostheader会出现冲突，导致接口502的情况。但是这个配置更新后，nginx重启包括使用nginx -t进行测试也不会报错，这个值得大家注意一下。
 
 
 [1]: https://a.test.com/index/html

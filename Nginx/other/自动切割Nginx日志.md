@@ -15,7 +15,7 @@
 
 我们在Nginx的站点配置文件中将日志文件保存在目录：`/home/www_logs`中，我们需要做的是将日志文件切割，并按月份保存起来。写一个脚本文件，命名为cut_nginx.sh。
 
-``` 
+```sh
 #!/bin/bash
 SAVE_DIR='/home/wwwlogs'
 MONTH=$(date -d "yesterday" +%Y%m)
@@ -104,10 +104,7 @@ logrotate -vf /etc/logrotate.d/nginx
 ```
 
 这样定时任务会在每天凌晨00:00自动执行日志切割任务，无需人工干预。
-
   
-
-
 
 [0]: https://www.helloweba.net/server/492.html
 [1]: https://www.helloweba.net/php/419.html

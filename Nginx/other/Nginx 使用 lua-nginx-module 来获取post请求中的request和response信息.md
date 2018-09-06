@@ -88,19 +88,19 @@
 启用如下选项
 
 ```nginx
-    #/usr/local/nginx/conf/nginx.conf
-    location / {
-                root   /web;
-                index  index.php index.html index.htm;
-            }
-    
-    location ~ \.php$ {
-                root           /web/;
-                fastcgi_pass   127.0.0.1:9000;
-                fastcgi_index  index.php;
-                fastcgi_param  SCRIPT_FILENAME  /$document_root$fastcgi_script_name;
-                include        fastcgi_params;
-            }
+#/usr/local/nginx/conf/nginx.conf
+location / {
+    root   /web;
+    index  index.php index.html index.htm;
+}
+
+location ~ \.php$ {
+    root           /web/;
+    fastcgi_pass   127.0.0.1:9000;
+    fastcgi_index  index.php;
+    fastcgi_param  SCRIPT_FILENAME  /$document_root$fastcgi_script_name;
+    include        fastcgi_params;
+}
 ```
 
 在/web/目录下 新建index.php的测试页面，测试php是否能正常工作
@@ -129,75 +129,75 @@
 使用下列配置
 
 ```nginx
-    # /usr/local/nginx/conf/nginx.conf
-    user  nginx;
-    worker_processes  1;
-    
-    events {
-        worker_connections  1024;
-    }
-    
-    http {
-        include       mime.types;
-        default_type  application/octet-stream;
-    
-        log_format postdata '$remote_addr | $request_body | $resp_body';
-    
-        sendfile        on;
-        keepalive_timeout  65;
-    
-        server {
-            listen       80;
-            server_name  localhost;
-            charset utf-8;
-            set $resp_body "";
-            location / {
-                root   /web/;
-                index  index.php index.html index.htm;
-            }
-    
-    http {
-        include       mime.types;
-        default_type  application/octet-stream;
-    
-        log_format postdata '$remote_addr | $request_body | $resp_body';
-    
-        sendfile        on;
-        keepalive_timeout  65;
-    
-        server {
-            listen       80;
-            server_name  localhost;
-            charset utf-8;
-            set $resp_body "";
-            location / {
-                root   /web/;
-                index  index.php index.html index.htm;
-            }
-    
-            location ~* ^/lua(/.*) {
-                    default_type 'text/plain';
-                    content_by_lua 'ngx.say("hello, lua")';
-            }
-    
-            location ~ \.php$ {
-                        root           /web/;
-                        fastcgi_pass   127.0.0.1:9000;
-                        fastcgi_index  index.php;
-                        fastcgi_param  SCRIPT_FILENAME  /$document_root$fastcgi_script_name;
-                        include        fastcgi_params;
-                        access_log /tmp/nginx_access.log postdata;
-                    lua_need_request_body on;
-                    body_filter_by_lua '
-                            local resp_body = string.sub(ngx.arg[1], 1, 1000)
-                            ngx.ctx.buffered = (ngx.ctx.buffered or"") .. resp_body
-                            if ngx.arg[2] then
-                                    ngx.var.resp_body = ngx.ctx.buffered
-                            end
-                    ';
-            }
+# /usr/local/nginx/conf/nginx.conf
+user  nginx;
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format postdata '$remote_addr | $request_body | $resp_body';
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        listen       80;
+        server_name  localhost;
+        charset utf-8;
+        set $resp_body "";
+        location / {
+            root   /web/;
+            index  index.php index.html index.htm;
+        }
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format postdata '$remote_addr | $request_body | $resp_body';
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        listen       80;
+        server_name  localhost;
+        charset utf-8;
+        set $resp_body "";
+        location / {
+            root   /web/;
+            index  index.php index.html index.htm;
+        }
+
+        location ~* ^/lua(/.*) {
+            default_type 'text/plain';
+            content_by_lua 'ngx.say("hello, lua")';
+        }
+
+        location ~ \.php$ {
+            root           /web/;
+            fastcgi_pass   127.0.0.1:9000;
+            fastcgi_index  index.php;
+            fastcgi_param  SCRIPT_FILENAME  /$document_root$fastcgi_script_name;
+            include        fastcgi_params;
+            access_log /tmp/nginx_access.log postdata;
+            lua_need_request_body on;
+            body_filter_by_lua '
+                    local resp_body = string.sub(ngx.arg[1], 1, 1000)
+                    ngx.ctx.buffered = (ngx.ctx.buffered or"") .. resp_body
+                    if ngx.arg[2] then
+                            ngx.var.resp_body = ngx.ctx.buffered
+                    end
+            ';
         }
     }
+}
 ```
 
 创建php文件，用来接收post请求，并返回数据

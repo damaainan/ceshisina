@@ -127,48 +127,48 @@ http{
  
  
 ```nginx
-      # 自己配置的虚拟主机
-   server{
-        listen 80;    # nginx的端口
-        server_name t1.chenjiabing.org;     # 访问的地址
-        location / {
-                root t1;     # 这个虚拟主机对应的web目录，这里设置的路径为/usr/share/t1
-                index index.html;   # 默认显示的首页
-        }
+# 自己配置的虚拟主机
+server{
+    listen 80;    # nginx的端口
+    server_name t1.chenjiabing.org;     # 访问的地址
+    location / {
+        root t1;     # 这个虚拟主机对应的web目录，这里设置的路径为/usr/share/t1
+        index index.html;   # 默认显示的首页
+    }
 }
 
 # 自己配置的虚拟主机
-   server{
-        listen 80;  
-        server_name t2.chenjiabing.cn;    # 访问的地址
-        location / {
-                # /usr/share/nginx/t2    
-                root t2;            # 这个虚拟主机的web目录
-                index index.html;  # 显示的首页
-        }
+server{
+    listen 80;  
+    server_name t2.chenjiabing.cn;    # 访问的地址
+    location / {
+        # /usr/share/nginx/t2    
+        root t2;            # 这个虚拟主机的web目录
+        index index.html;  # 显示的首页
+    }
 }
 
 # nginx默认的虚拟主机
 server {
-        listen       80 default_server;
-        listen       [::]:80 default_server;
-        server_name  _;
-        root         /usr/share/nginx/html;    # 默认的web目录，其实这里可以写 html 是一样的
+    listen       80 default_server;
+    listen       [::]:80 default_server;
+    server_name  _;
+    root         /usr/share/nginx/html;    # 默认的web目录，其实这里可以写 html 是一样的
 
-        # Load configuration files for the default server block.
-        include /etc/nginx/default.d/*.conf;
+    # Load configuration files for the default server block.
+    include /etc/nginx/default.d/*.conf;
 
-        location / {
-        }
-
-        error_page 404 /404.html;
-            location = /40x.html {
-        }
-
-        error_page 500 502 503 504 /50x.html;
-            location = /50x.html {
-        }
+    location / {
     }
+
+    error_page 404 /404.html;
+        location = /40x.html {
+    }
+
+    error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+    }
+}
 ```
  
  
@@ -214,48 +214,48 @@ server {
  
  
 ```nginx
-      # 自己配置的虚拟主机
-   server{
-        listen 80;    # nginx的端口
-        server_name t1.tedu.org;     # 访问的地址
-        location / {
-                root t1;     # 这个虚拟主机对应的web目录，这里设置的路径为/usr/share/t1
-                index index.html;   # 默认显示的首页
-        }
+# 自己配置的虚拟主机
+server{
+    listen 80;    # nginx的端口
+    server_name t1.tedu.org;     # 访问的地址
+    location / {
+        root t1;     # 这个虚拟主机对应的web目录，这里设置的路径为/usr/share/t1
+        index index.html;   # 默认显示的首页
+    }
 }
 
 # 自己配置的虚拟主机
-   server{
-        listen 80;  
-        server_name t2.tedu.cn;    # 访问的地址
-        location / {
-                # /usr/share/nginx/t2    
-                root t2;            # 这个虚拟主机的web目录
-                index index.html;  # 显示的首页
-        }
+server{
+    listen 80;  
+    server_name t2.tedu.cn;    # 访问的地址
+    location / {
+        # /usr/share/nginx/t2    
+        root t2;            # 这个虚拟主机的web目录
+        index index.html;  # 显示的首页
+    }
 }
 
 # nginx默认的虚拟主机
 server {
-        listen       80 default_server;
-        listen       [::]:80 default_server;
-        server_name  _;
-        root         /usr/share/nginx/html;    # 默认的web目录，其实这里可以写 html 是一样的
+    listen       80 default_server;
+    listen       [::]:80 default_server;
+    server_name  _;
+    root         /usr/share/nginx/html;    # 默认的web目录，其实这里可以写 html 是一样的
 
-        # Load configuration files for the default server block.
-        include /etc/nginx/default.d/*.conf;
+    # Load configuration files for the default server block.
+    include /etc/nginx/default.d/*.conf;
 
-        location / {
-        }
-
-        error_page 404 /404.html;
-            location = /40x.html {
-        }
-
-        error_page 500 502 503 504 /50x.html;
-            location = /50x.html {
-        }
+    location / {
     }
+
+    error_page 404 /404.html;
+        location = /40x.html {
+    }
+
+    error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+    }
+}
 ```
  
  

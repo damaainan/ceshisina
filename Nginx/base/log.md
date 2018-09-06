@@ -56,18 +56,19 @@ error_log指令的第二个参数，定义了输出日志的级别，默认值�
 * alert – Prompt action is required.
 * emerg – The system is in an unusable state and requires immediate attention.
 
-从上到下，严重程度逐渐变高。比如使用如下指令指定级别为 error 时， 
+从上到下，严重程度逐渐变高。比如使用如下指令指定级别为 `error` 时， 
 
+```nginx
     error_log logs/error.log error;
-    
+```
 
-级别为 error 、 crit 、 alert 、 emerg 的日志将输出到文件 logs/error.log 中。 
+级别为 `error` 、 `crit` 、 `alert` 、 `emerg` 的日志将输出到文件 logs/error.log 中。 
 
-需要注意的是，在构建nginx时需要指定选项 --with-debug ，否则无法使用 error_log 来使 debug 生效，参见 [A debugging log][6] 。 
+需要注意的是，在构建nginx时需要指定选项 `--with-debug` ，否则无法使用 `error_log` 来使 debug 生效，参见 [A debugging log][6] 。 
 
 ## 访问日志
 
-nginx提供了 access_log 指令来实现访问日志的输出文件和级别。 
+nginx提供了 `access_log` 指令来实现访问日志的输出文件和级别。 
 
 官方文档中给出的配置样例
 
@@ -79,7 +80,7 @@ nginx提供了 access_log 指令来实现访问日志的输出文件和级别。
     access_log /spool/logs/nginx-access.log compression buffer=32k;
 ```
 
-关键指令有 log_format 和 access_log 。 
+关键指令有 `log_format` 和 `access_log` 。 
 
 ### log_format
 
@@ -91,9 +92,9 @@ nginx提供了 access_log 指令来实现访问日志的输出文件和级别。
     Context:    http
     
 
-使用 log_format 可以在配置文件中定义多个输出格式，满足不同场景下的 access_log 指令输出日志的需求。 
+使用 `log_format` 可以在配置文件中定义多个输出格式，满足不同场景下的 `access_log` 指令输出日志的需求。 
 
-如下是 log_format 指令提供的日志字段和说明，来自 [nginx日志配置][7]
+如下是 `log_format` 指令提供的日志字段和说明，来自 [nginx日志配置][7]
 
 * $remote_addr和$http_x_forwarded_for，记录客户端IP地址。
 * $remote_user，记录客户端用户名称。
@@ -112,7 +113,7 @@ nginx提供了 access_log 指令来实现访问日志的输出文件和级别。
 * $time_iso8601，ISO8601标准格式下的本地时间。
 * $time_local，通用日志格式下的本地时间。
 
-定位性能问题时比较有用的几个字段，如下
+**`定位性能问题`**时比较有用的几个字段，如下
 
 * $upstream_connect_time，与upstream服务器建立链接时所花费的时间。
 * $upstream_header_time，与upstream服务器，从建立链接开始到收到响应消息的http头部的第一个字节时所花费的时间。
@@ -140,6 +141,7 @@ nginx提供了 access_log 指令来实现访问日志的输出文件和级别。
 
 配置样例
 
+```nginx
     # 关闭日志。
     access_log off;
     # 日志记录至logs/access.log中，格式为combined。
@@ -147,7 +149,7 @@ nginx提供了 access_log 指令来实现访问日志的输出文件和级别。
     
     # 日志记录至logs/access.log，内存中缓存至多64k日志，每隔10s将日志刷新到文件中。
     access_log logs/access.log buffer=64k flush=10s;
-    
+```
 
 ## 其它指令
 
@@ -172,8 +174,9 @@ nginx提供了 access_log 指令来实现访问日志的输出文件和级别。
 
 配置样例
 
+```nginx
     open_log_file_cache max=1000 inactive=20s valid=1m min_uses=2;
-    
+```
 
 ### log_not_found
 
@@ -185,7 +188,7 @@ nginx提供了 access_log 指令来实现访问日志的输出文件和级别。
     Context:    http, server, location
     
 
-是否在error_log中记录被访问URL不存在的错误。默认值为 on ，表示记录相关信息。 
+是否在 error_log 中记录被访问URL不存在的错误。默认值为 on ，表示记录相关信息。 
 
 ### log_subrequest
 
@@ -250,9 +253,9 @@ When master process receives -USR1 it repopens all logs, does chown() and chmod(
 
 给定 access_log 日志的格式如下 
 
-    log_format myformat '$remote_addr^A$http_x_forwarded_for^A$host^A$time_local^A$status^A'
-    '$request_time^A$request_length^A$bytes_sent^A$http_referer^A$request^A$http_user_agent';
-    
+```nginx
+log_format myformat '$remote_addr^A$http_x_forwarded_for^A$host^A$time_local^A$status^A'  '$request_time^A$request_length^A$bytes_sent^A$http_referer^A$request^A$http_user_agent';
+```
 
 利用 [awk][13] 命令，可以快速得到如下的数据。 
 

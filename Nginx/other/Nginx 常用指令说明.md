@@ -98,16 +98,16 @@ proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 Nginx 的访问控制模块默认就会安装，而且写法也非常简单，可以分别有多个allow,deny，允许或禁止某个ip或ip段访问，依次满足任何一个规则就停止往下匹配。如：
 
 ```nginx
-    location /nginx-status {
-      stub_status on;
-      access_log off;
+location /nginx-status {
+    stub_status on;
+    access_log off;
     #  auth_basic   "NginxStatus";
     #  auth_basic_user_file   /usr/local/nginx-1.6/htpasswd;
-    
-      allow 192.168.10.100;
-      allow 172.29.73.0/24;
-      deny all;
-    } 
+
+    allow 192.168.10.100;
+    allow 172.29.73.0/24;
+    deny all;
+} 
 ```
 
 我们也常用 httpd-devel 工具的 htpasswd 来为访问的路径设置登录密码：
@@ -132,11 +132,11 @@ Nginx默认是不允许列出整个目录的。如需此功能，打开nginx.con
 默认为off，显示的文件时间为GMT时间。改为on后，显示的文件时间为文件的服务器时间
 
 ```nginx
-    location /images {
-      root   /var/www/nginx-default/images;
-      autoindex on;
-      autoindex_exact_size off;
-      autoindex_localtime on;
-      } 
+location /images {
+    root   /var/www/nginx-default/images;
+    autoindex on;
+    autoindex_exact_size off;
+    autoindex_localtime on;
+} 
 ```
 [0]: http://link.zhihu.com/?target=http%3A//ip

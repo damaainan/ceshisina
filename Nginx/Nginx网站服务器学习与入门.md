@@ -57,122 +57,119 @@ nginx主配置文件为/usr/local/nginx/conf/nginx.conf，配置文件包括全�
     [root@cc]# vim /usr/local/nginx/conf/nginx.conf
 
 ```nginx
-        #user  nobody;                                      //设置用户和组
-        worker_processes  1;          //启动子进程，通过 ps -aux | grep nginx
-        #error_log  logs/error.log;                  //错误日志文件，以及日志级别
-        #error_log  logs/error.log  notice;                    
-        #error_log  logs/error.log  info;
-    
-        #pid        logs/nginx.pid;                          //进程号
-        events {                              //工作模式，每个进程可以处理的连接数
-            worker_connections  1024;                             
+#user  nobody;                                      # 设置用户和组
+worker_processes  1;          # 启动子进程，通过 ps -aux | grep nginx
+#error_log  logs/error.log;                  # 错误日志文件，以及日志级别
+#error_log  logs/error.log  notice;                    
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;                          # 进程号
+events {                              # 工作模式，每个进程可以处理的连接数
+    worker_connections  1024;                             
+}
+
+http {                                                 
+    include       mime.types;                       # 为文件类型定义文件
+    default_type  application/octet-stream;         # 默认文件类型   
+
+    # log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '$status $body_bytes_sent "$http_referer" ' '"$http_user_agent" "$http_x_forwarded_for"';# 创建访问日志
+
+    # access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;                             
+    keepalive_timeout  65;                               
+    # 保持连接的超时时间  
+
+    #gzip  on;                                          
+    # 是否启用压缩功能
+
+    server {                                             # 定义虚拟主机
+        listen       80;                             # 监听端口
+        server_name  localhost;                      # 主机名
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {                                      
+            # 对URL进行匹配，支持正则
+            root   html;
+            index  index.html index.htm;
         }
-    
-        http {                                                 
-                include       mime.types;                       //为文件类型定义文件
-                default_type  application/octet-stream;         //默认文件类型   
-    
-                #log_format  main  '$remote_addr - $remote_user
-                [$time_local] "$request"                        //创建访问日志
-                #'$status $body_bytes_sent "$http_referer" '
-                #'"$http_user_agent" "$http_x_forwarded_for"';
-    
-                #access_log  logs/access.log  main;
-    
-                sendfile        on;
-                #tcp_nopush     on;
-    
-                #keepalive_timeout  0;                             
-                keepalive_timeout  65;                               
-                //保持连接的超时时间  
-    
-                #gzip  on;                                          
-                //是否启用压缩功能
-    
-                server {                                             //定义虚拟主机
-                        listen       80;                             //监听端口
-                        server_name  localhost;                      //主机名
-    
-                    #charset koi8-r;
-    
-                    #access_log  logs/host.access.log  main;
-    
-                        location / {                                      
-                        //对URL进行匹配，支持正则
-                            root   html;
-                            index  index.html index.htm;
-                            }
-    
-                    #error_page  404              /404.html;           
-                    //设置错误代码对应的错误页面
-    
-                    # redirect server error pages to the static page /50x.html
-                    #
-                        error_page   500 502 503 504  /50x.html;
-                        location = /50x.html {
-                        root   html;
-                        }
-    
-                    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
-                    #
-                    #location ~ \.php$ {                                
-                    //若用户访问的是动态页面，则nginx找主机的9000端口，即交给php处理，
-                    //通过proxy_pass实现代理功能
-                    #    proxy_pass   http://127.0.0.1;
-                    #}
-    
-                    # pass the PHP scripts to FastCGI server listeningon
-                    #17.0.0.1:9000
-                    #
-                    #location ~ \.php$ {
-                    #    root           html;
-                    #    fastcgi_pass   127.0.0.1:9000;
-                    #    fastcgi_index  index.php;
-                    #fastcgi_param SCRIPT_FILENAME /scripts$fastcgi_script_name;
-                    #    include        fastcgi_params;
-                    #}
-    
-                    # deny access to .htaccess files, if Apache's document root
-                    # concurs with nginx's one
-                    #
-                    #location ~ /\.ht {
-                    #    deny  all;
-                    #}
-            }
-                # another virtual host using mix of IP-, name-, 
-                #and port-based configuration
-                #
-                #server {                                              
-                //定义另一个虚拟主机
-                #    listen       8000;
-                #    listen       somename:8080;
-                #    server_name  somename  alias  another.alias;
-                #    location / {
-                #        root   html;
-                #        index  index.html index.htm;
-                #    }
-             #}
-           # HTTPS server
-            #
-            #server {                                              
-            //定义https安全网页
-            #    listen       443 ssl;
-            #    server_name  localhost;
-            #    ssl_certificate      cert.pem;
-            #    ssl_certificate_key  cert.key;
-    
-            #    ssl_session_cache    shared:SSL:1m;
-            #    ssl_session_timeout  5m;
-    
-            #    ssl_ciphers  HIGH:!aNULL:!MD5;
-            #    ssl_prefer_server_ciphers  on;
-    
-            #    location / {
-            #        root   html;
-            #        index  index.html index.htm;
-            #    }
-            #}
+
+        #error_page  404              /404.html;           
+        # 设置错误代码对应的错误页面
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
         }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        #location ~ \.php$ {                                
+        # 若用户访问的是动态页面，则nginx找主机的9000端口，即交给php处理，
+        # 通过proxy_pass实现代理功能
+        #    proxy_pass   http://127.0.0.1;
+        #}
+
+        # pass the PHP scripts to FastCGI server listeningon
+        #17.0.0.1:9000
+        #
+        #location ~ \.php$ {
+        #    root           html;
+        #    fastcgi_pass   127.0.0.1:9000;
+        #    fastcgi_index  index.php;
+        #fastcgi_param SCRIPT_FILENAME /scripts$fastcgi_script_name;
+        #    include        fastcgi_params;
+        #}
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+    }
+    # another virtual host using mix of IP-, name-, 
+    #and port-based configuration
+    #
+    #server {                                              
+    # 定义另一个虚拟主机
+    #    listen       8000;
+    #    listen       somename:8080;
+    #    server_name  somename  alias  another.alias;
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+     #}
+    # HTTPS server
+    #
+    #server {                                              
+    # 定义https安全网页
+    #    listen       443 ssl;
+    #    server_name  localhost;
+    #    ssl_certificate      cert.pem;
+    #    ssl_certificate_key  cert.key;
+
+    #    ssl_session_cache    shared:SSL:1m;
+    #    ssl_session_timeout  5m;
+
+    #    ssl_ciphers  HIGH:!aNULL:!MD5;
+    #    ssl_prefer_server_ciphers  on;
+
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    #}
+}
 ```
 
 ### Nginx基本应用

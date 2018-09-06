@@ -150,13 +150,13 @@ sudo a2enmod mpm_event proxy_fcgi
 
 ```apache
 <ifmodule mpm_event_module>
-        StartServers              1
-        MinSpareThreads          30
-        MaxSpareThreads          75
-        ThreadLimit              64
-        ThreadsPerChild          30
-        MaxRequestWorkers        80
-        MaxConnectionsPerChild   80
+    StartServers              1
+    MinSpareThreads          30
+    MaxSpareThreads          75
+    ThreadLimit              64
+    ThreadsPerChild          30
+    MaxRequestWorkers        80
+    MaxConnectionsPerChild   80
 </ifmodule>
 ```
 
@@ -295,11 +295,11 @@ proxy_cache_use_stale error timeout http_500 http_502 http_503 http_504;
  **`proxy_cache_`** * 用于静态资源缓存，不过通常我们希望能够缓存动态内容 - 如 CMS 或其他应用。此时，我们可以使用 **`fastcgi_cache_*`**   指令来代替 **`proxy_cache_*`** ：
 
 ```nginx
- fastcgi_cache_path /var/run/nginx-cache levels=1:2 keys_zone=my_cache:10m inactive=60m;
- fastcgi_cache_key "$scheme$request_method$host$request_uri";
- fastcgi_cache_use_stale error timeout invalid_header http_500;
- fastcgi_ignore_headers Cache-Control Expires Set-Cookie;
- add_header NGINX_FASTCGI_CACHE $upstream_cache_status;
+fastcgi_cache_path /var/run/nginx-cache levels=1:2 keys_zone=my_cache:10m inactive=60m;
+fastcgi_cache_key "$scheme$request_method$host$request_uri";
+fastcgi_cache_use_stale error timeout invalid_header http_500;
+fastcgi_ignore_headers Cache-Control Expires Set-Cookie;
+add_header NGINX_FASTCGI_CACHE $upstream_cache_status;
 ```
 
 上面的最后一行会设置响应头，来告知我们内容是否从缓存中获取。
@@ -315,21 +315,21 @@ if ($query_string != "") {
 另外，在 **`server`**  指令下的 **`\.php`**  块指令里，我们会添加如下内容：
 
 ```nginx
-    try_files $uri =404;
-    include fastcgi_params;
+try_files $uri =404;
+include fastcgi_params;
 
-    fastcgi_read_timeout 360s;
-    fastcgi_buffer_size 128k;
-    fastcgi_buffers 4 256k;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+fastcgi_read_timeout 360s;
+fastcgi_buffer_size 128k;
+fastcgi_buffers 4 256k;
+fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 
-    fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+fastcgi_pass unix:/run/php/php7.0-fpm.sock;
 
-    fastcgi_index index.php;
-    fastcgi_cache_bypass $skip_cache;
-    fastcgi_no_cache $skip_cache;
-    fastcgi_cache my_cache;
-    fastcgi_cache_valid  60m;
+fastcgi_index index.php;
+fastcgi_cache_bypass $skip_cache;
+fastcgi_no_cache $skip_cache;
+fastcgi_cache my_cache;
+fastcgi_cache_valid  60m;
 ```
 
 以上， **`fastcgi_cache*`**  和 **`fastcgi_no_cache`**  就配置完可缓存和不可缓存的所有规则。
