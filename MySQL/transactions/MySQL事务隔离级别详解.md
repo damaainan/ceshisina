@@ -146,49 +146,49 @@ serializable完全锁定字段，若一个事务来查询同一份数据就必�
 贴代码来了。大家还要根据代码做一定的修改。
 
 ```sql
-    --＃＃＃＃＃＃＃＃＃＃＃＃＃
-    --＃＃＃＃＃＃＃＃＃＃＃＃＃
-    -- a客户端：
-    set autocommit=0
-    show variables like "%autocommit%";
-    
-    SELECT @@global.tx_isolation; 
-    SELECT @@session.tx_isolation; 
-    SELECT @@tx_isolation;
-    
-    SET SESSION TRANSACTION ISOLATION LEVEL read uncommitted;
-    SET SESSION TRANSACTION ISOLATION LEVEL read committed;
-    SET SESSION TRANSACTION ISOLATION LEVEL repeatable read;
-    SET SESSION TRANSACTION ISOLATION LEVEL serializable;
-    
-    start transaction;
-    SELECT * FROM text.tx;
-    commit;
-    
-    
-    --＃＃＃＃＃＃＃＃＃＃＃＃＃
-    --＃＃＃＃＃＃＃＃＃＃＃＃＃
-    -- b客户端代码：
-    set autocommit=0
-    show variables like "%autocommit%"
-    
-    start transaction;
-    SELECT * FROM text.tx;
-    update text.tx set num =10 where id = 1;
-    insert into text.tx(id,num) values(9,9);
-    rollback;
-    commit;
-    
-    
-    SET SESSION TRANSACTION ISOLATION LEVEL read uncommitted;
-    SET SESSION TRANSACTION ISOLATION LEVEL read committed;
-    SET SESSION TRANSACTION ISOLATION LEVEL repeatable read;
-    SET SESSION TRANSACTION ISOLATION LEVEL serializable;
-    
-    
-    SELECT @@global.tx_isolation; 
-    SELECT @@session.tx_isolation; 
-    SELECT @@tx_isolation;
+--＃＃＃＃＃＃＃＃＃＃＃＃＃
+--＃＃＃＃＃＃＃＃＃＃＃＃＃
+-- a客户端：
+set autocommit=0
+show variables like "%autocommit%";
+
+SELECT @@global.tx_isolation; 
+SELECT @@session.tx_isolation; 
+SELECT @@tx_isolation;
+
+SET SESSION TRANSACTION ISOLATION LEVEL read uncommitted;
+SET SESSION TRANSACTION ISOLATION LEVEL read committed;
+SET SESSION TRANSACTION ISOLATION LEVEL repeatable read;
+SET SESSION TRANSACTION ISOLATION LEVEL serializable;
+
+start transaction;
+SELECT * FROM text.tx;
+commit;
+
+
+--＃＃＃＃＃＃＃＃＃＃＃＃＃
+--＃＃＃＃＃＃＃＃＃＃＃＃＃
+-- b客户端代码：
+set autocommit=0
+show variables like "%autocommit%"
+
+start transaction;
+SELECT * FROM text.tx;
+update text.tx set num =10 where id = 1;
+insert into text.tx(id,num) values(9,9);
+rollback;
+commit;
+
+
+SET SESSION TRANSACTION ISOLATION LEVEL read uncommitted;
+SET SESSION TRANSACTION ISOLATION LEVEL read committed;
+SET SESSION TRANSACTION ISOLATION LEVEL repeatable read;
+SET SESSION TRANSACTION ISOLATION LEVEL serializable;
+
+
+SELECT @@global.tx_isolation; 
+SELECT @@session.tx_isolation; 
+SELECT @@tx_isolation;
 ```
 
 </font>

@@ -14,9 +14,9 @@
 一共有31条数据。符合下面语句的数据有5条。执行下面的sql语句：
 
 ```sql
-    select product_id
-    from orders
-    where order_id in (123, 312, 223, 132, 224);
+select product_id
+from orders
+where order_id in (123, 312, 223, 132, 224);
 ```
 
 这条语句要mysql去根据order_id进行搜索，然后返回匹配记录中的product_id。所以组合索引应该按照以下的顺序创建：
