@@ -146,7 +146,6 @@ select * from test_float;
 
 * D表示浮点型数据小数点之后的精度，假如超过D位则四舍五入，即1.233四舍五入为1.23，1.237四舍五入为1.24   
 * M表示浮点型数据总共的位数，D=2则表示总共支持五位，即小数点前只支持三位数，所以我们并没有看到1000.23、10000.233、100000.233这三条数据的插入，因为插入都报错了   
- 
 
 当我们不指定M、D的时候，会按照实际的精度来处理。
  
@@ -155,7 +154,6 @@ select * from test_float;
 介绍完float、double两种浮点型，我们介绍一下定点型的数据类型decimal类型，有了浮点型为什么我们还需要定点型？写一段SQL看一下就明白了：
  
 ```sql
-
 drop table if exists test_decimal;
 create table test_decimal (
     float_num float(10, 2),
@@ -165,10 +163,7 @@ create table test_decimal (
 
 insert into test_decimal values(1234567.66, 1234567899000000.66, 1234567899000000.66);
 insert into test_decimal values(1234567.66, 12345678990000000.66, 12345678990000000.66);
-
-
 ```
- 
 运行结果为：
  
 ![][3]
@@ -210,14 +205,11 @@ create table test_time (
 insert into test_time values(now(), now(), now(), now(), now());
 
 ```
- 
 看一下插入后的结果： 
-
  
 ![][4]
  
 MySQL的时间类型的知识点比较简单，这里重点关注一下datetime与timestamp两种类型的区别：
- 
 
 * 上面列了，datetime占8个字节，timestamp占4个字节   
 * 由于大小的区别，datetime与timestamp能存储的时间范围也不同，datetime的存储范围为1000-01-01 00:00:00——9999-12-31 23:59:59，timestamp存储的时间范围为19700101080001——20380119111407   
@@ -228,11 +220,8 @@ MySQL的时间类型的知识点比较简单，这里重点关注一下datetime�
 在实际工作中，一张表往往我们会有两个默认字段，一个记录创建时间而另一个记录最新一次的更新时间，这种时候可以使用timestamp类型来实现：
  
 ```sql
-
 create_time timestamp default current_timestamp comment "创建时间",
 update_time timestamp default current_timestamp on update current_timestamp comment "修改时间",
-
-
 ```
  
 #### char和varchar类型
@@ -259,7 +248,6 @@ insert into test_string values('a', 'a');
 insert into test_string values(' a', ' a');
 insert into test_string values('a ', 'a ');
 insert into test_string values(' a ', ' a ');
-
 ```
  
 使用length函数来看一下结果：
@@ -280,25 +268,18 @@ drop table if exists test_varchar;
 create table test_varchar (
     varchar_value varchar(100000)
 ) engine=innodb charset=utf8;
-
 ```
  
 执行报错：
  
 ```
-
 Column length too big for column 'varchar_value' (max = 21845); use BLOB or TEXT instead
-
-
 ```
  
 按照提示，我们把大小改为21845，执行依然报错：
  
 ```
-
 Row size too large. The maximum row size for the used table type, not counting BLOBs, is 65535. This includes storage overhead, check the manual. You have to change some columns to TEXT or BLOBs
-
-
 ```
  
 改为21844就不会有问题，因此在utf8编码下我们可以知道varchar(M)，M最大=21844。那么gbk呢：
@@ -309,25 +290,18 @@ drop table if exists test_varchar;
 create table test_varchar (
     varchar_value varchar(100000)
 ) engine=innodb charset=gbk;
-
-
 ```
  
 同样的报错：
  
 ```
-
 Column length too big for column 'varchar_value' (max = 32767); use BLOB or TEXT instead
-
-
 ```
  
 把大小改为32766，也是和utf8编码格式一样的报错：
  
 ```
-
 Row size too large. The maximum row size for the used table type, not counting BLOBs, is 65535. This includes storage overhead, check the manual. You have to change some columns to TEXT or BLOBs
-
 ```
  
 可见gbk的编码格式下，varchar(M)最大的M=32765，那么为什么会有这样的区别呢，分点详细解释一下：

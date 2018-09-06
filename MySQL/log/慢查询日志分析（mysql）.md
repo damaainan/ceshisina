@@ -309,7 +309,6 @@ Options and values after processing arguments:
   --vertical-format            TRUE
   --watch-server               (No value)
 
-View Code
 ```
  
 ```

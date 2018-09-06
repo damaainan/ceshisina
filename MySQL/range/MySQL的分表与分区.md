@@ -72,7 +72,7 @@ MySQL分表既可以自定义规则，也可以使用业内通用规则，还可
  
 不能直接删除一个分表，这样会破坏Merge表。正确的方法是：
  
-```LANG
+```sql
 alter table t ENGINE = MRG_MyISAM UNION = (t1) INSERT_METHOD = LAST；  
 drop table t1；  
 

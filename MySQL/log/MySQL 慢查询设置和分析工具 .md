@@ -38,7 +38,7 @@ Time: 0.004s
 
 在 MySQL 执行 SQL 语句设置，但是如果重启 MySQL 的话将失效
 
-```
+```sql
 set global slow_query_log = ON;
 
 set long_query_time = 1;
@@ -48,9 +48,8 @@ set long_query_time = 1;
 
 修改配置文件，重启 MySQL, 这种永久生效
 
-```
 my.cnf
-
+```cfg
 [mysqld]
 
 slow_query_log = ON

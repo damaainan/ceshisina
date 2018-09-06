@@ -88,7 +88,7 @@ pt-query-digest | 支持 | 支持 | perl |总能强大，使用简单，自定�
 
 * **.mysqlsla Config File**
 
-~.mysqlsla 这个文件，类似Mysql 里面的配置文件.cnf。 mysqlsla 启动都会读取这个全局配置文件。如：
+`~.mysqlsla` 这个文件，类似Mysql 里面的`配置文件.cnf`。 mysqlsla 启动都会读取这个全局配置文件。如：
 
 ```
 atomic­-statements 
@@ -264,7 +264,7 @@ udl | 无 | 无 | 无
 比如用—report-­format （-rf）FILE 可以替换。 
 
 然后基本模板如下：
-```mysql
+```
 (extra command line options)
 
  HEADER
@@ -280,7 +280,7 @@ report line format
 report line values
 ```
 一个自定义的slow标准模板
-```mysql
+```
 -nthp
 
 HEADER
@@ -376,7 +376,7 @@ _
 sample
 ```
 一个自定义的general log标准模板
-```mysql
+```
 HEADER
 
 Report for %s logs: %s
@@ -442,7 +442,7 @@ _
 sample
 ```
 一个自定义的binary log标准模板
-```mysql
+```
 HEADER
 
 Report for %s logs: %s
@@ -512,7 +512,7 @@ _
 sample
 ```
 一个自定义的msl log标准模板
-```mysql
+```
 HEADER
 
 Report for %s logs: %s

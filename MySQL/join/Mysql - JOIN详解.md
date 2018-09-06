@@ -278,7 +278,7 @@ SELECT *
 ps：其实我们从语义上就能看出 **`LEFT JOIN`** 和 **`RIGHT JOIN`** 没什么差别，两者的结果差异取决于左右表的放置顺序，以下内容摘自mysql官方文档：
 
 RIGHT JOIN works analogously to LEFT JOIN. To keep code portable across databases, it is recommended that you use LEFT JOIN instead of RIGHT JOIN.
-所以当你纠结使用LEFT JOIN还是RIGHT JOIN时，尽可能只使用LEFT JOIN吧
+**所以当你纠结使用LEFT JOIN还是RIGHT JOIN时，`尽可能只使用LEFT JOIN`吧**
 ## 5 ON和WHERE的区别
 
 上文把JOIN的执行顺序了解清楚之后，ON和WHERE的区别也就很好理解了。
@@ -324,7 +324,7 @@ vt3:
 
 而第二种情况 **`LEFT JOIN`** 在执行完第二步ON子句后，筛选出满足 **`i.userid = a.userid`** 的行，生成表vt2；再执行第三步JOIN子句添加外部行生成表vt3；然后执行第四步WHERE子句，再对vt3表进行过滤生成vt4，得的最终结果：
 
-```sql
+```
 vt2:
 +--------+------+--------+-------+
 | userid | name | userid | money |

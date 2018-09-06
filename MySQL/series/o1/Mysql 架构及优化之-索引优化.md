@@ -62,86 +62,86 @@
 * B-tree 索引实例
 
 ```
-        create table peple(
-            last_name  varchar(50) not null , 
-            first_name varchar(50) not null ,
-            dob date not null ,
-            gender enum('m','f') not null ,
-            key(last_name,first_name,dob)  #决定索引顺序
-        )
+    create table peple(
+        last_name  varchar(50) not null , 
+        first_name varchar(50) not null ,
+        dob date not null ,
+        gender enum('m','f') not null ,
+        key(last_name,first_name,dob)  #决定索引顺序
+    )
     
-        使用B-tree索引的查询类型,很好用于全键值、键值范围或键前缀查找
-        只有在超找使用了索引的最左前缀的时候才有用
-        
-        匹配全名：全键值匹配和索引中的所有列匹配
-                 查找叫Tang Kang 出生于 1991-09-23 的人 
-                 
-        匹配最左前缀：B-tree找到姓为tang的人
-        
-        匹配列前缀： 匹配某列的值的开头部分 查找姓氏以T开头的人         
-                 
-        匹配范围值：索引查找姓大于Tang小于zhu的人
-        
-        精确匹配一部分并且匹配某个范围的另外一部分：
-                   查找姓为Tang并且名字以字母K开头的人 精确匹配last_name列并且对
-                   first_name进行范围查询
-        
-        只访问索引的查询：B-tree支持只访问索引的查询，不会访问行
+    使用B-tree索引的查询类型,很好用于全键值、键值范围或键前缀查找
+    只有在超找使用了索引的最左前缀的时候才有用
+    
+    匹配全名：全键值匹配和索引中的所有列匹配
+             查找叫Tang Kang 出生于 1991-09-23 的人 
+             
+    匹配最左前缀：B-tree找到姓为tang的人
+    
+    匹配列前缀： 匹配某列的值的开头部分 查找姓氏以T开头的人         
+             
+    匹配范围值：索引查找姓大于Tang小于zhu的人
+    
+    精确匹配一部分并且匹配某个范围的另外一部分：
+               查找姓为Tang并且名字以字母K开头的人 精确匹配last_name列并且对
+               first_name进行范围查询
+    
+    只访问索引的查询：B-tree支持只访问索引的查询，不会访问行
 ```
 
 * B-tree局限性
 
 > B-tree局限性：(案例中索引顺序:last_name first_name dob )
 
-         
-        如果查找没有送索引列的最左边开始,没有什么用处,即不能查找所有叫Kang 的人 
-        也不能找到所有出生在某天的人，因为这些列不再索引最左边,也不能使用该索引超找
-        某个姓氏以特定字符结尾的人
-        
-        不能跳过索引的列,即不能找到所有姓氏为Tang并且出生在某个特定日期的人
-        如果不定义first_name列的值,Mysql只能使用索引的第一列
-        
-        存储引擎不能优化任何在第一个范围条件右边的列,比如查询是where last_name = 'Tang'
-        AND first_name like 'K%' AND dob='1993-09-23' 访问只能使用索引头两列
-        
-        由此可知 索引列顺序的重要性！
+     
+    如果查找没有送索引列的最左边开始,没有什么用处,即不能查找所有叫Kang 的人 
+    也不能找到所有出生在某天的人，因为这些列不再索引最左边,也不能使用该索引超找
+    某个姓氏以特定字符结尾的人
+    
+    不能跳过索引的列,即不能找到所有姓氏为Tang并且出生在某个特定日期的人
+    如果不定义first_name列的值,Mysql只能使用索引的第一列
+    
+    存储引擎不能优化任何在第一个范围条件右边的列,比如查询是where last_name = 'Tang'
+    AND first_name like 'K%' AND dob='1993-09-23' 访问只能使用索引头两列
+    
+    由此可知 索引列顺序的重要性！
 
 * 哈希索引
 
-        目前只有Memory存储引擎支持显示的哈希索引 而且Memory引擎对我来说不常用
-        所以我们就轻描淡写的过了吧
+    目前只有Memory存储引擎支持显示的哈希索引 而且Memory引擎对我来说不常用
+    所以我们就轻描淡写的过了吧
 
 * R-tree(空间索引)
 ```
-        Myisam支持空间索引 可以使用geometry空间数据类型
-        空间索引不会要求where子句使用索引最左前缀可以全方位索引数据
-        可以高效使用任何数据组合查找 配合使用mercontains()函数使用
+    Myisam支持空间索引 可以使用geometry空间数据类型
+    空间索引不会要求where子句使用索引最左前缀可以全方位索引数据
+    可以高效使用任何数据组合查找 配合使用mercontains()函数使用
 ```
 * 全文索引
 ```
-        fulltext是Myisam表特殊索引,从文本中找关键字不是直接和索引中的值进行比较
-        全文索引可以和B-Tree索引混用 索引价值互不影响
-        全文索引用于match against操作 而不是普通的where子句
+    fulltext是Myisam表特殊索引,从文本中找关键字不是直接和索引中的值进行比较
+    全文索引可以和B-Tree索引混用 索引价值互不影响
+    全文索引用于match against操作 而不是普通的where子句
 ```
 * 前缀索引和索引选择性
 ```
-        通常索引几个字符,而不是全部值,以节约空间并得到好的性能 同时也降低选择性
-        索引选择性是不重复的索引值和全部行数的比值
-        高选择性的索引有好处,查找匹配过滤更多的行,唯一索引选择率为1 最佳状态
-        
-        blob列 text列 及很长的varchar列 必须定义前缀索引 mysql 不允许索引他们的全文
+    通常索引几个字符,而不是全部值,以节约空间并得到好的性能 同时也降低选择性
+    索引选择性是不重复的索引值和全部行数的比值
+    高选择性的索引有好处,查找匹配过滤更多的行,唯一索引选择率为1 最佳状态
+    
+    blob列 text列 及很长的varchar列 必须定义前缀索引 mysql 不允许索引他们的全文
 ```
 * 前缀索引和索引选择性实例
 ```
       造数据
-        #复制一份与cs_area表结构
-        mysql> create table area like cs_area ;
+    #复制一份与cs_area表结构
+    mysql> create table area like cs_area ;
     
-        #插入1600数据
-        mysql> insert into area select * from cs_area limit     1600;
+    #插入1600数据
+    mysql> insert into area select * from cs_area limit     1600;
     
-        #模拟真实数据
-        mysql> update area set name = (select name from cs_area order by rand() limit 1 );
+    #模拟真实数据
+    mysql> update area set name = (select name from cs_area order by rand() limit 1 );
     
 
     #表area有name列 需要对name列前缀索引
@@ -149,67 +149,67 @@
 
 ![][0]
 
-          #计算得比值接近0.9350就好了
+      #计算得比值接近0.9350就好了
     
 
 ![][1]
 
-          #分别取 3 4 5位name值计算
+      #分别取 3 4 5位name值计算
     
 
 ![][2]
 
-          #可知name列添加5位前缀索引就可以了
+      #可知name列添加5位前缀索引就可以了
     
 
 ![][3]
 
-          #Mysql不能在order by 或 group by查询使用前缀索引 也不能将其用作覆盖索引
+      #Mysql不能在order by 或 group by查询使用前缀索引 也不能将其用作覆盖索引
 
 * 聚集索引
 ```
-        聚集索引不是一种单独的索引类型 而是一种存储数据的方式
-        Innodb 的聚集索引实际上同样的结构保存了B-tree索引和数据行
-        
-        "聚集" 是指实际的数据行和相关的键值保存在一起 
-        每个表只能有一个聚集索引 因此不能一次把行保存在两个地方
-        
-        (由于聚集索引对我来说 不常用 我们就略过啦~)
+    聚集索引不是一种单独的索引类型 而是一种存储数据的方式
+    Innodb 的聚集索引实际上同样的结构保存了B-tree索引和数据行
+    
+    "聚集" 是指实际的数据行和相关的键值保存在一起 
+    每个表只能有一个聚集索引 因此不能一次把行保存在两个地方
+    
+    (由于聚集索引对我来说 不常用 我们就略过啦~)
 ```
 * 覆盖索引
 ```
-        索引支持高效查找行 mysql也能使用索引来接收列的数据 这样不用读取行数据
-        
-        当发起一个被索引覆盖的查询 explain解释器的extra列看到 using index 
+    索引支持高效查找行 mysql也能使用索引来接收列的数据 这样不用读取行数据
     
-        #满足条件：#
-        # select 查询的字段必须 有索引全覆盖
-        select last_name,first_name 其中 last_name 和first_name 必须都有索引
-        #不能在索引执行like操作
+    当发起一个被索引覆盖的查询 explain解释器的extra列看到 using index 
+    
+    #满足条件：#
+    # select 查询的字段必须 有索引全覆盖
+    select last_name,first_name 其中 last_name 和first_name 必须都有索引
+    #不能在索引执行like操作
 ```
 * 为排序使用索引扫描
 
 ```
-        mysql排序结果的方式：使用文件排序 、 扫描有序的索引
-        explain中的type列若为 "索引(Index)" 说明mysql扫描索引
-        
-        单纯扫描索引很快，如果mysql没有使用索引覆盖查询 就不得不查找索引中发现的每一行
-        
-        mysql 能有为排序和查找行使用同样的索引
-        
-        如表 user 索引 (uid,birthday )
-        
-        使用排序索引：
-        .... where date = '1993-09-23' order by uid desc  (索引最左前缀)
-        .... where date > '1993-09-23' order by date, uid (两列索引最左前缀)
-        
-        不能使用索引进行排序的查询：
-        where date = '1993-09-23' order by uid desc，com_id  
-                        (使用了不同排序方向,索引都是升序排列)
-        where date = '1993-09-23' order by uid desc，staff_id (引用了不再索引的列)
-        where date = '1993-09-23' order by uid (不能形成最左前缀)
-        where date > '1993-09-23' order by uid,com_id  
-                        (where有范围条件 因此不会使用余下索引)
+    mysql排序结果的方式：使用文件排序 、 扫描有序的索引
+    explain中的type列若为 "索引(Index)" 说明mysql扫描索引
+    
+    单纯扫描索引很快，如果mysql没有使用索引覆盖查询 就不得不查找索引中发现的每一行
+    
+    mysql 能有为排序和查找行使用同样的索引
+    
+    如表 user 索引 (uid,birthday )
+    
+    使用排序索引：
+    .... where date = '1993-09-23' order by uid desc  (索引最左前缀)
+    .... where date > '1993-09-23' order by date, uid (两列索引最左前缀)
+    
+    不能使用索引进行排序的查询：
+    where date = '1993-09-23' order by uid desc，com_id  
+                    (使用了不同排序方向,索引都是升序排列)
+    where date = '1993-09-23' order by uid desc，staff_id (引用了不再索引的列)
+    where date = '1993-09-23' order by uid (不能形成最左前缀)
+    where date > '1993-09-23' order by uid,com_id  
+                    (where有范围条件 因此不会使用余下索引)
 ```
 
 * 避免多余和重复索引

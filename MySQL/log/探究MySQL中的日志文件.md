@@ -24,7 +24,7 @@ mysql> show variables like 'log_error';
 
 可以看到错误日志的路径和文件名，默认情况下错误文件的文件名为服务器的主机名，即：`hostname.err`。只不过我这里设置的是`/var/log/mysqld.log`,修改错误日志地址可以在`/etc/my.cnf`中添加
 
-```sql
+```
 # Recommended in standard MySQL setup
 sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
 
@@ -77,7 +77,7 @@ mysql> show variables like "slow_query_log";
 
 #### 但是使用 set global slow_query_log='ON' 开启慢查询日志，只是对当前数据库有效，如果MySQL数据库重启后就会失效。所以如果要永久生效，就要修改配置文件 my.cnf (其他系统变量也是如此)，如下：
 
-```sql
+```
 [mysqld]
 slow_query_log=1
 ```
@@ -192,7 +192,7 @@ mysql> show variables like "log_output";
 
 当越来越多的SQL查询被记录到慢查询日志文件中，这时候直接看日志文件就不容易了，MySQL提供了`mysqldumpslow`命令解决:
 
-```sql
+```
 [root@iz2zeaf3cg1099kiidi06mz mysql]# mysqldumpslow iz2zeaf3cg1099kiidi06mz-slow.log
 
 Reading mysql slow query log from iz2zeaf3cg1099kiidi06mz-slow.log
@@ -217,7 +217,7 @@ Count: 1  Time=0.02s (0s)  Lock=0.00s (0s)  Rows=142.0 (142), root[root]@[117.13
 
 pt-query-digest 是分析MySQL查询日志最有力的工具，该工具功能强大，它可以分析binlog，Generallog，slowlog，也可以通过`show processlist`或者通过`tcpdump`抓取的MySQL协议数据来进行分析，比 mysqldumpslow 更具体，更完善。以下是使用pt-query-digest的示例:
 
-```sql
+```
 //直接分析慢查询文件
 pt-query-digest  slow.log > slow_report.log
 ```
@@ -227,7 +227,9 @@ pt-query-digest  slow.log > slow_report.log
 
 ## 查询日志
 
-查看日志记录了所有对 MySQL 数据库请求的信息，不论这些请求是否得到了正确的执行。默认为`主机名.log````sql
+查看日志记录了所有对 MySQL 数据库请求的信息，不论这些请求是否得到了正确的执行。默认为`主机名.log`
+
+```sql
 mysql> show variables like "general_log%";
 +------------------+--------------------------------------------+
 | Variable_name    | Value                                      |
@@ -272,7 +274,7 @@ mysql> show variables like "general_log%";
 
 通过配置参数`log-bin[=name]`可以启动二进制日志。如果不指定name,则默认二进制日志文件名为主机名，后缀名为二进制日志的序列号
 
-```sql
+```
 [mysqld]
 log-bin
 ```
@@ -289,7 +291,7 @@ mysql> show variables like 'datadir';
 
 mysqld-bin.000001即为二进制日志文件，而mysqld-bin.index为二进制的索引文件，为了管理所有的binlog文件，MySQL额外创建了一个index文件，它按顺序记录了MySQL使用的所有binlog文件。如果你想自定义index文件的名称，可以设置`log_bin_index=file`参数。
 
-```sql
+```
 -rw-rw---- 1 mysql mysql      120 Aug 21 16:42 mysqld-bin.000001
 -rw-rw---- 1 mysql mysql       20 Aug 21 16:42 mysqld-bin.index
 ```
@@ -299,7 +301,7 @@ mysqld-bin.000001即为二进制日志文件，而mysqld-bin.index为二进制�
 
 对于二进制日志文件来说，不像错误日志文件，慢查询日志文件那样用cat，head, tail等命令可以查看，它需要通过 MySQL 提供的工具 mysqlbinlog。如:
 
-```sql
+```
 [root@iz2zeaf3cg1099kiidi06mz mysql]# mysqlbinlog mysqld-bin.000001
 /*!50530 SET @@SESSION.PSEUDO_SLAVE_MODE=1*/;
 /*!40019 SET @@session.max_insert_delayed_threads=0*/;
@@ -362,7 +364,7 @@ mysql> show variables like 'binlog_cache_size';
 * mixed: 在此格式下，mysql默认采用statement格式进行二进制日志文件的记录，但是有些情况下使用ROW格式，有以下几种情况:
   
 
-```sql
+```
 1)表的存储引擎为NDB，这时对表的DML操作都会以ROW格式记录。
 2)使用了UUID()、USER()、CURRENT_USER()、FOUND_ROW()、ROW_COUNT()等不确定函数。
 3)使用了INSERT DELAY语句。

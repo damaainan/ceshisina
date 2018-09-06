@@ -54,6 +54,7 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     mysql> select A.id,A.name,B.name from A,B where A.id=B.id;
     +----+-----------+-------------+
     | id | name | name |
@@ -64,6 +65,7 @@ table1:左表；table2:右表。
     | 4 | Spaghetti | Ninja |
     +----+-----------+-------------+
     4 rows in set (0.00 sec)
+```
 
 
 ## 二.Inner join 
@@ -72,6 +74,7 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     mysql> select * from A inner join B on A.name = B.name;
     +----+--------+----+--------+
     | id | name | id | name |
@@ -79,6 +82,7 @@ table1:左表；table2:右表。
     | 1 | Pirate | 2 | Pirate |
     | 3 | Ninja | 4 | Ninja |
     +----+--------+----+--------+
+```
 
 
 ![][24]
@@ -87,6 +91,7 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     mysql> select * from A left join B on A.name = B.name;
     #或者：select * from A left outer join B on A.name = B.name;
     +----+-----------+------+--------+
@@ -98,6 +103,7 @@ table1:左表；table2:右表。
     | 4 | Spaghetti | NULL | NULL |
     +----+-----------+------+--------+
     4 rows in set (0.00 sec)
+```
 
 
 **left join,**（或left outer join:在Mysql中两者等价，推荐使用left join.）**左连接从左表(A)产生一套完整的记录,与匹配的记录(右表(B))** .如果没有匹配,右侧将包含null。
@@ -108,6 +114,7 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     mysql> select * from A left join B on A.name=B.name where A.id is null or B.id is null;
     +----+-----------+------+------+
     | id | name | id | name |
@@ -116,6 +123,7 @@ table1:左表；table2:右表。
     | 4 | Spaghetti | NULL | NULL |
     +----+-----------+------+------+
     2 rows in set (0.00 sec)
+```
 
 
 ![][26]
@@ -124,6 +132,7 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     mysql> select * from A left join B on A.name=B.name where A.id is not null and B.id is not null;
     +----+--------+------+--------+
     | id | name | id | name |
@@ -132,6 +141,7 @@ table1:左表；table2:右表。
     | 3 | Ninja | 4 | Ninja |
     +----+--------+------+--------+
     2 rows in set (0.00 sec)
+```
 
 
 求差集：
@@ -140,6 +150,7 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     SELECT * FROM A LEFT JOIN B ON A.name = B.name
     WHERE B.id IS NULL
     union
@@ -154,6 +165,7 @@ table1:左表；table2:右表。
     | NULL | NULL | 1 | Rutabaga |
     | NULL | NULL | 3 | Darth Vader |
     +------+-----------+------+-------------+
+```
 
 
 ![][27]
@@ -162,6 +174,7 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     mysql> select * from A right join B on A.name = B.name;
     +------+--------+----+-------------+
     | id | name | id | name |
@@ -172,6 +185,7 @@ table1:左表；table2:右表。
     | 3 | Ninja | 4 | Ninja |
     +------+--------+----+-------------+
     4 rows in set (0.00 sec)
+```
 
 
 同left join。
@@ -184,6 +198,7 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     mysql> select * from A cross join B;
     +----+-----------+----+-------------+
     | id | name | id | name |
@@ -206,6 +221,7 @@ table1:左表；table2:右表。
     | 4 | Spaghetti | 4 | Ninja |
     +----+-----------+----+-------------+
     16 rows in set (0.00 sec)
+```
 
 
     #再执行：mysql> select * from A inner join B; 试一试
@@ -224,6 +240,7 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     mysql> select * from A left join B on B.name = A.name 
     -> union 
     -> select * from A right join B on B.name = A.name;
@@ -238,6 +255,7 @@ table1:左表；table2:右表。
     | NULL | NULL | 3 | Darth Vader |
     +------+-----------+------+-------------+
     6 rows in set (0.00 sec)
+```
 
 
 **全连接**产生的**所有记录（双方匹配记录）**在表A和表B。如果**没有匹配**,则对面**将包含null**。
@@ -252,17 +270,21 @@ table1:左表；table2:右表。
 
 代码如下:
 
+```sql
     select * from
     table a inner join table b
     on a.id = b.id;
+```
 
 VS
 
 代码如下:
 
+```sql
     select a.*, b.*
     from table a, table b
     where a.id = b.id;
+```
 
 我在数据库中比较(10w数据)得之，它们用时几乎相同，第一个是显示的inner join，后一个是隐式的inner join。
 
@@ -282,20 +304,24 @@ PASS
 
 代码如下:
 
+```sql
     select * from A
     inner join B on B.name = A.name
     left join C on C.name = B.name
     left join D on D.id = C.id
     where C.status>1 and D.status=1;
+```
 
 Great
 
 代码如下:
 
+```sql
     select * from A
     inner join B on B.name = A.name
     left join C on C.name = B.name and C.status>1
     left join D on D.id = C.id and D.status=1
+```
 
 从上面例子可以看出，**尽可能满足ON的条件**，而**少用Where的条件**。从执行性能来看第二个显然更加省时。
 
@@ -305,6 +331,7 @@ Great
 
 代码如下:
 
+```sql
     mysql> SELECT * FROM product LEFT JOIN product_details
     ON (product.id = product_details.id)
     AND product_details.id=2;
@@ -328,6 +355,7 @@ Great
     | 2 | 200 | 2 | 22 | 0 |
     +----+--------+----+--------+-------+
     1 row in set (0.01 sec)
+```
 
 
 从上可知，第一条查询使用 ON 条件决定了从 LEFT JOIN的 product_details表中检索符合的所有数据行。第二条查询做了简单的LEFT JOIN，然后使用 WHERE 子句从 LEFT JOIN的数据中过滤掉不符合条件的数据行。
@@ -340,16 +368,20 @@ PASS
 
 代码如下:
 
+```sql
     insert into t1(a1) select b1 from t2 where not exists(select 1 from t1 where t1.id = t2.r_id);
+```
 
 Great
 
 代码如下:
 
+```sql
     insert into t1(a1) 
     select b1 from t2 
     left join (select distinct t1.id from t1 ) t1 on t1.id = t2.r_id 
     where t1.id is null;  
+```
 
 ## 八.测试题(多表连接join查询)
 
@@ -359,6 +391,7 @@ Great
 
 #### 1.1 班级表
 
+```sql
     mysql> select * from class;
     +------+--------+
     | c_id | c_name |
@@ -369,10 +402,12 @@ Great
     |    4 | 4班    |
     +------+--------+
     4 rows in set (0.00 sec)
+```
 
 
 #### 1.2 比赛表
 
+```sql
     mysql> select * from team;
     +------+------+------+
     | h_id | g_id | num  |
@@ -381,6 +416,7 @@ Great
     |    2 |    4 |   37 |
     +------+------+------+
     2 rows in set (0.00 sec)
+```
 
 
 ### 2. 详解
@@ -391,6 +427,7 @@ Great
 
 #### 2.2 结果
 
+```sql
     mysql> select ct.h_name,class.c_name as g_name,ct.num from (select class.c_name as h_name,team.* from class join team on class.c_id=team.h_id) as ct join class on ct.g_id=class.c_id;
     +--------+--------+------+
     | h_name | g_name | num  |
@@ -399,7 +436,7 @@ Great
     | 2班    | 4班    |   37 |
     +--------+--------+------+
     2 rows in set (0.00 sec)
-
+```
 
 [0]: http://www.cnblogs.com/blueoverflow/p/4714470.html
 [1]: #_label0

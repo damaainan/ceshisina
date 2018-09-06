@@ -474,7 +474,7 @@ LIMIT 0,
  
 
 
-[0]: https://img1.tuicool.com/uAZRVnZ.jpg 
-[1]: https://img2.tuicool.com/rqmy6zv.jpg 
-[2]: https://img2.tuicool.com/ia6v63q.jpg 
-[3]: https://img0.tuicool.com/UfemiuJ.jpg 
+[0]: ./img/uAZRVnZ.jpg 
+[1]: ./img/rqmy6zv.jpg 
+[2]: ./img/ia6v63q.jpg 
+[3]: ./img/UfemiuJ.jpg 

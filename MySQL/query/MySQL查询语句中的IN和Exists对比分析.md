@@ -168,7 +168,7 @@ where tp.poetry_id>293650，耗时0.46S
  
 
 
-[1]: https://img1.tuicool.com/bqu2Ezb.jpg 
-[2]: https://img2.tuicool.com/IRBZzyr.jpg 
-[3]: https://img2.tuicool.com/Mj2mAna.jpg 
-[4]: https://img2.tuicool.com/qMzINvb.jpg 
+[1]: ./img/bqu2Ezb.jpg 
+[2]: ./img/IRBZzyr.jpg 
+[3]: ./img/Mj2mAna.jpg 
+[4]: ./img/qMzINvb.jpg 

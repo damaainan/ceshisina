@@ -5,7 +5,6 @@
 来源：[https://www.jianshu.com/p/20ffed814148](https://www.jianshu.com/p/20ffed814148)
 
 
-            
 -----
 
 ### 前言
@@ -31,7 +30,7 @@ mysql> show variables like 'log_error';
 
 可以看到错误日志的路径和文件名，默认情况下错误文件的文件名为服务器的主机名，即：hostname.err。只不过我这里设置的是/var/log/mysqld.log,修改错误日志地址可以在/etc/my.cnf中添加
 
-```sql
+```
 # Recommended in standard MySQL setup
 sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
 

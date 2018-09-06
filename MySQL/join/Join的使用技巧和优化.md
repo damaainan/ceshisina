@@ -246,16 +246,16 @@ EXPLAIN 连接查询
 
 其过程类似于三次次嵌套的循环。
 
-需要说明的是， **C** 作为驱动表，通过 **Using Where** 和 **Using join buffer** 来匹配 **F** ，是因为 C.cust_name ，F.user_name 都没有加索引，要获取具体的内容只能通过对全表的数据进行where过滤才能获取，而 _Using join buffer_ 是指使用到了Cache(只有当join类型为 **ALL** ，`index`，`rang`或者是`index_merge`的时候才会使用`join buffer`)，记录已经查询的结果，提高效率。 
+需要说明的是， **C** 作为驱动表，通过 **Using Where** 和 **Using join buffer** 来匹配 **F** ，是因为 C.cust_name ，F.user_name 都没有加索引，要获取具体的内容只能通过对全表的数据进行where过滤才能获取，而 `Using join buffer` 是指使用到了Cache(只有当join类型为 **ALL** ，`index`，`rang`或者是`index_merge`的时候才会使用`join buffer`)，记录已经查询的结果，提高效率。 
 
-而对于 **T** 和 **F** 之间通过T的主键T.id连接，所以join类型为 `eq_ref` ，也不用使用Using join buffer。 
+而对于 **T** 和 **F** 之间通过T的主键T.id连接，所以join类型为 `eq_ref` ，也不用使用`Using join buffer`。 
 
 ## 5. join语句的优化原则
 
 1. **用小结果集驱动大结果集** ，将筛选结果小的表首先连接，再去连接结果集比较大的表，尽量减少join语句中的Nested Loop的循环总次数；
 1. **优先优化Nested Loop的内层循环** （也就是最外层的Join连接），因为内层循环是循环中执行次数最多的，每次循环提升很小的性能都能在整个循环中提升很大的性能；
 1. 对被驱动表的join字段上建立 **索引** ；
-1. 当被驱动表的join字段上无法建立索引的时候，设置 **足够的Join Buffer Size** 。
+1. 当被驱动表的join字段上无法建立索引的时候，设置 **足够的`Join Buffer Size`** 。
 
 ## 参考文章
 

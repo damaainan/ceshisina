@@ -1,8 +1,6 @@
 # [SQL 经典回顾：JOIN 表连接操作不完全指南][0]
 
-2017-01-16 分类：[数据库][1]、[编程开发][2]、[首页精华][3][0人评论][4]
-
-**本文由[码农网][5] – 小峰原创翻译，转载请看清文末的转载要求，欢迎参与我们的[付费投稿计划][6]！**
+2017-01-16 
 
 也许最强大的SQL功能是JOIN操作。这让所有非关系数据库羡慕不已，因为当你想“合并”两个数据集时，这个概念是如此简单，并且又普遍适用。
 
@@ -224,11 +222,12 @@ INNER JOIN操作是过滤后的CROSS JOIN操作。这意味着如果两个表中
 
 事实上，令人奇怪的是“EQUI”JOIN是特殊情况，因为我们在SQL中EQUI JOIN做得最多，并且在OLTP应用程序中，我们只是通过主键/外键关系JOIN。例如：
 
+```sql
     SELECT *
     FROM actor AS a
     JOIN film_actor AS fa ON a.actor_id = fa.actor_id
     JOIN film AS f ON f.film_id = fa.film_id
-
+```
 上述查询选择了所有演员及其电影。有两个INNER JOIN操作，一个将actors连接到film_actor关系表中的相应条目（因为演员可以演许多电影，而电影可以有许多演员出演），并且另一个连接每个film_actor与关于电影本身的附加信息的关系。
 
 ### 特点
@@ -245,11 +244,12 @@ INNER JOIN操作是过滤后的CROSS JOIN操作。这意味着如果两个表中
 
 再次，和前面一样，我们可以写INNER JOIN操作，而不使用实际的INNER JOIN语法，而是使用CROSS JOIN或以逗号分隔的表格列表。这很无聊，但更有趣的是以下两种替代语法，其中之一是非常有用的：
 
+```sql
     SELECT *
     FROM actor
     JOIN film_actor USING (actor_id)
     JOIN film USING (film_id)
-
+```
 USING子句替换ON子句，并允许列出必须在JOIN操作的两侧出现的一组列。如果你以与Sakila数据库相同的方式仔细设计数据库，即每个外键列具有与它们引用的主键列相同的名称（例如actor.actor_id = film_actor.actor_id），那么你至少可以在这些数据库中使用USING 用于“EQUI”JOIN：
 
 * Derby
@@ -303,20 +303,22 @@ USING子句替换ON子句，并允许列出必须在JOIN操作的两侧出现的
 
 “EQUI”JOIN的一个更极端和更少有用的形式是NATURAL JOIN子句。前面的例子可以通过NATURAL JOIN替换USING来进一步“改进”，像这样：
 
+```sql
     SELECT *
     FROM actor
     NATURAL JOIN film_actor
     NATURAL JOIN film
-
+```
 请注意，我们不再需要指定任何JOIN标准，因为NATURAL JOIN将自动从它加入的两个表中获取所有共享相同名称的列，并将它们放置在“隐藏”的USING子句中。正如我们前面所看到的，由于主键和外键具有相同的列名，这看起来很有用。
 
 真相是：这是没用的。在Sakila数据库中，每个表还有一个LAST_UPDATE列，这是NATURAL JOIN会自动考虑的。因此NATURAL JOIN查询等价于：
 
+```sql
     SELECT *
     FROM actor
     JOIN film_actor USING (actor_id, last_update)
     JOIN film USING (film_id, last_update)
-
+```
 …这当然完全没有任何意义。所以，马上将NATURAL JOIN抛之脑后吧（除了一些非常罕见的情况，例如当连接Oracle的诊断视图 ，如v$sql NATURAL JOIN v$sql_plan等，用于ad-hoc分析）
 
 ## OUTER JOIN
@@ -530,18 +532,20 @@ RIGHT OUTER JOIN正好相反。它保留结果中来自右表的所有行。让�
 
 上面的例子再次使用了某种“带过滤器的笛卡尔积”JOIN。然而，更常见的是“EQUI”OUTER JOIN方法，其中我们连接了主键/外键关系。让我们回到Sakila数据库示例。一些演员没有在任何电影中出演，那么我们可能希望像这样查询：
 
+```sql
     SELECT *
     FROM actor
     LEFT JOIN film_actor USING (actor_id)
     LEFT JOIN film USING (film_id)
-
+```
 此查询将返回所有actors至少一次，无论他们是否在电影中出演。如果我们还想要所有没有演员的电影，那么我们可以使用FULL OUTER JOIN来组合结果：
 
+```sql
     SELECT *
     FROM actor
     FULL JOIN film_actor USING (actor_id)
     FULL JOIN film USING (film_id)
-
+```
 当然，这也适用于NATURAL LEFT JOIN，NATURAL RIGHT JOIN，NATURAL FULL JOIN，但同样的，这些都没有用，因为我们将再次使用USING（…，LAST_UPDATE），这使之完全没有任何意义。
 
 ### 备选语法：Oracle和SQL Server style OUTER JOIN
@@ -655,10 +659,11 @@ SQL Server做了正确的事情，很久以前就弃用（以及后面删除）�
 
 当写下如下虚构查询时：
 
+```sql
     SELECT *
     FROM actor
     LEFT SEMI JOIN film_actor USING (actor_id)
-
+```
 我们真正的意思是，我们想要电影中出演的所有演员。但我们不想在结果中出现任何电影，只要演员。更具体地说，我们不想让每个演员出现多次，即一部电影出现一次。我们希望每个演员在结果中只出现一次（或零次）。
 
 Semi在拉丁语中为“半”的意思，即我们只实现“半连接”，在这种情况下，即左半部分。
@@ -669,13 +674,14 @@ Semi在拉丁语中为“半”的意思，即我们只实现“半连接”，�
 
 这是更强大和更冗长的语法
 
+```sql
     SELECT *
     FROM actor a
     WHERE EXISTS (
       SELECT * FROM film_actor fa
       WHERE a.actor_id = fa.actor_id
     )
-
+```
 我们正在寻找存在于一部电影的所有演员，即在电影中演出的演员。使用这种语法（即，“SEMI”JOIN被放置在WHERE子句中），很明显我们可以在结果中最多得到每个演员一次。语法中没有实际的JOIN。
 
 尽管如此，大多数数据库能够识别这里真正发生的是“SEMI”JOIN，而不仅仅是一个普通的EXISTS()谓词。例如，对上述查询考虑Oracle执行计划：
@@ -695,13 +701,13 @@ Semi在拉丁语中为“半”的意思，即我们只实现“半连接”，�
 ### 替代语法：IN
 
 IN和EXISTS完全等同于“SEMI”JOIN模拟。以下查询将在大多数数据库（不是MySQL）中生成与先前EXISTS查询相同的计划：
-
+```sql
     SELECT *
     FROM actor
     WHERE actor_id IN (
       SELECT actor_id FROM film_actor
     )
-
+```
 如果你的数据库支持“SEMI”JOIN操作的两种语法，你或许可以从文体的角度选择你喜欢的。
 
 这与下面的JOIN是不一样的。
@@ -709,54 +715,60 @@ IN和EXISTS完全等同于“SEMI”JOIN模拟。以下查询将在大多数数�
 ## ANTI JOIN
 
 原则上，“ANTI”JOIN正好与“SEMI”JOIN相反。当写下如下虚构查询时：
-
+```sql
     SELECT *
     FROM actor
     LEFT ANTI JOIN film_actor USING (actor_id)
-
+```
 …我们正在做的是找出所有没有在任何电影中出演的演员。不幸的是，再次，SQL并没有这个操作的内置语法，但我们可以用EXISTS来模拟它：
 
 ### 替代语法：NOT EXISTS
 
 以下查询正好有预期的语义：
 
+```sql
     SELECT *
     FROM actor a
     WHERE NOT EXISTS (
       SELECT * FROM film_actor fa
       WHERE a.actor_id = fa.actor_id
     )
-
+```
 ### （危险）替代语法：NOT IN
 
 小心！虽然EXISTS和IN是等效的，但NOT EXISTS和NOT IN是不等效的。因为NULL值！
 
 在这种特殊情况下，下面的NOT IN查询等同于先前的NOT EXISTS查询，因为我们的film_actor表在film_actor.actor_id上有一个NOT NULL约束
 
+```sql
     SELECT *
     FROM actor
     WHERE actor_id NOT IN (
       SELECT actor_id FROM film_actor
     )
-
+```
 然而，如果actor_id变为可空，那么查询将是错误的。不相信吗？尝试运行：
 
+```sql
     SELECT *
     FROM actor
     WHERE actor_id NOT IN (1, 2, NULL)
+```
 
 它不会返回任何记录。为什么？因为NULL在SQL中是UNKNOWN值。所以，上面的谓词如下是一样的：
 
+```sql
     SELECT *
     FROM actor
     WHERE actor_id NOT IN (1, 2, UNKNOWN)
-
+```
 并且因为我们不能确定actor_id是否在一个值为UNKNOWN（是4？还是5？抑或-1？）的一组值中，因此整个谓词变为UNKNOWN
 
+```sql
     SELECT *
     FROM actor
     WHERE UNKNOWN
-
+```
 如果你想了解更多，这里有一篇Joe Celko写的[关于三值逻辑的好文章][13]。
 
 当然，这样还不够：
@@ -770,12 +782,13 @@ IN和EXISTS完全等同于“SEMI”JOIN模拟。以下查询将在大多数数�
 
 奇怪的是，有些人喜欢以下语法：
 
+```sql
     SELECT *
     FROM actor a
     LEFT JOIN film_actor fa
     USING (actor_id)
     WHERE film_id IS NULL
-
+```
 这是正确的，因为我们：
 
 * 连接电影加到演员
@@ -1011,12 +1024,6 @@ MULTISET运算符使用相关子查询参数，并在嵌套集合中聚合其所
 再次声明，本文对SQL中JOIN表的许多不同方法可能并不完整。我希望你在这篇文章中能发现1-2个新的技巧。JOIN只是许多非常有趣的SQL操作中的其中一个。
 
 [0]: http://www.codeceo.com/article/sql-join-guide.html
-[1]: http://www.codeceo.com/article/category/develop/database
-[2]: http://www.codeceo.com/article/category/develop
-[3]: http://www.codeceo.com/article/category/pick
-[4]: http://www.codeceo.com/article/sql-join-guide.html#comments
-[5]: http://www.codeceo.com/
-[6]: http://www.codeceo.com/article/2016-codeceo-post-plan.html
 [7]: ./img/venn-join1.png
 [8]: https://blog.jooq.org/2016/12/09/a-beginners-guide-to-the-true-order-of-sql-operations/
 [9]: ./img/venn-cross-product.png

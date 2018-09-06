@@ -48,31 +48,27 @@ binlog日志三种模式
 3、 如果生产中使用MySQL的特殊功能较多，又希望数据最大化一致，此时最好Row level模式；但是要注意，该模式的binlog非常“沉重”。
  
 #### 查看binlog模式
- 
+
+```sql
     mysql> show global variables like "%binlog_format%";
      
     +---------------+-----------+
-     
      Variable_name | Value    |
-     
     +---------------+-----------+
-     
      binlog_format | STATEMENT |
-     
     +---------------+-----------+
- 
+```
+
 #### 配置binlog日志模式
  
 `vim my.cnf`（在[mysqld]模块中配置）
- 
+
+```cfg
     log-bin = /data/3306/mysql-bin
-     
     binlog_format="STATEMENT"
-     
     #binlog_format="ROW"
-     
     #binlog_format="MIXED"
- 
+```
 不重启，使配置在msyql中生效
  
     SET global binlog_format='STATEMENT';

@@ -2,58 +2,58 @@
 
 目录结构
 
-22.1 performance Schema 快速入门  
-22.2 Performance Schema 配置  
-    22.2.1 mysql编译的时候 修改Performance Schema配置  
-    22.2.2 mysql启动的时候 修改Performance Schema配置  
-    22.2.3 mysql运行过程中 修改Performance Schema配置  
-22.3 Performance Schema 查询  
-22.4 Performance Schema Instrument Naming Conventions  
-22.5 Performance Schema Status 监控  
-22.6 Performance Schema 原子性，分子性 事件  
-22.7 Performance Schema Statement 诊断  
-22.8 Performance Schema 基本表特征  
-22.9 Performance Schema 表的描述  
-    22.9.1 Performance Schema 表的索引  
-    22.9.2 Performance Schema Setup 类型的表  
-    22.9.3 Performance Schema Instance 类型的表  
-    22.9.4 Performance Schema Wait Event 类型的表  
-    22.9.5 Performance Schema Stage Event 类型的表  
-    22.9.6 Performance Schema Statement Event 类型的表  
-    22.9.7 Performance Schema Connection 类型的表  
-    22.9.8 Performance Schema Connection Attribute 类型的表  
-    22.9.9 Performance Schema Summary 类型的表  
-    22.9.10 Performance Schema 其他类型的表  
-22.10 Performance Schema 变量与选项  
-22.11 Performance Schema 命令选项  
-22.12 Performance Schema 系统变量  
-22.13 Performance Schema status变量  
-22.14 Performance Schema 与插件  
-22.15 使用Performance Schema 来诊断问题  
-    22.15.1 使用Performance Schema来替代profiling  
-心得： performance_schema的使用  
+- 22.1 performance Schema 快速入门  
+- 22.2 Performance Schema 配置  
+    - 22.2.1 mysql编译的时候 修改Performance Schema配置  
+    - 22.2.2 mysql启动的时候 修改Performance Schema配置  
+    - 22.2.3 mysql运行过程中 修改Performance Schema配置  
+- 22.3 Performance Schema 查询  
+- 22.4 Performance Schema Instrument Naming Conventions  
+- 22.5 Performance Schema Status 监控  
+- 22.6 Performance Schema 原子性，分子性 事件  
+- 22.7 Performance Schema Statement 诊断  
+- 22.8 Performance Schema 基本表特征  
+- 22.9 Performance Schema 表的描述  
+    - 22.9.1 Performance Schema 表的索引  
+    - 22.9.2 Performance Schema Setup 类型的表  
+    - 22.9.3 Performance Schema Instance 类型的表  
+    - 22.9.4 Performance Schema Wait Event 类型的表  
+    - 22.9.5 Performance Schema Stage Event 类型的表  
+    - 22.9.6 Performance Schema Statement Event 类型的表  
+    - 22.9.7 Performance Schema Connection 类型的表  
+    - 22.9.8 Performance Schema Connection Attribute 类型的表  
+    - 22.9.9 Performance Schema Summary 类型的表  
+    - 22.9.10 Performance Schema 其他类型的表  
+- 22.10 Performance Schema 变量与选项  
+- 22.11 Performance Schema 命令选项  
+- 22.12 Performance Schema 系统变量  
+- 22.13 Performance Schema status变量  
+- 22.14 Performance Schema 与插件  
+- 22.15 使用Performance Schema 来诊断问题  
+    - 22.15.1 使用Performance Schema来替代profiling  
+- 心得： performance_schema的使用  
 
-架构图
+## 架构图
 
-Mysql 5.5 Performance schema  
+#### Mysql 5.5 Performance schema  
 ![](./img/5.5.png)
 
 
 
-Mysql 5.6 Performance schema  
+#### Mysql 5.6 Performance schema  
 ![](./img/5.6.png)
 
 
 
-Mysql 5.7 Performance schema  
+#### Mysql 5.7 Performance schema  
 
 ![](./img/5.7.png)
 
-consumer 层次图
+#### consumer 层次图
 
 ![](./img/consumer.png)
 
-Statement 诊断
+#### Statement 诊断
 
 ![](./img/statement.png)
 

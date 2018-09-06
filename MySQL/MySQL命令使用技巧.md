@@ -158,7 +158,7 @@ MySQL 5.6后推出了mysql_config_editor这个命令，本地加密存储用户�
 
 * **通过 -e 参数指定SQL**
 
-```sql
+```
     #mysql -S /tmp/mysql3306.sock -uroot -pzhishutang.com  -e "select version()"
     mysql: [Warning] Using a password on the command line interface can be insecure.
     +------------+
@@ -170,7 +170,7 @@ MySQL 5.6后推出了mysql_config_editor这个命令，本地加密存储用户�
 
 * **通管道来执行**
 
-```sql
+```
     #echo "select version()"|mysql -S /tmp/mysql3306.sock -uroot -pwubxwubx  zst
     mysql: [Warning] Using a password on the command line interface can be insecure.
     version()
@@ -179,7 +179,7 @@ MySQL 5.6后推出了mysql_config_editor这个命令，本地加密存储用户�
 
 * **通过login-path进行上面的方操作**
 
-```sql
+```
     #echo "select version()"|mysql --login-path=3306
     version()
     5.7.19-log

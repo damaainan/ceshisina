@@ -49,11 +49,11 @@ Fetch阶段也不是必须存在的，如果是聚集索引链接，那么直接
 
 接着计算两张表Join的成本，这里有下列几种概念：
 
-* 外表的扫描次数，记为O。通常外表的扫描次数都是1，即Join时扫描一次驱动表的数据即可
-* 内表的扫描次数，记为I。根据不同Join算法，内表的扫描次数不同
-* 读取表的记录数，记为R。根据不同Join算法，读取记录的数量可能不同
-* Join的比较次数，记为M。根据不同Join算法，比较次数不同   
-回表的读取记录的数，记为F。若Join的是辅助索引，可能需要回表取得最终的数据
+* `外表的扫描次数`，记为O。通常外表的扫描次数都是1，即Join时扫描一次驱动表的数据即可
+* `内表的扫描次数`，记为I。根据不同Join算法，内表的扫描次数不同
+* `读取表的记录数`，记为R。根据不同Join算法，读取记录的数量可能不同
+* `Join的比较次数`，记为M。根据不同Join算法，比较次数不同   
+* `回表的读取记录的数`，记为F。若Join的是辅助索引，可能需要回表取得最终的数据
 
 评判一个Join算法是否优劣，就是查看上述这些操作的开销是否比较小。当然，这还要考虑I/O的访问方式，顺序还是随机，总之Join的调优也是门艺术，并非想象的那么简单。
 
@@ -61,7 +61,7 @@ Fetch阶段也不是必须存在的，如果是聚集索引链接，那么直接
 
 网上大部分说MySQL只支持`Nested-Loop Join`，故性能差。但是`Nested-Loop join` 一定差吗？`Hash Join` 比 `Nested-Loop Join` 强？Inside君感觉这样的理解都是片面的，`Hash Join`可能仅是`Nested-Loop Join`的一种变种。所以 Inside 君打算从算法的角度来分析 MySQL 支持的 Join ，并以此分析对于 Join 语句的优化。
 
-首先来看 S`imple Nested-Loop Join`（以下简称SNLJ），也就是最朴素的` Nested-Loop Join`，其算法伪代码如下所示:
+首先来看 `Simple Nested-Loop Join`（以下简称SNLJ），也就是最朴素的` Nested-Loop Join`，其算法伪代码如下所示:
 
     For each row r in R do
         Foreach row s in S do
@@ -123,12 +123,13 @@ INLJ的算法并不复杂，也算简单易懂。但是效率是否能达到用�
 
 由于访问的是辅助索引，如果查询需要访问聚集索引上的列，那么必要需要进行回表取数据，看似每条记录只是多了一次回表操作，但这才是 **INLJ算法最大的弊端**。首先，辅助索引的index lookup是比较随机I/O访问操作。其次，根据index lookup再进行回表又是一个随机的I/O操作。所以说，INLJ最大的弊端是其 **可能需要大量的离散操作** ，这在SSD出现之前是最大的瓶颈。而即使SSD的出现大幅提升了随机的访问性能，但是对比顺序I/O，其还是慢了很多，依然不在一个数量级上。例如下面的这个SQL语句：
 
+```sql
     SELECT COUNT(*) FROMpart, lineitem
     WHERE
     l_partkey = p_partkey
     AND p_retailprice > 2050
     AND l_discount > 0.04;
-
+```
 
 其中 p_partkey 是表part的主键，l_partkey 是表lineitem的一个辅助索引，由于表part数据较小，因此作为外表（驱动表）。但是内表Join完成后还需要判断条件 l_discount > 0.04，这个在聚集索引上，故需要回表进行读取。根据explain得到上述SQL的执行计划如下图所示：
 
@@ -182,10 +183,11 @@ used columns还是非常模糊。为此，Inside君询问了好友李海翔，�
 
 比如下面的SQL语句，假设没有索引，需要使用到`Join Buffer`进行链接：
 
+```
     SELECT a.col3 FROM a,b
     WHERE a.col1 = b.col2
     AND a.col2 > …. AND b.col2 = …
-
+```
 
 假设上述SQL语句的外表是a，内表是b，那么存放在`Join Buffer`中的列是所有参与查询的列，在这里就是（a.col1，a.col2，a.col3）
 

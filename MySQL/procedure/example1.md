@@ -1,5 +1,7 @@
 存储过程和函数是在数据库中定义一些SQL语句的集合，然后直接调用这些存储过程和函数来执行已经定义好的SQL语句。存储过程和函数可以避免开发人员重复的编写相同的SQL语句。而且，存储过程和函数是在MySQL服务器中存储和执行的，可以减少客户端和服务器端的数据传输。  
-**一、存储过程****1.1、基本语法**
+**一、存储过程**
+
+**1.1、基本语法**
 
 CREATE PROCEDURE sp_name ([proc_parameter[,…]])   
   
@@ -13,7 +15,7 @@ Param_name为参数名，type为参数的数据类型。多个参数彼此间用
 
 Characteristic:存储过程的某些特征设定，分别介绍  
 
-1 COMMENT‘string‘:用于对存储过程的描述，其中string为描述内容,comment为关键字。  
+1 COMMENT'string':用于对存储过程的描述，其中string为描述内容,comment为关键字。  
 
 2 LANGUAGE SQL:指明编写这个存储过程的语言为SQL语言。这个选项可以不指定。  
 
@@ -50,10 +52,10 @@ CREATE TABLE
 **1.3 IN、OUT、INOUT参数**  
 **（1）、带IN的存储过程**
 ```sql
-//创建储存过程.cmd 中运行
+-- 创建储存过程.cmd 中运行
 CREATE PROCEDURE SP_SEARCH(IN p_name CHAR(20))
 BEGIN
-IF p_name is null or p_name=‘‘ THEN
+IF p_name is null or p_name=' THEN
 SELECT * FROM t_user;
 ELSE
 SELECT * FROM t_user WHERE USER_NAME LIKE p_name;
@@ -69,8 +71,8 @@ END
 
 调用：
 ```sql
-//调用并输出结果
-CALL SP_SEARCH(‘林炳文‘)
+-- 调用并输出结果
+CALL SP_SEARCH('林炳文')
 ```
 
 结果
@@ -80,10 +82,10 @@ CALL SP_SEARCH(‘林炳文‘)
 **（2）、带OUT的存储过程**
 
 ```sql
-//带OUT返回的
+-- 带OUT返回的
 CREATE PROCEDURE SP_SEARCH2(IN p_name CHAR(20),OUT p_int INT)
 BEGIN
-IF p_name is null or p_name=‘‘ THEN
+IF p_name is null or p_name=' THEN
 SELECT * FROM t_user;
 ELSE
 SELECT * FROM t_user WHERE USER_NAME LIKE p_name;
@@ -95,8 +97,8 @@ END
 调用输出：统计带林开头的人数
 
 ```sql
-//调用并输出结果
-CALL SP_SEARCH2(‘林%‘,@p_num);
+-- 调用并输出结果
+CALL SP_SEARCH2('林%',@p_num);
 SELECT @p_num;
 ```
 ![](./img/20158692656122.png)
@@ -105,12 +107,12 @@ SELECT @p_num;
 **（3）、带INOUT的存储过程**
 
 ```sql
-//带INOUT的存储过程
+-- 带INOUT的存储过程
 CREATE PROCEDURE sp_inout(INOUT p_num INT)
 BEGIN
 SET p_num=p_num*10;
 END
-//调用并输出结果
+-- 调用并输出结果
 SET @p_num=2;
 call sp_inout(@p_num);
 SELECT @p_num;
@@ -150,7 +152,7 @@ Set cid=910;
 
 **3、select … into 语句**  
 把选定列的值直接存储到局部变量中，语法格式
-```sql
+```
 Select col_name[,…] into var_name[,…] table_expr
 Col_name:用于指定列名
 Var_name:用于指定要赋值的变量名
@@ -158,15 +160,17 @@ Table_expr:表示select语句中的from字句及后面的语法部分
 ```
 说明:存储过程体中的select…into语句返回的结果集只能有一行数据。  
 **4、定义处理程序**是事先定义程序执行过程中可能遇到的问题。并且可以在处理程序中定义解决这些问题的办法。这种方式可以提前预测可能出现的问题，并提出解决方法。
-```sql
+```
 DECLARE handler_type HANDLER FOR condition_value[,…] sp_statement
 handler_type:CONTINUE | EXIT | UNDO
 Condition_value:Sqlwarning | not found | sqlexception
 ```
 
-**5、流程控制语句**（1）条件判断语句  
+**5、流程控制语句**
+
+（1）条件判断语句  
 **If语句**
-```sql
+```
 If search_condition then statement_list
 [elseif search_condition then statement_list]…
 [else statement_list]
@@ -217,16 +221,16 @@ CREATE TABLE
 
 然后写一个存储过程：返回各个分数等级的人
 ```sql
-//带多重IF的存储过程
+-- 带多重IF的存储过程
 CREATE PROCEDURE SP_SCHOLARSHIP_LEVEL(IN p_level char(1))
 BEGIN
-IF p_level =‘A‘ THEN
+IF p_level ='A' THEN
 SELECT * FROM t_grade WHERE STU_SCORE >=90;
-ELSEIF p_level =‘B‘ THEN
+ELSEIF p_level ='B' THEN
 SELECT * FROM t_grade WHERE STU_SCORE <90 AND STU_SCORE>=80;
-ELSEIF p_level =‘C‘ THEN
+ELSEIF p_level ='C' THEN
 SELECT * FROM t_grade WHERE STU_SCORE <80 AND STU_SCORE>=70;
-ELSEIF p_level =‘D‘ THEN
+ELSEIF p_level ='D' THEN
 SELECT * FROM t_grade WHERE STU_SCORE <60;
 ELSE
 SELECT * FROM t_grade;
@@ -235,8 +239,8 @@ END
 ```
 调用过程：
 ```sql
-//调用并输出结果
-CALL SP_SCHOLARSHIP_LEVEL(‘A‘);
+-- 调用并输出结果
+CALL SP_SCHOLARSHIP_LEVEL('A');
 ```
 ![](./img/20158693534267.png)
 
@@ -264,13 +268,13 @@ CREATE PROCEDURE SP_SCHOLARSHIP_LEVEL3(IN p_level char(1))
 BEGIN
 DECLARE p_num int DEFAULT 0;
 CASE p_level
-WHEN ‘A‘ THEN
+WHEN 'A' THEN
 SET p_num=90;
-WHEN ‘B‘ THEN
+WHEN 'B' THEN
 SET p_num=80;
-WHEN ‘C‘ THEN
+WHEN 'C' THEN
 SET p_num=70;
-WHEN ‘D‘ THEN
+WHEN 'D' THEN
 SET p_num=60;
 ELSE
 SET p_num=0;
@@ -281,8 +285,8 @@ END
 
 **调用：**
 ```sql
-//调用并输出结果
-CALL SP_SCHOLARSHIP_LEVEL3(‘d‘);
+-- 调用并输出结果
+CALL SP_SCHOLARSHIP_LEVEL3('d');
 ```
 ![](./img/20158693912492.png)
 
@@ -300,7 +304,7 @@ End while
 判断条件search_condition是否为真,若为真,则执行statement_list中的语句，然后再进行判断，如若仍然为真则继续循环，直至条件判断不为真时循环结束。  
 **使用范例**
 ```sql
-//带while的存储过程
+-- 带while的存储过程
 CREATE PROCEDURE sp_cal(IN p_num INT,OUT p_result INT)
 BEGIN
  SET p_result=1;
@@ -309,7 +313,7 @@ BEGIN
  SET p_num = p_num-1;
  END WHILE;
 END
-//调用并输出结果
+-- 调用并输出结果
 CALL sp_cal(5,@result);
 SELECT @result;
 ```
@@ -333,7 +337,7 @@ Repeat语句首先执行statement_list中的语句，然后判断条件search_co
 Repeat先执行后判断，while先判断后执行。  
 **使用范例：**
 ```sql
-//带repeat的存储过程
+-- 带repeat的存储过程
 CREATE PROCEDURE sp_cal2(IN p_num INT,OUT p_result INT)
 BEGIN
  SET p_result=1;
@@ -343,7 +347,7 @@ BEGIN
   UNTIL p_num<=1
  END REPEAT;
 END
-//调用并输出结果
+-- 调用并输出结果
 CALL sp_cal2(5,@result);
 SELECT @result;
 ```
@@ -456,10 +460,10 @@ CREATE TABLE `test_cur1` (
  `order1` char(11) default NULL,
  PRIMARY KEY (`id`)
 )
-INSERT INTO `test_cur1` VALUES (1, ‘145‘, ‘d1‘);
-INSERT INTO `test_cur1` VALUES (2, ‘134‘, ‘1d‘);
-INSERT INTO `test_cur1` VALUES (3, ‘123‘, ‘1ad‘);
-INSERT INTO `test_cur1` VALUES (4, ‘121‘, ‘1as‘);
+INSERT INTO `test_cur1` VALUES (1, '145', 'd1');
+INSERT INTO `test_cur1` VALUES (2, '134', '1d');
+INSERT INTO `test_cur1` VALUES (3, '123', '1ad');
+INSERT INTO `test_cur1` VALUES (4, '121', '1as');
   
 CREATE TABLE `test_cur2` (
  `id` int(11) NOT NULL auto_increment,
@@ -477,18 +481,18 @@ BEGIN
  DECLARE ID int(11);
  DECLARE type char(11);
  DECLARE order1 char(11);
- DECLARE mycur CURSOR FOR SELECT * FROM test_cur1;//定义光标
- DECLARE CONTINUE HANDLER FOR SQLSTATE ‘02000‘ SET done = 1;
- //打开光标
+ DECLARE mycur CURSOR FOR SELECT * FROM test_cur1;-- 定义光标
+ DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = 1;
+ -- 打开光标
  OPEN mycur;
- //开始循环
+ -- 开始循环
  REPEAT
- FETCH mycur INTO ID,type,order1;//取出光标的内容到临时变量
+ FETCH mycur INTO ID,type,order1;-- 取出光标的内容到临时变量
  IF NOT done THEN
-  INSERT INTO test_cur2 VALUES (ID,type,order1);//插入到另一张表
+  INSERT INTO test_cur2 VALUES (ID,type,order1);-- 插入到另一张表
  END IF;
- UNTIL done END REPEAT;//当done=1时结束循环
- //关闭光标
+ UNTIL done END REPEAT;-- 当done=1时结束循环
+ -- 关闭光标
  CLOSE mycur;
 END
 ```
