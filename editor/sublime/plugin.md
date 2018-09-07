@@ -161,3 +161,34 @@ Preferences > Package Settings > phpfmt > Settings - User
 状态栏显示当前文件大小 [StatusBarFileSize](https://github.com/SublimeText/StatusBarFileSize)   
 状态栏显示当前时间 [StatusBarTime](https://github.com/lowliet/sublimetext-StatusBarTime)   
 字数统计 [WordCount](https://github.com/titoBouzout/WordCount)   
+
+
+
+Cmd caller 配置
+
+配置快捷键 `ctrl+alt+x`  
+```
+{
+    "windows": {
+        "default": "CMD",
+        "apps": {
+          "CMD": {
+            "name": "Run cmd.exe Here",
+            "cmd": "cmd.exe /s /k pushd \"${file_path}\""
+          },
+          "Cmder": {
+            "name": "Run Cmder.exe Here",
+            "cmd": "Cmder.exe  \"${file_path}\""
+          },
+          "PowerShell": {
+            "name": "Run PowerShell Here",
+            "cmd": "powershell.exe -noexit -command Set-Location -literalPath '${file_path}'"
+          },
+          "explorer": {
+            "name": "Open Explorer Here",
+            "cmd": "explorer.exe \"${file_path}\""
+          },
+        }       
+    }
+}
+```
