@@ -102,6 +102,6 @@ xdebug.remote_handler=dbgp
  
 
 
-[0]: ../img/An6Nza3.png 
-[1]: ../img/R7RnAbm.png 
-[2]: ../img/AjaUbeZ.png 
+[0]: ./img/An6Nza3.png 
+[1]: ./img/R7RnAbm.png 
+[2]: ./img/AjaUbeZ.png 

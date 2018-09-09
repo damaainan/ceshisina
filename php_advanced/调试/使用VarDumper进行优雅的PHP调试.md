@@ -170,7 +170,7 @@
 
 [0]: https://jellybool.com/post/a-brand-new-way-to-test-php-with-symfony-vardumper
 [1]: https://github.com/symfony/var-dumper
-[2]: ../img/6cc571331198.png
-[3]: ../img/285e24b636e1.png
-[4]: ../img/4c8a25331d8d.gif
-[5]: ../img/081e98d01541.png
+[2]: ./img/6cc571331198.png
+[3]: ./img/285e24b636e1.png
+[4]: ./img/4c8a25331d8d.gif
+[5]: ./img/081e98d01541.png
