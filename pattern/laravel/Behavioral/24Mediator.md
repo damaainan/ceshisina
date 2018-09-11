@@ -17,256 +17,256 @@
 #### **MediatorInterface.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Mediator;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Mediator;
+
+/**
+ * MediatorInterface是一个中介者契约
+ * 该接口不是强制的，但是使用它更加符合里氏替换原则
+ */
+interface MediatorInterface
+{
     /**
-     * MediatorInterface是一个中介者契约
-     * 该接口不是强制的，但是使用它更加符合里氏替换原则
+     * 发送响应
+     *
+     * @param string $content
      */
-    interface MediatorInterface
-    {
-        /**
-         * 发送响应
-         *
-         * @param string $content
-         */
-        public function sendResponse($content);
-    
-        /**
-         * 发起请求
-         */
-        public function makeRequest();
-    
-        /**
-         * 查询数据库
-         */
-        public function queryDb();
-    }
+    public function sendResponse($content);
+
+    /**
+     * 发起请求
+     */
+    public function makeRequest();
+
+    /**
+     * 查询数据库
+     */
+    public function queryDb();
+}
 ```
 #### **Mediator.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Mediator;
-    
-    use DesignPatterns\Behavioral\Mediator\Subsystem;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Mediator;
+
+use DesignPatterns\Behavioral\Mediator\Subsystem;
+
+/**
+ * Mediator是中介者模式的具体实现类
+ * In this example, I have made a "Hello World" with the Mediator Pattern.
+ */
+class Mediator implements MediatorInterface
+{
+
     /**
-     * Mediator是中介者模式的具体实现类
-     * In this example, I have made a "Hello World" with the Mediator Pattern.
+     * @var Subsystem\Server
      */
-    class Mediator implements MediatorInterface
+    protected $server;
+
+    /**
+     * @var Subsystem\Database
+     */
+    protected $database;
+
+    /**
+     * @var Subsystem\Client
+     */
+    protected $client;
+
+    /**
+     * @param Subsystem\Database $db
+     * @param Subsystem\Client   $cl
+     * @param Subsystem\Server   $srv
+     */
+    public function setColleague(Subsystem\Database $db, Subsystem\Client $cl, Subsystem\Server $srv)
     {
-    
-        /**
-         * @var Subsystem\Server
-         */
-        protected $server;
-    
-        /**
-         * @var Subsystem\Database
-         */
-        protected $database;
-    
-        /**
-         * @var Subsystem\Client
-         */
-        protected $client;
-    
-        /**
-         * @param Subsystem\Database $db
-         * @param Subsystem\Client   $cl
-         * @param Subsystem\Server   $srv
-         */
-        public function setColleague(Subsystem\Database $db, Subsystem\Client $cl, Subsystem\Server $srv)
-        {
-            $this->database = $db;
-            $this->server = $srv;
-            $this->client = $cl;
-        }
-    
-        /**
-         * 发起请求
-         */
-        public function makeRequest()
-        {
-            $this->server->process();
-        }
-    
-        /**
-         * 查询数据库
-         * @return mixed
-         */
-        public function queryDb()
-        {
-            return $this->database->getData();
-        }
-    
-        /**
-         * 发送响应
-         *
-         * @param string $content
-         */
-        public function sendResponse($content)
-        {
-            $this->client->output($content);
-        }
+        $this->database = $db;
+        $this->server = $srv;
+        $this->client = $cl;
     }
+
+    /**
+     * 发起请求
+     */
+    public function makeRequest()
+    {
+        $this->server->process();
+    }
+
+    /**
+     * 查询数据库
+     * @return mixed
+     */
+    public function queryDb()
+    {
+        return $this->database->getData();
+    }
+
+    /**
+     * 发送响应
+     *
+     * @param string $content
+     */
+    public function sendResponse($content)
+    {
+        $this->client->output($content);
+    }
+}
 ```
 #### **Colleague.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Mediator;
+<?php
+
+namespace DesignPatterns\Behavioral\Mediator;
+
+/**
+ * Colleague是一个抽象的同事类，但是它只知道中介者Mediator，而不知道其他同事
+ */
+abstract class Colleague
+{
+    /**
+     * this ensures no change in subclasses
+     *
+     * @var MediatorInterface
+     */
+    private $mediator;
     
     /**
-     * Colleague是一个抽象的同事类，但是它只知道中介者Mediator，而不知道其他同事
+     * @param MediatorInterface $medium
      */
-    abstract class Colleague
+    public function __construct(MediatorInterface $medium)
     {
-        /**
-         * this ensures no change in subclasses
-         *
-         * @var MediatorInterface
-         */
-        private $mediator;
-        
-        /**
-         * @param MediatorInterface $medium
-         */
-        public function __construct(MediatorInterface $medium)
-        {
-            $this->mediator = $medium;
-        }
-    
-        // for subclasses
-        protected function getMediator()
-        {
-            return $this->mediator;
-        }
+        $this->mediator = $medium;
     }
+
+    // for subclasses
+    protected function getMediator()
+    {
+        return $this->mediator;
+    }
+}
 ```
 #### **Subsystem/Client.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Mediator\Subsystem;
-    
-    use DesignPatterns\Behavioral\Mediator\Colleague;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Mediator\Subsystem;
+
+use DesignPatterns\Behavioral\Mediator\Colleague;
+
+/**
+ * Client是发起请求&获取响应的客户端
+ */
+class Client extends Colleague
+{
     /**
-     * Client是发起请求&获取响应的客户端
+     * request
      */
-    class Client extends Colleague
+    public function request()
     {
-        /**
-         * request
-         */
-        public function request()
-        {
-            $this->getMediator()->makeRequest();
-        }
-    
-        /**
-         * output content
-         *
-         * @param string $content
-         */
-        public function output($content)
-        {
-            echo $content;
-        }
+        $this->getMediator()->makeRequest();
     }
+
+    /**
+     * output content
+     *
+     * @param string $content
+     */
+    public function output($content)
+    {
+        echo $content;
+    }
+}
 ```
 #### **Subsystem/Database.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Mediator\Subsystem;
-    
-    use DesignPatterns\Behavioral\Mediator\Colleague;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Mediator\Subsystem;
+
+use DesignPatterns\Behavioral\Mediator\Colleague;
+
+/**
+ * Database提供数据库服务
+ */
+class Database extends Colleague
+{
     /**
-     * Database提供数据库服务
+     * @return string
      */
-    class Database extends Colleague
+    public function getData()
     {
-        /**
-         * @return string
-         */
-        public function getData()
-        {
-            return "World";
-        }
+        return "World";
     }
+}
 ```
 #### **Subsystem/Server.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Mediator\Subsystem;
-    
-    use DesignPatterns\Behavioral\Mediator\Colleague;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Mediator\Subsystem;
+
+use DesignPatterns\Behavioral\Mediator\Colleague;
+
+/**
+ * Server用于发送响应
+ */
+class Server extends Colleague
+{
     /**
-     * Server用于发送响应
+     * process on server
      */
-    class Server extends Colleague
+    public function process()
     {
-        /**
-         * process on server
-         */
-        public function process()
-        {
-            $data = $this->getMediator()->queryDb();
-            $this->getMediator()->sendResponse("Hello $data");
-        }
+        $data = $this->getMediator()->queryDb();
+        $this->getMediator()->sendResponse("Hello $data");
     }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/MediatorTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Tests\Mediator\Tests;
-    
-    use DesignPatterns\Behavioral\Mediator\Mediator;
-    use DesignPatterns\Behavioral\Mediator\Subsystem\Database;
-    use DesignPatterns\Behavioral\Mediator\Subsystem\Client;
-    use DesignPatterns\Behavioral\Mediator\Subsystem\Server;
-    
-    /**
-     * MediatorTest tests hello world
-     */
-    class MediatorTest extends \PHPUnit\Framework\TestCase
+<?php
+
+namespace DesignPatterns\Tests\Mediator\Tests;
+
+use DesignPatterns\Behavioral\Mediator\Mediator;
+use DesignPatterns\Behavioral\Mediator\Subsystem\Database;
+use DesignPatterns\Behavioral\Mediator\Subsystem\Client;
+use DesignPatterns\Behavioral\Mediator\Subsystem\Server;
+
+/**
+ * MediatorTest tests hello world
+ */
+class MediatorTest extends \PHPUnit\Framework\TestCase
+{
+
+    protected $client;
+
+    protected function setUp()
     {
-    
-        protected $client;
-    
-        protected function setUp()
-        {
-            $media = new Mediator();
-            $this->client = new Client($media);
-            $media->setColleague(new Database($media), $this->client, new Server($media));
-        }
-    
-        public function testOutputHelloWorld()
-        {
-            // 测试是否输出 Hello World :
-            $this->expectOutputString('Hello World');
-            // 正如你所看到的, Client, Server 和 Database 是完全解耦的
-            $this->client->request();
-        }
+        $media = new Mediator();
+        $this->client = new Client($media);
+        $media->setColleague(new Database($media), $this->client, new Server($media));
     }
+
+    public function testOutputHelloWorld()
+    {
+        // 测试是否输出 Hello World :
+        $this->expectOutputString('Hello World');
+        // 正如你所看到的, Client, Server 和 Database 是完全解耦的
+        $this->client->request();
+    }
+}
 ```
 ### **5、总结**
 

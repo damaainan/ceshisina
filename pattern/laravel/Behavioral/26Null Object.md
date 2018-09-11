@@ -33,138 +33,138 @@
 #### **Service.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\NullObject;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\NullObject;
+
+/**
+ * Service 是使用 logger 的模拟服务
+ */
+class Service
+{
     /**
-     * Service 是使用 logger 的模拟服务
+     * @var LoggerInterface
      */
-    class Service
+    protected $logger;
+
+    /**
+     * 我们在构造函数中注入logger
+     *
+     * @param LoggerInterface $log
+     */
+    public function __construct(LoggerInterface $log)
     {
-        /**
-         * @var LoggerInterface
-         */
-        protected $logger;
-    
-        /**
-         * 我们在构造函数中注入logger
-         *
-         * @param LoggerInterface $log
-         */
-        public function __construct(LoggerInterface $log)
-        {
-            $this->logger = $log;
-        }
-    
-        /**
-         * do something ...
-         */
-        public function doSomething()
-        {
-            // 在空对象模式中不再需要这样判断 "if (!is_null($this->logger))..."
-            $this->logger->log('We are in ' . __METHOD__);
-            // something to do...
-        }
+        $this->logger = $log;
     }
+
+    /**
+     * do something ...
+     */
+    public function doSomething()
+    {
+        // 在空对象模式中不再需要这样判断 "if (!is_null($this->logger))..."
+        $this->logger->log('We are in ' . __METHOD__);
+        // something to do...
+    }
+}
 ```
 #### **LoggerInterface.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\NullObject;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\NullObject;
+
+/**
+ * LoggerInterface 是 logger 接口
+ *
+ * 核心特性: NullLogger必须和其它Logger一样实现这个接口
+ */
+interface LoggerInterface
+{
     /**
-     * LoggerInterface 是 logger 接口
+     * @param string $str
      *
-     * 核心特性: NullLogger必须和其它Logger一样实现这个接口
+     * @return mixed
      */
-    interface LoggerInterface
-    {
-        /**
-         * @param string $str
-         *
-         * @return mixed
-         */
-        public function log($str);
-    }
+    public function log($str);
+}
 ```
 #### **PrintLogger.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\NullObject;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\NullObject;
+
+/**
+ * PrintLogger是用于打印Logger实体到标准输出的Logger
+ */
+class PrintLogger implements LoggerInterface
+{
     /**
-     * PrintLogger是用于打印Logger实体到标准输出的Logger
+     * @param string $str
      */
-    class PrintLogger implements LoggerInterface
+    public function log($str)
     {
-        /**
-         * @param string $str
-         */
-        public function log($str)
-        {
-            echo $str;
-        }
+        echo $str;
     }
+}
 ```
 #### **NullLogger.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\NullObject;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\NullObject;
+
+/**
+ * 核心特性 : 必须实现LoggerInterface接口
+ */
+class NullLogger implements LoggerInterface
+{
     /**
-     * 核心特性 : 必须实现LoggerInterface接口
+     * {@inheritdoc}
      */
-    class NullLogger implements LoggerInterface
+    public function log($str)
     {
-        /**
-         * {@inheritdoc}
-         */
-        public function log($str)
-        {
-            // do nothing
-        }
+        // do nothing
     }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/LoggerTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\NullObject\Tests;
-    
-    use DesignPatterns\Behavioral\NullObject\NullLogger;
-    use DesignPatterns\Behavioral\NullObject\Service;
-    use DesignPatterns\Behavioral\NullObject\PrintLogger;
-    
-    /**
-     * LoggerTest 用于测试不同的Logger
-     */
-    class LoggerTest extends \PHPUnit\Framework\TestCase
+<?php
+
+namespace DesignPatterns\Behavioral\NullObject\Tests;
+
+use DesignPatterns\Behavioral\NullObject\NullLogger;
+use DesignPatterns\Behavioral\NullObject\Service;
+use DesignPatterns\Behavioral\NullObject\PrintLogger;
+
+/**
+ * LoggerTest 用于测试不同的Logger
+ */
+class LoggerTest extends \PHPUnit\Framework\TestCase
+{
+
+    public function testNullObject()
     {
-    
-        public function testNullObject()
-        {
-            $service = new Service(new NullLogger());
-            $this->expectOutputString(null);  // 没有输出
-            $service->doSomething();
-        }
-    
-        public function testStandardLogger()
-        {
-            $service = new Service(new PrintLogger());
-            $this->expectOutputString('We are in DesignPatterns\Behavioral\NullObject\Service::doSomething');
-            $service->doSomething();
-        }
+        $service = new Service(new NullLogger());
+        $this->expectOutputString(null);  // 没有输出
+        $service->doSomething();
     }
+
+    public function testStandardLogger()
+    {
+        $service = new Service(new PrintLogger());
+        $this->expectOutputString('We are in DesignPatterns\Behavioral\NullObject\Service::doSomething');
+        $service->doSomething();
+    }
+}
 ```
 [0]: http://laravelacademy.org/post/2912.html
 [1]: http://laravelacademy.org/post/author/nonfu

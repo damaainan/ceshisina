@@ -21,66 +21,66 @@
 
 
 ```php
-     //总公司员工
-    class Employee{
-        private $id;
-        public function setId($id){
-            $this->id = $id;
-        }
-        public function getId(){
-            return $id;
-        }
-    }
-    //分公司员工
-    class SubEmployee{
-        private $id;
-        public void setId($id){
-            $this->id = $id;
-        }
-        public String getId(){
-            return $id;
-        }
-    }
-    class SubCompanyManager{
-        public function getAllEmployee(){
-            $list = [];
-            for($i=0; $i<100; $i++){
-                $emp = new SubEmployee();
-                //为分公司人员按顺序分配一个ID
-                $emp->setId("分公司"+$i);
-                $list[] = $emp;
-            }
-            return $list;
-        }
-    }
-    class CompanyManager{
-        public function getAllEmployee(){
-            $list = [];
-            for($i=0; $i<30; $i++){
-                $emp = new Employee();
-                //为总公司人员按顺序分配一个ID
-                $emp->setId("总公司"+$i);
-                $list[] = $emp;
-            }
-            return $list;
-        }
-        public function printAllEmployee(object $sub){
-            $list1 = $sub->getAllEmployee();
-            foreach($list1 as $lt){
-                print_r($lt->getId());
-            }
-            $list2 = $this->getAllEmployee();
-            foreach($list2 as $lt2){
-                print_r($lt2->getId());
-            }
-        }
-    }
-    class Client{
-        public static function main(){
-            $e = new CompanyManager();
-            $e->printAllEmployee(new SubCompanyManager());
-        }
-    }
+ //总公司员工
+class Employee{
+    private $id;
+    public function setId($id){
+        $this->id = $id;
+    }
+    public function getId(){
+        return $id;
+    }
+}
+//分公司员工
+class SubEmployee{
+    private $id;
+    public void setId($id){
+        $this->id = $id;
+    }
+    public String getId(){
+        return $id;
+    }
+}
+class SubCompanyManager{
+    public function getAllEmployee(){
+        $list = [];
+        for($i=0; $i<100; $i++){
+            $emp = new SubEmployee();
+            //为分公司人员按顺序分配一个ID
+            $emp->setId("分公司"+$i);
+            $list[] = $emp;
+        }
+        return $list;
+    }
+}
+class CompanyManager{
+    public function getAllEmployee(){
+        $list = [];
+        for($i=0; $i<30; $i++){
+            $emp = new Employee();
+            //为总公司人员按顺序分配一个ID
+            $emp->setId("总公司"+$i);
+            $list[] = $emp;
+        }
+        return $list;
+    }
+    public function printAllEmployee(object $sub){
+        $list1 = $sub->getAllEmployee();
+        foreach($list1 as $lt){
+            print_r($lt->getId());
+        }
+        $list2 = $this->getAllEmployee();
+        foreach($list2 as $lt2){
+            print_r($lt2->getId());
+        }
+    }
+}
+class Client{
+    public static function main(){
+        $e = new CompanyManager();
+        $e->printAllEmployee(new SubCompanyManager());
+    }
+}
 ```
 
 
@@ -88,43 +88,43 @@
 
 
 ```php
-    class SubCompanyManager{
-        public function getAllEmployee(){
-            $list = [];
-            for($i=0; $i<100; $i++){
-                $emp = new SubEmployee();
-                //为分公司人员按顺序分配一个ID
-                $emp->setId("分公司"+$i);
-                $list[] = $emp;
-            }
-            return $list;
-        }
-        public function printEmployee(){
-            $list = $his->getAllEmployee();
-            foreach($list as $e){
-                print_r($e->getId());
-            }
-        }
-    }
-    class CompanyManager{
-        public function getAllEmployee(){
-            $list = [];
-            for($i=0; $i<30; $i++){
-                $emp = new Employee();
-                //为总公司人员按顺序分配一个ID
-                $emp->setId("总公司"+$i);
-                $list[] = $emp;
-            }
-            return $list;
-        }
-        public function printAllEmployee(object $sub){
-            $sub->printEmployee();
-            $list2 = $this->getAllEmployee();
-            foreach(list2 as $e){
-                print_r($e->getId());
-            }
-        }
-    }
+class SubCompanyManager{
+    public function getAllEmployee(){
+        $list = [];
+        for($i=0; $i<100; $i++){
+            $emp = new SubEmployee();
+            //为分公司人员按顺序分配一个ID
+            $emp->setId("分公司"+$i);
+            $list[] = $emp;
+        }
+        return $list;
+    }
+    public function printEmployee(){
+        $list = $his->getAllEmployee();
+        foreach($list as $e){
+            print_r($e->getId());
+        }
+    }
+}
+class CompanyManager{
+    public function getAllEmployee(){
+        $list = [];
+        for($i=0; $i<30; $i++){
+            $emp = new Employee();
+            //为总公司人员按顺序分配一个ID
+            $emp->setId("总公司"+$i);
+            $list[] = $emp;
+        }
+        return $list;
+    }
+    public function printAllEmployee(object $sub){
+        $sub->printEmployee();
+        $list2 = $this->getAllEmployee();
+        foreach(list2 as $e){
+            print_r($e->getId());
+        }
+    }
+}
 ```
 
 

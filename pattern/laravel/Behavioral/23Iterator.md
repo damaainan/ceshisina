@@ -19,332 +19,332 @@
 #### **Book.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Iterator;
-    
-    class Book
+<?php
+
+namespace DesignPatterns\Behavioral\Iterator;
+
+class Book
+{
+
+    private $author;
+
+    private $title;
+
+    public function __construct($title, $author)
     {
-    
-        private $author;
-    
-        private $title;
-    
-        public function __construct($title, $author)
-        {
-            $this->author = $author;
-            $this->title = $title;
-        }
-    
-        public function getAuthor()
-        {
-            return $this->author;
-        }
-    
-        public function getTitle()
-        {
-            return $this->title;
-        }
-    
-        public function getAuthorAndTitle()
-        {
-            return $this->getTitle() . ' by ' . $this->getAuthor();
-        }
+        $this->author = $author;
+        $this->title = $title;
     }
+
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function getAuthorAndTitle()
+    {
+        return $this->getTitle() . ' by ' . $this->getAuthor();
+    }
+}
 ```
 #### **BookList.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Iterator;
-    
-    class BookList implements \Countable
+<?php
+
+namespace DesignPatterns\Behavioral\Iterator;
+
+class BookList implements \Countable
+{
+
+    private $books;
+
+    public function getBook($bookNumberToGet)
     {
-    
-        private $books;
-    
-        public function getBook($bookNumberToGet)
-        {
-            if (isset($this->books[$bookNumberToGet])) {
-                return $this->books[$bookNumberToGet];
+        if (isset($this->books[$bookNumberToGet])) {
+            return $this->books[$bookNumberToGet];
+        }
+
+        return null;
+    }
+
+    public function addBook(Book $book)
+    {
+        $this->books[] = $book;
+    }
+
+    public function removeBook(Book $bookToRemove)
+    {
+        foreach ($this->books as $key => $book) {
+            /** @var Book $book */
+            if ($book->getAuthorAndTitle() === $bookToRemove->getAuthorAndTitle()) {
+                unset($this->books[$key]);
             }
-    
-            return null;
-        }
-    
-        public function addBook(Book $book)
-        {
-            $this->books[] = $book;
-        }
-    
-        public function removeBook(Book $bookToRemove)
-        {
-            foreach ($this->books as $key => $book) {
-                /** @var Book $book */
-                if ($book->getAuthorAndTitle() === $bookToRemove->getAuthorAndTitle()) {
-                    unset($this->books[$key]);
-                }
-            }
-        }
-    
-        public function count()
-        {
-            return count($this->books);
         }
     }
+
+    public function count()
+    {
+        return count($this->books);
+    }
+}
 ```
 #### **BookListIterator.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Iterator;
-    
-    class BookListIterator implements \Iterator
+<?php
+
+namespace DesignPatterns\Behavioral\Iterator;
+
+class BookListIterator implements \Iterator
+{
+
+    /**
+     * @var BookList
+     */
+    private $bookList;
+
+    /**
+     * @var int
+     */
+    protected $currentBook = 0;
+
+    public function __construct(BookList $bookList)
     {
-    
-        /**
-         * @var BookList
-         */
-        private $bookList;
-    
-        /**
-         * @var int
-         */
-        protected $currentBook = 0;
-    
-        public function __construct(BookList $bookList)
-        {
-            $this->bookList = $bookList;
-        }
-    
-        /**
-         * Return the current book
-         * @link http://php.net/manual/en/iterator.current.php
-         * @return Book Can return any type.
-         */
-        public function current()
-        {
-            return $this->bookList->getBook($this->currentBook);
-        }
-    
-        /**
-         * (PHP 5 >= 5.0.0)
-         *
-         * Move forward to next element
-         * @link http://php.net/manual/en/iterator.next.php
-         * @return void Any returned value is ignored.
-         */
-        public function next()
-        {
-            $this->currentBook++;
-        }
-    
-        /**
-         * (PHP 5 >= 5.0.0)
-         *
-         * Return the key of the current element
-         * @link http://php.net/manual/en/iterator.key.php
-         * @return mixed scalar on success, or null on failure.
-         */
-        public function key()
-        {
-            return $this->currentBook;
-        }
-    
-        /**
-         * (PHP 5 >= 5.0.0)
-         *
-         * Checks if current position is valid
-         * @link http://php.net/manual/en/iterator.valid.php
-         * @return boolean The return value will be casted to boolean and then evaluated.
-         *       Returns true on success or false on failure.
-         */
-        public function valid()
-        {
-            return null !== $this->bookList->getBook($this->currentBook);
-        }
-    
-        /**
-         * (PHP 5 >= 5.0.0)
-         *
-         * Rewind the Iterator to the first element
-         * @link http://php.net/manual/en/iterator.rewind.php
-         * @return void Any returned value is ignored.
-         */
-        public function rewind()
-        {
-            $this->currentBook = 0;
-        }
+        $this->bookList = $bookList;
     }
+
+    /**
+     * Return the current book
+     * @link http://php.net/manual/en/iterator.current.php
+     * @return Book Can return any type.
+     */
+    public function current()
+    {
+        return $this->bookList->getBook($this->currentBook);
+    }
+
+    /**
+     * (PHP 5 >= 5.0.0)
+     *
+     * Move forward to next element
+     * @link http://php.net/manual/en/iterator.next.php
+     * @return void Any returned value is ignored.
+     */
+    public function next()
+    {
+        $this->currentBook++;
+    }
+
+    /**
+     * (PHP 5 >= 5.0.0)
+     *
+     * Return the key of the current element
+     * @link http://php.net/manual/en/iterator.key.php
+     * @return mixed scalar on success, or null on failure.
+     */
+    public function key()
+    {
+        return $this->currentBook;
+    }
+
+    /**
+     * (PHP 5 >= 5.0.0)
+     *
+     * Checks if current position is valid
+     * @link http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     *       Returns true on success or false on failure.
+     */
+    public function valid()
+    {
+        return null !== $this->bookList->getBook($this->currentBook);
+    }
+
+    /**
+     * (PHP 5 >= 5.0.0)
+     *
+     * Rewind the Iterator to the first element
+     * @link http://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     */
+    public function rewind()
+    {
+        $this->currentBook = 0;
+    }
+}
 ```
 #### **BookListReverseIterator.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Iterator;
-    
-    class BookListReverseIterator implements \Iterator
+<?php
+
+namespace DesignPatterns\Behavioral\Iterator;
+
+class BookListReverseIterator implements \Iterator
+{
+
+    /**
+     * @var BookList
+     */
+    private $bookList;
+
+    /**
+     * @var int
+     */
+    protected $currentBook = 0;
+
+    public function __construct(BookList $bookList)
     {
-    
-        /**
-         * @var BookList
-         */
-        private $bookList;
-    
-        /**
-         * @var int
-         */
-        protected $currentBook = 0;
-    
-        public function __construct(BookList $bookList)
-        {
-            $this->bookList = $bookList;
-            $this->currentBook = $this->bookList->count() - 1;
-        }
-    
-        /**
-         * Return the current book
-         * @link http://php.net/manual/en/iterator.current.php
-         * @return Book Can return any type.
-         */
-        public function current()
-        {
-            return $this->bookList->getBook($this->currentBook);
-        }
-    
-        /**
-         * (PHP 5 >= 5.0.0)
-         *
-         * Move forward to next element
-         * @link http://php.net/manual/en/iterator.next.php
-         * @return void Any returned value is ignored.
-         */
-        public function next()
-        {
-            $this->currentBook--;
-        }
-    
-        /**
-         * (PHP 5 >= 5.0.0)
-         *
-         * Return the key of the current element
-         * @link http://php.net/manual/en/iterator.key.php
-         * @return mixed scalar on success, or null on failure.
-         */
-        public function key()
-        {
-            return $this->currentBook;
-        }
-    
-        /**
-         * (PHP 5 >= 5.0.0)
-         *
-         * Checks if current position is valid
-         * @link http://php.net/manual/en/iterator.valid.php
-         * @return boolean The return value will be casted to boolean and then evaluated.
-         *       Returns true on success or false on failure.
-         */
-        public function valid()
-        {
-            return null !== $this->bookList->getBook($this->currentBook);
-        }
-    
-        /**
-         * (PHP 5 >= 5.0.0)
-         *
-         * Rewind the Iterator to the first element
-         * @link http://php.net/manual/en/iterator.rewind.php
-         * @return void Any returned value is ignored.
-         */
-        public function rewind()
-        {
-            $this->currentBook = $this->bookList->count() - 1;
-        }
+        $this->bookList = $bookList;
+        $this->currentBook = $this->bookList->count() - 1;
     }
+
+    /**
+     * Return the current book
+     * @link http://php.net/manual/en/iterator.current.php
+     * @return Book Can return any type.
+     */
+    public function current()
+    {
+        return $this->bookList->getBook($this->currentBook);
+    }
+
+    /**
+     * (PHP 5 >= 5.0.0)
+     *
+     * Move forward to next element
+     * @link http://php.net/manual/en/iterator.next.php
+     * @return void Any returned value is ignored.
+     */
+    public function next()
+    {
+        $this->currentBook--;
+    }
+
+    /**
+     * (PHP 5 >= 5.0.0)
+     *
+     * Return the key of the current element
+     * @link http://php.net/manual/en/iterator.key.php
+     * @return mixed scalar on success, or null on failure.
+     */
+    public function key()
+    {
+        return $this->currentBook;
+    }
+
+    /**
+     * (PHP 5 >= 5.0.0)
+     *
+     * Checks if current position is valid
+     * @link http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     *       Returns true on success or false on failure.
+     */
+    public function valid()
+    {
+        return null !== $this->bookList->getBook($this->currentBook);
+    }
+
+    /**
+     * (PHP 5 >= 5.0.0)
+     *
+     * Rewind the Iterator to the first element
+     * @link http://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     */
+    public function rewind()
+    {
+        $this->currentBook = $this->bookList->count() - 1;
+    }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/IteratorTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Iterator\Tests;
-    
-    use DesignPatterns\Behavioral\Iterator\Book;
-    use DesignPatterns\Behavioral\Iterator\BookList;
-    use DesignPatterns\Behavioral\Iterator\BookListIterator;
-    use DesignPatterns\Behavioral\Iterator\BookListReverseIterator;
-    
-    class IteratorTest extends \PHPUnit\Framework\TestCase
+<?php
+
+namespace DesignPatterns\Behavioral\Iterator\Tests;
+
+use DesignPatterns\Behavioral\Iterator\Book;
+use DesignPatterns\Behavioral\Iterator\BookList;
+use DesignPatterns\Behavioral\Iterator\BookListIterator;
+use DesignPatterns\Behavioral\Iterator\BookListReverseIterator;
+
+class IteratorTest extends \PHPUnit\Framework\TestCase
+{
+
+    /**
+     * @var BookList
+     */
+    protected $bookList;
+
+    protected function setUp()
     {
-    
-        /**
-         * @var BookList
-         */
-        protected $bookList;
-    
-        protected function setUp()
-        {
-            $this->bookList = new BookList();
-            $this->bookList->addBook(new Book('Learning PHP Design Patterns', 'William Sanders'));
-            $this->bookList->addBook(new Book('Professional Php Design Patterns', 'Aaron Saray'));
-            $this->bookList->addBook(new Book('Clean Code', 'Robert C. Martin'));
-        }
-    
-        public function expectedAuthors()
-        {
-            return array(
+        $this->bookList = new BookList();
+        $this->bookList->addBook(new Book('Learning PHP Design Patterns', 'William Sanders'));
+        $this->bookList->addBook(new Book('Professional Php Design Patterns', 'Aaron Saray'));
+        $this->bookList->addBook(new Book('Clean Code', 'Robert C. Martin'));
+    }
+
+    public function expectedAuthors()
+    {
+        return array(
+            array(
                 array(
-                    array(
-                        'Learning PHP Design Patterns by William Sanders',
-                        'Professional Php Design Patterns by Aaron Saray',
-                        'Clean Code by Robert C. Martin'
-                    )
-                ),
-            );
-        }
-    
-        /**
-         * @dataProvider expectedAuthors
-         */
-        public function testUseAIteratorAndValidateAuthors($expected)
-        {
-            $iterator = new BookListIterator($this->bookList);
-    
-            while ($iterator->valid()) {
-                $expectedBook = array_shift($expected);
-                $this->assertEquals($expectedBook, $iterator->current()->getAuthorAndTitle());
-                $iterator->next();
-            }
-        }
-    
-        /**
-         * @dataProvider expectedAuthors
-         */
-        public function testUseAReverseIteratorAndValidateAuthors($expected)
-        {
-            $iterator = new BookListReverseIterator($this->bookList);
-    
-            while ($iterator->valid()) {
-                $expectedBook = array_pop($expected);
-                $this->assertEquals($expectedBook, $iterator->current()->getAuthorAndTitle());
-                $iterator->next();
-            }
-        }
-    
-        /**
-         * Test BookList Remove
-         */
-        public function testBookRemove()
-        {
-            $this->bookList->removeBook($this->bookList->getBook(0));
-            $this->assertEquals($this->bookList->count(), 2);
+                    'Learning PHP Design Patterns by William Sanders',
+                    'Professional Php Design Patterns by Aaron Saray',
+                    'Clean Code by Robert C. Martin'
+                )
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider expectedAuthors
+     */
+    public function testUseAIteratorAndValidateAuthors($expected)
+    {
+        $iterator = new BookListIterator($this->bookList);
+
+        while ($iterator->valid()) {
+            $expectedBook = array_shift($expected);
+            $this->assertEquals($expectedBook, $iterator->current()->getAuthorAndTitle());
+            $iterator->next();
         }
     }
+
+    /**
+     * @dataProvider expectedAuthors
+     */
+    public function testUseAReverseIteratorAndValidateAuthors($expected)
+    {
+        $iterator = new BookListReverseIterator($this->bookList);
+
+        while ($iterator->valid()) {
+            $expectedBook = array_pop($expected);
+            $this->assertEquals($expectedBook, $iterator->current()->getAuthorAndTitle());
+            $iterator->next();
+        }
+    }
+
+    /**
+     * Test BookList Remove
+     */
+    public function testBookRemove()
+    {
+        $this->bookList->removeBook($this->bookList->getBook(0));
+        $this->assertEquals($this->bookList->count(), 2);
+    }
+}
 ```
 
 [0]: http://laravelacademy.org/post/2882.html

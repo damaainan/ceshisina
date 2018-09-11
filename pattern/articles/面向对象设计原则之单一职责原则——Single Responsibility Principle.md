@@ -11,79 +11,79 @@
 假设我们有一个购物车的实例
 
 ```php
-    //购物车
-    class Cart
-    {
-        // 添加商品
-        public function addItem(){ /* ... */}
-    
-        // 移除商品
-        public function deleteItem(){/* ... */}
-    
-        // 获取商品
-        public function getItem(){/* ... */}
-    
-        // 设定订单信息
-        public function setOrderInfo($info){/* ... */}
-    
-        // 取得付款信息
-        public function getPaymentInfo(){/* ... */}
-    
-        // 保存订单
-        public function saveOrder(){/* ... */}
-    
-        // 发送订单确认邮件
-        public function sendMail(){/* ... */}
-    
-    }
-    
-    $cart = new Cart();
-    $cart->addItem(); // 添加商品
-    $cart->getPaymentInfo(); //获取付款信息
+//购物车
+class Cart
+{
+    // 添加商品
+    public function addItem(){ /* ... */}
+
+    // 移除商品
+    public function deleteItem(){/* ... */}
+
+    // 获取商品
+    public function getItem(){/* ... */}
+
+    // 设定订单信息
+    public function setOrderInfo($info){/* ... */}
+
+    // 取得付款信息
+    public function getPaymentInfo(){/* ... */}
+
+    // 保存订单
+    public function saveOrder(){/* ... */}
+
+    // 发送订单确认邮件
+    public function sendMail(){/* ... */}
+
+}
+
+$cart = new Cart();
+$cart->addItem(); // 添加商品
+$cart->getPaymentInfo(); //获取付款信息
 ```
 
 我们可以看到，在一个购物车的类中，除了应该有的添加商品、删除商品和获取商品方法之外。还包含了设定订单信息、取得付款信息、保存订单以及发送确认订单邮件这些方法。很明显，这个类显然做了一些不应该它负责的事情。如果我们在其他的地方使用订单的话，我们还得去实例化一个购物车的实例，非常奇怪。所以说，根据单一职责原则，我们需要拆分这个类。把订单的方法拿出去，单独定义一个Order类。
 
 ```php
-    // 订单
-    class Order
-    {
+// 订单
+class Order
+{
+
+    // 设定订单信息
+
+    public function setOrderInfo($info){/* ... */}
     
-        // 设定订单信息
+    // 取得付款信息
+
+    public function getPaymentInfo(){/* ... */}
     
-        public function setOrderInfo($info){/* ... */}
-        
-        // 取得付款信息
-    
-        public function getPaymentInfo(){/* ... */}
-        
-        // 保存订单
-    
-        public function saveOrder(){/* ... */}
-    
-        // 发送订单确认邮件
-    
-        public function sendMail(){/* ... */}
-    
-    }
-    
-    // 重构后的购物车
-    class Cart
-    {
-        // 添加商品
-        public function addItem(){ /* ... */}   
-    
-        // 移除商品
-        public function deleteItem(){/* ... */} 
-    
-        // 获取商品
-        public function getItem(){/* ... */}
-    }
-    
-    $cart = new Cart();
-    $order = new Order();
-    $cart->addItem(); // 添加商品
-    $order->getPaymentInfo(); //获取付款信息
+    // 保存订单
+
+    public function saveOrder(){/* ... */}
+
+    // 发送订单确认邮件
+
+    public function sendMail(){/* ... */}
+
+}
+
+// 重构后的购物车
+class Cart
+{
+    // 添加商品
+    public function addItem(){ /* ... */}   
+
+    // 移除商品
+    public function deleteItem(){/* ... */} 
+
+    // 获取商品
+    public function getItem(){/* ... */}
+}
+
+$cart = new Cart();
+$order = new Order();
+$cart->addItem(); // 添加商品
+$order->getPaymentInfo(); //获取付款信息
 ```
 
 这样一拆分，当我们需要在其他的地方使用订单的时候，只需要实例化一个Order对象，而不是Cart对象。即使我们的购物车中也需要订单，那就直接实例化一个Order对象，用其里面的方法即可。

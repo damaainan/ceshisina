@@ -17,207 +17,207 @@
 #### **RoleVisitorInterface.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Visitor;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Visitor;
+
+/**
+ * 访问者接口
+ */
+interface RoleVisitorInterface
+{
     /**
-     * 访问者接口
+     * 访问 User 对象
+     *
+     * @param \DesignPatterns\Behavioral\Visitor\User $role
      */
-    interface RoleVisitorInterface
-    {
-        /**
-         * 访问 User 对象
-         *
-         * @param \DesignPatterns\Behavioral\Visitor\User $role
-         */
-        public function visitUser(User $role);
-    
-        /**
-         * 访问 Group 对象
-         *
-         * @param \DesignPatterns\Behavioral\Visitor\Group $role
-         */
-        public function visitGroup(Group $role);
-    }
+    public function visitUser(User $role);
+
+    /**
+     * 访问 Group 对象
+     *
+     * @param \DesignPatterns\Behavioral\Visitor\Group $role
+     */
+    public function visitGroup(Group $role);
+}
 ```
 #### **RolePrintVisitor.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Visitor;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Visitor;
+
+/**
+ * Visitor接口的具体实现
+ */
+class RolePrintVisitor implements RoleVisitorInterface
+{
     /**
-     * Visitor接口的具体实现
+     * {@inheritdoc}
      */
-    class RolePrintVisitor implements RoleVisitorInterface
+    public function visitGroup(Group $role)
     {
-        /**
-         * {@inheritdoc}
-         */
-        public function visitGroup(Group $role)
-        {
-            echo "Role: " . $role->getName();
-        }
-    
-        /**
-         * {@inheritdoc}
-         */
-        public function visitUser(User $role)
-        {
-            echo "Role: " . $role->getName();
-        }
+        echo "Role: " . $role->getName();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function visitUser(User $role)
+    {
+        echo "Role: " . $role->getName();
+    }
+}
 ```
 #### **Role.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Visitor;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Visitor;
+
+/**
+ * Role 类
+ */
+abstract class Role
+{
     /**
-     * Role 类
+     * 该方法基于Visitor的类名判断调用Visitor的方法
+     *
+     * 如果必须调用其它方法，重写本方法即可
+     *
+     * @param \DesignPatterns\Behavioral\Visitor\RoleVisitorInterface $visitor
+     *
+     * @throws \InvalidArgumentException
      */
-    abstract class Role
+    public function accept(RoleVisitorInterface $visitor)
     {
-        /**
-         * 该方法基于Visitor的类名判断调用Visitor的方法
-         *
-         * 如果必须调用其它方法，重写本方法即可
-         *
-         * @param \DesignPatterns\Behavioral\Visitor\RoleVisitorInterface $visitor
-         *
-         * @throws \InvalidArgumentException
-         */
-        public function accept(RoleVisitorInterface $visitor)
-        {
-            $klass = get_called_class();
-            preg_match('#([^\\\\]+)$#', $klass, $extract);
-            $visitingMethod = 'visit' . $extract[1];
-    
-            if (!method_exists(__NAMESPACE__ . '\RoleVisitorInterface', $visitingMethod)) {
-                throw new \InvalidArgumentException("The visitor you provide cannot visit a $klass instance");
-            }
-    
-            call_user_func(array($visitor, $visitingMethod), $this);
+        $klass = get_called_class();
+        preg_match('#([^\\\\]+)$#', $klass, $extract);
+        $visitingMethod = 'visit' . $extract[1];
+
+        if (!method_exists(__NAMESPACE__ . '\RoleVisitorInterface', $visitingMethod)) {
+            throw new \InvalidArgumentException("The visitor you provide cannot visit a $klass instance");
         }
+
+        call_user_func(array($visitor, $visitingMethod), $this);
     }
+}
 ```
 #### **User.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Visitor;
-    
-    class User extends Role
+<?php
+
+namespace DesignPatterns\Behavioral\Visitor;
+
+class User extends Role
+{
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @param string $name
+     */
+    public function __construct($name)
     {
-        /**
-         * @var string
-         */
-        protected $name;
-    
-        /**
-         * @param string $name
-         */
-        public function __construct($name)
-        {
-            $this->name = (string) $name;
-        }
-    
-        /**
-         * @return string
-         */
-        public function getName()
-        {
-            return "User " . $this->name;
-        }
+        $this->name = (string) $name;
     }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return "User " . $this->name;
+    }
+}
 ```
 #### **Group.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Visitor;
-    
-    class Group extends Role
+<?php
+
+namespace DesignPatterns\Behavioral\Visitor;
+
+class Group extends Role
+{
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @param string $name
+     */
+    public function __construct($name)
     {
-        /**
-         * @var string
-         */
-        protected $name;
-    
-        /**
-         * @param string $name
-         */
-        public function __construct($name)
-        {
-            $this->name = (string) $name;
-        }
-    
-        /**
-         * @return string
-         */
-        public function getName()
-        {
-            return "Group: " . $this->name;
-        }
+        $this->name = (string) $name;
     }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return "Group: " . $this->name;
+    }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/VisitorTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Tests\Visitor\Tests;
-    
-    use DesignPatterns\Behavioral\Visitor;
-    
-    /**
-     * VisitorTest 用于测试访问者模式
-     */
-    class VisitorTest extends \PHPUnit\Framework\TestCase
+<?php
+
+namespace DesignPatterns\Tests\Visitor\Tests;
+
+use DesignPatterns\Behavioral\Visitor;
+
+/**
+ * VisitorTest 用于测试访问者模式
+ */
+class VisitorTest extends \PHPUnit\Framework\TestCase
+{
+
+    protected $visitor;
+
+    protected function setUp()
     {
-    
-        protected $visitor;
-    
-        protected function setUp()
-        {
-            $this->visitor = new Visitor\RolePrintVisitor();
-        }
-    
-        public function getRole()
-        {
-            return array(
-                array(new Visitor\User("Dominik"), 'Role: User Dominik'),
-                array(new Visitor\Group("Administrators"), 'Role: Group: Administrators')
-            );
-        }
-    
-        /**
-         * @dataProvider getRole
-         */
-        public function testVisitSomeRole(Visitor\Role $role, $expect)
-        {
-            $this->expectOutputString($expect);
-            $role->accept($this->visitor);
-        }
-    
-        /**
-         * @expectedException \InvalidArgumentException
-         * @expectedExceptionMessage Mock
-         */
-        public function testUnknownObject()
-        {
-            $mock = $this->getMockForAbstractClass('DesignPatterns\Behavioral\Visitor\Role');
-            $mock->accept($this->visitor);
-        }
+        $this->visitor = new Visitor\RolePrintVisitor();
     }
+
+    public function getRole()
+    {
+        return array(
+            array(new Visitor\User("Dominik"), 'Role: User Dominik'),
+            array(new Visitor\Group("Administrators"), 'Role: Group: Administrators')
+        );
+    }
+
+    /**
+     * @dataProvider getRole
+     */
+    public function testVisitSomeRole(Visitor\Role $role, $expect)
+    {
+        $this->expectOutputString($expect);
+        $role->accept($this->visitor);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Mock
+     */
+    public function testUnknownObject()
+    {
+        $mock = $this->getMockForAbstractClass('DesignPatterns\Behavioral\Visitor\Role');
+        $mock->accept($this->visitor);
+    }
+}
 ```
 ### **5、总结**
 

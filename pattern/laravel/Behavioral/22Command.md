@@ -19,160 +19,160 @@ Laravel 中的 [Artisan][3] 命令就使用了命令模式。
 #### **CommandInterface.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Command;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Command;
+
+/**
+ * CommandInterface
+ */
+interface CommandInterface
+{
     /**
-     * CommandInterface
+     * 在命令模式中这是最重要的方法,
+     * Receiver在构造函数中传入.
      */
-    interface CommandInterface
-    {
-        /**
-         * 在命令模式中这是最重要的方法,
-         * Receiver在构造函数中传入.
-         */
-        public function execute();
-    }
+    public function execute();
+}
 ```
 #### **HelloCommand.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Command;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Command;
+
+/**
+ * 这是一个调用Receiver的print方法的命令实现类，
+ * 但是对于调用者而言，只知道调用命令类的execute方法
+ */
+class HelloCommand implements CommandInterface
+{
     /**
-     * 这是一个调用Receiver的print方法的命令实现类，
-     * 但是对于调用者而言，只知道调用命令类的execute方法
+     * @var Receiver
      */
-    class HelloCommand implements CommandInterface
+    protected $output;
+
+    /**
+     * 每一个具体的命令基于不同的Receiver
+     * 它们可以是一个、多个，甚至完全没有Receiver
+     *
+     * @param Receiver $console
+     */
+    public function __construct(Receiver $console)
     {
-        /**
-         * @var Receiver
-         */
-        protected $output;
-    
-        /**
-         * 每一个具体的命令基于不同的Receiver
-         * 它们可以是一个、多个，甚至完全没有Receiver
-         *
-         * @param Receiver $console
-         */
-        public function __construct(Receiver $console)
-        {
-            $this->output = $console;
-        }
-    
-        /**
-         * 执行并输出 "Hello World"
-         */
-        public function execute()
-        {
-            // 没有Receiver的时候完全通过命令类来实现功能
-            $this->output->write('Hello World');
-        }
+        $this->output = $console;
     }
+
+    /**
+     * 执行并输出 "Hello World"
+     */
+    public function execute()
+    {
+        // 没有Receiver的时候完全通过命令类来实现功能
+        $this->output->write('Hello World');
+    }
+}
 ```
 #### **Receiver.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Command;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Command;
+
+/**
+ * Receiver类
+ */
+class Receiver
+{
     /**
-     * Receiver类
+     * @param string $str
      */
-    class Receiver
+    public function write($str)
     {
-        /**
-         * @param string $str
-         */
-        public function write($str)
-        {
-            echo $str;
-        }
+        echo $str;
     }
+}
 ```
 #### **Invoker.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Command;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Command;
+
+/**
+ * Invoker类
+ */
+class Invoker
+{
     /**
-     * Invoker类
+     * @var CommandInterface
      */
-    class Invoker
+    protected $command;
+
+    /**
+     * 在调用者中我们通常可以找到这种订阅命令的方法
+     *
+     * @param CommandInterface $cmd
+     */
+    public function setCommand(CommandInterface $cmd)
     {
-        /**
-         * @var CommandInterface
-         */
-        protected $command;
-    
-        /**
-         * 在调用者中我们通常可以找到这种订阅命令的方法
-         *
-         * @param CommandInterface $cmd
-         */
-        public function setCommand(CommandInterface $cmd)
-        {
-            $this->command = $cmd;
-        }
-    
-        /**
-         * 执行命令
-         */
-        public function run()
-        {
-            $this->command->execute();
-        }
+        $this->command = $cmd;
     }
+
+    /**
+     * 执行命令
+     */
+    public function run()
+    {
+        $this->command->execute();
+    }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/CommandTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Command\Tests;
-    
-    use DesignPatterns\Behavioral\Command\Invoker;
-    use DesignPatterns\Behavioral\Command\Receiver;
-    use DesignPatterns\Behavioral\Command\HelloCommand;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Command\Tests;
+
+use DesignPatterns\Behavioral\Command\Invoker;
+use DesignPatterns\Behavioral\Command\Receiver;
+use DesignPatterns\Behavioral\Command\HelloCommand;
+
+/**
+ * CommandTest在命令模式中扮演客户端角色
+ */
+class CommandTest extends \PHPUnit\Framework\TestCase
+{
+
     /**
-     * CommandTest在命令模式中扮演客户端角色
+     * @var Invoker
      */
-    class CommandTest extends \PHPUnit\Framework\TestCase
+    protected $invoker;
+
+    /**
+     * @var Receiver
+     */
+    protected $receiver;
+
+    protected function setUp()
     {
-    
-        /**
-         * @var Invoker
-         */
-        protected $invoker;
-    
-        /**
-         * @var Receiver
-         */
-        protected $receiver;
-    
-        protected function setUp()
-        {
-            $this->invoker = new Invoker();
-            $this->receiver = new Receiver();
-        }
-    
-        public function testInvocation()
-        {
-            $this->invoker->setCommand(new HelloCommand($this->receiver));
-            $this->expectOutputString('Hello World');
-            $this->invoker->run();
-        }
+        $this->invoker = new Invoker();
+        $this->receiver = new Receiver();
     }
+
+    public function testInvocation()
+    {
+        $this->invoker->setCommand(new HelloCommand($this->receiver));
+        $this->expectOutputString('Hello World');
+        $this->invoker->run();
+    }
+}
 ```
 ### **5、总结**
 

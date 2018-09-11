@@ -31,302 +31,302 @@ facade到底翻译作啥好呢？倒是也有的人群干脆提倡不翻译，�
 ## 示例一：在java中，通过facade操作计算机内部复杂的系统信息
 
 假设我们有这么一些复杂的子系统逻辑：
+```java
+class CPU {
+    public void freeze() { ... }
+    public void jump(long position) { ... }
+    public void execute() { ... }
+}
 
-    class CPU {
-        public void freeze() { ... }
-        public void jump(long position) { ... }
-        public void execute() { ... }
+class Memory {
+    public void load(long position, byte[] data) {
+        ...
     }
-    
-    class Memory {
-        public void load(long position, byte[] data) {
-            ...
-        }
-    }
-    
-    class HardDrive {
-        public byte[] read(long lba, int size) {
-            ...
-        }
-    }
+}
 
+class HardDrive {
+    public byte[] read(long lba, int size) {
+        ...
+    }
+}
+```
 为了更方便地操作它们，我们可以来创建一个外观类（facade）：
-
-    class Computer {
-        public void startComputer() {
-            cpu.freeze();
-            memory.load(BOOT_ADDRESS, hardDrive.read(BOOT_SECTOR, SECTOR_SIZE));
-            cpu.jump(BOOT_ADDRESS);
-            cpu.execute();
-        }
+```java
+class Computer {
+    public void startComputer() {
+        cpu.freeze();
+        memory.load(BOOT_ADDRESS, hardDrive.read(BOOT_SECTOR, SECTOR_SIZE));
+        cpu.jump(BOOT_ADDRESS);
+        cpu.execute();
     }
-
+}
+```
 然后我们的客户，就可以很方便地来这样调用了：
-
-    class You {
-        public static void main(String[] args) {
-            Computer facade = new Computer();
-            facade.startComputer();
-        }
+```java
+class You {
+    public static void main(String[] args) {
+        Computer facade = new Computer();
+        facade.startComputer();
     }
-
+}
+```
 ## 示例二：一个糟糕的第三方邮件类
 
 假设你不得不用下面这个看上去很糟糕的第三方邮件类，尤其是里面每个方法名你都得停留个好几秒才能看懂：
-
-    interface SendMailInterface
+```php
+interface SendMailInterface
+{
+    public function setSendToEmailAddress($emailAddress);
+    public function setSubjectName($subject);
+    public function setTheEmailContents($body);
+    public function setTheHeaders($headers);
+    public function getTheHeaders();
+    public function getTheHeadersText();
+    public function sendTheEmailNow();
+}
+ 
+class SendMail implements SendMailInterface
+{
+    public $to, $subject, $body;
+    public $headers = array();
+ 
+    public function setSendToEmailAddress($emailAddress)
     {
-        public function setSendToEmailAddress($emailAddress);
-        public function setSubjectName($subject);
-        public function setTheEmailContents($body);
-        public function setTheHeaders($headers);
-        public function getTheHeaders();
-        public function getTheHeadersText();
-        public function sendTheEmailNow();
+        $this->to = $emailAddress;
     }
-     
-    class SendMail implements SendMailInterface
+    
+    public function setSubjectName($subject)
     {
-        public $to, $subject, $body;
-        public $headers = array();
-     
-        public function setSendToEmailAddress($emailAddress)
-        {
-            $this->to = $emailAddress;
-        }
-        
-        public function setSubjectName($subject)
-        {
-            $this->subject = $subject;
-        }
-     
-        public function setTheEmailContents($body)
-        {
-            $this->body = $body;
-        }
-     
-        public function setTheHeaders($headers)
-        {
-            $this->headers = $headers;
-        }
-     
-        public function getTheHeaders()
-        {
-            return $this->headers;
-        }
-     
-        public function getTheHeadersText()
-        {
-            $headers = "";
-            foreach ($this->getTheHeaders() as $header) {
-                $headers .= $header . "\r\n";
-            }
-        }
-     
-        public function sendTheEmailNow()
-        {
-            mail($this->to, $this->subject, $this->body, $this->getTheHeadersText());
+        $this->subject = $subject;
+    }
+ 
+    public function setTheEmailContents($body)
+    {
+        $this->body = $body;
+    }
+ 
+    public function setTheHeaders($headers)
+    {
+        $this->headers = $headers;
+    }
+ 
+    public function getTheHeaders()
+    {
+        return $this->headers;
+    }
+ 
+    public function getTheHeadersText()
+    {
+        $headers = "";
+        foreach ($this->getTheHeaders() as $header) {
+            $headers .= $header . "\r\n";
         }
     }
-
+ 
+    public function sendTheEmailNow()
+    {
+        mail($this->to, $this->subject, $this->body, $this->getTheHeadersText());
+    }
+}
+```
 这个时候你又不好直接改源码，没办法，来一个facade吧
-
-    class SendMailFacade
+```php
+class SendMailFacade
+{
+    private $sendMail;
+ 
+    public function __construct(SendMailInterface $sendMail)
     {
-        private $sendMail;
-     
-        public function __construct(SendMailInterface $sendMail)
-        {
-            $this->sendMail = $sendMail;
-        }
-     
-        public function setTo($to)
-        {
-            $this->sendMail->setSendToEmailAddress($to);
-            return $this;
-        }
-        
-        public function setSubject($subject)
-        {
-            $this->sendMail->setSubjectName($subject);
-            return $this;
-        }
-     
-        public function setBody($body)
-        {
-            $this->sendMail->setTheEmailContents($body);
-            return $this;
-        }
-     
-        public function setHeaders($headers)
-        {
-            $this->sendMail->setTheHeaders($headers);
-            return $this;
-        }
-     
-        public function send()
-        {
-            $this->sendMail->sendTheEmailNow();
-        }
+        $this->sendMail = $sendMail;
     }
-
+ 
+    public function setTo($to)
+    {
+        $this->sendMail->setSendToEmailAddress($to);
+        return $this;
+    }
+    
+    public function setSubject($subject)
+    {
+        $this->sendMail->setSubjectName($subject);
+        return $this;
+    }
+ 
+    public function setBody($body)
+    {
+        $this->sendMail->setTheEmailContents($body);
+        return $this;
+    }
+ 
+    public function setHeaders($headers)
+    {
+        $this->sendMail->setTheHeaders($headers);
+        return $this;
+    }
+ 
+    public function send()
+    {
+        $this->sendMail->sendTheEmailNow();
+    }
+}
+```
 然后原来不加优化的终端调用可能是这样的：
-
-    $sendMail = new SendMail();
-    $sendMail->setSendToEmailAddress($to);
-    $sendMail->setSubjectName($subject);
-    $sendMail->setTheEmailContents($body);
-    $sendMail->setTheHeaders($headers);
-    $sendMail->sendTheEmailNow();
-
+```php
+$sendMail = new SendMail();
+$sendMail->setSendToEmailAddress($to);
+$sendMail->setSubjectName($subject);
+$sendMail->setTheEmailContents($body);
+$sendMail->setTheHeaders($headers);
+$sendMail->sendTheEmailNow();
+```
 现在有了外观类，就可以这样了：
-
-    $sendMail       = new SendMail();
-    $sendMailFacade = new sendMailFacade($sendMail);
-    $sendMailFacade->setTo($to)->setSubject($subject)->setBody($body)->setHeaders($headers)->send();
-
+```php
+$sendMail       = new SendMail();
+$sendMailFacade = new sendMailFacade($sendMail);
+$sendMailFacade->setTo($to)->setSubject($subject)->setBody($body)->setHeaders($headers)->send();
+```
 ## 示例三：完成一个商品交易的复杂流程
 
 假设呢，一个商品交易环节需要有这么几步：
+```php
+$productID = $_GET['productId']; 
+$qtyCheck = new productQty();
 
-    $productID = $_GET['productId']; 
-    $qtyCheck = new productQty();
-    
-     // 检查库存
-    if($qtyCheck->checkQty($productID) > 0) {
+ // 检查库存
+if($qtyCheck->checkQty($productID) > 0) {
+     
+    // 添加商品到购物车
+    $addToCart = new addToCart($productID);
+     
+    // 计算运费
+    $shipping = new shippingCharge();
+    $shipping->updateCharge();
+     
+    // 计算打折
+    $discount = new discount();
+    $discount->applyDiscount();
+     
+    $order = new order();
+    $order->generateOrder();
+}
+```
+可以看到，一个流程呢包含了很多步骤，涉及到了很多Object，一旦类似环节要用在多个地方，可能就会导致问题，所以可以先创建一个外观类：
+```php
+class productOrderFacade {
          
-        // 添加商品到购物车
-        $addToCart = new addToCart($productID);
+    public $productID = '';
+     
+    public function __construct($pID) {
+        $this->productID = $pID;
+    }
+     
+    public function generateOrder() {
          
-        // 计算运费
+        if($this->qtyCheck()) {
+             
+            $this->addToCart();
+            
+            $this->calulateShipping();
+                        
+            $this->applyDiscount();
+                        
+            $this->placeOrder();
+             
+        }
+         
+    }
+     
+    private function addToCart () {
+        /* .. add product to cart ..  */
+    }
+     
+    private function qtyCheck() {
+         
+        $qty = 'get product quantity from database';
+         
+        if($qty > 0) {
+            return true;
+        } else {
+            return true;
+        }
+    }
+     
+     
+    private function calulateShipping() {
         $shipping = new shippingCharge();
-        $shipping->updateCharge();
-         
-        // 计算打折
+        $shipping->calculateCharge();
+    }
+     
+    private function applyDiscount() {
         $discount = new discount();
         $discount->applyDiscount();
-         
+    }
+     
+    private function placeOrder() {
         $order = new order();
         $order->generateOrder();
     }
-
-可以看到，一个流程呢包含了很多步骤，涉及到了很多Object，一旦类似环节要用在多个地方，可能就会导致问题，所以可以先创建一个外观类：
-
-    class productOrderFacade {
-             
-        public $productID = '';
-         
-        public function __construct($pID) {
-            $this->productID = $pID;
-        }
-         
-        public function generateOrder() {
-             
-            if($this->qtyCheck()) {
-                 
-                $this->addToCart();
-                
-                $this->calulateShipping();
-                            
-                $this->applyDiscount();
-                            
-                $this->placeOrder();
-                 
-            }
-             
-        }
-         
-        private function addToCart () {
-            /* .. add product to cart ..  */
-        }
-         
-        private function qtyCheck() {
-             
-            $qty = 'get product quantity from database';
-             
-            if($qty > 0) {
-                return true;
-            } else {
-                return true;
-            }
-        }
-         
-         
-        private function calulateShipping() {
-            $shipping = new shippingCharge();
-            $shipping->calculateCharge();
-        }
-         
-        private function applyDiscount() {
-            $discount = new discount();
-            $discount->applyDiscount();
-        }
-         
-        private function placeOrder() {
-            $order = new order();
-            $order->generateOrder();
-        }
-    }
-
+}
+```
 这样呢，我们的终端调用就可以两行解决：
-
-    $order = new productOrderFacade($productID);
-    $order->generateOrder();
-
+```php
+$order = new productOrderFacade($productID);
+$order->generateOrder();
+```
 ## 示例四：往多个社交媒体同步消息的流程
+```php
+// 发Twitter消息
+class CodeTwit {
+  function tweet($status, $url)
+  {
+    var_dump('Tweeted:'.$status.' from:'.$url);
+  }
+}
 
-    // 发Twitter消息
-    class CodeTwit {
-      function tweet($status, $url)
-      {
-        var_dump('Tweeted:'.$status.' from:'.$url);
-      }
-    }
-    
-    // 分享到Google plus上
-    class Googlize {
-      function share($url)
-      {
-        var_dump('Shared on Google plus:'.$url);
-      }
-    }
-    
-    //分享到Reddit上
-    class Reddiator {
-      function reddit($url, $title)
-      {
-        var_dump('Reddit! url:'.$url.' title:'.$title);
-      }
-    }
+// 分享到Google plus上
+class Googlize {
+  function share($url)
+  {
+    var_dump('Shared on Google plus:'.$url);
+  }
+}
 
+//分享到Reddit上
+class Reddiator {
+  function reddit($url, $title)
+  {
+    var_dump('Reddit! url:'.$url.' title:'.$title);
+  }
+}
+```
 如果每次我们写了一篇文章，想着转发到其他平台，都得分别去调用相应方法，这工作量就太大了，后期平台数量往往只增不减呢。这个时候借助于facade class：
-
-    class shareFacade {
-      
-      protected $twitter;    
-      protected $google;   
-      protected $reddit;    
-        
-     function __construct($twitterObj,$gooleObj,$redditObj)
-      {
-        $this->twitter = $twitterObj;
-        $this->google  = $gooleObj;
-        $this->reddit  = $redditObj;
-      }  
-      
-      function share($url,$title,$status)
-      {
-        $this->twitter->tweet($status, $url);
-        $this->google->share($url);
-        $this->reddit->reddit($url, $title);
-      }
-    }
-
+```php
+class shareFacade {
+  
+  protected $twitter;    
+  protected $google;   
+  protected $reddit;    
+    
+ function __construct($twitterObj,$gooleObj,$redditObj)
+  {
+    $this->twitter = $twitterObj;
+    $this->google  = $gooleObj;
+    $this->reddit  = $redditObj;
+  }  
+  
+  function share($url,$title,$status)
+  {
+    $this->twitter->tweet($status, $url);
+    $this->google->share($url);
+    $this->reddit->reddit($url, $title);
+  }
+}
+```
 这样终端调用就可以：
-
-    $shareObj = new shareFacade($twitterObj,$gooleObj,$redditObj);
-    $shareObj->share('//myBlog.com/post-awsome','My greatest post','Read my greatest post ever.');
-
+```php
+$shareObj = new shareFacade($twitterObj,$gooleObj,$redditObj);
+$shareObj->share('//myBlog.com/post-awsome','My greatest post','Read my greatest post ever.');
+```
 ## facade pattern的优劣势
 
 ### 优势

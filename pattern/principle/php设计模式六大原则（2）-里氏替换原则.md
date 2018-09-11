@@ -29,21 +29,21 @@
 
 举例说明继承的风险，我们需要完成一个两数相减的功能，由类demo来负责。
 ```php
-    class demo {
-        public function f1($a, $b)
-        {
-            return $a-$b;
-        }
-    }
-    
-    class Client {
-        public function main()
-        {
-            $demo = new demo();
-            echo '100-50='.$demo->f1(100,50);
-            echo '150-50='.$demo->f1(150,50);
-        }
-    }
+class demo {
+    public function f1($a, $b)
+    {
+        return $a-$b;
+    }
+}
+
+class Client {
+    public function main()
+    {
+        $demo = new demo();
+        echo '100-50='.$demo->f1(100,50);
+        echo '150-50='.$demo->f1(150,50);
+    }
+}
 ```
 运行结果：
 
@@ -58,27 +58,27 @@
 
 由于类A已经实现了第一个功能，所以类demo1继承类demo后，只需要再完成第二个功能就可以了，代码如下
 ```php
-    class demo1 extend demo {
-        public function f1($a, $b)
-        {
-            return $a+$b;
-        }
-        
-        public function f2($a, $b)
-        {
-            return $this->f1($a, $b)+100;
-        }
-    }
-    
-    class Client {
-        public function main()
-        {
-            $demo1 = new demo1();
-            echo '100-50='.$demo1->f1(100,50);
-            echo '150-50='.$demo1->f1(150,50);
-            echo '100+20+100='.$demo1->f2(100,20);
-        }
-    }
+class demo1 extend demo {
+    public function f1($a, $b)
+    {
+        return $a+$b;
+    }
+    
+    public function f2($a, $b)
+    {
+        return $this->f1($a, $b)+100;
+    }
+}
+
+class Client {
+    public function main()
+    {
+        $demo1 = new demo1();
+        echo '100-50='.$demo1->f1(100,50);
+        echo '150-50='.$demo1->f1(150,50);
+        echo '100+20+100='.$demo1->f2(100,20);
+    }
+}
 ```
 类B完成后，运行结果：
 

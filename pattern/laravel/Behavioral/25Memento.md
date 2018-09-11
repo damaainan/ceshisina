@@ -25,295 +25,295 @@
 #### **Memento.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Memento;
-    
-    class Memento
+<?php
+
+namespace DesignPatterns\Behavioral\Memento;
+
+class Memento
+{
+    /* @var mixed */
+    private $state;
+
+    /**
+     * @param mixed $stateToSave
+     */
+    public function __construct($stateToSave)
     {
-        /* @var mixed */
-        private $state;
-    
-        /**
-         * @param mixed $stateToSave
-         */
-        public function __construct($stateToSave)
-        {
-            $this->state = $stateToSave;
-        }
-    
-        /**
-         * @return mixed
-         */
-        public function getState()
-        {
-            return $this->state;
-        }
+        $this->state = $stateToSave;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+}
 ```
 #### **Originator.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Memento;
-    
-    class Originator
+<?php
+
+namespace DesignPatterns\Behavioral\Memento;
+
+class Originator
+{
+    /* @var mixed */
+    private $state;
+
+    // 这个类还可以包含不属于备忘录状态的额外数据
+
+    /**
+     * @param mixed $state
+     */
+    public function setState($state)
     {
-        /* @var mixed */
-        private $state;
-    
-        // 这个类还可以包含不属于备忘录状态的额外数据
-    
-        /**
-         * @param mixed $state
-         */
-        public function setState($state)
-        {
-            // 必须检查该类子类内部的状态类型或者使用依赖注入
-            $this->state = $state;
-        }
-    
-        /**
-         * @return Memento
-         */
-        public function getStateAsMemento()
-        {
-            // 在Memento中必须保存一份隔离的备份
-            $state = is_object($this->state) ? clone $this->state : $this->state;
-    
-            return new Memento($state);
-        }
-    
-        public function restoreFromMemento(Memento $memento)
-        {
-            $this->state = $memento->getState();
-        }
+        // 必须检查该类子类内部的状态类型或者使用依赖注入
+        $this->state = $state;
     }
+
+    /**
+     * @return Memento
+     */
+    public function getStateAsMemento()
+    {
+        // 在Memento中必须保存一份隔离的备份
+        $state = is_object($this->state) ? clone $this->state : $this->state;
+
+        return new Memento($state);
+    }
+
+    public function restoreFromMemento(Memento $memento)
+    {
+        $this->state = $memento->getState();
+    }
+}
 ```
 #### **Caretaker.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Memento;
-    
-    class Caretaker
+<?php
+
+namespace DesignPatterns\Behavioral\Memento;
+
+class Caretaker
+{
+    protected $history = array();
+
+    /**
+     * @return Memento
+     */
+    public function getFromHistory($id)
     {
-        protected $history = array();
-    
-        /**
-         * @return Memento
-         */
-        public function getFromHistory($id)
-        {
-            return $this->history[$id];
-        }
-    
-        /**
-         * @param Memento $state
-         */
-        public function saveToHistory(Memento $state)
-        {
-            $this->history[] = $state;
-        }
-    
-        public function runCustomLogic()
-        {
-            $originator = new Originator();
-    
-            //设置状态为State1
-            $originator->setState("State1");
-            //设置状态为State2
-            $originator->setState("State2");
-            //将State2保存到Memento
-            $this->saveToHistory($originator->getStateAsMemento());
-            //设置状态为State3
-            $originator->setState("State3");
-    
-            //我们可以请求多个备忘录, 然后选择其中一个进行[回滚][4]
-            
-            //保存State3到Memento
-            $this->saveToHistory($originator->getStateAsMemento());
-            //设置状态为State4
-            $originator->setState("State4");
-    
-            $originator->restoreFromMemento($this->getFromHistory(1));
-            //从备忘录恢复后的状态: State3
-    
-            return $originator->getStateAsMemento()->getState();
-        }
+        return $this->history[$id];
     }
+
+    /**
+     * @param Memento $state
+     */
+    public function saveToHistory(Memento $state)
+    {
+        $this->history[] = $state;
+    }
+
+    public function runCustomLogic()
+    {
+        $originator = new Originator();
+
+        //设置状态为State1
+        $originator->setState("State1");
+        //设置状态为State2
+        $originator->setState("State2");
+        //将State2保存到Memento
+        $this->saveToHistory($originator->getStateAsMemento());
+        //设置状态为State3
+        $originator->setState("State3");
+
+        //我们可以请求多个备忘录, 然后选择其中一个进行[回滚][4]
+        
+        //保存State3到Memento
+        $this->saveToHistory($originator->getStateAsMemento());
+        //设置状态为State4
+        $originator->setState("State4");
+
+        $originator->restoreFromMemento($this->getFromHistory(1));
+        //从备忘录恢复后的状态: State3
+
+        return $originator->getStateAsMemento()->getState();
+    }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/MementoTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Memento\Tests;
-    
-    use DesignPatterns\Behavioral\Memento\Caretaker;
-    use DesignPatterns\Behavioral\Memento\Memento;
-    use DesignPatterns\Behavioral\Memento\Originator;
-    
-    /**
-     * MementoTest用于测试备忘录模式
-     */
-    class MementoTest extends \PHPUnit\Framework\TestCase
+<?php
+
+namespace DesignPatterns\Behavioral\Memento\Tests;
+
+use DesignPatterns\Behavioral\Memento\Caretaker;
+use DesignPatterns\Behavioral\Memento\Memento;
+use DesignPatterns\Behavioral\Memento\Originator;
+
+/**
+ * MementoTest用于测试备忘录模式
+ */
+class MementoTest extends \PHPUnit\Framework\TestCase
+{
+
+    public function testUsageExample()
     {
-    
-        public function testUsageExample()
-        {
-            $originator = new Originator();
-            $caretaker = new Caretaker();
-    
-            $character = new \stdClass();
-            // new object
-            $character->name = "Gandalf";
-            // connect Originator to character object
-            $originator->setState($character);
-    
-            // work on the object
-            $character->name = "Gandalf the Grey";
-            // still change something
-            $character->race = "Maia";
-            // time to save state
-            $snapshot = $originator->getStateAsMemento();
-            // put state to log
-            $caretaker->saveToHistory($snapshot);
-    
-            // change something
-            $character->name = "Sauron";
-            // and again
-            $character->race = "Ainur";
-            // state inside the Originator was equally changed
-            $this->assertAttributeEquals($character, "state", $originator);
-    
-            // time to save another state
-            $snapshot = $originator->getStateAsMemento();
-            // put state to log
-            $caretaker->saveToHistory($snapshot);
-    
-            $rollback = $caretaker->getFromHistory(0);
-            // return to first state
-            $originator->restoreFromMemento($rollback);
-            // use character from old state
-            $character = $rollback->getState();
-    
-            // yes, that what we need
-            $this->assertEquals("Gandalf the Grey", $character->name);
-            // make new changes
-            $character->name = "Gandalf the White";
-    
-            // and Originator linked to actual object again
-            $this->assertAttributeEquals($character, "state", $originator);
-        }
-    
-        public function testStringState()
-        {
-            $originator = new Originator();
-            $originator->setState("State1");
-    
-            $this->assertAttributeEquals("State1", "state", $originator);
-    
-            $originator->setState("State2");
-            $this->assertAttributeEquals("State2", "state", $originator);
-    
-            $snapshot = $originator->getStateAsMemento();
-            $this->assertAttributeEquals("State2", "state", $snapshot);
-    
-            $originator->setState("State3");
-            $this->assertAttributeEquals("State3", "state", $originator);
-    
-            $originator->restoreFromMemento($snapshot);
-            $this->assertAttributeEquals("State2", "state", $originator);
-        }
-    
-        public function testSnapshotIsClone()
-        {
-            $originator = new Originator();
-            $object = new \stdClass();
-    
-            $originator->setState($object);
-            $snapshot = $originator->getStateAsMemento();
-            $object->new_property = 1;
-    
-            $this->assertAttributeEquals($object, "state", $originator);
-            $this->assertAttributeNotEquals($object, "state", $snapshot);
-    
-            $originator->restoreFromMemento($snapshot);
-            $this->assertAttributeNotEquals($object, "state", $originator);
-        }
-    
-        public function testCanChangeActualState()
-        {
-            $originator = new Originator();
-            $first_state = new \stdClass();
-    
-            $originator->setState($first_state);
-            $snapshot = $originator->getStateAsMemento();
-            $second_state = $snapshot->getState();
-    
-            // still actual
-            $first_state->first_property = 1;
-            // just history
-            $second_state->second_property = 2;
-            $this->assertAttributeEquals($first_state, "state", $originator);
-            $this->assertAttributeNotEquals($second_state, "state", $originator);
-    
-            $originator->restoreFromMemento($snapshot);
-            // now it lost state
-            $first_state->first_property = 11;
-            // must be actual
-            $second_state->second_property = 22;
-            $this->assertAttributeEquals($second_state, "state", $originator);
-            $this->assertAttributeNotEquals($first_state, "state", $originator);
-        }
-    
-        public function testStateWithDifferentObjects()
-        {
-            $originator = new Originator();
-    
-            $first = new \stdClass();
-            $first->data = "foo";
-    
-            $originator->setState($first);
-            $this->assertAttributeEquals($first, "state", $originator);
-    
-            $first_snapshot = $originator->getStateAsMemento();
-            $this->assertAttributeEquals($first, "state", $first_snapshot);
-    
-            $second       = new \stdClass();
-            $second->data = "bar";
-            $originator->setState($second);
-            $this->assertAttributeEquals($second, "state", $originator);
-    
-            $originator->restoreFromMemento($first_snapshot);
-            $this->assertAttributeEquals($first, "state", $originator);
-        }
-    
-        public function testCaretaker()
-        {
-            $caretaker = new Caretaker();
-            $memento1 = new Memento("foo");
-            $memento2 = new Memento("bar");
-            $caretaker->saveToHistory($memento1);
-            $caretaker->saveToHistory($memento2);
-            $this->assertAttributeEquals(array($memento1, $memento2), "history", $caretaker);
-            $this->assertEquals($memento1, $caretaker->getFromHistory(0));
-            $this->assertEquals($memento2, $caretaker->getFromHistory(1));
-    
-        }
-    
-        public function testCaretakerCustomLogic()
-        {
-            $caretaker = new Caretaker();
-            $result = $caretaker->runCustomLogic();
-            $this->assertEquals("State3", $result);
-        }
+        $originator = new Originator();
+        $caretaker = new Caretaker();
+
+        $character = new \stdClass();
+        // new object
+        $character->name = "Gandalf";
+        // connect Originator to character object
+        $originator->setState($character);
+
+        // work on the object
+        $character->name = "Gandalf the Grey";
+        // still change something
+        $character->race = "Maia";
+        // time to save state
+        $snapshot = $originator->getStateAsMemento();
+        // put state to log
+        $caretaker->saveToHistory($snapshot);
+
+        // change something
+        $character->name = "Sauron";
+        // and again
+        $character->race = "Ainur";
+        // state inside the Originator was equally changed
+        $this->assertAttributeEquals($character, "state", $originator);
+
+        // time to save another state
+        $snapshot = $originator->getStateAsMemento();
+        // put state to log
+        $caretaker->saveToHistory($snapshot);
+
+        $rollback = $caretaker->getFromHistory(0);
+        // return to first state
+        $originator->restoreFromMemento($rollback);
+        // use character from old state
+        $character = $rollback->getState();
+
+        // yes, that what we need
+        $this->assertEquals("Gandalf the Grey", $character->name);
+        // make new changes
+        $character->name = "Gandalf the White";
+
+        // and Originator linked to actual object again
+        $this->assertAttributeEquals($character, "state", $originator);
     }
+
+    public function testStringState()
+    {
+        $originator = new Originator();
+        $originator->setState("State1");
+
+        $this->assertAttributeEquals("State1", "state", $originator);
+
+        $originator->setState("State2");
+        $this->assertAttributeEquals("State2", "state", $originator);
+
+        $snapshot = $originator->getStateAsMemento();
+        $this->assertAttributeEquals("State2", "state", $snapshot);
+
+        $originator->setState("State3");
+        $this->assertAttributeEquals("State3", "state", $originator);
+
+        $originator->restoreFromMemento($snapshot);
+        $this->assertAttributeEquals("State2", "state", $originator);
+    }
+
+    public function testSnapshotIsClone()
+    {
+        $originator = new Originator();
+        $object = new \stdClass();
+
+        $originator->setState($object);
+        $snapshot = $originator->getStateAsMemento();
+        $object->new_property = 1;
+
+        $this->assertAttributeEquals($object, "state", $originator);
+        $this->assertAttributeNotEquals($object, "state", $snapshot);
+
+        $originator->restoreFromMemento($snapshot);
+        $this->assertAttributeNotEquals($object, "state", $originator);
+    }
+
+    public function testCanChangeActualState()
+    {
+        $originator = new Originator();
+        $first_state = new \stdClass();
+
+        $originator->setState($first_state);
+        $snapshot = $originator->getStateAsMemento();
+        $second_state = $snapshot->getState();
+
+        // still actual
+        $first_state->first_property = 1;
+        // just history
+        $second_state->second_property = 2;
+        $this->assertAttributeEquals($first_state, "state", $originator);
+        $this->assertAttributeNotEquals($second_state, "state", $originator);
+
+        $originator->restoreFromMemento($snapshot);
+        // now it lost state
+        $first_state->first_property = 11;
+        // must be actual
+        $second_state->second_property = 22;
+        $this->assertAttributeEquals($second_state, "state", $originator);
+        $this->assertAttributeNotEquals($first_state, "state", $originator);
+    }
+
+    public function testStateWithDifferentObjects()
+    {
+        $originator = new Originator();
+
+        $first = new \stdClass();
+        $first->data = "foo";
+
+        $originator->setState($first);
+        $this->assertAttributeEquals($first, "state", $originator);
+
+        $first_snapshot = $originator->getStateAsMemento();
+        $this->assertAttributeEquals($first, "state", $first_snapshot);
+
+        $second       = new \stdClass();
+        $second->data = "bar";
+        $originator->setState($second);
+        $this->assertAttributeEquals($second, "state", $originator);
+
+        $originator->restoreFromMemento($first_snapshot);
+        $this->assertAttributeEquals($first, "state", $originator);
+    }
+
+    public function testCaretaker()
+    {
+        $caretaker = new Caretaker();
+        $memento1 = new Memento("foo");
+        $memento2 = new Memento("bar");
+        $caretaker->saveToHistory($memento1);
+        $caretaker->saveToHistory($memento2);
+        $this->assertAttributeEquals(array($memento1, $memento2), "history", $caretaker);
+        $this->assertEquals($memento1, $caretaker->getFromHistory(0));
+        $this->assertEquals($memento2, $caretaker->getFromHistory(1));
+
+    }
+
+    public function testCaretakerCustomLogic()
+    {
+        $caretaker = new Caretaker();
+        $result = $caretaker->runCustomLogic();
+        $this->assertEquals("State3", $result);
+    }
+}
 ```
 ### **5、总结**
 

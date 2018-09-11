@@ -17,408 +17,408 @@
 #### **Item.php**
 
 ```php
-    <?php
-    namespace DesignPatterns\Behavioral\Specification;
-    
-    class Item
+<?php
+namespace DesignPatterns\Behavioral\Specification;
+
+class Item
+{
+    protected $price;
+
+    /**
+     * An item must have a price
+     *
+     * @param int $price
+     */
+    public function __construct($price)
     {
-        protected $price;
-    
-        /**
-         * An item must have a price
-         *
-         * @param int $price
-         */
-        public function __construct($price)
-        {
-            $this->price = $price;
-        }
-    
-        /**
-         * Get the items price
-         *
-         * @return int
-         */
-        public function getPrice()
-        {
-            return $this->price;
-        }
+        $this->price = $price;
     }
+
+    /**
+     * Get the items price
+     *
+     * @return int
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+}
 ```
 #### **SpecificationInterface.php**
 
 ```php
-    <?php
-    namespace DesignPatterns\Behavioral\Specification;
-    
+<?php
+namespace DesignPatterns\Behavioral\Specification;
+
+/**
+ * 规格接口
+ */
+interface SpecificationInterface
+{
     /**
-     * 规格接口
+     * 判断对象是否满足规格
+     *
+     * @param Item $item
+     *
+     * @return bool
      */
-    interface SpecificationInterface
-    {
-        /**
-         * 判断对象是否满足规格
-         *
-         * @param Item $item
-         *
-         * @return bool
-         */
-        public function isSatisfiedBy(Item $item);
-    
-        /**
-         * 创建一个逻辑与规格（AND）
-         *
-         * @param SpecificationInterface $spec
-         */
-        public function plus(SpecificationInterface $spec);
-    
-        /**
-         * 创建一个逻辑或规格（OR）
-         *
-         * @param SpecificationInterface $spec
-         */
-        public function either(SpecificationInterface $spec);
-    
-        /**
-         * 创建一个逻辑非规格（NOT）
-         */
-        public function not();
-    }
+    public function isSatisfiedBy(Item $item);
+
+    /**
+     * 创建一个逻辑与规格（AND）
+     *
+     * @param SpecificationInterface $spec
+     */
+    public function plus(SpecificationInterface $spec);
+
+    /**
+     * 创建一个逻辑或规格（OR）
+     *
+     * @param SpecificationInterface $spec
+     */
+    public function either(SpecificationInterface $spec);
+
+    /**
+     * 创建一个逻辑非规格（NOT）
+     */
+    public function not();
+}
 ```
 #### **AbstractSpecification.php**
 
 ```php
-    <?php
-    namespace DesignPatterns\Behavioral\Specification;
-    
+<?php
+namespace DesignPatterns\Behavioral\Specification;
+
+/**
+ * 规格抽象类
+ */
+abstract class AbstractSpecification implements SpecificationInterface
+{
     /**
-     * 规格抽象类
+     * 检查给定Item是否满足所有规则
+     *
+     * @param Item $item
+     *
+     * @return bool
      */
-    abstract class AbstractSpecification implements SpecificationInterface
+    abstract public function isSatisfiedBy(Item $item);
+
+    /**
+     * 创建一个新的逻辑与规格（AND）
+     *
+     * @param SpecificationInterface $spec
+     *
+     * @return SpecificationInterface
+     */
+    public function plus(SpecificationInterface $spec)
     {
-        /**
-         * 检查给定Item是否满足所有规则
-         *
-         * @param Item $item
-         *
-         * @return bool
-         */
-        abstract public function isSatisfiedBy(Item $item);
-    
-        /**
-         * 创建一个新的逻辑与规格（AND）
-         *
-         * @param SpecificationInterface $spec
-         *
-         * @return SpecificationInterface
-         */
-        public function plus(SpecificationInterface $spec)
-        {
-            return new Plus($this, $spec);
-        }
-    
-        /**
-         * 创建一个新的逻辑或组合规格（OR）
-         *
-         * @param SpecificationInterface $spec
-         *
-         * @return SpecificationInterface
-         */
-        public function either(SpecificationInterface $spec)
-        {
-            return new Either($this, $spec);
-        }
-    
-        /**
-         * 创建一个新的逻辑非规格（NOT）
-         *
-         * @return SpecificationInterface
-         */
-        public function not()
-        {
-            return new Not($this);
-        }
+        return new Plus($this, $spec);
     }
+
+    /**
+     * 创建一个新的逻辑或组合规格（OR）
+     *
+     * @param SpecificationInterface $spec
+     *
+     * @return SpecificationInterface
+     */
+    public function either(SpecificationInterface $spec)
+    {
+        return new Either($this, $spec);
+    }
+
+    /**
+     * 创建一个新的逻辑非规格（NOT）
+     *
+     * @return SpecificationInterface
+     */
+    public function not()
+    {
+        return new Not($this);
+    }
+}
 ```
 #### **Plus.php**
 
 ```php
-    <?php
-    namespace DesignPatterns\Behavioral\Specification;
-    
+<?php
+namespace DesignPatterns\Behavioral\Specification;
+
+/**
+ * 逻辑与规格（AND）
+ */
+class Plus extends AbstractSpecification
+{
+
+    protected $left;
+    protected $right;
+
     /**
-     * 逻辑与规格（AND）
+     * 在构造函数中传入两种规格
+     *
+     * @param SpecificationInterface $left
+     * @param SpecificationInterface $right
      */
-    class Plus extends AbstractSpecification
+    public function __construct(SpecificationInterface $left, SpecificationInterface $right)
     {
-    
-        protected $left;
-        protected $right;
-    
-        /**
-         * 在构造函数中传入两种规格
-         *
-         * @param SpecificationInterface $left
-         * @param SpecificationInterface $right
-         */
-        public function __construct(SpecificationInterface $left, SpecificationInterface $right)
-        {
-            $this->left = $left;
-            $this->right = $right;
-        }
-    
-        /**
-         * 返回两种规格的逻辑与评估
-         *
-         * @param Item $item
-         *
-         * @return bool
-         */
-        public function isSatisfiedBy(Item $item)
-        {
-            return $this->left->isSatisfiedBy($item) && $this->right->isSatisfiedBy($item);
-        }
+        $this->left = $left;
+        $this->right = $right;
     }
+
+    /**
+     * 返回两种规格的逻辑与评估
+     *
+     * @param Item $item
+     *
+     * @return bool
+     */
+    public function isSatisfiedBy(Item $item)
+    {
+        return $this->left->isSatisfiedBy($item) && $this->right->isSatisfiedBy($item);
+    }
+}
 ```
 #### **Either.php**
 
 ```php
-    <?php
-    namespace DesignPatterns\Behavioral\Specification;
-    
+<?php
+namespace DesignPatterns\Behavioral\Specification;
+
+/**
+ * 逻辑或规格
+ */
+class Either extends AbstractSpecification
+{
+
+    protected $left;
+    protected $right;
+
     /**
-     * 逻辑或规格
+     * 两种规格的组合
+     *
+     * @param SpecificationInterface $left
+     * @param SpecificationInterface $right
      */
-    class Either extends AbstractSpecification
+    public function __construct(SpecificationInterface $left, SpecificationInterface $right)
     {
-    
-        protected $left;
-        protected $right;
-    
-        /**
-         * 两种规格的组合
-         *
-         * @param SpecificationInterface $left
-         * @param SpecificationInterface $right
-         */
-        public function __construct(SpecificationInterface $left, SpecificationInterface $right)
-        {
-            $this->left = $left;
-            $this->right = $right;
-        }
-    
-        /**
-         * 返回两种规格的逻辑或评估
-         *
-         * @param Item $item
-         *
-         * @return bool
-         */
-        public function isSatisfiedBy(Item $item)
-        {
-            return $this->left->isSatisfiedBy($item) || $this->right->isSatisfiedBy($item);
-        }
+        $this->left = $left;
+        $this->right = $right;
     }
+
+    /**
+     * 返回两种规格的逻辑或评估
+     *
+     * @param Item $item
+     *
+     * @return bool
+     */
+    public function isSatisfiedBy(Item $item)
+    {
+        return $this->left->isSatisfiedBy($item) || $this->right->isSatisfiedBy($item);
+    }
+}
 ```
 #### **Not.php**
 
 ```php
-    <?php
-    namespace DesignPatterns\Behavioral\Specification;
-    
+<?php
+namespace DesignPatterns\Behavioral\Specification;
+
+/**
+ * 逻辑非规格
+ */
+class Not extends AbstractSpecification
+{
+
+    protected $spec;
+
     /**
-     * 逻辑非规格
+     * 在构造函数中传入指定规格
+     *
+     * @param SpecificationInterface $spec
      */
-    class Not extends AbstractSpecification
+    public function __construct(SpecificationInterface $spec)
     {
-    
-        protected $spec;
-    
-        /**
-         * 在构造函数中传入指定规格
-         *
-         * @param SpecificationInterface $spec
-         */
-        public function __construct(SpecificationInterface $spec)
-        {
-            $this->spec = $spec;
-        }
-    
-        /**
-         * 返回规格的相反结果
-         *
-         * @param Item $item
-         *
-         * @return bool
-         */
-        public function isSatisfiedBy(Item $item)
-        {
-            return !$this->spec->isSatisfiedBy($item);
-        }
+        $this->spec = $spec;
     }
+
+    /**
+     * 返回规格的相反结果
+     *
+     * @param Item $item
+     *
+     * @return bool
+     */
+    public function isSatisfiedBy(Item $item)
+    {
+        return !$this->spec->isSatisfiedBy($item);
+    }
+}
 ```
 #### **PriceSpecification.php**
 
 ```php
-    <?php
-    namespace DesignPatterns\Behavioral\Specification;
-    
+<?php
+namespace DesignPatterns\Behavioral\Specification;
+
+/**
+ * 判断给定Item的价格是否介于最小值和最大值之间的规格
+ */
+class PriceSpecification extends AbstractSpecification
+{
+    protected $maxPrice;
+    protected $minPrice;
+
     /**
-     * 判断给定Item的价格是否介于最小值和最大值之间的规格
+     * 设置最大值
+     *
+     * @param int $maxPrice
      */
-    class PriceSpecification extends AbstractSpecification
+    public function setMaxPrice($maxPrice)
     {
-        protected $maxPrice;
-        protected $minPrice;
-    
-        /**
-         * 设置最大值
-         *
-         * @param int $maxPrice
-         */
-        public function setMaxPrice($maxPrice)
-        {
-            $this->maxPrice = $maxPrice;
-        }
-    
-        /**
-         * 设置最小值
-         *
-         * @param int $minPrice
-         */
-        public function setMinPrice($minPrice)
-        {
-            $this->minPrice = $minPrice;
-        }
-    
-        /**
-         * 判断给定Item的定价是否在最小值和最大值之间
-         *
-         * @param Item $item
-         *
-         * @return bool
-         */
-        public function isSatisfiedBy(Item $item)
-        {
-            if (!empty($this->maxPrice) && $item->getPrice() > $this->maxPrice) {
-                return false;
-            }
-            if (!empty($this->minPrice) && $item->getPrice() < $this->minPrice) {
-                return false;
-            }
-    
-            return true;
-        }
+        $this->maxPrice = $maxPrice;
     }
+
+    /**
+     * 设置最小值
+     *
+     * @param int $minPrice
+     */
+    public function setMinPrice($minPrice)
+    {
+        $this->minPrice = $minPrice;
+    }
+
+    /**
+     * 判断给定Item的定价是否在最小值和最大值之间
+     *
+     * @param Item $item
+     *
+     * @return bool
+     */
+    public function isSatisfiedBy(Item $item)
+    {
+        if (!empty($this->maxPrice) && $item->getPrice() > $this->maxPrice) {
+            return false;
+        }
+        if (!empty($this->minPrice) && $item->getPrice() < $this->minPrice) {
+            return false;
+        }
+
+        return true;
+    }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/SpecificationTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Specification\Tests;
-    
-    use DesignPatterns\Behavioral\Specification\PriceSpecification;
-    use DesignPatterns\Behavioral\Specification\Item;
-    
-    /**
-     * SpecificationTest 用于测试规格模式
-     */
-    class SpecificationTest extends \PHPUnit\Framework\TestCase
+<?php
+
+namespace DesignPatterns\Behavioral\Specification\Tests;
+
+use DesignPatterns\Behavioral\Specification\PriceSpecification;
+use DesignPatterns\Behavioral\Specification\Item;
+
+/**
+ * SpecificationTest 用于测试规格模式
+ */
+class SpecificationTest extends \PHPUnit\Framework\TestCase
+{
+    public function testSimpleSpecification()
     {
-        public function testSimpleSpecification()
-        {
-            $item = new Item(100);
-            $spec = new PriceSpecification();
-    
-            $this->assertTrue($spec->isSatisfiedBy($item));
-    
-            $spec->setMaxPrice(50);
-            $this->assertFalse($spec->isSatisfiedBy($item));
-    
-            $spec->setMaxPrice(150);
-            $this->assertTrue($spec->isSatisfiedBy($item));
-    
-            $spec->setMinPrice(101);
-            $this->assertFalse($spec->isSatisfiedBy($item));
-    
-            $spec->setMinPrice(100);
-            $this->assertTrue($spec->isSatisfiedBy($item));
-        }
-    
-        public function testNotSpecification()
-        {
-            $item = new Item(100);
-            $spec = new PriceSpecification();
-            $not = $spec->not();
-    
-            $this->assertFalse($not->isSatisfiedBy($item));
-    
-            $spec->setMaxPrice(50);
-            $this->assertTrue($not->isSatisfiedBy($item));
-    
-            $spec->setMaxPrice(150);
-            $this->assertFalse($not->isSatisfiedBy($item));
-    
-            $spec->setMinPrice(101);
-            $this->assertTrue($not->isSatisfiedBy($item));
-    
-            $spec->setMinPrice(100);
-            $this->assertFalse($not->isSatisfiedBy($item));
-        }
-    
-        public function testPlusSpecification()
-        {
-            $spec1 = new PriceSpecification();
-            $spec2 = new PriceSpecification();
-            $plus = $spec1->plus($spec2);
-    
-            $item = new Item(100);
-    
-            $this->assertTrue($plus->isSatisfiedBy($item));
-    
-            $spec1->setMaxPrice(150);
-            $spec2->setMinPrice(50);
-            $this->assertTrue($plus->isSatisfiedBy($item));
-    
-            $spec1->setMaxPrice(150);
-            $spec2->setMinPrice(101);
-            $this->assertFalse($plus->isSatisfiedBy($item));
-    
-            $spec1->setMaxPrice(99);
-            $spec2->setMinPrice(50);
-            $this->assertFalse($plus->isSatisfiedBy($item));
-        }
-    
-        public function testEitherSpecification()
-        {
-            $spec1 = new PriceSpecification();
-            $spec2 = new PriceSpecification();
-            $either = $spec1->either($spec2);
-    
-            $item = new Item(100);
-    
-            $this->assertTrue($either->isSatisfiedBy($item));
-    
-            $spec1->setMaxPrice(150);
-            $spec2->setMaxPrice(150);
-            $this->assertTrue($either->isSatisfiedBy($item));
-    
-            $spec1->setMaxPrice(150);
-            $spec2->setMaxPrice(0);
-            $this->assertTrue($either->isSatisfiedBy($item));
-    
-            $spec1->setMaxPrice(0);
-            $spec2->setMaxPrice(150);
-            $this->assertTrue($either->isSatisfiedBy($item));
-    
-            $spec1->setMaxPrice(99);
-            $spec2->setMaxPrice(99);
-            $this->assertFalse($either->isSatisfiedBy($item));
-        }
+        $item = new Item(100);
+        $spec = new PriceSpecification();
+
+        $this->assertTrue($spec->isSatisfiedBy($item));
+
+        $spec->setMaxPrice(50);
+        $this->assertFalse($spec->isSatisfiedBy($item));
+
+        $spec->setMaxPrice(150);
+        $this->assertTrue($spec->isSatisfiedBy($item));
+
+        $spec->setMinPrice(101);
+        $this->assertFalse($spec->isSatisfiedBy($item));
+
+        $spec->setMinPrice(100);
+        $this->assertTrue($spec->isSatisfiedBy($item));
     }
+
+    public function testNotSpecification()
+    {
+        $item = new Item(100);
+        $spec = new PriceSpecification();
+        $not = $spec->not();
+
+        $this->assertFalse($not->isSatisfiedBy($item));
+
+        $spec->setMaxPrice(50);
+        $this->assertTrue($not->isSatisfiedBy($item));
+
+        $spec->setMaxPrice(150);
+        $this->assertFalse($not->isSatisfiedBy($item));
+
+        $spec->setMinPrice(101);
+        $this->assertTrue($not->isSatisfiedBy($item));
+
+        $spec->setMinPrice(100);
+        $this->assertFalse($not->isSatisfiedBy($item));
+    }
+
+    public function testPlusSpecification()
+    {
+        $spec1 = new PriceSpecification();
+        $spec2 = new PriceSpecification();
+        $plus = $spec1->plus($spec2);
+
+        $item = new Item(100);
+
+        $this->assertTrue($plus->isSatisfiedBy($item));
+
+        $spec1->setMaxPrice(150);
+        $spec2->setMinPrice(50);
+        $this->assertTrue($plus->isSatisfiedBy($item));
+
+        $spec1->setMaxPrice(150);
+        $spec2->setMinPrice(101);
+        $this->assertFalse($plus->isSatisfiedBy($item));
+
+        $spec1->setMaxPrice(99);
+        $spec2->setMinPrice(50);
+        $this->assertFalse($plus->isSatisfiedBy($item));
+    }
+
+    public function testEitherSpecification()
+    {
+        $spec1 = new PriceSpecification();
+        $spec2 = new PriceSpecification();
+        $either = $spec1->either($spec2);
+
+        $item = new Item(100);
+
+        $this->assertTrue($either->isSatisfiedBy($item));
+
+        $spec1->setMaxPrice(150);
+        $spec2->setMaxPrice(150);
+        $this->assertTrue($either->isSatisfiedBy($item));
+
+        $spec1->setMaxPrice(150);
+        $spec2->setMaxPrice(0);
+        $this->assertTrue($either->isSatisfiedBy($item));
+
+        $spec1->setMaxPrice(0);
+        $spec2->setMaxPrice(150);
+        $this->assertTrue($either->isSatisfiedBy($item));
+
+        $spec1->setMaxPrice(99);
+        $spec2->setMaxPrice(99);
+        $this->assertFalse($either->isSatisfiedBy($item));
+    }
+}
 ```
 [0]: http://laravelacademy.org/post/2960.html
 [1]: http://laravelacademy.org/post/author/nonfu

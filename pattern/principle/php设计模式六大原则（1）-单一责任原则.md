@@ -21,20 +21,20 @@
 用一个类描述动物吃什么这个场景
 
 ```php
-    class Animal {
-        public function eat($animal)
-        {
-            echo $animal.'吃草';
-        }
+class Animal {
+    public function eat($animal)
+    {
+        echo $animal.'吃草';
+    }
+}
+
+class Client{
+    public static function main(){
+        $animal = new Animal();
+        $animal->eat("牛");
+        $animal->eat("羊");
     }
-    
-    class Client{
-        public static function main(){
-            $animal = new Animal();
-            $animal->eat("牛");
-            $animal->eat("羊");
-        }
-    }
+}
 ```
 执行结果:
 
@@ -44,31 +44,31 @@
 那么，程序上线后我们发现不是所有动物都是吃草的，比如老虎吃肉。修改时如果遵循单一责任原则，需要将Animal细分为食肉动物meatAnimal和食草动物grassAnimal，代码如下
 
 ```php
-    class meatAnimal{
-        public function eat($animal)
-        {
-            echo $animal.'吃肉';
-        }
+class meatAnimal{
+    public function eat($animal)
+    {
+        echo $animal.'吃肉';
+    }
+}
+
+class grassAnimal{
+    public function eat($animal)
+    {
+        echo $animal.'吃草';
+    }
+}
+
+class Client{
+    public static function main(){
+        $meatAnimal = new meatAnimal();
+        $meatAnimal->eat("狮子");
+        $meatAnimal->eat("老虎");
+        
+        $grassAnimal = new grassAnimal();
+        $meatAnimal->eat("牛");
+        $meatAnimal->eat("羊");
     }
-    
-    class grassAnimal{
-        public function eat($animal)
-        {
-            echo $animal.'吃草';
-        }
-    }
-    
-    class Client{
-        public static function main(){
-            $meatAnimal = new meatAnimal();
-            $meatAnimal->eat("狮子");
-            $meatAnimal->eat("老虎");
-            
-            $grassAnimal = new grassAnimal();
-            $meatAnimal->eat("牛");
-            $meatAnimal->eat("羊");
-        }
-    }
+}
 ```
 执行结果
 
@@ -80,47 +80,47 @@
 我们会发现如果这样修改花销是很大的，除了将原来的类分解之外，还需要修改客户端。而直接修改类Animal来达成目的虽然违背了单一职责原则，但花销却小的多，代码如下：
 
 ```php
-    class Animal{
-        public function eat($animal){
-                if($animal == '狮子'||$animal == '老虎')
-            echo $animal.'吃肉';
-        }else{
-                echo $animal.'吃草';
-        }
+class Animal{
+    public function eat($animal){
+            if($animal == '狮子'||$animal == '老虎')
+        echo $animal.'吃肉';
+    }else{
+            echo $animal.'吃草';
     }
-    
-    class Client{
-        public static function main(){
-            $animal = new Animal();
-            $animal->eat("狮子");
-            $animal->eat("老虎");
-            $animal->eat("牛");
-            $animal->eat("羊");
-        }
+}
+
+class Client{
+    public static function main(){
+        $animal = new Animal();
+        $animal->eat("狮子");
+        $animal->eat("老虎");
+        $animal->eat("牛");
+        $animal->eat("羊");
     }
+}
 ```
   
 可以看到，这种修改方式要简单的多。但是却存在着隐患：如果有一天要加一个猪（杂食动物），我们又要去修改动物类，而对原有的功能带来了风险，这样修改方式在代码级别上违背了单一责任原则，虽然改起来简单，隐患却是最大的，还有一种修改方式，代码如下
 ```php
-    class Animal{
-        public function eat($animal){
-            echo $animal.'吃肉';
-        }
-    
-        public function eat2($animal){
-            echo $animal.'吃草';
-        }
+class Animal{
+    public function eat($animal){
+        echo $animal.'吃肉';
     }
-    
-    class Client{
-        public static function main(){
-            $animal = new Animal();
-            $animal->eat("狮子");
-            $animal->eat("老虎");
-            $animal->eat2("牛");
-            $animal->eat2("羊");
-        }
+
+    public function eat2($animal){
+        echo $animal.'吃草';
     }
+}
+
+class Client{
+    public static function main(){
+        $animal = new Animal();
+        $animal->eat("狮子");
+        $animal->eat("老虎");
+        $animal->eat2("牛");
+        $animal->eat2("羊");
+    }
+}
 ```
 可以看到，这种修改方式没有改动原来的方法，而是在类中新加了一个方法，这样虽然也违背了单一职责原则，但在方法级别上却是符合单一职责原则的，因为它并没有动原来方法的代码。这三种方式各有优缺点，那么在实际编程中，采用哪一中呢？其实这真的比较难说，需要根据实际情况来确定。我的原则是：只有逻辑足够简单，才可以在代码级别上违反单一职责原则；只有类中方法数量足够少，才可以在方法级别上违反单一职责原则；
 

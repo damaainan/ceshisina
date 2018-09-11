@@ -20,23 +20,23 @@
 代码如下：
 
 ```php
-    class Book{
-        public function getContent(){
-            return "很久很久以前有一个阿拉伯的故事……";
-        }
-    }
-    class Mother{
-        public function narrate($book){
-            print_r("妈妈开始讲故事");
-            print_r(book.getContent());
-        }
-    }
-    class Client{
-        public static function main(){
-            $mother = new Mother();
-            $mother.narrate(new Book());
-        }
-    }
+class Book{
+    public function getContent(){
+        return "很久很久以前有一个阿拉伯的故事……";
+    }
+}
+class Mother{
+    public function narrate($book){
+        print_r("妈妈开始讲故事");
+        print_r(book.getContent());
+    }
+}
+class Client{
+    public static function main(){
+        $mother = new Mother();
+        $mother.narrate(new Book());
+    }
+}
 ```
 运行结果：
 
@@ -46,47 +46,48 @@
 运行良好，假如有一天，需求变成这样：不是给书而是给一份报纸，让这位母亲讲一下报纸上的故事，报纸的代码如下：
 
 ```php
-    class Newspaper{
-        public function getContent(){
-            return "林书豪38+7领导尼克斯击败湖人……";
-        }
-    }
+class Newspaper{
+    public function getContent(){
+        return "林书豪38+7领导尼克斯击败湖人……";
+    }
+}
 ```
 
 这位母亲却办不到，因为她居然不会读报纸上的故事，这太荒唐了，只是将书换成报纸，居然必须要修改Mother才能读。假如以后需求换成杂志呢？换成网页呢？还要不断地修改Mother，这显然不是好的设计。原因就是Mother与Book之间的耦合性太高了，必须降低他们之间的耦合度才行。
 
 我们引入一个抽象的接口IReader。读物，只要是带字的都属于读物：
 
-    interface IReader{
-        public function getContent();
-    }
-
+```php
+interface IReader{
+    public function getContent();
+}
+```
 Mother类与接口IReader发生依赖关系，而Book和Newspaper都属于读物的范畴，他们各自都去实现IReader接口，这样就符合依赖倒置原则了，代码修改为：
 
 ```php
-    class Newspaper implements IReader {
-        public function getContent(){
-            return "林书豪17+9助尼克斯击败老鹰……";
-        }
-    }
-    class Book implements IReader{
-        public function getContent(){
-            return "很久很久以前有一个阿拉伯的故事……";
-        }
-    }
-    class Mother{
-        public void narrate($reader){
-            print_r("妈妈开始讲故事");
-            print_r(reader.getContent());
-        }
-    }
-    class Client{
-        public static function main(){
-            $mother = new Mother();
-            $mother.narrate(new Book());
-            $mother.narrate(new Newspaper());
-        }
-    }
+class Newspaper implements IReader {
+    public function getContent(){
+        return "林书豪17+9助尼克斯击败老鹰……";
+    }
+}
+class Book implements IReader{
+    public function getContent(){
+        return "很久很久以前有一个阿拉伯的故事……";
+    }
+}
+class Mother{
+    public void narrate($reader){
+        print_r("妈妈开始讲故事");
+        print_r(reader.getContent());
+    }
+}
+class Client{
+    public static function main(){
+        $mother = new Mother();
+        $mother.narrate(new Book());
+        $mother.narrate(new Newspaper());
+    }
+}
 ```
 运行结果：
 

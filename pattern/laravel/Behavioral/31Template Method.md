@@ -17,139 +17,139 @@
 #### **Journey.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\TemplateMethod;
-    
-    abstract class Journey
+<?php
+
+namespace DesignPatterns\Behavioral\TemplateMethod;
+
+abstract class Journey
+{
+    /**
+     * 该方法是父类和子类提供的公共服务
+     * 注意到方法前加了final，意味着子类不能重写该方法
+     */
+    final public function takeATrip()
     {
-        /**
-         * 该方法是父类和子类提供的公共服务
-         * 注意到方法前加了final，意味着子类不能重写该方法
-         */
-        final public function takeATrip()
-        {
-            $this->buyAFlight();
-            $this->takePlane();
-            $this->enjoyVacation();
-            $this->buyGift();
-            $this->takePlane();
-        }
-    
-        /**
-         * 该方法必须被子类实现, 这是模板方法模式的核心特性
-         */
-        abstract protected function enjoyVacation();
-    
-        /**
-         * 这个方法也是算法的一部分，但是是可选的，只有在需要的时候才去重写它
-         */
-        protected function buyGift()
-        {
-        }
-    
-        /**
-         * 子类不能访问该方法
-         */
-        private function buyAFlight()
-        {
-            echo "Buying a flight\n";
-        }
-    
-        /**
-         * 这也是个final方法
-         */
-        final protected function takePlane()
-        {
-            echo "Taking the plane\n";
-        }
+        $this->buyAFlight();
+        $this->takePlane();
+        $this->enjoyVacation();
+        $this->buyGift();
+        $this->takePlane();
     }
+
+    /**
+     * 该方法必须被子类实现, 这是模板方法模式的核心特性
+     */
+    abstract protected function enjoyVacation();
+
+    /**
+     * 这个方法也是算法的一部分，但是是可选的，只有在需要的时候才去重写它
+     */
+    protected function buyGift()
+    {
+    }
+
+    /**
+     * 子类不能访问该方法
+     */
+    private function buyAFlight()
+    {
+        echo "Buying a flight\n";
+    }
+
+    /**
+     * 这也是个final方法
+     */
+    final protected function takePlane()
+    {
+        echo "Taking the plane\n";
+    }
+}
 ```
 #### **BeachJourney.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\TemplateMethod;
-    
-    /**
-     * BeachJourney类（在海滩度假）
-     */
-    class BeachJourney extends Journey
+<?php
+
+namespace DesignPatterns\Behavioral\TemplateMethod;
+
+/**
+ * BeachJourney类（在海滩度假）
+ */
+class BeachJourney extends Journey
+{
+    protected function enjoyVacation()
     {
-        protected function enjoyVacation()
-        {
-            echo "Swimming and sun-bathing\n";
-        }
+        echo "Swimming and sun-bathing\n";
     }
+}
 ```
 #### **CityJourney.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\TemplateMethod;
-    
-    /**
-     * CityJourney类（在城市中度假）
-     */
-    class CityJourney extends Journey
+<?php
+
+namespace DesignPatterns\Behavioral\TemplateMethod;
+
+/**
+ * CityJourney类（在城市中度假）
+ */
+class CityJourney extends Journey
+{
+    protected function enjoyVacation()
     {
-        protected function enjoyVacation()
-        {
-            echo "Eat, drink, take photos and sleep\n";
-        }
+        echo "Eat, drink, take photos and sleep\n";
     }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/JourneyTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\TemplateMethod\Tests;
-    
-    use DesignPatterns\Behavioral\TemplateMethod;
-    
-    /**
-     * JourneyTest测试所有的度假
-     */
-    class JourneyTest extends \PHPUnit\Framework\TestCase
+<?php
+
+namespace DesignPatterns\Behavioral\TemplateMethod\Tests;
+
+use DesignPatterns\Behavioral\TemplateMethod;
+
+/**
+ * JourneyTest测试所有的度假
+ */
+class JourneyTest extends \PHPUnit\Framework\TestCase
+{
+
+    public function testBeach()
     {
-    
-        public function testBeach()
-        {
-            $journey = new TemplateMethod\BeachJourney();
-            $this->expectOutputRegex('#sun-bathing#');
-            $journey->takeATrip();
-        }
-    
-        public function testCity()
-        {
-            $journey = new TemplateMethod\CityJourney();
-            $this->expectOutputRegex('#drink#');
-            $journey->takeATrip();
-        }
-    
-        /**
-         * 在PHPUnit中如何测试抽象模板方法
-         */
-        public function testLasVegas()
-        {
-            $journey = $this->getMockForAbstractClass('DesignPatterns\Behavioral\TemplateMethod\Journey');
-            $journey->expects($this->once())
-                ->method('enjoyVacation')
-                ->will($this->returnCallback(array($this, 'mockUpVacation')));
-            $this->expectOutputRegex('#Las Vegas#');
-            $journey->takeATrip();
-        }
-    
-        public function mockUpVacation()
-        {
-            echo "Fear and loathing in Las Vegas\n";
-        }
+        $journey = new TemplateMethod\BeachJourney();
+        $this->expectOutputRegex('#sun-bathing#');
+        $journey->takeATrip();
     }
+
+    public function testCity()
+    {
+        $journey = new TemplateMethod\CityJourney();
+        $this->expectOutputRegex('#drink#');
+        $journey->takeATrip();
+    }
+
+    /**
+     * 在PHPUnit中如何测试抽象模板方法
+     */
+    public function testLasVegas()
+    {
+        $journey = $this->getMockForAbstractClass('DesignPatterns\Behavioral\TemplateMethod\Journey');
+        $journey->expects($this->once())
+            ->method('enjoyVacation')
+            ->will($this->returnCallback(array($this, 'mockUpVacation')));
+        $this->expectOutputRegex('#Las Vegas#');
+        $journey->takeATrip();
+    }
+
+    public function mockUpVacation()
+    {
+        echo "Fear and loathing in Las Vegas\n";
+    }
+}
 ```
 ### **5、总结**
 

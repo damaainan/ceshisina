@@ -1,6 +1,5 @@
 # [API开发第二篇：PHP的设计模式之工厂模式][0]
 
- 标签： [php][1][设计模式][2][工厂模式][3][工厂模式的作用][4][API开发][5]
 
  2015-02-05 23:15  1168人阅读 
 
@@ -15,26 +14,26 @@
 **工厂模式简单代码：**
 
 **需要被工厂生产的类：**
-
-    class Database {
-        public function where($str){
-            echo $str.'<br />';
-            
-            return $this;
-        }
-    }
-
-**工厂类：**
-
-    class Factory {
+```php
+class Database {
+    public function where($str){
+        echo $str.'<br />';
         
-        public static function createInstance(){
-            $instance = new Database();
-            
-            return $instance;
-        }
+        return $this;
     }
-
+}
+```
+**工厂类：**
+```php
+class Factory {
+    
+    public static function createInstance(){
+        $instance = new Database();
+        
+        return $instance;
+    }
+}
+```
   
 **外部调用：**
 
@@ -42,10 +41,5 @@
     $db ->where( 'where' )->order( 'order' );
 
 [0]: /hel12he/article/details/43540145
-[1]: http://www.csdn.net/tag/php
-[2]: http://www.csdn.net/tag/%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f
-[3]: http://www.csdn.net/tag/%e5%b7%a5%e5%8e%82%e6%a8%a1%e5%bc%8f
-[4]: http://www.csdn.net/tag/%e5%b7%a5%e5%8e%82%e6%a8%a1%e5%bc%8f%e7%9a%84%e4%bd%9c%e7%94%a8
-[5]: http://www.csdn.net/tag/API%e5%bc%80%e5%8f%91
 [10]: http://lib.csdn.net/base/php
 [11]: #

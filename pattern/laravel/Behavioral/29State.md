@@ -17,212 +17,212 @@
 #### **OrderController.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\State;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\State;
+
+/**
+ * OrderController类
+ */
+class OrderController
+{
     /**
-     * OrderController类
+     * @param int $id
      */
-    class OrderController
+    public function shipAction($id)
     {
-        /**
-         * @param int $id
-         */
-        public function shipAction($id)
-        {
-            $order = OrderFactory::getOrder($id);
-            try {
-                $order->shipOrder();
-            } catch (Exception $e) {
-                //处理错误!
-            }
-            // 发送响应到浏览器
+        $order = OrderFactory::getOrder($id);
+        try {
+            $order->shipOrder();
+        } catch (Exception $e) {
+            //处理错误!
         }
-    
-        /**
-         * @param int $id
-         */
-        public function completeAction($id)
-        {
-            $order = OrderFactory::getOrder($id);
-            try {
-                $order->completeOrder();
-            } catch (Exception $e) {
-                //处理错误!
-            }
-            // 发送响应到浏览器
-        }
+        // 发送响应到浏览器
     }
+
+    /**
+     * @param int $id
+     */
+    public function completeAction($id)
+    {
+        $order = OrderFactory::getOrder($id);
+        try {
+            $order->completeOrder();
+        } catch (Exception $e) {
+            //处理错误!
+        }
+        // 发送响应到浏览器
+    }
+}
 ```
 #### **OrderFactory.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\State;
-    
-    /**
-     * OrderFactory类
-     */
-    class OrderFactory
+<?php
+
+namespace DesignPatterns\Behavioral\State;
+
+/**
+ * OrderFactory类
+ */
+class OrderFactory
+{
+    private function __construct()
     {
-        private function __construct()
-        {
-            throw new \Exception('Can not instance the OrderFactory class!');
-        }
-    
-        /**
-         * @param int $id
-         *
-         * @return CreateOrder|ShippingOrder
-         * @throws \Exception
-         */
-        public static function getOrder($id)
-        {
-            //从数据库获取订单伪代码
-            $order = 'Get Order From Database';
-    
-            switch ($order['status']) {
-                case 'created':
-                    return new CreateOrder($order);
-                case 'shipping':
-                    return new ShippingOrder($order);
-                default:
-                    throw new \Exception('Order status error!');
-                    break;
-            }
+        throw new \Exception('Can not instance the OrderFactory class!');
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return CreateOrder|ShippingOrder
+     * @throws \Exception
+     */
+    public static function getOrder($id)
+    {
+        //从数据库获取订单伪代码
+        $order = 'Get Order From Database';
+
+        switch ($order['status']) {
+            case 'created':
+                return new CreateOrder($order);
+            case 'shipping':
+                return new ShippingOrder($order);
+            default:
+                throw new \Exception('Order status error!');
+                break;
         }
     }
+}
 ```
 #### **OrderInterface.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\State;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\State;
+
+/**
+ * OrderInterface接口
+ */
+interface OrderInterface
+{
     /**
-     * OrderInterface接口
+     * @return mixed
      */
-    interface OrderInterface
-    {
-        /**
-         * @return mixed
-         */
-        public function shipOrder();
-    
-        /**
-         * @return mixed
-         */
-        public function completeOrder();
-    }
+    public function shipOrder();
+
+    /**
+     * @return mixed
+     */
+    public function completeOrder();
+}
 ```
 #### **ShippingOrder.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\State;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\State;
+
+/**
+ * ShippingOrder类
+ */
+class ShippingOrder implements OrderInterface
+{
     /**
-     * ShippingOrder类
+     * @var array
      */
-    class ShippingOrder implements OrderInterface
+    private $order;
+
+    /**
+     * @param array $order
+     *
+     * @throws \Exception
+     */
+    public function __construct(array $order)
     {
-        /**
-         * @var array
-         */
-        private $order;
-    
-        /**
-         * @param array $order
-         *
-         * @throws \Exception
-         */
-        public function __construct(array $order)
-        {
-            if (empty($order)) {
-                throw new \Exception('Order can not be empty!');
-            }
-            $this->order = $order;
+        if (empty($order)) {
+            throw new \Exception('Order can not be empty!');
         }
-    
-        /**
-         * @return mixed|void
-         * @throws \Exception
-         */
-        public function shipOrder()
-        {
-            //当订单发货过程中不能对该订单进行发货处理
-            throw new \Exception('Can not ship the order which status is shipping!');
-        }
-    
-        /**
-         * @return mixed
-         */
-        public function completeOrder()
-        {
-            $this->order['status'] = 'completed';
-            $this->order['updatedTime'] = time();
-    
-            // 将订单状态保存到数据库
-            return $this->updateOrder($this->order);
-        }
+        $this->order = $order;
     }
+
+    /**
+     * @return mixed|void
+     * @throws \Exception
+     */
+    public function shipOrder()
+    {
+        //当订单发货过程中不能对该订单进行发货处理
+        throw new \Exception('Can not ship the order which status is shipping!');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function completeOrder()
+    {
+        $this->order['status'] = 'completed';
+        $this->order['updatedTime'] = time();
+
+        // 将订单状态保存到数据库
+        return $this->updateOrder($this->order);
+    }
+}
 ```
 #### **CreateOrder.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\State;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\State;
+
+/**
+ * CreateOrder类
+ */
+class CreateOrder implements OrderInterface
+{
     /**
-     * CreateOrder类
+     * @var array
      */
-    class CreateOrder implements OrderInterface
+    private $order;
+
+    /**
+     * @param array $order
+     *
+     * @throws \Exception
+     */
+    public function __construct(array $order)
     {
-        /**
-         * @var array
-         */
-        private $order;
-    
-        /**
-         * @param array $order
-         *
-         * @throws \Exception
-         */
-        public function __construct(array $order)
-        {
-            if (empty($order)) {
-                throw new \Exception('Order can not be empty!');
-            }
-            $this->order = $order;
+        if (empty($order)) {
+            throw new \Exception('Order can not be empty!');
         }
-    
-        /**
-         * @return mixed
-         */
-        public function shipOrder()
-        {
-            $this->order['status'] = 'shipping';
-            $this->order['updatedTime'] = time();
-    
-            // 将订单状态保存到数据库
-            return $this->updateOrder($this->order);
-        }
-    
-        /**
-         * @return mixed|void
-         * @throws \Exception
-         */
-        public function completeOrder()
-        {
-            // 还未发货的订单不能设置为完成状态
-            throw new \Exception('Can not complete the order which status is created!');
-        }
+        $this->order = $order;
     }
+
+    /**
+     * @return mixed
+     */
+    public function shipOrder()
+    {
+        $this->order['status'] = 'shipping';
+        $this->order['updatedTime'] = time();
+
+        // 将订单状态保存到数据库
+        return $this->updateOrder($this->order);
+    }
+
+    /**
+     * @return mixed|void
+     * @throws \Exception
+     */
+    public function completeOrder()
+    {
+        // 还未发货的订单不能设置为完成状态
+        throw new \Exception('Can not complete the order which status is created!');
+    }
+}
 ```
 > 注：由于代码中使用了伪代码，所以这里就不进行测试了。
 

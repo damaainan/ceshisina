@@ -19,57 +19,57 @@
 #### **PaperBookInterface.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Structural\Adapter;
-    
+<?php
+
+namespace DesignPatterns\Structural\Adapter;
+
+/**
+ * PaperBookInterface 是纸质书接口
+ */
+interface PaperBookInterface
+{
     /**
-     * PaperBookInterface 是纸质书接口
+     * 翻页方法
+     *
+     * @return mixed
      */
-    interface PaperBookInterface
-    {
-        /**
-         * 翻页方法
-         *
-         * @return mixed
-         */
-        public function turnPage();
-    
-        /**
-         * 打开书的方法
-         *
-         * @return mixed
-         */
-        public function open();
-    }
+    public function turnPage();
+
+    /**
+     * 打开书的方法
+     *
+     * @return mixed
+     */
+    public function open();
+}
 ```
 
 #### **Book.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Structural\Adapter;
-    
+<?php
+
+namespace DesignPatterns\Structural\Adapter;
+
+/**
+ * Book 是纸质书实现类
+ */
+class Book implements PaperBookInterface
+{
     /**
-     * Book 是纸质书实现类
+     * {@inheritdoc}
      */
-    class Book implements PaperBookInterface
+    public function open()
     {
-        /**
-         * {@inheritdoc}
-         */
-        public function open()
-        {
-        }
-    
-        /**
-         * {@inheritdoc}
-         */
-        public function turnPage()
-        {
-        }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function turnPage()
+    {
+    }
+}
 ```
 
 #### **EBookAdapter.php**

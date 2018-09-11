@@ -21,189 +21,189 @@
 #### **User.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Observer;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Observer;
+
+/**
+ * 观察者模式 : 被观察对象 (主体对象)
+ *
+ * 主体对象维护观察者列表并发送通知
+ *
+ */
+class User implements \SplSubject
+{
     /**
-     * 观察者模式 : 被观察对象 (主体对象)
+     * user data
      *
-     * 主体对象维护观察者列表并发送通知
-     *
+     * @var array
      */
-    class User implements \SplSubject
+    protected $data = array();
+
+    /**
+     * observers
+     *
+     * @var \SplObjectStorage
+     */
+    protected $observers;
+    
+    public function __construct()
     {
-        /**
-         * user data
-         *
-         * @var array
-         */
-        protected $data = array();
-    
-        /**
-         * observers
-         *
-         * @var \SplObjectStorage
-         */
-        protected $observers;
-        
-        public function __construct()
-        {
-            $this->observers = new \SplObjectStorage();
-        }
-    
-        /**
-         * 附加观察者
-         *
-         * @param \SplObserver $observer
-         *
-         * @return void
-         */
-        public function attach(\SplObserver $observer)
-        {
-            $this->observers->attach($observer);
-        }
-    
-        /**
-         * 取消观察者
-         *
-         * @param \SplObserver $observer
-         *
-         * @return void
-         */
-        public function detach(\SplObserver $observer)
-        {
-            $this->observers->detach($observer);
-        }
-    
-        /**
-         * 通知观察者方法
-         *
-         * @return void
-         */
-        public function notify()
-        {
-            /** @var \SplObserver $observer */
-            foreach ($this->observers as $observer) {
-                $observer->update($this);
-            }
-        }
-    
-        /**
-         *
-         * @param string $name
-         * @param mixed  $value
-         *
-         * @return void
-         */
-        public function __set($name, $value)
-        {
-            $this->data[$name] = $value;
-    
-            // 通知观察者用户被改变
-            $this->notify();
+        $this->observers = new \SplObjectStorage();
+    }
+
+    /**
+     * 附加观察者
+     *
+     * @param \SplObserver $observer
+     *
+     * @return void
+     */
+    public function attach(\SplObserver $observer)
+    {
+        $this->observers->attach($observer);
+    }
+
+    /**
+     * 取消观察者
+     *
+     * @param \SplObserver $observer
+     *
+     * @return void
+     */
+    public function detach(\SplObserver $observer)
+    {
+        $this->observers->detach($observer);
+    }
+
+    /**
+     * 通知观察者方法
+     *
+     * @return void
+     */
+    public function notify()
+    {
+        /** @var \SplObserver $observer */
+        foreach ($this->observers as $observer) {
+            $observer->update($this);
         }
     }
+
+    /**
+     *
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $this->data[$name] = $value;
+
+        // 通知观察者用户被改变
+        $this->notify();
+    }
+}
 ```
 #### **UserObserver.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Observer;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Observer;
+
+/**
+ * UserObserver 类（观察者对象）
+ */
+class UserObserver implements \SplObserver
+{
     /**
-     * UserObserver 类（观察者对象）
+     * 观察者要实现的唯一方法
+     * 也是被 Subject 调用的方法
+     *
+     * @param \SplSubject $subject
      */
-    class UserObserver implements \SplObserver
+    public function update(\SplSubject $subject)
     {
-        /**
-         * 观察者要实现的唯一方法
-         * 也是被 Subject 调用的方法
-         *
-         * @param \SplSubject $subject
-         */
-        public function update(\SplSubject $subject)
-        {
-            echo get_class($subject) . ' has been updated';
-        }
+        echo get_class($subject) . ' has been updated';
     }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/ObserverTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Observer\Tests;
-    
-    use DesignPatterns\Behavioral\Observer\UserObserver;
-    use DesignPatterns\Behavioral\Observer\User;
-    
-    /**
-     * ObserverTest 测试观察者模式
-     */
-    class ObserverTest extends \PHPUnit\Framework\TestCase
+<?php
+
+namespace DesignPatterns\Behavioral\Observer\Tests;
+
+use DesignPatterns\Behavioral\Observer\UserObserver;
+use DesignPatterns\Behavioral\Observer\User;
+
+/**
+ * ObserverTest 测试观察者模式
+ */
+class ObserverTest extends \PHPUnit\Framework\TestCase
+{
+
+    protected $observer;
+
+    protected function setUp()
     {
-    
-        protected $observer;
-    
-        protected function setUp()
-        {
-            $this->observer = new UserObserver();
-        }
-    
-        /**
-         * 测试通知
-         */
-        public function testNotify()
-        {
-            $this->expectOutputString('DesignPatterns\Behavioral\Observer\User has been updated');
-            $subject = new User();
-    
-            $subject->attach($this->observer);
-            $subject->property = 123;
-        }
-    
-        /**
-         * 测试订阅
-         */
-        public function testAttachDetach()
-        {
-            $subject = new User();
-            $reflection = new \ReflectionProperty($subject, 'observers');
-    
-            $reflection->setAccessible(true);
-            /** @var \SplObjectStorage $observers */
-            $observers = $reflection->getValue($subject);
-    
-            $this->assertInstanceOf('SplObjectStorage', $observers);
-            $this->assertFalse($observers->contains($this->observer));
-    
-            $subject->attach($this->observer);
-            $this->assertTrue($observers->contains($this->observer));
-    
-            $subject->detach($this->observer);
-            $this->assertFalse($observers->contains($this->observer));
-        }
-    
-        /**
-         * 测试 update() 调用
-         */
-        public function testUpdateCalling()
-        {
-            $subject = new User();
-            $observer = $this->getMock('SplObserver');
-            $subject->attach($observer);
-    
-            $observer->expects($this->once())
-                ->method('update')
-                ->with($subject);
-    
-            $subject->notify();
-        }
+        $this->observer = new UserObserver();
     }
+
+    /**
+     * 测试通知
+     */
+    public function testNotify()
+    {
+        $this->expectOutputString('DesignPatterns\Behavioral\Observer\User has been updated');
+        $subject = new User();
+
+        $subject->attach($this->observer);
+        $subject->property = 123;
+    }
+
+    /**
+     * 测试订阅
+     */
+    public function testAttachDetach()
+    {
+        $subject = new User();
+        $reflection = new \ReflectionProperty($subject, 'observers');
+
+        $reflection->setAccessible(true);
+        /** @var \SplObjectStorage $observers */
+        $observers = $reflection->getValue($subject);
+
+        $this->assertInstanceOf('SplObjectStorage', $observers);
+        $this->assertFalse($observers->contains($this->observer));
+
+        $subject->attach($this->observer);
+        $this->assertTrue($observers->contains($this->observer));
+
+        $subject->detach($this->observer);
+        $this->assertFalse($observers->contains($this->observer));
+    }
+
+    /**
+     * 测试 update() 调用
+     */
+    public function testUpdateCalling()
+    {
+        $subject = new User();
+        $observer = $this->getMock('SplObserver');
+        $subject->attach($observer);
+
+        $observer->expects($this->once())
+            ->method('update')
+            ->with($subject);
+
+        $subject->notify();
+    }
+}
 ```
 ### **5、总结**
 

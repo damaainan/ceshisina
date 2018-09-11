@@ -11,82 +11,82 @@
 
 以下可运行代码，没有用到任何接口和抽象类，一样可以实现功能，并且可扩展，不需要修改 `Mother` 类里的任何代码，一样可以轻松自如地让妈妈读各种读物，无非就是在上面追加各种 `class` ，只要这个 `class` 里有 `getContent` 方法，妈妈全部可以识别： 
 ```php
-    <?php
-    class Book {
-        public function getContent(){
-            return "很久很久以前有一个阿拉伯的故事……\n";
-        }
+<?php
+class Book {
+    public function getContent(){
+        return "很久很久以前有一个阿拉伯的故事……\n";
     }
-    
-    class Newspaper {
-        public function getContent(){
-            return "林书豪17+9助尼克斯击败老鹰……\n";
-        }
+}
+
+class Newspaper {
+    public function getContent(){
+        return "林书豪17+9助尼克斯击败老鹰……\n";
     }
-    
-    class Mother{
-        public function narrate($book){
-            echo "妈妈开始讲故事\n";
-            echo $book->getContent();
-        }
+}
+
+class Mother{
+    public function narrate($book){
+        echo "妈妈开始讲故事\n";
+        echo $book->getContent();
     }
-    
-    class Client{
-        public static function main(){
-            $mother = new Mother();
-            $mother->narrate(new Book());
-            $mother->narrate(new Newspaper());
-        }
+}
+
+class Client{
+    public static function main(){
+        $mother = new Mother();
+        $mother->narrate(new Book());
+        $mother->narrate(new Newspaper());
     }
-    
-    $client = new Client();
-    $client->main();
+}
+
+$client = new Client();
+$client->main();
 ```
 既然如此随意，还如何体现依赖倒置呢？这是因为 `PHP` 是 **弱类型语言** ，特点就是不需要为变量指定类型，导致的结果就是只要你的 `class` 里有我需要调用的方法（在这里是 `getContent` 方法），那就无论如何也不会出错，至于你是不是实现了什么 `interface` 接口，都无所谓的。像这样，是无法真正体现依赖倒置原则的。那到底如何才能真正体现依赖倒置呢？秘诀就是我们通过使用PHP的 **类型约束** 来规定 `narrate` 函数的 `$book` 参数必须是一个接口： 
 ```php
-    class Mother{
-        public function narrate(IReader $book){
-            echo "妈妈开始讲故事\n";
-            echo $book->getContent();
-        }
+class Mother{
+    public function narrate(IReader $book){
+        echo "妈妈开始讲故事\n";
+        echo $book->getContent();
     }
+}
 ```
 在这里，我们规定了 `$book` 参数必须是一个 `IReader` 接口，那么凡是需要让妈妈讲的读物都必须是对于 `IReader` 这个接口的一个实现，否则就会报错。完整代码如下： 
 ```php
-    <?php
-    interface IReader{
-        public function getContent();
+<?php
+interface IReader{
+    public function getContent();
+}
+
+class Book implements IReader {
+    public function getContent(){
+        return "很久很久以前有一个阿拉伯的故事……\n";
     }
-    
-    class Book implements IReader {
-        public function getContent(){
-            return "很久很久以前有一个阿拉伯的故事……\n";
-        }
+}
+
+class Newspaper implements IReader {
+    public function getContent(){
+        return "林书豪17+9助尼克斯击败老鹰……\n";
     }
-    
-    class Newspaper implements IReader {
-        public function getContent(){
-            return "林书豪17+9助尼克斯击败老鹰……\n";
-        }
+}
+
+class Mother{
+    public function narrate(IReader $book){
+        echo "妈妈开始讲故事\n";
+        echo $book->getContent();
     }
-    
-    class Mother{
-        public function narrate(IReader $book){
-            echo "妈妈开始讲故事\n";
-            echo $book->getContent();
-        }
+}
+
+class Client{
+    public static function main(){
+        $mother = new Mother();
+        $mother->narrate(new Book());
+        $mother->narrate(new Newspaper());
     }
-    
-    class Client{
-        public static function main(){
-            $mother = new Mother();
-            $mother->narrate(new Book());
-            $mother->narrate(new Newspaper());
-        }
-    }
-    
-    $client = new Client();
-    $client->main();
+}
+
+$client = new Client();
+$client->main();
 ```
 你可以试着把 `class Newspaper` 后面的 `implements IReader` 去掉然后运行一下，马上就会报错： 
 

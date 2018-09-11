@@ -59,17 +59,17 @@ D-DIP(Dependency Inversion Principle)  | 依赖反转原则 | 一个方法应该
 比如支付功能，不遵守这个原则的话你可能会写出这样的代码:
 
 ```php
-    public function payInit($payType){
-        $payment = null;
-        if(true == $payType){
-            // 微信支付
-            $payment = acceptWechat($total);
-        }else{
-            // 支付宝支付
-            $payment = acceptAlipay($total);
-        }
-        return $payment;
+public function payInit($payType){
+    $payment = null;
+    if(true == $payType){
+        // 微信支付
+        $payment = acceptWechat($total);
+    }else{
+        // 支付宝支付
+        $payment = acceptAlipay($total);
     }
+    return $payment;
+}
 ```
 
 以上的代码中初始化了两种支付方式，当业务增长时要增加信用卡支付只能去修改这个方法增加 elseif 或者改为 switch 而且因为忽视了业务的增长情况，传入参数是一个 Bool 值，不能适用这种变化，因此需要更改调用的传值，这种修改只要一不小心就会改出 BUG 来。
@@ -77,11 +77,11 @@ D-DIP(Dependency Inversion Principle)  | 依赖反转原则 | 一个方法应该
 更好的解决方案是：
 
 ```php
-    interface PaymentMethod{ public function accept($total) }
-    
-    public function checkOut(PaymentMethod $pm, $total){
-        return $pm->accept($total);
-    }
+interface PaymentMethod{ public function accept($total) }
+
+public function checkOut(PaymentMethod $pm, $total){
+    return $pm->accept($total);
+}
 ```
 
 这样在实现一个新的支付渠道时，只要实现 PaymentMethod 接口就可以创建一个新的支付方式，在调用时将实现接口具体类的实例传入到 checkOut 中就可以得到不同支付渠道付款的实例，而不用每新增一个支付渠道就去修改原来的代码。
@@ -137,21 +137,21 @@ D-DIP(Dependency Inversion Principle)  | 依赖反转原则 | 一个方法应该
 根据 ISP 原则，我们需要将 Messenger 接口进行分切，不同的 ATM 功能依赖于分离后的 Messenger
 
 ```php
-    interface LoginMessenger {
-      askForCard();
-      tellInvalidCard();
-      askForPin();
-      tellInvalidPin(); 
-    }
-    
-    interface WithdrawalMessenger {
-      tellNotEnoughMoneyInAccount();
-      askForFeeConfirmation();
-    }
-    
-    publc class EnglishMessenger implements LoginMessenger, WithdrawalMessenger {
-      ...   
-    }
+interface LoginMessenger {
+  askForCard();
+  tellInvalidCard();
+  askForPin();
+  tellInvalidPin(); 
+}
+
+interface WithdrawalMessenger {
+  tellNotEnoughMoneyInAccount();
+  askForFeeConfirmation();
+}
+
+publc class EnglishMessenger implements LoginMessenger, WithdrawalMessenger {
+  ...   
+}
 ```
 
 ### 依赖反转原则（D）
@@ -164,21 +164,21 @@ D-DIP(Dependency Inversion Principle)  | 依赖反转原则 | 一个方法应该
 **2.抽象不应该依赖于细节，细节应该依赖于抽象**
 
 ```php
-    interface Reader { getchar(); }
-    interface Writer { putchar($c);}
-    
-    class CharCopier {
-    
-      public function copy(Reader reader, Writer writer) {
-        $c;
-        while ((c = reader.getchar()) != EOF) {
-          writer.putchar();
-        }
-      }
+interface Reader { getchar(); }
+interface Writer { putchar($c);}
+
+class CharCopier {
+
+  public function copy(Reader reader, Writer writer) {
+    $c;
+    while ((c = reader.getchar()) != EOF) {
+      writer.putchar();
     }
-    
-    public Keyboard implements Reader {...}
-    public Printer implements Writer {...}
+  }
+}
+
+public Keyboard implements Reader {...}
+public Printer implements Writer {...}
 ```
 以上代码片段是一个例子，一个程序依赖于 Reader 和 Writer 接口，Keyboard 和 Printer 作为依赖于这些抽象的细节实现了这些接口，CharCopier 是依赖于 Reader 和 Writer 实现类的底层细节，可以传入任何 Reader 和 Writer 的实现进行正常工作。 
 

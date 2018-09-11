@@ -21,207 +21,207 @@
 #### **ObjectCollection.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Strategy;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Strategy;
+
+/**
+ * ObjectCollection类
+ */
+class ObjectCollection
+{
     /**
-     * ObjectCollection类
+     * @var array
      */
-    class ObjectCollection
+    private $elements;
+
+    /**
+     * @var ComparatorInterface
+     */
+    private $comparator;
+
+    /**
+     * @param array $elements
+     */
+    public function __construct(array $elements = array())
     {
-        /**
-         * @var array
-         */
-        private $elements;
-    
-        /**
-         * @var ComparatorInterface
-         */
-        private $comparator;
-    
-        /**
-         * @param array $elements
-         */
-        public function __construct(array $elements = array())
-        {
-            $this->elements = $elements;
-        }
-    
-        /**
-         * @return array
-         */
-        public function sort()
-        {
-            if (!$this->comparator) {
-                throw new \LogicException("Comparator is not set");
-            }
-    
-            $callback = array($this->comparator, 'compare');
-            uasort($this->elements, $callback);
-    
-            return $this->elements;
-        }
-    
-        /**
-         * @param ComparatorInterface $comparator
-         *
-         * @return void
-         */
-        public function setComparator(ComparatorInterface $comparator)
-        {
-            $this->comparator = $comparator;
-        }
+        $this->elements = $elements;
     }
+
+    /**
+     * @return array
+     */
+    public function sort()
+    {
+        if (!$this->comparator) {
+            throw new \LogicException("Comparator is not set");
+        }
+
+        $callback = array($this->comparator, 'compare');
+        uasort($this->elements, $callback);
+
+        return $this->elements;
+    }
+
+    /**
+     * @param ComparatorInterface $comparator
+     *
+     * @return void
+     */
+    public function setComparator(ComparatorInterface $comparator)
+    {
+        $this->comparator = $comparator;
+    }
+}
 ```
 #### **ComparatorInterface.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Strategy;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Strategy;
+
+/**
+ * ComparatorInterface类
+ */
+interface ComparatorInterface
+{
     /**
-     * ComparatorInterface类
+     * @param mixed $a
+     * @param mixed $b
+     *
+     * @return bool
      */
-    interface ComparatorInterface
-    {
-        /**
-         * @param mixed $a
-         * @param mixed $b
-         *
-         * @return bool
-         */
-        public function compare($a, $b);
-    }
+    public function compare($a, $b);
+}
 ```
 #### **DateComparator.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Strategy;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Strategy;
+
+/**
+ * DateComparator类
+ */
+class DateComparator implements ComparatorInterface
+{
     /**
-     * DateComparator类
+     * {@inheritdoc}
      */
-    class DateComparator implements ComparatorInterface
+    public function compare($a, $b)
     {
-        /**
-         * {@inheritdoc}
-         */
-        public function compare($a, $b)
-        {
-            $aDate = new \DateTime($a['date']);
-            $bDate = new \DateTime($b['date']);
-    
-            if ($aDate == $bDate) {
-                return 0;
-            } else {
-                return $aDate < $bDate ? -1 : 1;
-            }
+        $aDate = new \DateTime($a['date']);
+        $bDate = new \DateTime($b['date']);
+
+        if ($aDate == $bDate) {
+            return 0;
+        } else {
+            return $aDate < $bDate ? -1 : 1;
         }
     }
+}
 ```
 #### **IdComparator.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Strategy;
-    
+<?php
+
+namespace DesignPatterns\Behavioral\Strategy;
+
+/**
+ * IdComparator类
+ */
+class IdComparator implements ComparatorInterface
+{
     /**
-     * IdComparator类
+     * {@inheritdoc}
      */
-    class IdComparator implements ComparatorInterface
+    public function compare($a, $b)
     {
-        /**
-         * {@inheritdoc}
-         */
-        public function compare($a, $b)
-        {
-            if ($a['id'] == $b['id']) {
-                return 0;
-            } else {
-                return $a['id'] < $b['id'] ? -1 : 1;
-            }
+        if ($a['id'] == $b['id']) {
+            return 0;
+        } else {
+            return $a['id'] < $b['id'] ? -1 : 1;
         }
     }
+}
 ```
 ### **4、测试代码**
 
 #### **Tests/StrategyTest.php**
 
 ```php
-    <?php
-    
-    namespace DesignPatterns\Behavioral\Strategy\Tests;
-    
-    use DesignPatterns\Behavioral\Strategy\DateComparator;
-    use DesignPatterns\Behavioral\Strategy\IdComparator;
-    use DesignPatterns\Behavioral\Strategy\ObjectCollection;
-    use DesignPatterns\Behavioral\Strategy\Strategy;
-    
-    /**
-     * 策略模式测试
-     */
-    class StrategyTest extends \PHPUnit\Framework\TestCase
+<?php
+
+namespace DesignPatterns\Behavioral\Strategy\Tests;
+
+use DesignPatterns\Behavioral\Strategy\DateComparator;
+use DesignPatterns\Behavioral\Strategy\IdComparator;
+use DesignPatterns\Behavioral\Strategy\ObjectCollection;
+use DesignPatterns\Behavioral\Strategy\Strategy;
+
+/**
+ * 策略模式测试
+ */
+class StrategyTest extends \PHPUnit\Framework\TestCase
+{
+
+    public function getIdCollection()
     {
-    
-        public function getIdCollection()
-        {
-            return array(
-                array(
-                    array(array('id' => 2), array('id' => 1), array('id' => 3)),
-                    array('id' => 1)
-                ),
-                array(
-                    array(array('id' => 3), array('id' => 2), array('id' => 1)),
-                    array('id' => 1)
-                ),
-            );
-        }
-    
-        public function getDateCollection()
-        {
-            return array(
-                array(
-                    array(array('date' => '2014-03-03'), array('date' => '2015-03-02'), array('date' => '2013-03-01')),
-                    array('date' => '2013-03-01')
-                ),
-                array(
-                    array(array('date' => '2014-02-03'), array('date' => '2013-02-01'), array('date' => '2015-02-02')),
-                    array('date' => '2013-02-01')
-                ),
-            );
-        }
-    
-        /**
-         * @dataProvider getIdCollection
-         */
-        public function testIdComparator($collection, $expected)
-        {
-            $obj = new ObjectCollection($collection);
-            $obj->setComparator(new IdComparator());
-            $elements = $obj->sort();
-    
-            $firstElement = array_shift($elements);
-            $this->assertEquals($expected, $firstElement);
-        }
-    
-        /**
-         * @dataProvider getDateCollection
-         */
-        public function testDateComparator($collection, $expected)
-        {
-            $obj = new ObjectCollection($collection);
-            $obj->setComparator(new DateComparator());
-            $elements = $obj->sort();
-    
-            $firstElement = array_shift($elements);
-            $this->assertEquals($expected, $firstElement);
-        }
+        return array(
+            array(
+                array(array('id' => 2), array('id' => 1), array('id' => 3)),
+                array('id' => 1)
+            ),
+            array(
+                array(array('id' => 3), array('id' => 2), array('id' => 1)),
+                array('id' => 1)
+            ),
+        );
     }
+
+    public function getDateCollection()
+    {
+        return array(
+            array(
+                array(array('date' => '2014-03-03'), array('date' => '2015-03-02'), array('date' => '2013-03-01')),
+                array('date' => '2013-03-01')
+            ),
+            array(
+                array(array('date' => '2014-02-03'), array('date' => '2013-02-01'), array('date' => '2015-02-02')),
+                array('date' => '2013-02-01')
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider getIdCollection
+     */
+    public function testIdComparator($collection, $expected)
+    {
+        $obj = new ObjectCollection($collection);
+        $obj->setComparator(new IdComparator());
+        $elements = $obj->sort();
+
+        $firstElement = array_shift($elements);
+        $this->assertEquals($expected, $firstElement);
+    }
+
+    /**
+     * @dataProvider getDateCollection
+     */
+    public function testDateComparator($collection, $expected)
+    {
+        $obj = new ObjectCollection($collection);
+        $obj->setComparator(new DateComparator());
+        $elements = $obj->sort();
+
+        $firstElement = array_shift($elements);
+        $this->assertEquals($expected, $firstElement);
+    }
+}
 ```
 ### **5、总结**
 
