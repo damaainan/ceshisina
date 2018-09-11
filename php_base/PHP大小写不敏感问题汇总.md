@@ -7,7 +7,7 @@ PHP的大小写敏感可以总结写“变量敏感，函数不敏感”，所�
 
 ### 1. 变量名区分大小写
 
-所有变量均区分大小写，包括普通变量以及$_GET,$_POST,$_REQUEST,$_COOKIE,$_SESSION,$GLOBALS,$_SERVER,$_FILES,$_ENV等；
+所有变量均区分大小写，包括普通变量以及`$_GET`,`$_POST`,`$_REQUEST`,`$_COOKIE`,`$_SESSION,$GLOBALS`,`$_SERVER`,`$_FILES`,`$_ENV`等；
 ```php
     <?php
     $abc = 'abcd';

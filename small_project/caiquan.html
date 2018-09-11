@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <h3>黄哥所写剪刀石头布游戏习题Javascript版</h3>
+    <br name="valform" action="" method="">
+    <input type="text" name="name" id="uniqueID" value="" />
+    </br>
+    <input type="button" name="submit" value="猜游戏" onclick="guessForm()" />
+    </form>
+    <div id="div1"></div>
+    <script type="text/javascript">
+    /*
+       由黄哥Python培训 黄哥所写
+    */
+    let guessArr = ["石头", "剪刀", "布"];
+    let win = [
+        ["布", "石头"],
+        ["石头", "剪刀"],
+        ["剪刀", "布"]
+    ];
+
+    function arraysEqual(a, b) {
+        /*
+           判断二个数组是不是相等
+        */
+        if (a instanceof Array && b instanceof Array) {
+            if (a.length != b.length) // assert same length
+                return false;
+            for (var i = 0; i < a.length; i++) // assert each element equal
+                if (!arraysEqual(a[i], b[i]))
+                    return false;
+            return true;
+        } else {
+            return a == b; // if not both arrays, should be the same
+        }
+    }
+
+
+    function existIn(win, input, guess) {
+        for (let arr of win) {
+            console.log(arr);
+            if (arraysEqual([input, guess], arr)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function guessForm() {
+        // 从表单中获取输入值
+        let input = document.getElementById("uniqueID").value;
+        //下面的语句是从数组中随机抽取一个元素
+        let guess = guessArr[Math.floor(Math.random() * guessArr.length)];
+        if (existIn(win, input, guess)) {
+            addElement("人获胜！")
+        } else {
+            addElement("电脑获胜！")
+        }
+    }
+
+    function addElement(message) {
+        /*
+           将游戏结果输出到html网页上。
+        */
+        // create a new div element 
+        var newDiv = document.createElement("div");
+        // and give it some content 
+
+        var newContent = document.createTextNode(message);
+        // add the text node to the newly created div
+        newDiv.appendChild(newContent);
+
+        // add the newly created element and its content into the DOM 
+        var currentDiv = document.getElementById("div1");
+        document.body.insertBefore(newDiv, currentDiv);
+    }
+    </script>
+</body>
+
+</html>
