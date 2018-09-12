@@ -12,12 +12,14 @@ php弱类型一般来说 定义变量不需要声明类型，可以任意类型�
 ==为松散比较，数字和字符串比较时，字符串转为数字(rule：取字符串开头第一个,若为数字,则从第一个数字开始直到不是数字的为转换结果，否则为0)
 
 ```php
-var_dump(1 == '1')    //true
-var_dump(2 == '2ewfs')    //true
-var_dump(234 == '23wdf')    //flase
-var_dump(234 == '234wdf')   //true
-var_dump(234 == '234w5456df')  //true
-var_dump(234 == '2w5456df')    //flase
+var_dump(1 == '1');    //true
+var_dump(2 == '2ewfs');    //true
+var_dump(234 == '23wdf');    //flase
+var_dump(234 == '234wdf');   //true
+var_dump(234 == '234w5456df');  //true
+var_dump(234 == '2w5456df');    //flase
+```
+```
 0 == '0' => true
 0 == 'abcd' => true
 1 == '1abcd' => true
@@ -27,13 +29,13 @@ var_dump(234 == '2w5456df')    //flase
  
 #### 其他 
 
-```php
+```
 null == '' == 0 == "0" == array() == false => true (多个松散比较任取2个为true)
 ```
  
 #### 数学计算 
 
-```php
+```
 "0e132456789"=="0e7124511451155" //true
 "0e123456abc"=="0e1dddada"    //false
 "0e1abc"=="0"     //true
@@ -43,7 +45,7 @@ md5('s878926199a') == 0 => true
  
 e后全是数字则科学计算后比较
 
-```php
+```
 '0x001'=='1' => true
 ```
  
@@ -53,7 +55,7 @@ e后全是数字则科学计算后比较
  
 #### switch 
 
-```php
+```
 $j ="3ab";
 switch ($j)
 ```

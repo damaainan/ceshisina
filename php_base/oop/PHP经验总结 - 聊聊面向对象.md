@@ -18,22 +18,17 @@
 
 * 通常定义一个汽车类的方法为：
 
-
-
 ```php
 <?php
-    // 定义一个叫Car的类
-    class Car {
-        $name = '汽车';// 这个类有个变量$name，它的值为“汽车”
-        // 这个类同时还有一个函数方法叫getName()，它能实现返回这个Car的类里面的变量$name的值
-        function getName() {
-            return $this->name;
-        }
+// 定义一个叫Car的类
+class Car {
+    $name = '汽车';// 这个类有个变量$name，它的值为“汽车”
+    // 这个类同时还有一个函数方法叫getName()，它能实现返回这个Car的类里面的变量$name的值
+    function getName() {
+        return $this->name;
     }
-
-?>
+}
 ```
-
 
 * **`类是一类东西的结构描述，而对象则是一类东西的一个具体实例。`** 
 
@@ -42,14 +37,11 @@
 * 对象可以通过`new`关键字进行实例化：
 
 
-
 ```php
 <?php
 
-    $car = new Car(); // 实例化Car这个类
-    echo $car->getName();// 调用Car这个类里面的getName()方法并输出结果（因为类被实例化了，所以这个类里面的函数、方法、变量、常量等都可以调用使用）
-
-?>
+$car = new Car(); // 实例化Car这个类
+echo $car->getName();// 调用Car这个类里面的getName()方法并输出结果（因为类被实例化了，所以这个类里面的函数、方法、变量、常量等都可以调用使用）
 ```
 
 
@@ -72,20 +64,17 @@
 
 ```php
 <?php
+// 定义一个类Car
+class Car {
+    // 定义属性变量$name
+    public $name = '汽车';
 
-    // 定义一个类Car
-    class Car {
-        // 定义属性变量$name
-        public $name = '汽车';
-    
-        // 定义方法getName（）
-        public function getName() {
-            // 方法内部可以使用$this伪变量调用对象的属性或者方法
-            return $this->name;
-        }
+    // 定义方法getName（）
+    public function getName() {
+        // 方法内部可以使用$this伪变量调用对象的属性或者方法
+        return $this->name;
     }
-
-?>
+}
 ```
 
 * 要创建一个类的实例，可以使用`new`关键字创建一个对象，下面介绍2种创建类的方法：
@@ -94,13 +83,11 @@
 ```php
 <?php
 
-    // 实例化类Car
-    $car = new Car(); 
-    //也可以采用变量来创建类Car
-    $className = 'Car';
-    $car = new $className();
-
-?>
+// 实例化类Car
+$car = new Car(); 
+//也可以采用变量来创建类Car
+$className = 'Car';
+$car = new $className();
 ```
 
 * 注意：类的定义和创建是有本质上的区别的，定义类只是相当于创造了一台汽车，而创建类则是你要去开这台汽车，但是你并不知道这台汽车是否存在（类是否已被定义），所以在使用类之前那你必须要确保你要用的类存在（已被定义）。
@@ -124,18 +111,16 @@
 ```php
 <?php
 
-    class Car {
-        //定义公共属性
-        public $name = '汽车';
-    
-        //定义受保护的属性
-        protected $corlor = '白色';
-    
-        //定义私有属性
-        private $price = '100000';
-    }
+class Car {
+    //定义公共属性
+    public $name = '汽车';
 
-?>
+    //定义受保护的属性
+    protected $corlor = '白色';
+
+    //定义私有属性
+    private $price = '100000';
+}
 ```
 
 
@@ -152,12 +137,10 @@
 ```php
 <?php
 
-    $car = new Car();
-    echo $car->name;   // 调用对象的属性
-    echo $car->color;  // 错误 受保护的属性不允许外部调用
-    echo $car->price;  // 错误 私有属性不允许外部调用
-
-?>
+$car = new Car();
+echo $car->name;   // 调用对象的属性
+echo $car->color;  // 错误 受保护的属性不允许外部调用
+echo $car->price;  // 错误 私有属性不允许外部调用
 ```
 
 * 受保护的属性与私有属性不允许外部调用，在类的成员方法内部是可以调用的。如下：
@@ -165,15 +148,12 @@
 
 ```php
 <?php
-
-    class Car{
-        private $price = '1000';
-        public function getPrice() {
-            return $this->price; // 内部访问私有属性
-    ​    }
-    }
-
-?>
+class Car{
+    private $price = '1000';
+    public function getPrice() {
+        return $this->price; // 内部访问私有属性
+​    }
+}
 ```
 ### 定义类的方法
 
@@ -201,16 +181,14 @@
 ```php
 <?php
 
-    class Car {
-        // 显然我定义了一个公共方法，类的外部也可以调用 
-        public function getName() {
-            return '汽车';
-        }
-    ​}
-    $car = new Car();
-    echo $car->getName();
-
-?>
+class Car {
+    // 显然我定义了一个公共方法，类的外部也可以调用 
+    public function getName() {
+        return '汽车';
+    }
+​}
+$car = new Car();
+echo $car->getName();
 ```
 
 * 使用关键字static修饰的，称之为静态方法，静态方法不需要实例化对象，可以通过类名直接调用，操作符为双冒号`: :`。
@@ -219,15 +197,13 @@
 ```php
 <?php
 
-    class Car {
-        // 显然我定义了一个公共的静态方法
-        public static function getName() {
-            return '汽车';
-        }
-    ​}
-    echo Car::getName(); // 结果为“汽车”
-
-?>
+class Car {
+    // 显然我定义了一个公共的静态方法
+    public static function getName() {
+        return '汽车';
+    }
+​}
+echo Car::getName(); // 结果为“汽车”
 ```
 ### 构造函数和析构函数
 
@@ -243,15 +219,13 @@
 ```php
 <?php
 
-    class Car {
-       // 这个就是大名鼎鼎的构造函数，一般在系统执行一些初始化工作
-       function __construct() {
-           print "构造函数被调用\n";
-       }
-    }
-    $car = new Car(); //实例化类Car的时候 会自动调用构造函数__construct，这里会输出一个字符串
-
-?>
+class Car {
+   // 这个就是大名鼎鼎的构造函数，一般在系统执行一些初始化工作
+   function __construct() {
+       print "构造函数被调用\n";
+   }
+}
+$car = new Car(); //实例化类Car的时候 会自动调用构造函数__construct，这里会输出一个字符串
 ```
 
 
@@ -265,22 +239,20 @@
 
 ```php
 <?php
-    // 注意，这个类Car是父级类
-    class Car {
-       function __construct() {
-           print "父类构造函数被调用\n";
-       }
-    }
-    // 这个类Truck是Car的子类，因为它继承(extexds)了父类Car
-    class Truck extends Car {
-       function __construct() {
-           print "子类构造函数被调用\n";
-           parent::__construct();
-       }
-    }
-    $car = new Truck();// 结果显示：子类构造函数被调用\n父类构造函数被调用\n
-
-?>
+// 注意，这个类Car是父级类
+class Car {
+   function __construct() {
+       print "父类构造函数被调用\n";
+   }
+}
+// 这个类Truck是Car的子类，因为它继承(extexds)了父类Car
+class Truck extends Car {
+   function __construct() {
+       print "子类构造函数被调用\n";
+       parent::__construct();
+   }
+}
+$car = new Truck();// 结果显示：子类构造函数被调用\n父类构造函数被调用\n
 ```
 
 * 同样，PHP5支持析构函数，使用__destruct()进行定义，析构函数指的是当某个对象的所有引用被删除，或者对象被显式的销毁时会执行的函数。
@@ -291,19 +263,17 @@
 ```php
 <?php
 
-    class Car {
-       function __construct() {
-           print "构造函数被调用 \n";
-       }
-       function __destruct() {
-           print "析构函数被调用 \n";
-       }
-    }
-    $car = new Car(); // 实例化时会调用构造函数
-    echo '使用后，准备销毁car对象 \n';
-    unset($car); // 销毁时会调用析构函数
-
-?>
+class Car {
+   function __construct() {
+       print "构造函数被调用 \n";
+   }
+   function __destruct() {
+       print "析构函数被调用 \n";
+   }
+}
+$car = new Car(); // 实例化时会调用构造函数
+echo '使用后，准备销毁car对象 \n';
+unset($car); // 销毁时会调用析构函数
 ```
 
 * 当PHP代码执行完毕以后，会自动回收与销毁对象，因此一般情况下不需要显式的去销毁对象。
@@ -321,16 +291,14 @@
 ```php
 <?php
 
-    class Car {
-        private static $speed = 10;
-        
-        public static function getSpeed() {
-            return self::$speed;
-        }
+class Car {
+    private static $speed = 10;
+    
+    public static function getSpeed() {
+        return self::$speed;
     }
-    echo Car::getSpeed();  //调用静态方法，获取对象Car里面的静态属性$speed的值，并输出
-
-?>
+}
+echo Car::getSpeed();  //调用静态方法，获取对象Car里面的静态属性$speed的值，并输出
 ```
 
 * 静态方法也可以通过变量来进行动态调用：
@@ -339,11 +307,9 @@
 ```php
 <?php
 
-    $func = 'getSpeed';
-    $className = 'Car';
-    echo $className::$func();  //动态调用静态方法
-
-?>
+$func = 'getSpeed';
+$className = 'Car';
+echo $className::$func();  //动态调用静态方法
 ```
 
 ```php
@@ -354,32 +320,30 @@
 ```php
 <?php
 
-    // 父类Car
-    class Car {
-        // 静态属性
-        private static $speed = 10;
-        // 静态方法
-        public static function getSpeed() {
-            return self::$speed;
-        }
-        // 静态方法
-        public static function speedUp() {
-            return self::$speed+=10;
-        }
+// 父类Car
+class Car {
+    // 静态属性
+    private static $speed = 10;
+    // 静态方法
+    public static function getSpeed() {
+        return self::$speed;
     }
-    
-    // 子类BigCar继承父类Car
-    class BigCar extends Car {
-        // 静态方法
-        public static function start() {
-            parent::speedUp();
-        }
+    // 静态方法
+    public static function speedUp() {
+        return self::$speed+=10;
     }
-     
-    BigCar::start();// 实例化调用BigCar类的statr()方法获取父类中的静态方法speedUp，实现静态属性$speed的值加10
-    echo BigCar::getSpeed(); // 解释太长了，自己脑补吧
+}
 
-?>
+// 子类BigCar继承父类Car
+class BigCar extends Car {
+    // 静态方法
+    public static function start() {
+        parent::speedUp();
+    }
+}
+ 
+BigCar::start();// 实例化调用BigCar类的statr()方法获取父类中的静态方法speedUp，实现静态属性$speed的值加10
+echo BigCar::getSpeed(); // 解释太长了，自己脑补吧
 ```
 ### 访问控制
 
@@ -406,12 +370,10 @@
 ```php
 <?php
 
-    class Car {
-        $speed = 10; // 错误 属性必须定义访问控制
-        public $name;   // 定义共有属性
-    }
-
-?>
+class Car {
+    $speed = 10; // 错误 属性必须定义访问控制
+    public $name;   // 定义共有属性
+}
 ```
 
 
@@ -424,13 +386,11 @@
 ```php
 <?php
 
-    class Car {
-    ​    //默认为共有方法
-        function turnLeft() {
-        }
+class Car {
+​    //默认为共有方法
+    function turnLeft() {
     }
-
-?>
+}
 ```
 
 * 如果构造函数定义成了私有方法，则不允许直接实例化对象了，这时候一般通过静态方法进行实例化，在设计模式中会经常使用这样的方法来控制对象的创建，比如单例模式只允许有一个全局唯一的对象：
@@ -439,25 +399,23 @@
 ```php
 <?php
 
-    class Car {
-        // 显然这是一个私有的构造函数
-        private function __construct() {
-            echo 'object create';
-        }
-        // 这是一个私有的属性
-        private static $_object = null;
-        // 这是一个公共方法
-        public static function getInstance() {
-            if (empty(self::$_object)) {
-                self::$_object = new Car(); // 内部方法可以调用私有方法，因此这里可以创建对象
-            }
-            return self::$_object;
-        }
+class Car {
+    // 显然这是一个私有的构造函数
+    private function __construct() {
+        echo 'object create';
     }
-    // $car = new Car(); // 这里不允许直接实例化对象
-    $car = Car::getInstance(); // 通过静态方法来获得一个实例
-
-?>
+    // 这是一个私有的属性
+    private static $_object = null;
+    // 这是一个公共方法
+    public static function getInstance() {
+        if (empty(self::$_object)) {
+            self::$_object = new Car(); // 内部方法可以调用私有方法，因此这里可以创建对象
+        }
+        return self::$_object;
+    }
+}
+// $car = new Car(); // 这里不允许直接实例化对象
+$car = Car::getInstance(); // 通过静态方法来获得一个实例
 ```
 ### 对象继承
 
@@ -484,37 +442,35 @@
 ```php
 <?php
 
-    class Car {
-        // 显然这是一个私有属性
-        private $ary = array();
-        // 魔法方法 __set
-        public function __set($key, $val) {
-            $this->ary[$key] = $val;
-        }
-        //  魔法方法__get
-        public function __get($key) {
-            if (isset($this->ary[$key])) {
-                return $this->ary[$key];
-            }
-            return null;
-        }
-        //  魔法方法__isset
-        public function __isset($key) {
-            if (isset($this->ary[$key])) {
-                return true;
-            }
-            return false;
-        }
-        //  魔法方法__unset
-        public function __unset($key) {
-            unset($this->ary[$key]);
-        }
+class Car {
+    // 显然这是一个私有属性
+    private $ary = array();
+    // 魔法方法 __set
+    public function __set($key, $val) {
+        $this->ary[$key] = $val;
     }
-    $car = new Car();
-    $car->name = '汽车';  //name属性动态创建并赋值
-    echo $car->name;
-
-?>
+    //  魔法方法__get
+    public function __get($key) {
+        if (isset($this->ary[$key])) {
+            return $this->ary[$key];
+        }
+        return null;
+    }
+    //  魔法方法__isset
+    public function __isset($key) {
+        if (isset($this->ary[$key])) {
+            return true;
+        }
+        return false;
+    }
+    //  魔法方法__unset
+    public function __unset($key) {
+        unset($this->ary[$key]);
+    }
+}
+$car = new Car();
+$car->name = '汽车';  //name属性动态创建并赋值
+echo $car->name;
 ```
 
 * 方法的重载通过`__call`来实现，当调用不存在的方法的时候，将会转为参数调用`__call`方法，当调用不存在的静态方法时会使用`__callStatic`重载。
@@ -523,20 +479,18 @@
 ```php
 <?php
 
-    class Car {
-        public $speed = 0;
-        // 显然这是一个魔法方法__call()，实现方法的重载
-        public function __call($name, $args) {
-            if ($name == 'speedUp') {
-                $this->speed += 10;
-            }
+class Car {
+    public $speed = 0;
+    // 显然这是一个魔法方法__call()，实现方法的重载
+    public function __call($name, $args) {
+        if ($name == 'speedUp') {
+            $this->speed += 10;
         }
     }
-    $car = new Car();
-    $car->speedUp(); // 调用不存在的方法会使用重载
-    echo $car->speed;
-
-?>
+}
+$car = new Car();
+$car->speedUp(); // 调用不存在的方法会使用重载
+echo $car->speed;
 ```
 ### 对象的高级特性
 
@@ -553,8 +507,6 @@
     $b = new Car();
     if ($a == $b) echo '==';   //true
     if ($a === $b) echo '==='; //false
-
-?>
 ```
 
 * 对象复制，在一些特殊情况下，可以通过关键字`clone`来复制一个对象，这时`__clone()`方法会被调用，通过这个魔术方法来设置属性的值。
@@ -563,21 +515,19 @@
 ```php
 <?php
 
-    class Car {
-        public $name = 'car';
-        // 这是一个魔法方法__clone()方法
-        public function __clone() {
-            $obj = new Car();
-            $obj->name = $this->name;
-        }
+class Car {
+    public $name = 'car';
+    // 这是一个魔法方法__clone()方法
+    public function __clone() {
+        $obj = new Car();
+        $obj->name = $this->name;
     }
-    $a = new Car();
-    $a->name = 'new car';
-    // 通过关键字clone来复制一个对象
-    $b = clone $a;
-    var_dump($b);
-
-?>
+}
+$a = new Car();
+$a->name = 'new car';
+// 通过关键字clone来复制一个对象
+$b = clone $a;
+var_dump($b);
 ```
 
 * 对象序列化，可以通过`serialize()`方法将对象序列化为字符串，用于存储或者传递数据，然后在需要的时候通过`unserialize()`将字符串反序列化成对象进行使用。
@@ -586,17 +536,14 @@
 ```php
 <?php
 
-    class Car {
-        public $name = 'car';
-    }
-    $a = new Car();
-    $str = serialize($a); //对象序列化成字符串
-    echo $str.'
-';
-    $b = unserialize($str); //反序列化为对象
-    var_dump($b);
-
-?>
+class Car {
+    public $name = 'car';
+}
+$a = new Car();
+$str = serialize($a); //对象序列化成字符串
+echo $str.'<br/>';
+$b = unserialize($str); //反序列化为对象
+var_dump($b);
 ```
 ### 小结
 

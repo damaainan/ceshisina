@@ -13,15 +13,15 @@
 ## 更快的方式实现PHP数组去重
 
 ```php
-    /* 创建一个包含重复值的，一共四个元素的数组 */
-    $array = array('green','blue','orange','blue');
-    
-    /* 翻转数组，你将会得到唯一键值的数组
-            array('green'=>0,'blue'=>1,'orange'=>2); */
-    $array = array_flip($array);
-    
-    /* 然后再翻转一次，将键和值重新放置，然后得到数组：array(0=>'green',1=>'blue',2=>'orange'); */
-    $array = array_flip($array);
+/* 创建一个包含重复值的，一共四个元素的数组 */
+$array = array('green','blue','orange','blue');
+
+/* 翻转数组，你将会得到唯一键值的数组
+        array('green'=>0,'blue'=>1,'orange'=>2); */
+$array = array_flip($array);
+
+/* 然后再翻转一次，将键和值重新放置，然后得到数组：array(0=>'green',1=>'blue',2=>'orange'); */
+$array = array_flip($array);
 ```
 
 因为我们已经移除了一些元素，因此数组看起来不是正常的序列。比如我们可能会得到：array(0=>'A',2=>'B',5=>'C');。在某些情况下，这不是一个问题，但是如果你需要数组的键值保持数字的序列，你可以使用一到两种方法解决键值乱序的问题。
@@ -31,12 +31,12 @@
 添加`array_flip`之后的函数，将会对数组的键值排序并且让它们恢复到正常的序列，如：0,1,2,3...
 
 ```php
-    $array = array('green','blue','orange','blue');
-    $array = array_flip($array);
-    $array = array_flip($array);
-    
-    /* 使用array_merge()函数修复键值*/
-    $array = array_merge($array);
+$array = array('green','blue','orange','blue');
+$array = array_flip($array);
+$array = array_flip($array);
+
+/* 使用array_merge()函数修复键值*/
+$array = array_merge($array);
 ```
 
 ## 第二种方式，使用array_keys
@@ -44,10 +44,10 @@
 注意，这种修复数组键值的方法比使用`array_merge()`函数稍微快了一点。你也可以在最后一步结合使用`array_keys()`函数(此函数返回翻转后的值)。然后当你翻转数组的值，键值就会根据顺序创建。
 
 ```php
-    $array = array('green','blue','orange','blue');
-    $array = array_flip($array);
-    /* 跟第一个例子一样，但是现在我们先提取数组的键值 */
-    $array = array_keys($array);
+$array = array('green','blue','orange','blue');
+$array = array_flip($array);
+/* 跟第一个例子一样，但是现在我们先提取数组的键值 */
+$array = array_keys($array);
 ```
 
 ## 结论

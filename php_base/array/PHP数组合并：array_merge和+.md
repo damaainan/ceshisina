@@ -17,15 +17,15 @@ array_merge() 将一个或多个数组的单元合并起来，一个数组中的
 ## 合并包含非数组类型 
 
 ```php
-    $arr1 = [
-            'name' => 'wangxb',
-            2,
-            3
-        ];
-    // 这里假设$arr2等于一个表达式，但是在某些情况下表达式会得到一个空字符串
-    $arr2 = '';
-    var_dump(array_merge($arr1, $arr2));  // null
-    var_dump(array_merge($arr2, $arr1));  // null
+$arr1 = [
+        'name' => 'wangxb',
+        2,
+        3
+    ];
+// 这里假设$arr2等于一个表达式，但是在某些情况下表达式会得到一个空字符串
+$arr2 = '';
+var_dump(array_merge($arr1, $arr2));  // null
+var_dump(array_merge($arr2, $arr1));  // null
 ```
 
 运行结果：
@@ -37,14 +37,14 @@ array_merge() 将一个或多个数组的单元合并起来，一个数组中的
 优化一下：
 
 ```php
-    $arr1 = [
-            'name' => 'wangxb',
-            2,
-            3
-        ];
-    $arr2 = '';
-    var_dump(array_merge((array)$arr1, (array)$arr2));  // array('name' => 'wangxb',2,3)
-    var_dump(array_merge((array)$arr2, (array)$arr1));  // array('name' => 'wangxb',2,3)
+$arr1 = [
+        'name' => 'wangxb',
+        2,
+        3
+    ];
+$arr2 = '';
+var_dump(array_merge((array)$arr1, (array)$arr2));  // array('name' => 'wangxb',2,3)
+var_dump(array_merge((array)$arr2, (array)$arr1));  // array('name' => 'wangxb',2,3)
 ```
 
 利用 (array) 这种强制类型转换就可以保证array_merge函数的参数都为数组。 
@@ -52,18 +52,18 @@ array_merge() 将一个或多个数组的单元合并起来，一个数组中的
 ## 合并数组为空或不存在 
 
 ```php
-    $arr1 = [
-            'name' => 'wangxb',
-            2,
-            3
-        ];
-    $arr2 = null;
-    var_dump((array)$arr2);  // array()
-    var_dump((array)$arr3);  // array()
-    var_dump(array_merge($arr1, $arr2));  // null
-    var_dump(array_merge($arr1, $arr3));  // null
-    var_dump(array_merge((array)$arr1, (array)$arr2));  // array('name' => 'wangxb',2,3)
-    var_dump(array_merge((array)$arr1, (array)$arr3));  // array('name' => 'wangxb',2,3);
+$arr1 = [
+        'name' => 'wangxb',
+        2,
+        3
+    ];
+$arr2 = null;
+var_dump((array)$arr2);  // array()
+var_dump((array)$arr3);  // array()
+var_dump(array_merge($arr1, $arr2));  // null
+var_dump(array_merge($arr1, $arr3));  // null
+var_dump(array_merge((array)$arr1, (array)$arr2));  // array('name' => 'wangxb',2,3)
+var_dump(array_merge((array)$arr1, (array)$arr3));  // array('name' => 'wangxb',2,3);
 ```
 
 结果：
@@ -79,11 +79,11 @@ array_merge() 将一个或多个数组的单元合并起来，一个数组中的
 `array_merge` 在处理key=>value这种关联数组时，存在相同key的健值后面的数组健值会替换覆盖前面的健值；但是对于key是数字即索引数组时，相同的key的健值不会覆盖，后面参数数组中的数字健值会重新索引追加到生成数组的后面排列。 
 
 ```php
-    $arr1 = ['name' => 'wangxb', 'age'=>25, 2, 3];
-    
-    $arr2 = [1, 2, 3, 'age'=>26, 4];
-    print_r(array_merge($arr1, $arr2));
-    print_r(array_merge($arr2, $arr1));
+$arr1 = ['name' => 'wangxb', 'age'=>25, 2, 3];
+
+$arr2 = [1, 2, 3, 'age'=>26, 4];
+print_r(array_merge($arr1, $arr2));
+print_r(array_merge($arr2, $arr1));
 ```
 
 结果
@@ -93,10 +93,10 @@ array_merge() 将一个或多个数组的单元合并起来，一个数组中的
 ## 重新索引一个数组的索引 
 
 ```php
-    $arr1 = ['name' => 'wangxb', 'age'=>25, 2=>2, 3=>3];
-    $arr2 = [5=>0,4=>1,3=>2,2=>3,1=>4,0=>5];
-    print_r(array_merge($arr1));
-    print_r(array_merge($arr2));
+$arr1 = ['name' => 'wangxb', 'age'=>25, 2=>2, 3=>3];
+$arr2 = [5=>0,4=>1,3=>2,2=>3,1=>4,0=>5];
+print_r(array_merge($arr1));
+print_r(array_merge($arr2));
 ```
 
 结果
@@ -125,13 +125,13 @@ array_merge() 将一个或多个数组的单元合并起来，一个数组中的
 * `+` 操作符，存在覆盖时，是以相同项最靠前的为基准的，为最后值；
 
 ```php
-    $arr1 = ['name' => 'wangxb', 'age'=>25, 2, 3];
-    $arr2 = [1, 2, 3, 'age'=>26, 4];
-    $arr3 = [10, 11,12, 13];
-    $res1 = $arr1+$arr2+$arr3;
-    $res2 = $arr1+$arr3+$arr2;
-    print_r($res1);
-    print_r($res2);
+$arr1 = ['name' => 'wangxb', 'age'=>25, 2, 3];
+$arr2 = [1, 2, 3, 'age'=>26, 4];
+$arr3 = [10, 11,12, 13];
+$res1 = $arr1+$arr2+$arr3;
+$res2 = $arr1+$arr3+$arr2;
+print_r($res1);
+print_r($res2);
 ```
 
 结果

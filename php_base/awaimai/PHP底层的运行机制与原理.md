@@ -105,16 +105,16 @@ Zend hash table实现了典型的hash表散列结构，同时通过附加一个�
 * **`PHP关联数组`：**关联数组是典型的hash_table应用。一次查询过程经过如下几步（从代码可以看出，这是一个常见的hash查询过程，并增加一些快速判定加速查找。）： 
 
 ```c
-    getKeyHashValue h;
-    index = n & nTableMask;
-    Bucket *p = arBucket[index];
-    while (p) {
-        if ((p->h == h) & (p->nKeyLength == nKeyLength)) {
-            RETURN p->data;   
-        }
-        p=p->next;
+getKeyHashValue h;
+index = n & nTableMask;
+Bucket *p = arBucket[index];
+while (p) {
+    if ((p->h == h) & (p->nKeyLength == nKeyLength)) {
+        RETURN p->data;   
     }
-    RETURN FALTURE;
+    p=p->next;
+}
+RETURN FALTURE;
 ```
 * **`PHP索引数组`：** 索引数组就是我们常见的数组，通过下标访问。例如 `$arr [0]`，Zend HashTable内部进行了归一化处理，对于index类型key同样分配了hash值和`nKeyLength`(为0)。内部成员变量`nNextFreeElement`就是当前分配到的最大id，每次push后自动加一。正是这种归一化处理，PHP才能够实现关联和非关联的混合。由于push操作的特殊性，索引key在PHP数组中先后顺序并不是通过下标大小来决定，而是由push的先后决定。例如 `$arr [1] = 2; $arr [2] = 3;` 对于double类型的key，Zend HashTable会将他当做索引key处理
 
@@ -173,28 +173,28 @@ PHP变量通过引用计数实现变量共享数据，那如果改变其中一�
 假设有如下4个变量：
 
 ```php
-    $strA = '123';
-    $strB = '456';
-    $intA = 123;
-    $intB = 456;
+$strA = '123';
+$strB = '456';
+$intA = 123;
+$intB = 456;
 ```
 现在对如下的几种字符串拼接方式做一个比较和说明：
 
 ```php
-    // 下面两张情况，zend会重新malloc一块内存并进行相应处理，其速度一般
-    $res = $strA . $strB
-    $res = "$strA$strB"
-    
-    // 这种是速度最快的，zend会在当前strA基础上直接relloc，避免重复拷贝
-    $strA = $strA . $strB
-    
-    // 这种速度较慢，因为需要做隐式的格式转换，实际编写程序中也应该注意尽量避免
-    $res = $intA . $intB
-    
-    // 这会是最慢的一种方式，因为sprintf在PHP中并不是一个语言结构，
-    // 本身对于格式识别和处理就需要耗费比较多时间，另外本身机制也是malloc。
-    // 不过sprintf的方式最具可读性，实际中可以根据具体情况灵活选择。
-    $strA = sprintf ("%s%s", $strA . $strB);
+// 下面两张情况，zend会重新malloc一块内存并进行相应处理，其速度一般
+$res = $strA . $strB
+$res = "$strA$strB"
+
+// 这种是速度最快的，zend会在当前strA基础上直接relloc，避免重复拷贝
+$strA = $strA . $strB
+
+// 这种速度较慢，因为需要做隐式的格式转换，实际编写程序中也应该注意尽量避免
+$res = $intA . $intB
+
+// 这会是最慢的一种方式，因为sprintf在PHP中并不是一个语言结构，
+// 本身对于格式识别和处理就需要耗费比较多时间，另外本身机制也是malloc。
+// 不过sprintf的方式最具可读性，实际中可以根据具体情况灵活选择。
+$strA = sprintf ("%s%s", $strA . $strB);
 ```
 
 ### 数组 

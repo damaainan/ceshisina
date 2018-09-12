@@ -82,8 +82,6 @@ class Http{
     fclose($this->fo);
   }
 }
-?>
-
 ```
 
 核心函数:

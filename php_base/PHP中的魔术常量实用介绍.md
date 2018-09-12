@@ -44,31 +44,31 @@ Trait 的名字（PHP 5.4.0 新加）。自 PHP 5.4 起此常量返回 `trait` �
 作用：这两个常量经常在记录日志的时候会用到，比如：错误日志中要记录哪个文件在什么位置出现了什么问题。
 
 ```php
-    <?php
-    class Log
+<?php
+class Log
+{
+    private $logFile = null;
+
+    public function __construct( $filePath = '' )
     {
-        private $logFile = null;
-    
-        public function __construct( $filePath = '' )
-        {
-            $this->logFile = $filePath;
-        }
-    
-        public function writeLog( $message )
-        {
-            // 把记录写入日志文件
-            echo $message;
-        }
-    
-        public function error()
-        {
-            $error = "在文件（" . __FILE__ . "） 中的第  " . __LINE__ . " 行出错了";
-            $this->writeLog( $error );
-        }
+        $this->logFile = $filePath;
     }
-    
-    $log = new Log('./log.txt');
-    $log->error(); //在文件（E:\www.demo.com\index.php） 中的第 19 行出错了
+
+    public function writeLog( $message )
+    {
+        // 把记录写入日志文件
+        echo $message;
+    }
+
+    public function error()
+    {
+        $error = "在文件（" . __FILE__ . "） 中的第  " . __LINE__ . " 行出错了";
+        $this->writeLog( $error );
+    }
+}
+
+$log = new Log('./log.txt');
+$log->error(); //在文件（E:\www.demo.com\index.php） 中的第 19 行出错了
 ```
 
 #### 2、`__DIR__` 魔方常量
@@ -78,14 +78,14 @@ Trait 的名字（PHP 5.4.0 新加）。自 PHP 5.4 起此常量返回 `trait` �
 作用：这个在框架中会经常用到。比如：从入口文件中记录当前项目的路径，然后经这个路径引用其它文件
 
 ```php
-    <?php
-    define('FILE_PATH', __DIR__);
-    
-    function __autoload( $className = '' )
-    {
-        // 自动加载文件
-        // include FILE_PATH . "/xxx/" . $className . ".class.php";
-    }
+<?php
+define('FILE_PATH', __DIR__);
+
+function __autoload( $className = '' )
+{
+    // 自动加载文件
+    // include FILE_PATH . "/xxx/" . $className . ".class.php";
+}
 ```
 
 `__autoload`在《[PHP中的十六个魔术方法详解][1]》可以查看它的用法。
@@ -97,40 +97,40 @@ Trait 的名字（PHP 5.4.0 新加）。自 PHP 5.4 起此常量返回 `trait` �
 作用：这个在记录日志的时候，也会经常用到，比如：错误日志中记录这个错误所所发生的位置，返回值会包含命名空间名
 
 ```php
-    <?php
-    namespace Think;
-    
-    function logWriteToFilea()
-    {
-        echo __FUNCTION__ , "<br><br>";
-    }
-    
-    function logWriteToFileb()
+<?php
+namespace Think;
+
+function logWriteToFilea()
+{
+    echo __FUNCTION__ , "<br><br>";
+}
+
+function logWriteToFileb()
+{
+    echo __METHOD__ , "<br><br>";
+}
+
+class Log
+{
+    private $logFile = null;
+
+    public function error1()
     {
         echo __METHOD__ , "<br><br>";
     }
-    
-    class Log
+
+    public function error2()
     {
-        private $logFile = null;
-    
-        public function error1()
-        {
-            echo __METHOD__ , "<br><br>";
-        }
-    
-        public function error2()
-        {
-            echo __FUNCTION__ , "<br><br>";
-        }
+        echo __FUNCTION__ , "<br><br>";
     }
-    
-    logWriteToFilea(); // Think\logWriteToFilea
-    logWriteToFileb(); // Think\logWriteToFileb
-    
-    $log = new Log();
-    $log->error1(); // Think\Log::error1
-    $log->error2(); // error2
+}
+
+logWriteToFilea(); // Think\logWriteToFilea
+logWriteToFileb(); // Think\logWriteToFileb
+
+$log = new Log();
+$log->error1(); // Think\Log::error1
+$log->error2(); // error2
 ```
 
 特别说明一点：如果将 `__METHOD__` 放到函数里时 和 `__FUNCTION__` 返回的内容一样。但是将 `__FUNCTION__` 放到类的方法里时，返回的值 和 `__METHOD__` 返回的是有区别的。看上面的实例返回内容
@@ -140,19 +140,19 @@ Trait 的名字（PHP 5.4.0 新加）。自 PHP 5.4 起此常量返回 `trait` �
 说明：返回当前的类名（包含命名空间）
 
 ```php
-    <?php
-    namespace Think;
-    
-    class Log
+<?php
+namespace Think;
+
+class Log
+{
+    public function getClassName()
     {
-        public function getClassName()
-        {
-            echo __CLASS__ , "<br><Br>";
-        }
+        echo __CLASS__ , "<br><Br>";
     }
-    
-    $log = new Log();
-    $log->getClassName(); // Think\Log
+}
+
+$log = new Log();
+$log->getClassName(); // Think\Log
 ```
 
 #### 5、`__NAMESPACE__` 魔术常量
@@ -170,24 +170,24 @@ Trait 的名字（PHP 5.4.0 新加）。自 PHP 5.4 起此常量返回 `trait` �
 说明：返回`Trait` 名，包含命令空间
 
 ```php
-    <?php
-    namespace Think;
-    
-    trait ezcReflectionReturnInfo 
+<?php
+namespace Think;
+
+trait ezcReflectionReturnInfo 
+{
+    public function demo()
     {
-        public function demo()
-        {
-            echo __TRAIT__;
-        }
+        echo __TRAIT__;
     }
-    
-    class ezcReflectionMethod
-    {
-        use ezcReflectionReturnInfo;
-    }
-    
-    $demo = new ezcReflectionMethod();
-    $demo->demo(); // Think\ezcReflectionReturnInfo
+}
+
+class ezcReflectionMethod
+{
+    use ezcReflectionReturnInfo;
+}
+
+$demo = new ezcReflectionMethod();
+$demo->demo(); // Think\ezcReflectionReturnInfo
 ```
 
 特别说明一点：`Trait` 是为类似 PHP 的单继承语言而准备的一种代码复用机制。`Trait` 为了减少单继承语言的限制，使开发人员能够自由地在不同层次结构内独立的类中复用 method。`Trait` 和 `Class` 组合的语义定义了一种减少复杂性的方式，避免传统多继承和 Mixin 类相关典型问题。

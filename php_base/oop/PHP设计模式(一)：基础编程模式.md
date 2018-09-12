@@ -16,26 +16,24 @@
 假设你需要在页面上显示不同的用户类型，如电脑用户、手机用户等，那么你可以将“显示”这件事抽象为一个类，如：
 
 ```php
-    <?php
-    class ShowAgent {
-      private $agent;
-      public function __construct() {
-        $this->agent = $_SERVER['HTTP_USER_AGENT'];
-        echo $this->agent;
-      }
-    }
-    $showAgent = new ShowAgent();
-    ?>
+<?php
+class ShowAgent {
+  private $agent;
+  public function __construct() {
+    $this->agent = $_SERVER['HTTP_USER_AGENT'];
+    echo $this->agent;
+  }
+}
+$showAgent = new ShowAgent();
 ```
 ## 调试技巧
 
 在很多PHP默认环境中，调试功能是关闭的。打开调试功能又需要配置php.ini文件，其实有一个简单的方法：
 
 ```php
-    <?php
-    ini_set("display_errors", "1");
-    ERROR_REPORTING(E_ALL);
-    ?>
+<?php
+ini_set("display_errors", "1");
+ERROR_REPORTING(E_ALL);
 ```
 将这段代码加入到你的代码中，甚至可以require或者include进去，方便调试。
 
@@ -44,12 +42,11 @@
 这里列出流水账编程，并不是让你学习，而是指出何种编程不推荐使用：
 
 ```php
-    <?php
-    $total = "Total number is ";
-    $number = "6";
-    $totalNumber = $total.$number;
-    echo $totalNumber;
-    ?>
+<?php
+$total = "Total number is ";
+$number = "6";
+$totalNumber = $total.$number;
+echo $totalNumber;
 ```
 这段代码并没有错，但是以后再也无法重用了，对吧？每次遇到相同问题，你都需要反复拼接。
 
@@ -58,13 +55,12 @@
 面向过程编程曾经很流行，缺点也是无法维护，例如：
 
 ```php
-    <?php
-    function showTotal($total, $number) {
-      $totalNumber = $total.$number;
-      echo $totalNumber;
-    }
-    showTotal("Total number is", "6");
-    ?>
+<?php
+function showTotal($total, $number) {
+  $totalNumber = $total.$number;
+  echo $totalNumber;
+}
+showTotal("Total number is", "6");
 ```
 这段代码同样没有错，但是时间久了，由于缺乏类的概念，showTotal在各种应用场景缺乏灵活性，你还是需要重写代码。
 

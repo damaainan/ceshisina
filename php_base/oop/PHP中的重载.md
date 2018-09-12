@@ -18,9 +18,6 @@ int add(int a, int b) { return a + b; }
 double add(double a, double b) { return a + b; }
 double add(int a, int b, double c) { return a + b + c; }
 double add(double a, int b, int c) { return a + b + c; }
- 
-
-
 ```
  
 第一个函数为参考基准，其他三个对应重载的三种情形。函数重载多见于强类型语言，编译后函数在函数符号表的名称一般是函数名加参数类型。上面的四个函数，g++编译后，nm命令查看符号表中的名字，输出如下：
@@ -32,9 +29,6 @@ double add(double a, int b, int c) { return a + b + c; }
 00000000004008b1 T _Z3adddii
 000000000040083d T _Z3addii
 000000000040087d T _Z3addiid
- 
-
-
 ```
  
 最后四行的第三列对应编译后四个函数的符号信息，_Z3为前缀，add是函数名，剩下的字母d代表double，i代表int，与生命一一对应。
@@ -64,9 +58,6 @@ foo("hello", "tlanyan", "nice day");
  
 // 传更多参数，也一切正常
 foo("hello", "tlanyan", "morning", "noon", "afternoon", "evening", "night");
- 
-
-
 ```
  
 只要个数不小于声明的，传多少参数PHP不管。所以参数个数不同，在PHP中不足以区分函数。

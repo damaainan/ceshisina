@@ -13,37 +13,36 @@
 还是用动物、鲸鱼和鲤鱼来举例：
 
 ```php
-    <?php
-    interface IEat {
-      function eatFish();
-      function eatMoss();
-    }
-    
-    class Whale implements IEat {
-      public function eatFish() {
-        echo "Whale eats fish.\n";
-      }
-      public function eatMoss() {
-        echo "Whale doesn't eat fish\n";
-      }
-    }
-    
-    class Carp implements IEat {
-      public function eatFish() {
-        echo "Carp doesn't eat moss.\n";
-      }
-      public function eatMoss() {
-        echo "Carp eats moss.\n";
-      }
-    }
-    
-    $whale = new Whale();
-    $whale->eatFish();
-    $whale->eatMoss();
-    $carp = new Carp();
-    $carp->eatFish();
-    $carp->eatMoss();
-    ?>
+<?php
+interface IEat {
+  function eatFish();
+  function eatMoss();
+}
+
+class Whale implements IEat {
+  public function eatFish() {
+    echo "Whale eats fish.\n";
+  }
+  public function eatMoss() {
+    echo "Whale doesn't eat fish\n";
+  }
+}
+
+class Carp implements IEat {
+  public function eatFish() {
+    echo "Carp doesn't eat moss.\n";
+  }
+  public function eatMoss() {
+    echo "Carp eats moss.\n";
+  }
+}
+
+$whale = new Whale();
+$whale->eatFish();
+$whale->eatMoss();
+$carp = new Carp();
+$carp->eatFish();
+$carp->eatMoss();
 ```
 运行一下：
 

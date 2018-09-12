@@ -36,25 +36,25 @@ Github这么神奇的地方，怎么会有你找不到的东西呢？我找到�
 然后配置nginx中conf里nginx.conf文件：
 
 ```nginx
-     server {
-            listen       80;
-            server_name  localhost;
-            index index.php index.html;
-            root D:/web_root;
-    
-            #charset koi8-r;
-    
-            #access_log  logs/host.access.log  main;
-    
-            # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-            #
-            location ~ \.php$ {
-                fastcgi_pass   127.0.0.1:9000;
-                fastcgi_index  index.php;
-                fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
-                include        fastcgi_params;
-            }
+server {
+    listen       80;
+    server_name  localhost;
+    index index.php index.html;
+    root D:/web_root;
+
+    #charset koi8-r;
+
+    #access_log  logs/host.access.log  main;
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    location ~ \.php$ {
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+        include        fastcgi_params;
     }
+}
 ```
 在D盘建立一个web_root的文件夹，放入index.php，开启nginx测试
 
@@ -62,8 +62,8 @@ Github这么神奇的地方，怎么会有你找不到的东西呢？我找到�
 index.php写入
 
 ```php
-    <?php
-    echo "hello  world";
+<?php
+echo "hello  world";
 ```
 访问[http://localhost][8]
 

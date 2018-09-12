@@ -19,7 +19,7 @@ Clients should not be forced to depend on methods that they do not use.客户端
 
 首先我们应当有一个工具函数库接口，这个接口会描述我们想要暴露的关于`byte`操作逻辑的方法，让我们创建这样一个接口，如下
 
-```js
+```groovy
 type ByteUtils interface {
     Read(b []byte) (n int, err error) // Read into buffer
     Write(b []byte)(n int, err error) // Write into buffer
@@ -38,7 +38,7 @@ type ByteUtils interface {
 
 我们可以通过创建三个更精简、更具体的接口来替代原先通用的接口：
 
-```js
+```groovy
 type Reader interface {
     Read(b []byte) (n int, err error) 
 }
@@ -54,7 +54,7 @@ type Trimmer interface {
 
 在这三个基础上，我们可以通过组合它们来获取一个更有关联性的接口列表，比如：
 
-```js
+```groovy
 type ReadWriter interface {
     Reader
     Writer 

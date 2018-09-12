@@ -12,43 +12,42 @@
 还是用动物、鲸鱼和鲤鱼来举例：
 
 ```php
-    <?php
-    abstract class Animal {
-      protected $name;
-    
-      protected function chew($food) {
-        echo $this->name . " is chewing " . $food . ".\n";
-      }
-      protected function digest($food) {
-        echo $this->name . " is digesting " . $food . ".\n";
-      }
-    }
-    
-    class Whale extends Animal {
-      public function __construct() {
-        $this->name = "Whale";
-      }
-      public function eat($food) {
-        $this->chew($food);
-        $this->digest($food);
-      }
-    }
-    
-    class Carp extends Animal {
-      public function __construct() {
-        $this->name = "Carp";
-      }
-      public function eat($food) {
-        $this->chew($food);
-        $this->digest($food);
-      }
-    }
-    
-    $whale = new Whale();
-    $whale->eat("fish");
-    $carp = new Carp();
-    $carp->eat("moss");
-    ?>
+<?php
+abstract class Animal {
+  protected $name;
+
+  protected function chew($food) {
+    echo $this->name . " is chewing " . $food . ".\n";
+  }
+  protected function digest($food) {
+    echo $this->name . " is digesting " . $food . ".\n";
+  }
+}
+
+class Whale extends Animal {
+  public function __construct() {
+    $this->name = "Whale";
+  }
+  public function eat($food) {
+    $this->chew($food);
+    $this->digest($food);
+  }
+}
+
+class Carp extends Animal {
+  public function __construct() {
+    $this->name = "Carp";
+  }
+  public function eat($food) {
+    $this->chew($food);
+    $this->digest($food);
+  }
+}
+
+$whale = new Whale();
+$whale->eat("fish");
+$carp = new Carp();
+$carp->eat("moss");
 ```
 运行一下：
 

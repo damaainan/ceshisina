@@ -32,12 +32,13 @@
 
 本博客建立在512M的VPS上，因此我设置的参数如下： 
 
+```cfg
     pm=dynamic
     pm.max_children=20
     pm.start_servers=5
     pm.min_spare_servers=5
     pm.max_spare_servers=20
-
+```
 这样就可以最大的节省内存并提高执行效率。
 </font>
 

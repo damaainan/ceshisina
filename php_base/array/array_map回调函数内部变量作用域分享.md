@@ -52,7 +52,6 @@ class Test {
 }
 $test = new Test();
 var_dump($test->fun());
-?>
 ```
 
 
@@ -105,7 +104,6 @@ class Test {
 }
 $test = new Test();
 var_dump($test->fun());
-?>
 ```
 
 
@@ -162,7 +160,6 @@ class Test {
 }
 $test = new Test();
 $test->fun();
-?>
 ```
 
 

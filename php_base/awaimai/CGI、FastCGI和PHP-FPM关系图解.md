@@ -47,14 +47,14 @@ WEB 中，
 
 在了解 CGI 之前，我们先了解一下Web server 传递数据的另外一种方法：**PHP Module加载方式**。以 Apache 为例，在PHP Module方式中，是不是在 Apache 的配置文件 httpd.conf 中加上这样几句：
 ```apache
-    # 加入以下2句
-    LoadModule php5_module D:/php/php5apache2_2.dll
-    AddType application/x-httpd-php .php
-    
-    # 修改如下内容
-    <IfModule dir_module>
-        DirectoryIndex index.php index.html
-    </IfModule>
+# 加入以下2句
+LoadModule php5_module D:/php/php5apache2_2.dll
+AddType application/x-httpd-php .php
+
+# 修改如下内容
+<IfModule dir_module>
+    DirectoryIndex index.php index.html
+</IfModule>
 ```
 上面是 Windows 下安装php和apache环境后手动配置，在linux下源码安装大致是这样配置的：
 

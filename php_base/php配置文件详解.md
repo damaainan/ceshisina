@@ -5,6 +5,8 @@
 > 优化php性能的时候，优化配置文件这个是首当其冲的。下边跟大家分享下我总结的关于php.ini配置文件里的每一行的解释，希望能帮助大家进一步了解php。
 
     [ipv6@ipv6 ~]# grep -v ";" /etc/php5/apache2/php.ini
+
+```
     [PHP]
     engine = On  --->  是否启用PHP解析引擎
     short_open_tag = Off    --->  是否使用简介标志
@@ -241,4 +243,4 @@
     [mcrypt]
     [dba]
     [xsl]
-
+```

@@ -17,7 +17,7 @@ PHP的错误机制也是非常复杂的，做了几年php，也没有仔细总�
  
 注意：尝试下面的代码的时候请确保打开error_log:
  
-```
+```php
 error_reporting(E_ALL); 
 ini_set('display_errors', 'On'); 
 ```
@@ -28,14 +28,14 @@ ini_set('display_errors', 'On'); 
  
 错误示例：
  
-```
+```php
 // Fatal error: Call to undefined function hpinfo() in /tmp/php/index.php on line 5  
 hpinfo();  //E_ERROR 
 ```
  
 注意，如果有未被捕获的异常，也是会触发这个级别的。
  
-```
+```php
 // Fatal error: Uncaught exception 'Exception' with message 'test exception' in /tmp/php/index.php:5 Stack trace: #0 {main} thrown in /tmp/php/index.php on line 5 
 throw new \Exception("test exception"); 
 ```
@@ -44,7 +44,7 @@ throw new \Exception("test exception"); 
  
 这种错误只是警告，不会终止脚本，程序还会继续进行，显示的错误信息是Warning。比如include一个不存在的文件。
  
-```
+```php
 //Warning: include(a.php): failed to open stream: No such file or directory in /tmp/php/index.php on line 7  
 //Warning: include(): Failed opening 'a.php' for inclusion (include_path='.:/usr/share/pear:/usr/share/php') in /tmp/php/index.php on line 7  
 include("a.php"); //E_WARNING 
@@ -56,7 +56,7 @@ include("a.php"); //E_WARNING 
  
 比如$b变量不存在，我们把它赋值给另外一个变量
  
-```
+```php
 //Notice: Undefined variable: b in /tmp/php/index.php on line 9  
 $a = $b; //E_NOTICE 
 ```
@@ -77,7 +77,7 @@ E_STRICT 
  
 比如在函数形参传递++符号
  
-```
+```php
 // Strict Standards: Only variables should be passed by reference in /tmp/php/index.php on line 17  
 function change (&$var) {  
   $var += 10;  
@@ -93,7 +93,7 @@ change(++$var);  
  
 经常出现在形参定义了类型，但调用的时候传入了错误类型。它的错误提醒也比E_ERROR的fatal error前面多了一个Catachable的字样。
  
-```
+```php
 //Catchable fatal error: Argument 1 passed to testCall() must be an instance of A, instance of B given, called in /tmp/php/index.php on line 37 and defined in /tmp/php/index.php on line 33 
 class A { 
 }  
@@ -111,7 +111,7 @@ testCall($b); 
  
 比如curl的CURLOPT_POSTFIELDS使用\@FILENAME来上传文件的方法
  
-```
+```php
 // Deprecated: curl_setopt(): The usage of the @filename API for file uploading is deprecated. Please use the CURLFile class instead in /tmp/php/index.php on line 42 
 $ch = curl_init("http://www.remotesite.com/upload.php"); 
 curl_setopt($ch, CURLOPT_POSTFIELDS, array('fileupload' => '@'. "test")); 
@@ -129,7 +129,7 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, array('fileupload' => '@'. "test")); 
  
 这些错误都是用户制造的，使用trigger_error，这里就相当于一个口子给用户触发出各种错误类型。这个是一个很好逃避try catch异常的方式。
  
-```
+```php
 trigger_error("Cannot divide by zero", E_USER_ERROR);  
 // E_USER_ERROR  
 // E_USER_WARING  
@@ -149,20 +149,20 @@ php中有很多配置和参数是可以控制错误，以及错误的日志显�
  
 ### php.ini中的配置
  
-```
-error_reporting = E_ALL  // 报告错误级别，什么级别的 
-error_log = /tmp/php_errors.log // php中的错误显示的日志位置  
-display_errors = On // 是否把错误展示在输出上，这个输出可能是页面，也可能是stdout  
-display_startup_errors = On // 是否把启动过程的错误信息显示在页面上，记得上面说的有几个Core类型的错误是启动时候发生的，这个就是控制这些错误是否显示页面的。  
-log_errors = On // 是否要记录错误日志  
-log_errors_max_len = 1024 // 错误日志的最大长度  
-ignore_repeated_errors = Off // 是否忽略重复的错误  
-track_errors = Off // 是否使用全局变量$php_errormsg来记录最后一个错误  
-xmlrpc_errors = 0 //是否使用XML-RPC的错误信息格式记录错误  
-xmlrpc_error_number = 0 // 用作 XML-RPC faultCode 元素的值。  
-html_errors = On  // 是否把输出中的函数等信息变为HTML链接  
-docref_root = http://manual/en/ // 如果html_errors开启了，这个链接的根路径是什么  
-fastcgi.logging = 0 // 是否把php错误抛出到fastcgi中 
+```ini
+error_reporting = E_ALL  ; 报告错误级别，什么级别的 
+error_log = /tmp/php_errors.log ; php中的错误显示的日志位置  
+display_errors = On ; 是否把错误展示在输出上，这个输出可能是页面，也可能是stdout  
+display_startup_errors = On ; 是否把启动过程的错误信息显示在页面上，记得上面说的有几个Core类型的错误是启动时候发生的，这个就是控制这些错误是否显示页面的。  
+log_errors = On ; 是否要记录错误日志  
+log_errors_max_len = 1024 ; 错误日志的最大长度  
+ignore_repeated_errors = Off ; 是否忽略重复的错误  
+track_errors = Off ; 是否使用全局变量$php_errormsg来记录最后一个错误  
+xmlrpc_errors = 0 ;是否使用XML-RPC的错误信息格式记录错误  
+xmlrpc_error_number = 0 ; 用作 XML-RPC faultCode 元素的值。  
+html_errors = On  ; 是否把输出中的函数等信息变为HTML链接  
+docref_root = http:;manual/en/ ; 如果html_errors开启了，这个链接的根路径是什么  
+fastcgi.logging = 0 ; 是否把php错误抛出到fastcgi中 
 ```
  
 我们经常会被问到，error_reporting和display_errors有什么区别呢？这两个函数是完全不一样的。
@@ -179,7 +179,7 @@ error_log是显示错误日志的位置，这个在php-fpm中往往会被重写�
  
 ignore_repeated_errors这个标记控制的是如果有重复的日志，那么就只会记录一条，比如下面的程序：
  
-```
+```php
 error_reporting(E_ALL);  
 ini_set('ignore_repeated_errors', 1);  
 ini_set('ignore_repeated_source', 1);  
@@ -193,7 +193,7 @@ track_errors开启会把最后一个错误信息存储到变量里面去，这�
  
 html_errors 和 docref_root 两个是个挺有人性化的配置，配置了这两个参数以后，我们返回的错误信息中如果有一些在文档中有的信息，就会变成链接形式。
  
-```
+```php
 error_reporting(E_ALL);  
 ini_set('html_errors', 1);  
 ini_set('docref_root', "https://secure.php.net/manual/zh/");  
@@ -204,16 +204,16 @@ include("a2.php"); //E_WARNING 
  
 ### php-fpm中的配置
  
-```
-error_log = /var/log/php-fpm/error.log // php-fpm自身的日志  
-log_level = notice // php-fpm自身的日志记录级别  
-php_flag[display_errors] = off // 覆盖php.ini中的某个配置变量，可被程序中的ini_set覆盖  
-php_value[display_errors] = off // 同php_flag  
-php_admin_value[error_log] = /tmp/www-error.log // 覆盖php.ini中的某个配置变量，不可被程序中的ini_set覆盖  
-php_admin_flag[log_errors] = on // 同php_admin_value  
-catch_workers_output = yes // 是否抓取fpmworker的输出  
-request_slowlog_timeout = 0 // 慢日志时长  
-slowlog = /var/log/php-fpm/www-slow.log // 慢日志记录 
+```cfg
+error_log = /var/log/php-fpm/error.log ; php-fpm自身的日志  
+log_level = notice ; php-fpm自身的日志记录级别  
+php_flag[display_errors] = off ; 覆盖php.ini中的某个配置变量，可被程序中的ini_set覆盖  
+php_value[display_errors] = off ; 同php_flag  
+php_admin_value[error_log] = /tmp/www-error.log ; 覆盖php.ini中的某个配置变量，不可被程序中的ini_set覆盖  
+php_admin_flag[log_errors] = on ; 同php_admin_value  
+catch_workers_output = yes ; 是否抓取fpmworker的输出  
+request_slowlog_timeout = 0 ; 慢日志时长  
+slowlog = /var/log/php-fpm/www-slow.log ; 慢日志记录 
 ```
  
 php-fpm的配置中也有一个error_log配置，这个很经常会和php.ini中的error_log配置弄混。但他们记录的东西是不一样的，php-fpm的error_log只记录php-fpm本身的日志，比如fpm启动，关闭。

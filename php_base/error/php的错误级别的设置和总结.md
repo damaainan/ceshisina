@@ -48,12 +48,12 @@ error_log是显示错误日志的位置，这个在php-fpm中往往会被重写�
 ignore_repeated_errors这个标记控制的是如果有重复的日志，那么就只会记录一条，比如下面的程序：
 
 ```php
-    <?php
-    ini_set('ignore_repeated_errors', 1);
-    ini_set('ignore_repeated_source', 1);
-     
-    $a = $c; $a = $c; //E_NOTICE
-    //Notice: Undefined variable: c in /tmp/php/index.php on line 20
+<?php
+ini_set('ignore_repeated_errors', 1);
+ini_set('ignore_repeated_source', 1);
+ 
+$a = $c; $a = $c; //E_NOTICE
+//Notice: Undefined variable: c in /tmp/php/index.php on line 20
 ```
 
 本来会出现两次NOTICE的，但是现在，只会出现一次
@@ -61,27 +61,27 @@ ignore_repeated_errors这个标记控制的是如果有重复的日志，那么�
 html_errors 和 docref_root 两个是个挺有人性化的配置，配置了这两个参数以后，我们返回的错误信息中如果有一些在文档中有的信息，就会变成链接形式
 
 ```php
-    <?php
-    error_reporting(E_ALL);
-    ini_set('html_errors', 1);
-    ini_set('docref_root', "https://secure.php.net/manual/zh/");
-    include("a2.php"); //E_WARNING
+<?php
+error_reporting(E_ALL);
+ini_set('html_errors', 1);
+ini_set('docref_root', "https://secure.php.net/manual/zh/");
+include("a2.php"); //E_WARNING
 ```
 
 能让你快速定位到我们出现错误的地方。是不是很人性
 
 #### php-fpm中的配置
 
-```
-    error_log = /var/log/php-fpm/error.log // php-fpm自身的日志
-    log_level = notice // php-fpm自身的日志记录级别
-    php_flag[display_errors] = off // 覆盖php.ini中的某个配置变量，可被程序中的ini_set覆盖
-    php_value[display_errors] = off // 同php_flag
-    php_admin_value[error_log] = /tmp/www-error.log // 覆盖php.ini中的某个配置变量，不可被程序中的ini_set覆盖
-    php_admin_flag[log_errors] = on // 同php_admin_value
-    catch_workers_output = yes // 是否抓取fpmworker的输出
-    request_slowlog_timeout = 0 // 慢日志时长
-    slowlog = /var/log/php-fpm/www-slow.log // 慢日志记录
+```cfg
+error_log = /var/log/php-fpm/error.log ; php-fpm自身的日志
+log_level = notice ; php-fpm自身的日志记录级别
+php_flag[display_errors] = off ; 覆盖php.ini中的某个配置变量，可被程序中的ini_set覆盖
+php_value[display_errors] = off ; 同php_flag
+php_admin_value[error_log] = /tmp/www-error.log ; 覆盖php.ini中的某个配置变量，不可被程序中的ini_set覆盖
+php_admin_flag[log_errors] = on ; 同php_admin_value
+catch_workers_output = yes ; 是否抓取fpmworker的输出
+request_slowlog_timeout = 0 ; 慢日志时长
+slowlog = /var/log/php-fpm/www-slow.log ; 慢日志记录
 ```
 
 php-fpm的配置中也有一个error_log配置，这个很经常会和php.ini中的error_log配置弄混。但他们记录的东西是不一样的，php-fpm的error_log只记录php-fpm本身的日志，比如fpm启动，关闭。
@@ -115,16 +115,16 @@ slowlog是fpm记录的，可以使用request_slowlog_timeout设置判断慢日�
 这种错误是致命错误，会在页面显示Fatal Error，当出现这种错误的时候，程序就无法继续执行下去了，错误示例：
 
 ```php
-    <?php
-    $demo = new Demo(); // Fatal error: Class 'Demo' not found in E:\www.demo.com\index.php on line 2
+<?php
+$demo = new Demo(); // Fatal error: Class 'Demo' not found in E:\www.demo.com\index.php on line 2
 ```
 
 这里出现了致命错误，是因为没有找到 Demo 类，如果有未被捕获的异常，也是会触发这个级别的，如：
 
 ```php
-    <?php
-    // Fatal error: Uncaught exception 'Exception' with message 'test exception' in E:\www.demo.com\index.php:3 Stack trace: #0 {main} thrown in E:\www.demo.com\index.php on line 3
-    throw new Exception("test exception");
+<?php
+// Fatal error: Uncaught exception 'Exception' with message 'test exception' in E:\www.demo.com\index.php:3 Stack trace: #0 {main} thrown in E:\www.demo.com\index.php on line 3
+throw new Exception("test exception");
 ```
 
 #### E_WARNING
@@ -132,9 +132,9 @@ slowlog是fpm记录的，可以使用request_slowlog_timeout设置判断慢日�
 这种错误只是警告，不会终止脚本，程序还会继续进行，显示的错误信息是Warning。比如include一个不存在的文件。
 
 ```php
-    <?php
-    include 'demo.php';
-    echo "Hello 易读小屋";
+<?php
+include 'demo.php';
+echo "Hello 易读小屋";
 ```
 
 以上的“Hello 易读小屋”可以正常显示，不过，也会出现一行 Warning: include(): Failed opening 'demo.php' for inclusion (include_path='C:\xampp\php\PEAR')，虽然这个不影响程序进行，但是一定要把这样的警告给修复了，因为有些警告会导致意想不到的结果。
@@ -144,9 +144,9 @@ slowlog是fpm记录的，可以使用request_slowlog_timeout设置判断慢日�
 编译时语法解析错误。解析错误仅仅由分析器产生。这个错误是编译时候发生的，在编译期发现语法错误，不能进行语法分析。
 
 ```php
-    <?php
-    int a = 1;
-    echo 123;
+<?php
+int a = 1;
+echo 123;
 ```
 
 上面的示例就会报 Parse error: syntax error, unexpected 'a' (T_STRING)，原因是PHP不支持这样的变量定义，这样的错误也是致命的，程序不会再进行下去，如上面的代码并不会输出 123;
@@ -156,9 +156,9 @@ slowlog是fpm记录的，可以使用request_slowlog_timeout设置判断慢日�
 这种错误程度更为轻微一些，提示你这个地方不应该这么写。这个也是运行时错误，这个错误的代码可能在其他地方没有问题，只是在当前上下文情况下出现了问题。比如：打印一个不存在的变量时，如：
 
 ```php
-    <?php
-    echo $a;
-    echo "Hello 易读小屋";
+<?php
+echo $a;
+echo "Hello 易读小屋";
 ```
 
 以上的“Hello 易读小屋”可以正常显示，但是会出现一行 Notice: Undefined variable: a，这样的注意警告，除非你知道是什么意思，否则最好也是修改一下。
@@ -168,15 +168,15 @@ slowlog是fpm记录的，可以使用request_slowlog_timeout设置判断慢日�
 这个错误是PHP5之后引入的，你的代码可以运行，但是不是PHP建议的写法。比如在函数形参传递++符号
 
 ```php
-    <?php
-    function change (&$var) 
-    {
-        $var += 10;
-    }
-     
-    $var = 1;
-    change( ++ $var );
-    var_dump( $var );
+<?php
+function change (&$var) 
+{
+    $var += 10;
+}
+ 
+$var = 1;
+change( ++ $var );
+var_dump( $var );
 ```
 
 以上的代码可以正常输出，不过有一个 Strict Standards: Only variables should be passed by reference的提示
@@ -186,14 +186,14 @@ slowlog是fpm记录的，可以使用request_slowlog_timeout设置判断慢日�
 这个级别其实是ERROR级别的，但是它是期望被捕获的，如果没有被错误处理捕获，表现和E_ERROR是一样的。经常出现在形参定义了类型，但调用的时候传入了错误类型。它的错误提醒也比E_ERROR的fatal error前面多了一个Catachable的字样。
 
 ```php
-    <?php
-    function printInt( int $number )
-    {
-        echo $number;
-    }
-    printInt('abc');
-    
-    echo 123;
+<?php
+function printInt( int $number )
+{
+    echo $number;
+}
+printInt('abc');
+
+echo 123;
 ```
 
 上面会报Catchable fatal error: Argument 1 passed to printInt() must be an instance of int, string given，说明函数需要一个整数，传的参数却是一个字符串，这样的错误是致命的，程序不会再继续执行下去，如上面的代码并没有输出 123;
@@ -203,13 +203,13 @@ slowlog是fpm记录的，可以使用request_slowlog_timeout设置判断慢日�
 这个错误表示你用了一个旧版本的函数，而这个函数后期版本可能被禁用或者不维护了。比如用 ereg 做正则匹配
 
 ```php
-    <?php
-    if (ereg ("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $date, $regs)) 
-    {
-        echo "$regs[3].$regs[2].$regs[1]";
-    } else {
-        echo "Invalid date format: $date";
-    }
+<?php
+if (ereg ("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $date, $regs)) 
+{
+    echo "$regs[3].$regs[2].$regs[1]";
+} else {
+    echo "Invalid date format: $date";
+}
 ```
 
 上面的代码会有两个 Notice，表示没有提前定义 $date, $regs 变量。还有一个 Deprecated: Function ereg() is deprecated，这样的警告一般影响不大，但是为了程序移植性更好，还是修改一下吧
@@ -227,12 +227,12 @@ slowlog是fpm记录的，可以使用request_slowlog_timeout设置判断慢日�
 这些错误都是用户制造的，使用trigger_error，这里就相当于一个口子给用户触发出各种错误类型。这个是一个很好逃避try catch异常的方式。
 
 ```php
-    <?php
-    trigger_error("Cannot divide by zero", E_USER_ERROR);
-    // E_USER_ERROR
-    // E_USER_WARING
-    // E_USER_NOTICE
-    // E_USER_DEPRECATED
+<?php
+trigger_error("Cannot divide by zero", E_USER_ERROR);
+// E_USER_ERROR
+// E_USER_WARING
+// E_USER_NOTICE
+// E_USER_DEPRECATED
 ```
 
 #### E_ALL

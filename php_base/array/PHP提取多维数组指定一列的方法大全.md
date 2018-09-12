@@ -35,9 +35,9 @@ array_walk()函数使用用户自定义函数对数组中的每个元素做回�
 
 ```php
 $username = array();
-    array_walk($user, function($value, $key) use (&$username){
-        $username[] = $value['username'];
-    });
+array_walk($user, function($value, $key) use (&$username){
+    $username[] = $value['username'];
+});
 
 ```
 

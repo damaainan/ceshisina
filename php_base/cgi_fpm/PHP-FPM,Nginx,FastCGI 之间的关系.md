@@ -11,6 +11,7 @@
 
 FastCGI 是一个协议，它是应用程序和 WEB 服务器连接的桥梁。Nginx 并不能直接与 PHP-FPM 通信，而是将请求通过 FastCGI 交给 PHP-FPM 处理。
 
+```nginx
     location ~ \.php$ {
         try_files $uri /index.php =404;
         fastcgi_pass 127.0.0.1:9000;
@@ -20,7 +21,7 @@ FastCGI 是一个协议，它是应用程序和 WEB 服务器连接的桥梁。N
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include fastcgi_params;
     }
-    
+```
 
 这里 fastcgi_pass 就是把所有 php 请求转发给 php-fpm 进行处理。通过 netstat 命令可以看到，127.0.0.1:9000 这个端口上运行的进程就是 php-fpm.
 
@@ -28,8 +29,9 @@ FastCGI 是一个协议，它是应用程序和 WEB 服务器连接的桥梁。N
 
 ### Nginx 反向代理
 
-Nginx 反向代理最重要的指令是 proxy_pass，如：
+Nginx 反向代理最重要的指令是 `proxy_pass`，如：
 
+```nginx
     location ^~ /seckill_query/ {
         proxy_pass http://ris.filemail.gdrive:8090/;
         proxy_set_header Host ris.filemail.gdrive;
@@ -44,7 +46,7 @@ Nginx 反向代理最重要的指令是 proxy_pass，如：
         proxy_pass http://ds.filemail.gdrive:8087/;
         proxy_set_header Host ds.filemail.gdrive;
     }
-    
+```
 
 通过 location 匹配 url 路径，将其转发到另外一个服务器处理。
 
@@ -58,6 +60,7 @@ Nginx 反向代理最重要的指令是 proxy_pass，如：
 
 负载均衡配置：
 
+```nginx
     upstream php-upstream {
         ip_hash;
      
@@ -70,7 +73,7 @@ Nginx 反向代理最重要的指令是 proxy_pass，如：
         index  index.html index.htm;
         proxy_pass http://php-upstream;
     }
-    
+```
 
 该例定义了一个 php-upstream 的负载均衡配置，通过 proxy_pass 反向代理指令应用这个配置。这里用的 ip_hash 算法，负载均衡的算法有多种，就不一一列举了。
 

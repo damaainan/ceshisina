@@ -64,31 +64,31 @@ Web 服务器在接受请求之后对这些环境变量赋值，然后创建一�
 ```
 3. CGI 程序解析获取这些环境变量
 
-```
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <unistd.h>
-    
-    int main()
-    {
-       putenv("QUERY_STRING=a=b&c=d");
-    
-       int pid = fork();
-    
-       if (pid == 0)
-       {
-            system("php cgi-demo.php");
-       }
-    
-       return 0;
-    }
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main()
+{
+   putenv("QUERY_STRING=a=b&c=d");
+
+   int pid = fork();
+
+   if (pid == 0)
+   {
+        system("php cgi-demo.php");
+   }
+
+   return 0;
+}
 ```
 
 cgi-demo.php 则在子进程中获取到 web 服务器在父进程设置的环境变量 
-
-    <?php
-    printf("QUERY_STRING:%s\n", getenv("QUERY_STRING"));
-
+```php
+<?php
+printf("QUERY_STRING:%s\n", getenv("QUERY_STRING"));
+```
 上面这两段代码仅仅是演示 Web 服务器和 CGI 程序对 CGI 接口的实现，对数据的输入输出都省略没写。完整的Web 服务器 + CGI 程序demo 可以参考 [http://mengkang.net/491.html][5]
 
 ## FastCGI 模型

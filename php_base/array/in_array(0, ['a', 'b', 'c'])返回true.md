@@ -14,9 +14,9 @@
 所以会发现一个奇怪的现象，就是：
 
 ```php
-    in_array(0, ['a', 'b', 'c']) // 返回bool(true)，也就相当于数组中有0
-    array_search(0, ['a', 'b', 'c']) // 返回int(0)，也就是第一个值的下标
-    0 == 'abc' // 返回bool(true)，也就相当于相等
+in_array(0, ['a', 'b', 'c']); // 返回bool(true)，也就相当于数组中有0
+array_search(0, ['a', 'b', 'c']); // 返回int(0)，也就是第一个值的下标
+0 == 'abc'; // 返回bool(true)，也就相当于相等
 ```
 
 这两个表达式都返回true。
@@ -35,7 +35,9 @@ PHP官网上的说明：[http://php.net/manual/en/language.types.string.php#lang
 
 而如果string类型数据第一个字符不是数字，就会转换成0。例如，
 
-    echo intval("Bye");    // 输出0
+```php
+echo intval("Bye");    // 输出0
+```
 
 因为in_array()和array_search()默认都是松散比较，相当于==，所以就得到true。
 
@@ -45,9 +47,11 @@ PHP官网上的说明：[http://php.net/manual/en/language.types.string.php#lang
 
 就是用严格比较，如下，
 
-    in_array(0, ['a', 'b', 'c'], true) // 返回false
-    array_search(0, ['a', 'b', 'c'], true) // 返回false
-    0 === 'abc' // 返回false
+```php
+in_array(0, ['a', 'b', 'c'], true); // 返回false
+array_search(0, ['a', 'b', 'c'], true); // 返回false
+0 === 'abc'; // 返回false
+```
 
 强制做类型比较，这样就能拿到精确的结果。
 
@@ -57,16 +61,19 @@ PHP官网上的说明：[http://php.net/manual/en/language.types.string.php#lang
 
 它们是不会转换成int型的，所以结果是这样的：
 
-    in_array(null, ['a', 'b', 'c']) //返回false
-    in_array(false, ['a', 'b', 'c']) //返回false
+```php
+in_array(null, ['a', 'b', 'c']); //返回false
+in_array(false, ['a', 'b', 'c']); //返回false
+```
 
 ## 4 数组中有true 
 
 还有另外一个看起来比较奇怪的现象：
 
-    in_array('a', [true, 'b', 'c']) // 返回bool(true)，相当于数组里面有字符'a'
-    array_search('a', [true, 'b', 'c']) // 返回int(0)，相当于找到了字符'a'
-
+```php
+in_array('a', [true, 'b', 'c']); // 返回bool(true)，相当于数组里面有字符'a'
+array_search('a', [true, 'b', 'c']); // 返回int(0)，相当于找到了字符'a'
+```
 这是为什么呢？
 
 说起来也很好理解，松散比较下，任何string都等于true。

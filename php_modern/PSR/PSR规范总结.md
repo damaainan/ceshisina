@@ -50,243 +50,243 @@ _原文_[http://www.jwlchina.cn/2017/04/19/PSR规范总结/][1]
 LoggerInterface.php 
 
 ```php
-    <?php
-    namespace Psr\Log;
+<?php
+namespace Psr\Log;
+/**
+ * Describes a logger instance.
+ *
+ * The message MUST be a string or object implementing __toString().
+ *
+ * The message MAY contain placeholders in the form: {foo} where foo
+ * will be replaced by the context data in key "foo".
+ *
+ * The context array can contain arbitrary data. The only assumption that
+ * can be made by implementors is that if an Exception instance is given
+ * to produce a stack trace, it MUST be in a key named "exception".
+ *
+ * See https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
+ * for the full interface specification.
+ */
+interfaceLoggerInterface
+{
     /**
-     * Describes a logger instance.
+     * System is unusable.
      *
-     * The message MUST be a string or object implementing __toString().
+     * @param string $message
+     * @param array  $context
      *
-     * The message MAY contain placeholders in the form: {foo} where foo
-     * will be replaced by the context data in key "foo".
-     *
-     * The context array can contain arbitrary data. The only assumption that
-     * can be made by implementors is that if an Exception instance is given
-     * to produce a stack trace, it MUST be in a key named "exception".
-     *
-     * See https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
-     * for the full interface specification.
+     * @return void
      */
-    interfaceLoggerInterface
-    {
-        /**
-         * System is unusable.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionemergency($message, array $context = array());
-        /**
-         * Action must be taken immediately.
-         *
-         * Example: Entire website down, database unavailable, etc. This should
-         * trigger the SMS alerts and wake you up.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionalert($message, array $context = array());
-        /**
-         * Critical conditions.
-         *
-         * Example: Application component unavailable, unexpected exception.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functioncritical($message, array $context = array());
-        /**
-         * Runtime errors that do not require immediate action but should typically
-         * be logged and monitored.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionerror($message, array $context = array());
-        /**
-         * Exceptional occurrences that are not errors.
-         *
-         * Example: Use of deprecated APIs, poor use of an API, undesirable things
-         * that are not necessarily wrong.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionwarning($message, array $context = array());
-        /**
-         * Normal but significant events.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionnotice($message, array $context = array());
-        /**
-         * Interesting events.
-         *
-         * Example: User logs in, SQL logs.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functioninfo($message, array $context = array());
-        /**
-         * Detailed debug information.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functiondebug($message, array $context = array());
-        /**
-         * Logs with an arbitrary level.
-         *
-         * @param mixed  $level
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionlog($level, $message, array $context = array());
-    }
+    public functionemergency($message, array $context = array());
+    /**
+     * Action must be taken immediately.
+     *
+     * Example: Entire website down, database unavailable, etc. This should
+     * trigger the SMS alerts and wake you up.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functionalert($message, array $context = array());
+    /**
+     * Critical conditions.
+     *
+     * Example: Application component unavailable, unexpected exception.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functioncritical($message, array $context = array());
+    /**
+     * Runtime errors that do not require immediate action but should typically
+     * be logged and monitored.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functionerror($message, array $context = array());
+    /**
+     * Exceptional occurrences that are not errors.
+     *
+     * Example: Use of deprecated APIs, poor use of an API, undesirable things
+     * that are not necessarily wrong.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functionwarning($message, array $context = array());
+    /**
+     * Normal but significant events.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functionnotice($message, array $context = array());
+    /**
+     * Interesting events.
+     *
+     * Example: User logs in, SQL logs.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functioninfo($message, array $context = array());
+    /**
+     * Detailed debug information.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functiondebug($message, array $context = array());
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed  $level
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functionlog($level, $message, array $context = array());
+}
 ```
 
 再看看AbstractLogger.php 
 
 ```php
-    <?php
-    namespace Psr\Log;
+<?php
+namespace Psr\Log;
+/**
+ * This is a simple Logger implementation that other Loggers can inherit from.
+ *
+ * It simply delegates all log-level-specific methods to the `log` method to
+ * reduce boilerplate code that a simple Logger that does the same thing with
+ * messages regardless of the error level has to implement.
+ */
+abstract classAbstractLoggerimplementsLoggerInterface
+{
     /**
-     * This is a simple Logger implementation that other Loggers can inherit from.
+     * System is unusable.
      *
-     * It simply delegates all log-level-specific methods to the `log` method to
-     * reduce boilerplate code that a simple Logger that does the same thing with
-     * messages regardless of the error level has to implement.
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
      */
-    abstract classAbstractLoggerimplementsLoggerInterface
+    public functionemergency($message, array $context = array())
     {
-        /**
-         * System is unusable.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionemergency($message, array $context = array())
-        {
-            $this->log(LogLevel::EMERGENCY, $message, $context);
-        }
-        /**
-         * Action must be taken immediately.
-         *
-         * Example: Entire website down, database unavailable, etc. This should
-         * trigger the SMS alerts and wake you up.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionalert($message, array $context = array())
-        {
-            $this->log(LogLevel::ALERT, $message, $context);
-        }
-        /**
-         * Critical conditions.
-         *
-         * Example: Application component unavailable, unexpected exception.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functioncritical($message, array $context = array())
-        {
-            $this->log(LogLevel::CRITICAL, $message, $context);
-        }
-        /**
-         * Runtime errors that do not require immediate action but should typically
-         * be logged and monitored.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionerror($message, array $context = array())
-        {
-            $this->log(LogLevel::ERROR, $message, $context);
-        }
-        /**
-         * Exceptional occurrences that are not errors.
-         *
-         * Example: Use of deprecated APIs, poor use of an API, undesirable things
-         * that are not necessarily wrong.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionwarning($message, array $context = array())
-        {
-            $this->log(LogLevel::WARNING, $message, $context);
-        }
-        /**
-         * Normal but significant events.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functionnotice($message, array $context = array())
-        {
-            $this->log(LogLevel::NOTICE, $message, $context);
-        }
-        /**
-         * Interesting events.
-         *
-         * Example: User logs in, SQL logs.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functioninfo($message, array $context = array())
-        {
-            $this->log(LogLevel::INFO, $message, $context);
-        }
-        /**
-         * Detailed debug information.
-         *
-         * @param string $message
-         * @param array  $context
-         *
-         * @return void
-         */
-        public functiondebug($message, array $context = array())
-        {
-            $this->log(LogLevel::DEBUG, $message, $context);
-        }
+        $this->log(LogLevel::EMERGENCY, $message, $context);
     }
+    /**
+     * Action must be taken immediately.
+     *
+     * Example: Entire website down, database unavailable, etc. This should
+     * trigger the SMS alerts and wake you up.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functionalert($message, array $context = array())
+    {
+        $this->log(LogLevel::ALERT, $message, $context);
+    }
+    /**
+     * Critical conditions.
+     *
+     * Example: Application component unavailable, unexpected exception.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functioncritical($message, array $context = array())
+    {
+        $this->log(LogLevel::CRITICAL, $message, $context);
+    }
+    /**
+     * Runtime errors that do not require immediate action but should typically
+     * be logged and monitored.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functionerror($message, array $context = array())
+    {
+        $this->log(LogLevel::ERROR, $message, $context);
+    }
+    /**
+     * Exceptional occurrences that are not errors.
+     *
+     * Example: Use of deprecated APIs, poor use of an API, undesirable things
+     * that are not necessarily wrong.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functionwarning($message, array $context = array())
+    {
+        $this->log(LogLevel::WARNING, $message, $context);
+    }
+    /**
+     * Normal but significant events.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functionnotice($message, array $context = array())
+    {
+        $this->log(LogLevel::NOTICE, $message, $context);
+    }
+    /**
+     * Interesting events.
+     *
+     * Example: User logs in, SQL logs.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functioninfo($message, array $context = array())
+    {
+        $this->log(LogLevel::INFO, $message, $context);
+    }
+    /**
+     * Detailed debug information.
+     *
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public functiondebug($message, array $context = array())
+    {
+        $this->log(LogLevel::DEBUG, $message, $context);
+    }
+}
 ```
 
 可以看到，如果我们继承了 `AbstractLogger` ，只需要实现我们自己的log方法就可以了 

@@ -155,17 +155,12 @@ do {
     socket_close($msgsock);
 } while (true);
 socket_close($sock);
-?>
-
 ```
 
 再编辑一个客户端程序`client.php`，如下：
 
 ```php
 <?php
-
-
-
 set_time_limit(0);
 $port = 8090;
 $ip = "127.0.0.1";
@@ -226,10 +221,6 @@ if ($result < 0) {
     echo "CLOSE OK\n";    
     
 }
-
-
-
-?>
 
 ```
 

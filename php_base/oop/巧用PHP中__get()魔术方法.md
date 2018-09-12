@@ -10,11 +10,9 @@ PHP中的魔术方法有很多，这些魔术方法可以让PHP脚本在某些�
 下面有段代码：
 
 ```php
-
-
+<?php
 class Model
 {
-
  　　//不存在的成员属性自动调用
 　　function __get($name) 
 　　{
@@ -50,9 +48,6 @@ class Model
         throw new LinkException("变量{$name}不被支持,请预先Model中定义",EXCEPT_CORE);
     }
 }
-
-?>
-
 
 ```
 

@@ -247,119 +247,119 @@ class Config extends Facade
 
 ```php
 public static function __callStatic($method, $args)
-    {
-        $instance = static::getFacadeRoot();
+{
+    $instance = static::getFacadeRoot();
 
-        if (! $instance) {
-            throw new RuntimeException('A facade root has not been set.');
-        }
-
-        switch (count($args)) {
-            case 0:
-                return $instance->$method();
-            case 1:
-                return $instance->$method($args[0]);
-            case 2:
-                return $instance->$method($args[0], $args[1]);
-            case 3:
-                return $instance->$method($args[0], $args[1], $args[2]);
-            case 4:
-                return $instance->$method($args[0], $args[1], $args[2], $args[3]);
-            default:
-                return call_user_func_array([$instance, $method], $args);
-        }
+    if (! $instance) {
+        throw new RuntimeException('A facade root has not been set.');
     }
+
+    switch (count($args)) {
+        case 0:
+            return $instance->$method();
+        case 1:
+            return $instance->$method($args[0]);
+        case 2:
+            return $instance->$method($args[0], $args[1]);
+        case 3:
+            return $instance->$method($args[0], $args[1], $args[2]);
+        case 4:
+            return $instance->$method($args[0], $args[1], $args[2], $args[3]);
+        default:
+            return call_user_func_array([$instance, $method], $args);
+    }
+}
 ```
 
 其中，
 
 ```php
-    /**
-     * Get the root object behind the facade.
-     *
-     * @return mixed
-     */
-    public static function getFacadeRoot()
-    {
-        return static::resolveFacadeInstance(static::getFacadeAccessor());//这里调用Config::getFacadeAccessor()，返回'config'，static是静态延迟绑定
-    }
-    
-    /**
-     * Resolve the facade root instance from the container.
-     *
-     * @param  string|object  $name
-     * @return mixed
-     */
-    protected static function resolveFacadeInstance($name)
-    {
-        if (is_object($name)) {
-            return $name;
-        }
+/**
+ * Get the root object behind the facade.
+ *
+ * @return mixed
+ */
+public static function getFacadeRoot()
+{
+    return static::resolveFacadeInstance(static::getFacadeAccessor());//这里调用Config::getFacadeAccessor()，返回'config'，static是静态延迟绑定
+}
 
-        if (isset(static::$resolvedInstance[$name])) {
-            return static::$resolvedInstance[$name];
-        }
-        //这里是使用$app['config']从容器中解析，也就是实际上Facade貌似是帮我们从容器中解析Service，其实也是通过$app['config']这种方式去解析。
-        //当然，有了Facade后，从容器中解析服务就不用受限于$app这个容器变量了。
-        return static::$resolvedInstance[$name] = static::$app[$name];
+/**
+ * Resolve the facade root instance from the container.
+ *
+ * @param  string|object  $name
+ * @return mixed
+ */
+protected static function resolveFacadeInstance($name)
+{
+    if (is_object($name)) {
+        return $name;
     }
+
+    if (isset(static::$resolvedInstance[$name])) {
+        return static::$resolvedInstance[$name];
+    }
+    //这里是使用$app['config']从容器中解析，也就是实际上Facade貌似是帮我们从容器中解析Service，其实也是通过$app['config']这种方式去解析。
+    //当然，有了Facade后，从容器中解析服务就不用受限于$app这个容器变量了。
+    return static::$resolvedInstance[$name] = static::$app[$name];
+}
 ```
 
 看到这里，我们知道当使用Config::get()方法时，会从容器中解析出名称为'config'这个Service，也就是这个Service中有我们需要的get()方法，那哪一个Service名字叫做'config'。实际上，观察Laravel源码包的目录结构也知道在哪了：`IlluminateConfigRepository`，这个服务就是我们需要的，里面get()方法源码：
 
 ```php
-    /**
-     * Get the specified configuration value.
-     *
-     * @param  string  $key
-     * @param  mixed   $default
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->items, $key, $default);
-    }
+/**
+ * Get the specified configuration value.
+ *
+ * @param  string  $key
+ * @param  mixed   $default
+ * @return mixed
+ */
+public function get($key, $default = null)
+{
+    return Arr::get($this->items, $key, $default);
+}
 ```
 
 既然这个服务Service叫做config，那么容器类Application刚启动时就已经把所有需要的服务注册进来了，并且取了名字。实际上，'config'服务是在`IlluminateFoundationBootstrapLoadConfiguration`注册的，看bootstrap()方法源码：
 
 ```php
-    /**
-     * Bootstrap the given application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return void
-     */
-    public function bootstrap(Application $app)
-    {
-        $items = [];
+/**
+ * Bootstrap the given application.
+ *
+ * @param  \Illuminate\Contracts\Foundation\Application  $app
+ * @return void
+ */
+public function bootstrap(Application $app)
+{
+    $items = [];
 
-        // First we will see if we have a cache configuration file. If we do, we'll load
-        // the configuration items from that file so that it is very quick. Otherwise
-        // we will need to spin through every configuration file and load them all.
-        if (file_exists($cached = $app->getCachedConfigPath())) {
-            $items = require $cached;
+    // First we will see if we have a cache configuration file. If we do, we'll load
+    // the configuration items from that file so that it is very quick. Otherwise
+    // we will need to spin through every configuration file and load them all.
+    if (file_exists($cached = $app->getCachedConfigPath())) {
+        $items = require $cached;
 
-            $loadedFromCache = true;
-        }
-
-        $app->instance('config', $config = new Repository($items)); //在这里注册名叫config的服务，服务实体是Repository类
-
-        // Next we will spin through all of the configuration files in the configuration
-        // directory and load each one into the repository. This will make all of the
-        // options available to the developer for use in various parts of this app.
-        if (! isset($loadedFromCache)) {
-            $this->loadConfigurationFiles($app, $config);
-        }
-
-        $app->detectEnvironment(function () use ($config) {
-            return $config->get('app.env', 'production');
-        });
-
-        date_default_timezone_set($config['app.timezone']);
-
-        mb_internal_encoding('UTF-8');
+        $loadedFromCache = true;
     }
+
+    $app->instance('config', $config = new Repository($items)); //在这里注册名叫config的服务，服务实体是Repository类
+
+    // Next we will spin through all of the configuration files in the configuration
+    // directory and load each one into the repository. This will make all of the
+    // options available to the developer for use in various parts of this app.
+    if (! isset($loadedFromCache)) {
+        $this->loadConfigurationFiles($app, $config);
+    }
+
+    $app->detectEnvironment(function () use ($config) {
+        return $config->get('app.env', 'production');
+    });
+
+    date_default_timezone_set($config['app.timezone']);
+
+    mb_internal_encoding('UTF-8');
+}
 ```
 
 这个启动方法做了一些环境监测、时间设置和编码设置。使用其他的Facade获取其他Service也是这样的过程。

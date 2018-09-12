@@ -15,45 +15,42 @@
 
 ```php
 <?php
-    // 数组定义
-    $arr1 = array();
-    $arr2 = [];
-?>
+// 数组定义
+$arr1 = array();
+$arr2 = [];
 ```
 
 （2）数组赋值
 
 ```php
 <?php
-    // 利用 list 函数给数组赋值
-    list($arr[], $arr[], $arr[]) = [1, 2, 3];
-?>
+// 利用 list 函数给数组赋值
+list($arr[], $arr[], $arr[]) = [1, 2, 3];
 ```
 ### array_multisort() - 数组排序
 
 函数功能：可以同时对多个数组进行排序，关联键名保持不变，数字键名会被重新索引。
 
 ```php
- <?php
-    // 自定义数据
-    $data[] = array('volume' => 67, 'edition' => 2);
-    $data[] = array('volume' => 86, 'edition' => 1);
-    $data[] = array('volume' => 85, 'edition' => 6);
-    $data[] = array('volume' => 98, 'edition' => 2);
-    $data[] = array('volume' => 86, 'edition' => 6);
-    $data[] = array('volume' => 67, 'edition' => 7);
-    
-    // 取得列的列表
-    foreach ($data as $key => $row) {
-        $volume[$key]  = $row['volume'];
-        $edition[$key] = $row['edition'];
-    }
-    
-    // 先将数据根据 volume 降序排列，出现重复时再根据 edition 升序排列
-    // 把 $data 作为最后一个参数，以通用键排序
-    array_multisort($volume, SORT_DESC, $edition, SORT_ASC, $data);
-    print_r($data);
- ?>
+<?php
+// 自定义数据
+$data[] = array('volume' => 67, 'edition' => 2);
+$data[] = array('volume' => 86, 'edition' => 1);
+$data[] = array('volume' => 85, 'edition' => 6);
+$data[] = array('volume' => 98, 'edition' => 2);
+$data[] = array('volume' => 86, 'edition' => 6);
+$data[] = array('volume' => 67, 'edition' => 7);
+
+// 取得列的列表
+foreach ($data as $key => $row) {
+    $volume[$key]  = $row['volume'];
+    $edition[$key] = $row['edition'];
+}
+
+// 先将数据根据 volume 降序排列，出现重复时再根据 edition 升序排列
+// 把 $data 作为最后一个参数，以通用键排序
+array_multisort($volume, SORT_DESC, $edition, SORT_ASC, $data);
+print_r($data);
 ```
 ### array_column() - 获取数组指定一列
 
@@ -63,7 +60,6 @@
 <?php
     // 对目标数组获取 key 的一列，并复制到结果数组
     $resultArr = array_column($targetArr, 'key');
-?>
 ```
 ### array_diff() - 数组相减求差集合
 
@@ -71,9 +67,8 @@
 
 ```php
 <?php
-    // 把两个数组的差集保存到结果数组
-    $diffArr = array_diff($arr1, $arr2);
-?>
+// 把两个数组的差集保存到结果数组
+$diffArr = array_diff($arr1, $arr2);
 ```
 ### array_flip() - 数组键和值互换位置
 
@@ -81,9 +76,8 @@
 
 ```php
 <?php
-    // 把目标数组的键和值互换位置
-    array_flip($targetArr);
-?>
+// 把目标数组的键和值互换位置
+array_flip($targetArr);
 ```
 ### array_intersect() - 两个数组的交集
 
@@ -91,9 +85,8 @@
 
 ```php
 <?php
-    // 两个数组的交集保存到结果数组
-    $resultArr = array_intersect($arr1, $arr2)
-?>
+// 两个数组的交集保存到结果数组
+$resultArr = array_intersect($arr1, $arr2)
 ```
 ### array_key_exists() - 判断数组键名是否存在
 
@@ -108,16 +101,14 @@ if(!array_key_exists('key', $targetArr)) {
 }
 ```
 
-?>
 ### array_merge() - 合并数组
 
 函数功能：合并多个数据，不会合并相同键值的元素。
 
 ```php
 <?php
-    // 合并数组
-    $resultArr = array_merge($arr1, $arr2)
-?>
+// 合并数组
+$resultArr = array_merge($arr1, $arr2)
 ```
 ### array_pad() - 按照设定补全数组元素
 
@@ -125,9 +116,8 @@ if(!array_key_exists('key', $targetArr)) {
 
 ```php
 <?php
-    // 结果计划是：$resultArr = [1,2,3,0,0]
-    $resultArr = array_pad([1,2,3], 5, 0);
-?>
+// 结果计划是：$resultArr = [1,2,3,0,0]
+$resultArr = array_pad([1,2,3], 5, 0);
 ```
 ### array_pop() - 数组最后一个元素出栈（删）
 
@@ -135,9 +125,8 @@ if(!array_key_exists('key', $targetArr)) {
 
 ```php
 <?php
-    // 删掉最后一个元素
-    $resultArr = array_pop([1,2,3]);// $resultArr = [3]; [1,2]
-?>
+// 删掉最后一个元素
+$resultArr = array_pop([1,2,3]);// $resultArr = [3]; [1,2]
 ```
 ### array_product() - 数组内元素相乘
 
@@ -145,9 +134,8 @@ if(!array_key_exists('key', $targetArr)) {
 
 ```php
 <?php
-    // 数组内元素相乘
-    $result = array_product([1,2,3]) // $result = 6
-?>
+// 数组内元素相乘
+$result = array_product([1,2,3]) // $result = 6
 ```
 ### array_sum() - 数组内元素相加
 
@@ -155,9 +143,8 @@ if(!array_key_exists('key', $targetArr)) {
 
 ```php
 <?php
-    // 数组内元素相加
-    $result = array_product([1,2,3]) // $result = 6
-?>
+// 数组内元素相加
+$result = array_product([1,2,3]) // $result = 6
 ```
 ### array_push() - 数组叠加元素
 
@@ -165,9 +152,8 @@ if(!array_key_exists('key', $targetArr)) {
 
 ```php
 <?php
-    //  数组加元素 
-    $resultArr = array_push([1,2],3,4); // $resultArr = [1,2,3,4]
-?>
+//  数组加元素 
+$resultArr = array_push([1,2],3,4); // $resultArr = [1,2,3,4]
 ```
 ### array_search() - 数组搜索键值
 
@@ -175,9 +161,8 @@ if(!array_key_exists('key', $targetArr)) {
 
 ```php
 <?php
-    // 把数组搜索 needle 的结果保存起来
-    $result = array_search('needle', $targetArr);
-?>
+// 把数组搜索 needle 的结果保存起来
+$result = array_search('needle', $targetArr);
 ```
 ### array_shift() - 数组第一个元素出栈（删）
 
@@ -185,9 +170,8 @@ if(!array_key_exists('key', $targetArr)) {
 
 ```php
 <?php
-    // 删掉第一个元素
-    $resultArr = array_shift([1,2,3]); // [2,3]
-?>
+// 删掉第一个元素
+$resultArr = array_shift([1,2,3]); // [2,3]
 ```
 ### implode() - 数组转字符串
 
@@ -195,9 +179,8 @@ if(!array_key_exists('key', $targetArr)) {
 
 ```php
 <?php
-    $arr = array('Hello','World!','I','love','Shanghai!');
-    echo implode(" ",$arr);// 数组以空格连在一起，转成字符串
-?>
+$arr = array('Hello','World!','I','love','Shanghai!');
+echo implode(" ",$arr);// 数组以空格连在一起，转成字符串
 ```
 ### explode() - 字符串转数组
 
@@ -205,8 +188,7 @@ if(!array_key_exists('key', $targetArr)) {
 
 ```php
 <?php
-    $str = "Hello world. I love Shanghai!";
-    print_r (explode(" ",$str));// 字符串以空格的方式切割，转为数组
-?>
+$str = "Hello world. I love Shanghai!";
+print_r (explode(" ",$str));// 字符串以空格的方式切割，转为数组
 ```
 ### 未完待续

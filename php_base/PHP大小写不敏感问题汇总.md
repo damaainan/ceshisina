@@ -9,20 +9,20 @@ PHP的大小写敏感可以总结写“变量敏感，函数不敏感”，所�
 
 所有变量均区分大小写，包括普通变量以及`$_GET`,`$_POST`,`$_REQUEST`,`$_COOKIE`,`$_SESSION,$GLOBALS`,`$_SERVER`,`$_FILES`,`$_ENV`等；
 ```php
-    <?php
-    $abc = 'abcd';
-    echo $abc; //输出 'abcd';
-    
-    echo $aBc; //无输出
-    echo $ABC; //无输出
+<?php
+$abc = 'abcd';
+echo $abc; //输出 'abcd';
+
+echo $aBc; //无输出
+echo $ABC; //无输出
 ```
 
 ### 2. 常量名默认区分大小写，通常都写为大写
 ```php
-    <?php
-    define("ABC","Hello World");
-    echo ABC;   //输出 Hello World
-    echo abc;   //输出 abc
+<?php
+define("ABC","Hello World");
+echo ABC;   //输出 Hello World
+echo abc;   //输出 abc
 ```
 
 ### 3. php.ini配置项指令区分大小写
@@ -33,20 +33,20 @@ PHP的大小写敏感可以总结写“变量敏感，函数不敏感”，所�
 
 ### 1. 函数名、方法名、类名 不区分大小写，但推荐使用与定义时相同的名字
 ```php
-    function show(){
+function show(){
     echo "Hello World";
-    }
-    show(); //输出 Hello World    推荐写法
-    SHOW(); //输出 Hello World
+}
+show(); //输出 Hello World    推荐写法
+SHOW(); //输出 Hello World
 ```
 ```php
-    class cls{
+class cls{
     static function func(){
-    echo "hello world";
+        echo "hello world";
     }
-    }
-    
-    Cls::FunC();  //输出hello world
+}
+
+Cls::FunC();  //输出hello world
 ```
 
 ### 2. 魔术常量不区分大小写，推荐大写
@@ -84,12 +84,12 @@ PHP的大小写敏感可以总结写“变量敏感，函数不敏感”，所�
 * (array) – 转换成数组
 * (object) – 转换成对象
 ```php
-    $a=1;
-    var_dump($a);  //输出 int 1
-    
-    $b=(STRING)$a;
-    var_dump($b);  //输出string ';1'; (length=1)
-    
-    $c=(string)$a;
-    var_dump($c);  //输出string ';1'; (length=1)
+$a=1;
+var_dump($a);  //输出 int 1
+
+$b=(STRING)$a;
+var_dump($b);  //输出string ';1'; (length=1)
+
+$c=(string)$a;
+var_dump($c);  //输出string ';1'; (length=1)
 ```

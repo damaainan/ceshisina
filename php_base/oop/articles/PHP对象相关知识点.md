@@ -7,34 +7,34 @@ public表明类成员在任何地方可见，protected表明类成员在其自�
  
 ```php
 
-    class Test
+class Test
+{
+    private $foo;
+
+    public function __construct($foo)
     {
-        private $foo;
-    
-        public function __construct($foo)
-        {
-            $this->foo = $foo;
-        }
-    
-        private function bar()
-        {
-            echo 'Accessed the private method.';
-        }
-    
-        public function baz(Test $other)
-        {
-            // We can change the private property:
-            $other->foo = 'hello';
-            var_dump($other->foo);
-    
-            // We can also call the private method:
-            $other->bar();
-        }
+        $this->foo = $foo;
     }
-    
-    $test = new Test('test');
-    
-    $test->baz(new Test('other'));
+
+    private function bar()
+    {
+        echo 'Accessed the private method.';
+    }
+
+    public function baz(Test $other)
+    {
+        // We can change the private property:
+        $other->foo = 'hello';
+        var_dump($other->foo);
+
+        // We can also call the private method:
+        $other->bar();
+    }
+}
+
+$test = new Test('test');
+
+$test->baz(new Test('other'));
 ```
 ## 范围解析符(::)：
 通常以self::、 parent::、 static:: 和 <classname>::形式来访问静态成员、类常量，另外，static::、self:: 和 parent:: 还可用来调用类中的非静态方法。 
@@ -42,53 +42,53 @@ public表明类成员在任何地方可见，protected表明类成员在其自�
  
 ```php
 
-    <?php
-    class A
+<?php
+class A
+{
+    public static $proPublic = "public of A";
+    
+    public function myMethod()
     {
-        public static $proPublic = "public of A";
-        
-        public function myMethod()
-        {
-            echo static::$proPublic."\n";
-        }
-        
-        public function test()
-        {
-            echo "Class A:\n";
-            echo self::$proPublic."\n";
-            echo __CLASS__."\n";
-            //echo parent::$proPublic."\n";
-            self::myMethod();
-            static::myMethod();
-        }
+        echo static::$proPublic."\n";
     }
     
-    class B extends A
+    public function test()
     {
-       public static $proPublic = "public of B";
-       
-       public function test()
-        {
-            echo "\n\nClass B:\n";
-            echo self::$proPublic."\n";
-            echo __CLASS__."\n";
-            echo parent::$proPublic."\n";
-            self::myMethod();
-            static::myMethod();
-        }
+        echo "Class A:\n";
+        echo self::$proPublic."\n";
+        echo __CLASS__."\n";
+        //echo parent::$proPublic."\n";
+        self::myMethod();
+        static::myMethod();
     }
-    
-    class C extends B
+}
+
+class B extends A
+{
+   public static $proPublic = "public of B";
+   
+   public function test()
     {
-        public static $proPublic = "public of C";
+        echo "\n\nClass B:\n";
+        echo self::$proPublic."\n";
+        echo __CLASS__."\n";
+        echo parent::$proPublic."\n";
+        self::myMethod();
+        static::myMethod();
     }
-    
-    $t1 = new A();
-    $t1->test();
-    $t2 = new B();
-    $t2->test();
-    $t3 = new C();
-    $t3->test();
+}
+
+class C extends B
+{
+    public static $proPublic = "public of C";
+}
+
+$t1 = new A();
+$t1->test();
+$t2 = new B();
+$t2->test();
+$t3 = new C();
+$t3->test();
 ```
 
 上例输出结果为：
@@ -96,27 +96,27 @@ public表明类成员在任何地方可见，protected表明类成员在其自�
  
 ```
 
-    Class A:
-    public of A
-    A
-    public of A
-    public of A
-    
-    
-    Class B:
-    public of B
-    B
-    public of A
-    public of B
-    public of B
-    
-    
-    Class B:
-    public of B
-    B
-    public of A
-    public of C
-    public of C
+Class A:
+public of A
+A
+public of A
+public of A
+
+
+Class B:
+public of B
+B
+public of A
+public of B
+public of B
+
+
+Class B:
+public of B
+B
+public of A
+public of C
+public of C
 ```
 ## 接口与抽象类：
 
@@ -267,44 +267,44 @@ echo $obj2->cloneTest();
 函数serialize()可将对象打成包含字节流的字符串，但不含静态属性( 如果属性需要序列化后进行存储，最好将该属性实例化 )和方法；函数unserialize()能够还原字符串为对象。无论序列化还是反序列化，对象的类定义已经完成， 即需要先导入类(文件)。 大致过程是先创建 一个同类实例，然后再合并之前保存的对象属性来实现最后还原对象 。
 
  
-```
+```php
 
-    //SerializationTest.php:
-    class SerializationTest
+//SerializationTest.php:
+class SerializationTest
+{
+    static $staticProp = 0;
+    public $instanceProp;
+
+    public function __construct()
     {
-        static $staticProp = 0;
-        public $instanceProp;
-    
-        public function __construct()
-        {
-            $this->instanceProp = self::$staticProp + 5;
-        }
-        
-        public function doIncrease()
-        {
-            self::$staticProp += 10;
-        }
-    
-        public function doPrint()
-        {
-            print "instanceProp:".$this->instanceProp."\n";
-            print "staticProp:".self::$staticProp."\n";
-        }
+        $this->instanceProp = self::$staticProp + 5;
     }
     
-    //object.store.php:
-    include 'SerializationTest.php';
-    
-    $myTest = new SerializationTest();
-    $myTest->doIncrease();
-    $myTest->doPrint()."\n";$myTestSeri = serialize($myTest);
-    file_put_contents('object.store', $myTestSeri);
-    
-    //object.restore.php:
-    include 'SerializationTest.php';
-    
-    $myTestSeri = file_get_contents('object.store');
-    $myTestUnseri = unserialize($myTestSeri);  
+    public function doIncrease()
+    {
+        self::$staticProp += 10;
+    }
+
+    public function doPrint()
+    {
+        print "instanceProp:".$this->instanceProp."\n";
+        print "staticProp:".self::$staticProp."\n";
+    }
+}
+
+//object.store.php:
+include 'SerializationTest.php';
+
+$myTest = new SerializationTest();
+$myTest->doIncrease();
+$myTest->doPrint()."\n";$myTestSeri = serialize($myTest);
+file_put_contents('object.store', $myTestSeri);
+
+//object.restore.php:
+include 'SerializationTest.php';
+
+$myTestSeri = file_get_contents('object.store');
+$myTestUnseri = unserialize($myTestSeri);  
 $myTestUnseri->doPrint();
 ```
 
@@ -313,13 +313,13 @@ $myTestUnseri->doPrint();
  
 ```
 
-    /object.store.php:
-    instanceProp:5
-    staticProp:10
-    
-    /object.restore.php:
-    instanceProp:5
-    staticProp:0
+/object.store.php:
+instanceProp:5
+staticProp:10
+
+/object.restore.php:
+instanceProp:5
+staticProp:0
 ```
 ## 重载：
 PHP的重载包括 属性和方法 ，更像一个套用说法，不支持常见的重载语法规范，具有不可预见性，影响范围更宽泛，就是利用魔术方法(magic methods)来调用当前环境下未定义或不可见的类属性或方法。所有重载方法都必须被声明为 public(这一条应该比较好理解，别人可能因不可见才需要你，那你自己必须可见才行)，参数也不能通过引用传递(重载方法具有不可预见性，估计出于安全方面的考虑吧，防止变量被随意引用)。 在除 isset() 外的其它语言结构中无法使用重载的属性，这意味着当对一个重载的属性使用 empty() 时，重载魔术方法将不会被调用；  为避开此限制，必须将重载属性赋值到本地变量再使用 empty()，可见重载属性是介于合法属性与非法属性之间的存在 。 
@@ -327,35 +327,35 @@ PHP的重载包括 属性和方法 ，更像一个套用说法，不支持常见
  
 ```
 
-    [**属性重载**]：_这些方法不能被声明为 static，在静态方法中，这些魔术方法将不会被调用_
-    public void __set ( string $name , mixed $value )
-    在给不可访问属性赋值时，__set() 会被调用
-    
-    public mixed __get ( string $name )
-    读取不可访问属性的值时，__get() 会被调用
-    
-    public bool __isset ( string $name )
-    当对不可访问属性调用 isset() 或 empty() 时，__isset() 会被调用
-    
-    public void __unset ( string $name )
-    当对不可访问属性调用 unset() 时，__unset() 会被调用
-    
-    **Note**:
-    因为 PHP 处理赋值运算的方式，__set() 的返回值将被忽略。类似的, 在下面这样的链式赋值中，__get() 不会被调用：
-     $a = $obj->b = 8; 
-    
-    [**方法重载**]：
-    public mixed __call ( string $name , array $arguments )
-    在对象中调用一个不可访问方法时，__call() 会被调用
-    
-    public static mixed __callStatic ( string $name , array $arguments )
-    在静态上下文中调用一个不可访问方法时，__callStatic() 会被调用
+[属性重载]：_这些方法不能被声明为 static，在静态方法中，这些魔术方法将不会被调用_
+public void __set ( string $name , mixed $value )
+在给不可访问属性赋值时，__set() 会被调用
+
+public mixed __get ( string $name )
+读取不可访问属性的值时，__get() 会被调用
+
+public bool __isset ( string $name )
+当对不可访问属性调用 isset() 或 empty() 时，__isset() 会被调用
+
+public void __unset ( string $name )
+当对不可访问属性调用 unset() 时，__unset() 会被调用
+
+Note:
+因为 PHP 处理赋值运算的方式，__set() 的返回值将被忽略。类似的, 在下面这样的链式赋值中，__get() 不会被调用：
+ $a = $obj->b = 8; 
+
+[方法重载]：
+public mixed __call ( string $name , array $arguments )
+在对象中调用一个不可访问方法时，__call() 会被调用
+
+public static mixed __callStatic ( string $name , array $arguments )
+在静态上下文中调用一个不可访问方法时，__callStatic() 会被调用
 ```
 ## 静态属性和方法：
 static 关键字用来定义静态属性、静态方法， 静态属性不能通过实例化的对象来调用(但静态方法可以) 。 静态属性只能被初始化为常量表达式 ，所以可以把静态属性初始化为整数或数组，但不能初始化为另一个变量或函数返回值，也不能指向一个对象。可以用一个变量表示类来动态调用静态属性，但该变量的值不能为关键字 self，parent 或 static。 
 
  
-```
+```php
 
 class Foo
 {

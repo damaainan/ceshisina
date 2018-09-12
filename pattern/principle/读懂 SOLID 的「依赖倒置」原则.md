@@ -59,7 +59,7 @@
 
 首先，我们来定义我们的接口：
 
-```js
+```groovy
 export interface WebSocketConfiguration {
   uri: string;
   options?: Object;
@@ -73,7 +73,7 @@ export interface SocketFactory {
 
 接下来，如果我们想要一个提供`Socket.io`服务工厂：
 
-```js
+```groovy
 import {Manager} from 'socket.io-client';
 
 class SocketIOFactory implements SocketFactory {
@@ -89,7 +89,7 @@ class SocketIOFactory implements SocketFactory {
 
 我们在提供一个关于客户端连接实例的抽象：
 
-```js
+```groovy
 export interface SocketClient {
   connect(configuration: WebSocketConfiguration): Promise<any>;
   close(): Promise<any>;
@@ -100,7 +100,7 @@ export interface SocketClient {
 
 然后再提供一些实现细节：
 
-```js
+```groovy
 class WebSocketClient implements SocketClient {
   private socketFactory: SocketFactory;
   private socket: any;
@@ -153,7 +153,7 @@ class WebSocketClient implements SocketClient {
 
 这也是为什么我们要使用`Inversify`这个库的原因，我们来加入一些额外的代码和注解（装饰器）：
 
-```js
+```groovy
 import {injectable} from 'inversify';
 const webSocketFactoryType: symbol = Symbol('WebSocketFactory');
 const webSocketClientType: symbol = Symbol('WebSocketClient');
@@ -174,7 +174,7 @@ public constructor(@inject(TYPES.WebSocketFactory) webSocketFactory: SocketFacto
 
 这些注释（装饰器）仅仅会在代码运行时，在如何提供这些组件实例时，提供一些元数据，接下来我们仅仅需要创建一个依赖倒置容器，并将所有的对象按正确的类型绑定起来，如下：
 
-```js
+```groovy
 import {Container} from 'inversify';
 import 'reflect-metadata';
 import {TYPES, SocketClient, SocketFactory, SocketIOFactory, WebSocketClient} from '@web/app';
@@ -187,7 +187,7 @@ export default provider;
 
 让我们来看看我们如何使用我们提供连接服务的客户端实例：
 
-```js
+```groovy
 var socketClient = provider.get<SocketClient>(TYPES.WebSocketClient);
 ```
 

@@ -19,52 +19,52 @@
 ### 使用
 
 ```php
-    $arr = [
-        'loWer' => 1,
-    ];
-     
-    $toLower = array_change_key_case($arr, CASE_LOWER);
-    // 我认为，不管它的默认值是什么，我们都要写上这第二个参数。我们的代码写出来，是给人看的，不是给机器看的。
-    // 所以我们的代码应当尽量多的包含语义。
-    
-    $toUpper = array_change_key_case($arr, CASE_UPPER);
-    
-    var_dump($toLower);
-    
-    /**
-    [
-        'lower' => 1
-    ]
-    */
-    
-    var_dump($toUpper);
-    
-    /**
-    [
-        'LOWER' => 1
-    ]
-    */
+$arr = [
+    'loWer' => 1,
+];
+ 
+$toLower = array_change_key_case($arr, CASE_LOWER);
+// 我认为，不管它的默认值是什么，我们都要写上这第二个参数。我们的代码写出来，是给人看的，不是给机器看的。
+// 所以我们的代码应当尽量多的包含语义。
+
+$toUpper = array_change_key_case($arr, CASE_UPPER);
+
+var_dump($toLower);
+
+/**
+[
+    'lower' => 1
+]
+*/
+
+var_dump($toUpper);
+
+/**
+[
+    'LOWER' => 1
+]
+*/
 ```
 
 不过，这个函数不是递归的。我们看一下下面这个例子。
 
 ```php
-    $arr = [
-        'loWer' => [
-            'Lower' => 1,
-        ],
-    ];
-     
-    $toLower = array_change_key_case($arr, CASE_LOWER);
-    
-    var_dump($toLower);
-    
-    /**
-    [
-        'lower' => [
-            'Lower' => 1,
-        ],
-    ]
+$arr = [
+    'loWer' => [
+        'Lower' => 1,
+    ],
+];
+ 
+$toLower = array_change_key_case($arr, CASE_LOWER);
+
+var_dump($toLower);
+
+/**
+[
+    'lower' => [
+        'Lower' => 1,
+    ],
+]
     */
 ```
 ### 坑
@@ -72,15 +72,15 @@
 这个函数的使用，是有个坑的，这个坑就是，当转换之后，如果结果中有两个相同的 key，那么就会保留最后的那个。举个例子。
 
 ```php
-    $arr = [
-        'key' => 1,
-        'kEy' => 2,
-        'keY' => 3,
-    ];
-    
-    $toLower = array_change_key_case($arr, CASE_UPPER);
-    
-    var_dump($toLower); // ['key' => 3]
+$arr = [
+    'key' => 1,
+    'kEy' => 2,
+    'keY' => 3,
+];
+
+$toLower = array_change_key_case($arr, CASE_UPPER);
+
+var_dump($toLower); // ['key' => 3]
 ```
 在这个例子中，我们发现，当执行转换之后，三个 key 变成相同的了，那么在这种情况下，只会保留最后一个元素作为 key。这里得到的数组是 ['key' => 3]。
 
@@ -93,38 +93,38 @@
 我们先来看一下源代码。
 
 ```c
-    PHP_FUNCTION(array_change_key_case)
-    {
-        zval *array, *entry;
-        zend_string *string_key;
-        zend_string *new_key;
-        zend_ulong num_key;
-        zend_long change_to_upper=0;
-    
-        ZEND_PARSE_PARAMETERS_START(1, 2)
-            Z_PARAM_ARRAY(array)
-            Z_PARAM_OPTIONAL
-            Z_PARAM_LONG(change_to_upper)
-        ZEND_PARSE_PARAMETERS_END();
-    
-        array_init_size(return_value, zend_hash_num_elements(Z_ARRVAL_P(array)));
-    
-        ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(array), num_key, string_key, entry) {
-            if (!string_key) {
-                entry = zend_hash_index_update(Z_ARRVAL_P(return_value), num_key, entry);
+PHP_FUNCTION(array_change_key_case)
+{
+    zval *array, *entry;
+    zend_string *string_key;
+    zend_string *new_key;
+    zend_ulong num_key;
+    zend_long change_to_upper=0;
+
+    ZEND_PARSE_PARAMETERS_START(1, 2)
+        Z_PARAM_ARRAY(array)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(change_to_upper)
+    ZEND_PARSE_PARAMETERS_END();
+
+    array_init_size(return_value, zend_hash_num_elements(Z_ARRVAL_P(array)));
+
+    ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(array), num_key, string_key, entry) {
+        if (!string_key) {
+            entry = zend_hash_index_update(Z_ARRVAL_P(return_value), num_key, entry);
+        } else {
+            if (change_to_upper) {
+                new_key = php_string_toupper(string_key);
             } else {
-                if (change_to_upper) {
-                    new_key = php_string_toupper(string_key);
-                } else {
-                    new_key = php_string_tolower(string_key);
-                }
-                entry = zend_hash_update(Z_ARRVAL_P(return_value), new_key, entry);
-                zend_string_release(new_key);
+                new_key = php_string_tolower(string_key);
             }
-    
-            zval_add_ref(entry);
-        } ZEND_HASH_FOREACH_END();
-    }
+            entry = zend_hash_update(Z_ARRVAL_P(return_value), new_key, entry);
+            zend_string_release(new_key);
+        }
+
+        zval_add_ref(entry);
+    } ZEND_HASH_FOREACH_END();
+}
 ```
 ### 关于 PHP_FUNCTION 宏
 
@@ -137,34 +137,34 @@
 这是其中之一的代码。
 
 ```c
-    PHPAPI zend_string *php_string_toupper(zend_string *s)
-    {
-        unsigned char *c, *e;
-    
-        c = (unsigned char *)ZSTR_VAL(s);
-        e = c + ZSTR_LEN(s);
-    
-        while (c < e) {
-            if (islower(*c)) {
-                register unsigned char *r;
-                zend_string *res = zend_string_alloc(ZSTR_LEN(s), 0);
-    
-                if (c != (unsigned char*)ZSTR_VAL(s)) {
-                    memcpy(ZSTR_VAL(res), ZSTR_VAL(s), c - (unsigned char*)ZSTR_VAL(s));
-                }
-                r = c + (ZSTR_VAL(res) - ZSTR_VAL(s));
-                while (c < e) {
-                    *r = toupper(*c);
-                    r++;
-                    c++;
-                }
-                *r = '\0';
-                return res;
+PHPAPI zend_string *php_string_toupper(zend_string *s)
+{
+    unsigned char *c, *e;
+
+    c = (unsigned char *)ZSTR_VAL(s);
+    e = c + ZSTR_LEN(s);
+
+    while (c < e) {
+        if (islower(*c)) {
+            register unsigned char *r;
+            zend_string *res = zend_string_alloc(ZSTR_LEN(s), 0);
+
+            if (c != (unsigned char*)ZSTR_VAL(s)) {
+                memcpy(ZSTR_VAL(res), ZSTR_VAL(s), c - (unsigned char*)ZSTR_VAL(s));
             }
-            c++;
+            r = c + (ZSTR_VAL(res) - ZSTR_VAL(s));
+            while (c < e) {
+                *r = toupper(*c);
+                r++;
+                c++;
+            }
+            *r = '\0';
+            return res;
         }
-        return zend_string_copy(s);
+        c++;
     }
+    return zend_string_copy(s);
+}
 ```
 用 C 写过转换字符串大小写的同学都知道，其实和我们自己实现的思路基本都差不多。只是用了几个宏。c 就是字符串的首地址，e 是字符串 '\0' 的地址。从 c 到 e 循环，然后来对每一个地址的字符转换大小写。
 

@@ -49,7 +49,7 @@ foreach ($testIterator as $key => $value) {
 
 输出的是：
 
-```php
+```
 name:PHP
 address:php.net
 ```
@@ -58,12 +58,12 @@ address:php.net
 
 ```php
 public function unAccessIterator()
-    {
-        echo 'Iterator the unaccess fields:'.PHP_EOL;
-        foreach ($this as $key => $value) {
-            echo $key.':'.$value.PHP_EOL;
-        }
+{
+    echo 'Iterator the unaccess fields:'.PHP_EOL;
+    foreach ($this as $key => $value) {
+        echo $key.':'.$value.PHP_EOL;
     }
+}
 ```
 
 对象外部访问：
@@ -74,7 +74,7 @@ $testIterator->unAccessIterator();
 
 将可以遍历对象的不可见属性，输出结果：
 
-```php
+```
 Iterator the unaccess fields:
 name:PHP
 address:php.net

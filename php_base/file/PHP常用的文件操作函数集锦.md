@@ -8,25 +8,25 @@
  basename();   
 给出一个包含有指向一个文件的全路径的字符串，本函数返回基本的文件名。如果文件名是以 suffix 结束的，那这一部分也会被去掉。
 ```php
- <?php   
- $path  =  "/home/httpd/html/index.php" ;   
- $file  = [basename][3] ( $path , ".php" ) ;  // $file is set to "index"
+<?php   
+$path  =  "/home/httpd/html/index.php" ;   
+$file  = [basename][3] ( $path , ".php" ) ;  // $file is set to "index"
 ```
 **2 得到目录部分**：
 
 dirname();   
 给出一个包含有指向一个文件的全路径的字符串，本函数返回去掉文件名后的目录名。
 ```php
- <?php   
- $path  =  "/etc/passwd" ;   
- $file  = [dirname][4] ( $path ) ;  // $file is set to "/etc"
+<?php   
+$path  =  "/etc/passwd" ;   
+$file  = [dirname][4] ( $path ) ;  // $file is set to "/etc"
 ```
 **3 得到路径关联数组**  
  pathinfo();   
 得到一个指定路径中的三个部分：目录名，基本名，扩展名。
 ```php
- <?php   
- $pathinfo  = [pathinfo][5] ( "www/test/index.html" ) ;   
+<?php   
+$pathinfo  = [pathinfo][5] ( "www/test/index.html" ) ;   
 [var_dump][6] ( $pathinfo ) ;   
  // $path['dirname']   
  $path [ 'basename' ]   

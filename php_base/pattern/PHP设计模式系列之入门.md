@@ -41,42 +41,42 @@
 
 既然伪代码想好了，那么我们就可以着手进行开发了，然后我们在 if 代码块中添加各自的家在广告代码，于是就变成了下面的样子：
 
-```
-    if ($_GET['sex'] == 'man') {
-        echo '外星人大减价现在购买立即送电竞瑞文皮肤';
-    }else{
-        echo '卡西欧美颜相机不要钱免费送！';
-    }
+```php
+if ($_GET['sex'] == 'man') {
+    echo '外星人大减价现在购买立即送电竞瑞文皮肤';
+}else{
+    echo '卡西欧美颜相机不要钱免费送！';
+}
 ```
 
 但是这是属于一种硬编码的编程方式，一旦我们增加了某种需求，要求其年龄大于23岁显示什么样的广告，那么我们就不得不在每一个 if 判断处再加上新的判断条件，这样的设计就是不合理的，为了提高可读性与可维护性，我们会考虑建立两个不同的类来对两个广告类来对其进行管理。于是代码变成了下面的样子。
 
 ```php
-    //index.php
-    include 'GenderAD.php';
-    include 'ManAD.php';
-    
-    if ($_GET['sex'] == 'man') {
-        $ad = new ManAD();
-    }else{
-        $ad = new GenderAD();
+//index.php
+include 'GenderAD.php';
+include 'ManAD.php';
+
+if ($_GET['sex'] == 'man') {
+    $ad = new ManAD();
+}else{
+    $ad = new GenderAD();
+}
+$ad->show();
+
+//GenderAD.php
+class GenderAD
+{
+    public algorithm(){
+        echo '卡西欧美颜相机不要钱免费送！';
     }
-    $ad->show();
-    
-    //GenderAD.php
-    class GenderAD
-    {
-        public algorithm(){
-            echo '卡西欧美颜相机不要钱免费送！';
-        }
+}
+
+//ManAD.php
+class ManAD{
+    public algorithm(){
+        echo '外星人大减价现在购买立即送电竞瑞文皮肤';
     }
-    
-    //ManAD.php
-    class ManAD{
-        public algorithm(){
-            echo '外星人大减价现在购买立即送电竞瑞文皮肤';
-        }
-    }
+}
 ```
 
 > algorithm 英[ˈælgərɪðəm] 美[ˈælɡəˌrɪðəm] n. 演算法; 运算法则; 计算程序;
@@ -90,22 +90,22 @@
 我们可以新建一个接口来对这些策略进行控制。
 
 ```php
-    interface ADinterface{
-        public function algorithm();
+interface ADinterface{
+    public function algorithm();
+}
+
+class ManAD implements ADInterface
+{
+    public function algorithm(){
+        echo '外星人大减价现在购买立即送电竞瑞文皮肤';
     }
-    
-    class ManAD implements ADInterface
-    {
-        public function algorithm(){
-            echo '外星人大减价现在购买立即送电竞瑞文皮肤';
-        }
+}
+class GenderAD implements ADInterface
+{
+    public function algorithm(){    
+        echo '卡西欧美颜相机不要钱免费送！';
     }
-    class GenderAD implements ADInterface
-    {
-        public function algorithm(){    
-            echo '卡西欧美颜相机不要钱免费送！';
-        }
-    }
+}
 ```
 
 这样一来广告策略必须遵循这个接口进行开发，就保证了所有策略类都需要实现 show 方法。
@@ -113,70 +113,70 @@
 到目前为止，策略模式已经相对的完善了，但是还是不够完美，因为代码依旧并不是很 OOP，我们其实还可以更进一步，让他更 OOP，我们可以对那些策略外面套一个壳子，给外面一个选择器。
 
 ```php
-    class StrategySelect {
-        //具体策略对象
-        private $strategyInstance;
-        
-        //构造函数
-        public function __construct($instance)
-        {
-            $this->strategyInstance = $instance;
-        }
-        
-        public function algorithm($strategy)
-        {
-            return $this->strategyInstance->algorithm();
-        }
+class StrategySelect {
+    //具体策略对象
+    private $strategyInstance;
+    
+    //构造函数
+    public function __construct($instance)
+    {
+        $this->strategyInstance = $instance;
     }
+    
+    public function algorithm($strategy)
+    {
+        return $this->strategyInstance->algorithm();
+    }
+}
 ```
 
 我们通过构造函数接收到具体的执行策略，然后使用algorithm()执行相对应的策略。
 
 ```php
-    <?php
+<?php
+
+interface ADinterface{
+    public function algorithm();
+}
+
+class StrategySelect {
+    //具体策略对象
+    private $strategyInstance;
     
-    interface ADinterface{
-        public function algorithm();
-    }
-    
-    class StrategySelect {
-        //具体策略对象
-        private $strategyInstance;
-        
-        //构造函数
-        public function __construct($instance)
-        {
-            $this->strategyInstance = $instance;
-        }
-        
-        public function algorithm()
-        {
-            return $this->strategyInstance->algorithm();
-        }
-    }
-    
-    class ManAD implements ADInterface
+    //构造函数
+    public function __construct($instance)
     {
-        public function algorithm(){
-            echo '外星人大减价现在购买立即送电竞瑞文皮肤';
-        }
+        $this->strategyInstance = $instance;
     }
     
-    class GenderAD implements ADInterface
+    public function algorithm()
     {
-        public function algorithm(){
-            echo '卡西欧相机免费赠送啦';
-        }
+        return $this->strategyInstance->algorithm();
     }
-    
-    header("Content-type:text/html;charset=utf-8");
-    if ($_GET['sex'] == 'man') {
-        $stratey = new StrategySelect(new ManAD());
-        $stratey->algorithm();
-    }else{
-        $stratey = new StrategySelect(new GenderAD());
-        $stratey->algorithm();
+}
+
+class ManAD implements ADInterface
+{
+    public function algorithm(){
+        echo '外星人大减价现在购买立即送电竞瑞文皮肤';
     }
+}
+
+class GenderAD implements ADInterface
+{
+    public function algorithm(){
+        echo '卡西欧相机免费赠送啦';
+    }
+}
+
+header("Content-type:text/html;charset=utf-8");
+if ($_GET['sex'] == 'man') {
+    $stratey = new StrategySelect(new ManAD());
+    $stratey->algorithm();
+}else{
+    $stratey = new StrategySelect(new GenderAD());
+    $stratey->algorithm();
+}
 ```
 
 Strategy其实算是一个策略选择器，当满足一定条件的时候，我们通过这个策略选测器来进行选择相对应的策略。这样一来更符合逻辑。是不是很 OOP？

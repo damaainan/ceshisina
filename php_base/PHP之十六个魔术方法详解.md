@@ -28,7 +28,7 @@ PHP中把以两个下划线`__`开头的方法称为魔术方法(Magic methods)�
 
 下面让我们以实例的形式向大家讲解下这几个魔术方法时如何使用的。
 
-### 一、 __construct()，类的构造函数
+### 一、 `__construct()`，类的构造函数
 
 php中构造方法是对象创建完成后第一个被对象自动调用的方法。在每个类中都有一个构造方法，如果没有显示地声明它，那么类中都会默认存在一个没有参数且内容为空的构造方法。
 
@@ -39,10 +39,10 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 2、 构造方法的在类中的声明格式
 
 ```
-    function __constrct([参数列表]){
-    
-        方法体 //通常用来对成员属性进行初始化赋值
-    }
+function __constrct([参数列表]){
+
+    方法体 //通常用来对成员属性进行初始化赋值
+}
 ```
 
 3、 在类中声明构造方法需要注意的事项
@@ -54,56 +54,56 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 下面是它的例子：
 ```php
-    <?php
-        class Person
-        {                                                                      
-                public $name;        
-                public $age;        
-                public $sex;        
-                                                                     
-            /**
-             * 显示声明一个构造方法且带参数
-             */                                                                                       
-            public function __construct($name="", $sex="男", $age=22)
-            {      
-                $this->name = $name;
-                $this->sex = $sex;
-                $this->age = $age;
-            }
-            
-            /**
-             * say 方法
-             */
-            public function say()
-            { 
-                echo "我叫：" . $this->name . "，性别：" . $this->sex . "，年龄：" . $this->age;
-            }   
-                                                                                               
-        }
+<?php
+class Person
+{                                                                      
+    public $name;        
+    public $age;        
+    public $sex;        
+                                                             
+    /**
+     * 显示声明一个构造方法且带参数
+     */                                                                                       
+    public function __construct($name="", $sex="男", $age=22)
+    {      
+        $this->name = $name;
+        $this->sex = $sex;
+        $this->age = $age;
+    }
+    
+    /**
+     * say 方法
+     */
+    public function say()
+    { 
+        echo "我叫：" . $this->name . "，性别：" . $this->sex . "，年龄：" . $this->age;
+    }   
+                                                                                       
+}
 ```
 
 创建对象$Person1且不带任参数
 
 ```php
-    $Person1 = new Person();
-    echo $Person1->say(); //输出:我叫：，性别：男，年龄：27
+$Person1 = new Person();
+echo $Person1->say(); //输出:我叫：，性别：男，年龄：27
 ```
 
 创建对象$Person2且带参数“小明”
 
 ```php
-    $Person2 = new Person("小明");
-    echo $Person2->say(); //输出：我叫：张三，性别：男，年龄：27
+$Person2 = new Person("小明");
+echo $Person2->say(); //输出：我叫：张三，性别：男，年龄：27
 ```
 
 创建对象$Person3且带三个参数
 
 ```php
-    $Person3 = new Person("李四","男",25);
-    echo $Person3->say(); //输出：我叫：李四，性别：男，年龄：25
+$Person3 = new Person("李四","男",25);
+echo $Person3->say(); //输出：我叫：李四，性别：男，年龄：25
 ```
 
-### 二、__destruct()，类的析构函数
+### 二、`__destruct()`，类的析构函数
 
 通过上面的讲解，现在我们已经知道了什么叫构造方法。那么与构造方法对应的就是析构方法。
 
@@ -130,39 +130,39 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 举例演示，如下：
 ```php
-    <?php
-    class Person{     
-                                                            
-        public $name;         
-        public $age;         
-        public $sex;         
-                                                                        
-        public function __construct($name="", $sex="男", $age=22)
-        {   
-            $this->name = $name;
-            $this->sex  = $sex;
-            $this->age  = $age;
-        }
-        
-        /**
-         * say 说话方法
-         */
-        public function say()
-        {  
-            echo "我叫：".$this->name."，性别：".$this->sex."，年龄：".$this->age;
-        }    
-        
-        /**
-         * 声明一个析构方法
-         */
-        public function __destruct()
-        {
-                echo "我觉得我还可以再抢救一下，我的名字叫".$this->name;
-        }
+<?php
+class Person{     
+                                                        
+    public $name;         
+    public $age;         
+    public $sex;         
+                                                                    
+    public function __construct($name="", $sex="男", $age=22)
+    {   
+        $this->name = $name;
+        $this->sex  = $sex;
+        $this->age  = $age;
     }
     
-    $Person = new Person("小明");
-    unset($Person); //销毁上面创建的对象$Person
+    /**
+     * say 说话方法
+     */
+    public function say()
+    {  
+        echo "我叫：".$this->name."，性别：".$this->sex."，年龄：".$this->age;
+    }    
+    
+    /**
+     * 声明一个析构方法
+     */
+    public function __destruct()
+    {
+            echo "我觉得我还可以再抢救一下，我的名字叫".$this->name;
+    }
+}
+
+$Person = new Person("小明");
+unset($Person); //销毁上面创建的对象$Person
 ```
 
 上面的程序运行时输出：
@@ -170,7 +170,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     我觉得我还可以再抢救一下，我的名字叫小明
     
 
-### 三、 __call()，在对象中调用一个不可访问方法时调用。
+### 三、 `__call()`，在对象中调用一个不可访问方法时调用。
 
 该方法有两个参数，第一个参数 $function_name 会自动接收不存在的方法名，第二个 $arguments 则以数组的方式接收不存在方法的多个参数。
 
@@ -186,36 +186,36 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 2、 `__call()` 方法的作用：
 
-    为了避免当调用的方法不存在时产生错误，而意外的导致程序中止，可以使用 __call() 方法来避免。
-    
-    该方法在调用的方法不存在时会自动调用，程序仍会继续执行下去。
+为了避免当调用的方法不存在时产生错误，而意外的导致程序中止，可以使用 `__call()` 方法来避免。
+
+该方法在调用的方法不存在时会自动调用，程序仍会继续执行下去。
     
 
 请参考如下代码：
 ```php
-    <?php
-    class Person
-    {                             
-        function say()
-        {  
-                                  
-               echo "Hello, world!<br>"; 
-        }      
-            
-        /**
-         * 声明此方法用来处理调用对象中不存在的方法
-         */
-        function __call($funName, $arguments)
-        { 
-              echo "你所调用的函数：" . $funName . "(参数：" ;  // 输出调用不存在的方法名
-              print_r($arguments); // 输出调用不存在的方法时的参数列表
-              echo ")不存在！<br>\n"; // 结束换行                      
-        }                                          
-    }
-    $Person = new Person();            
-    $Person->run("teacher"); // 调用对象中不存在的方法，则自动调用了对象中的__call()方法
-    $Person->eat("小明", "苹果");             
-    $Person->say();                        
+<?php
+class Person
+{                             
+    function say()
+    {  
+                              
+           echo "Hello, world!<br>"; 
+    }      
+        
+    /**
+     * 声明此方法用来处理调用对象中不存在的方法
+     */
+    function __call($funName, $arguments)
+    { 
+          echo "你所调用的函数：" . $funName . "(参数：" ;  // 输出调用不存在的方法名
+          print_r($arguments); // 输出调用不存在的方法时的参数列表
+          echo ")不存在！<br>\n"; // 结束换行                      
+    }                                          
+}
+$Person = new Person();            
+$Person->run("teacher"); // 调用对象中不存在的方法，则自动调用了对象中的__call()方法
+$Person->eat("小明", "苹果");             
+$Person->say();                        
 ```
 
 运行结果：
@@ -227,35 +227,35 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     Hello, world!
     
 
-### 四、 __callStatic()，用静态方式中调用一个不可访问方法时调用
+### 四、 `__callStatic()`，用静态方式中调用一个不可访问方法时调用
 
 此方法与上面所说的 `__call()` 功能除了 `__callStatic()` 是未静态方法准备的之外，其它都是一样的。
 
 请看下面代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    function say()
     {
-        function say()
-        {
-    
-            echo "Hello, world!<br>";
-        }
-    
-        /**
-         * 声明此方法用来处理调用对象中不存在的方法
-         */
-        public static function __callStatic($funName, $arguments)
-        {
-            echo "你所调用的静态方法：" . $funName . "(参数：" ;  // 输出调用不存在的方法名
-            print_r($arguments); // 输出调用不存在的方法时的参数列表
-            echo ")不存在！<br>\n"; // 结束换行
-        }
+
+        echo "Hello, world!<br>";
     }
-    $Person = new Person();
-    $Person::run("teacher"); // 调用对象中不存在的方法，则自动调用了对象中的__call()方法
-    $Person::eat("小明", "苹果");
-    $Person->say();
+
+    /**
+     * 声明此方法用来处理调用对象中不存在的方法
+     */
+    public static function __callStatic($funName, $arguments)
+    {
+        echo "你所调用的静态方法：" . $funName . "(参数：" ;  // 输出调用不存在的方法名
+        print_r($arguments); // 输出调用不存在的方法时的参数列表
+        echo ")不存在！<br>\n"; // 结束换行
+    }
+}
+$Person = new Person();
+$Person::run("teacher"); // 调用对象中不存在的方法，则自动调用了对象中的__call()方法
+$Person::eat("小明", "苹果");
+$Person->say();
 ```
 运行结果如下：
 
@@ -270,45 +270,45 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 * 魔术方法`__get()`的作用
 
 ```
-    在程序运行过程中，通过它可以在对象的外部获取私有成员属性的值。
+在程序运行过程中，通过它可以在对象的外部获取私有成员属性的值。
 ```
 
 我们通过下面的 `__get()` 的实例来更进一步的连接它吧：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    private $name;
+    private $age;
+
+    function __construct($name="", $age=1)
     {
-        private $name;
-        private $age;
-    
-        function __construct($name="", $age=1)
-        {
-            $this->name = $name;
-            $this->age = $age;
-        }
-    
-        /**
-         * 在类中添加__get()方法，在直接获取属性值时自动调用一次，以属性名作为参数传入并处理
-         * @param $propertyName
-         *
-         * @return int
-         */
-        public function __get($propertyName)
-        {   
-            if ($propertyName == "age") {
-                if ($this->age > 30) {
-                    return $this->age - 10;
-                } else {
-                    return $this->$propertyName;
-                }
+        $this->name = $name;
+        $this->age = $age;
+    }
+
+    /**
+     * 在类中添加__get()方法，在直接获取属性值时自动调用一次，以属性名作为参数传入并处理
+     * @param $propertyName
+     *
+     * @return int
+     */
+    public function __get($propertyName)
+    {   
+        if ($propertyName == "age") {
+            if ($this->age > 30) {
+                return $this->age - 10;
             } else {
                 return $this->$propertyName;
             }
+        } else {
+            return $this->$propertyName;
         }
     }
-    $Person = new Person("小明", 60);   // 通过Person类实例化的对象，并通过构造方法为属性赋初值
-    echo "姓名：" . $Person->name . "<br>";   // 直接访问私有属性name，自动调用了__get()方法可以间接获取
-    echo "年龄：" . $Person->age . "<br>";    // 自动调用了__get()方法，根据对象本身的情况会返回不同的值
+}
+$Person = new Person("小明", 60);   // 通过Person类实例化的对象，并通过构造方法为属性赋初值
+echo "姓名：" . $Person->name . "<br>";   // 直接访问私有属性name，自动调用了__get()方法可以间接获取
+echo "年龄：" . $Person->age . "<br>";    // 自动调用了__get()方法，根据对象本身的情况会返回不同的值
 ```
 运行结果：
 
@@ -316,62 +316,62 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     年龄：50
     
 
-### 六、 __set()，设置一个类的成员变量时调用
+### 六、 `__set()`，设置一个类的成员变量时调用
 
 * `__set()` 的作用：
 `__set( $property, $value )` 方法用来设置私有属性， 给一个未定义的属性赋值时，此方法会被触发，传递的参数是被设置的属性名和值。
 
 请看下面的演示代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    private $name;
+    private $age;
+
+    public function __construct($name="",  $age=25)
     {
-        private $name;
-        private $age;
-    
-        public function __construct($name="",  $age=25)
-        {
-            $this->name = $name;
-            $this->age  = $age;
-        }
-    
-        /**
-         * 声明魔术方法需要两个参数，真接为私有属性赋值时自动调用，并可以屏蔽一些非法赋值
-         * @param $property
-         * @param $value
-         */
-        public function __set($property, $value) {
-            if ($property=="age")
-            {
-                if ($value > 150 || $value < 0) {
-                    return;
-                }
-            }
-            $this->$property = $value;
-        }
-    
-        /**
-         * 在类中声明说话的方法，将所有的私有属性说出
-         */
-        public function say(){
-            echo "我叫".$this->name."，今年".$this->age."岁了";
-        }
+        $this->name = $name;
+        $this->age  = $age;
     }
-    
-    $Person=new Person("小明", 25); //注意，初始值将被下面所改变
-    //自动调用了__set()函数，将属性名name传给第一个参数，将属性值”李四”传给第二个参数
-    $Person->name = "小红";     //赋值成功。如果没有__set()，则出错。
-    //自动调用了__set()函数，将属性名age传给第一个参数，将属性值26传给第二个参数
-    $Person->age = 16; //赋值成功
-    $Person->age = 160; //160是一个非法值，赋值失效
-    $Person->say();  //输出：我叫小红，今年16岁了
+
+    /**
+     * 声明魔术方法需要两个参数，真接为私有属性赋值时自动调用，并可以屏蔽一些非法赋值
+     * @param $property
+     * @param $value
+     */
+    public function __set($property, $value) {
+        if ($property=="age")
+        {
+            if ($value > 150 || $value < 0) {
+                return;
+            }
+        }
+        $this->$property = $value;
+    }
+
+    /**
+     * 在类中声明说话的方法，将所有的私有属性说出
+     */
+    public function say(){
+        echo "我叫".$this->name."，今年".$this->age."岁了";
+    }
+}
+
+$Person=new Person("小明", 25); //注意，初始值将被下面所改变
+//自动调用了__set()函数，将属性名name传给第一个参数，将属性值”李四”传给第二个参数
+$Person->name = "小红";     //赋值成功。如果没有__set()，则出错。
+//自动调用了__set()函数，将属性名age传给第一个参数，将属性值26传给第二个参数
+$Person->age = 16; //赋值成功
+$Person->age = 160; //160是一个非法值，赋值失效
+$Person->say();  //输出：我叫小红，今年16岁了
 ```
 运行结果：
 
     我叫小红，今年16岁了
     
 
-### 七、 __isset()，当对不可访问属性调用isset()或empty()时调用
+### 七、 `__isset()`，当对不可访问属性调用`isset()`或`empty()`时调用
 
 在看这个方法之前我们看一下`isset()`函数的应用，`isset()`是测定变量是否设定用的函数，传入一个变量作为参数，如果传入的变量存在则传回true，否则传回false。
 
@@ -382,35 +382,35 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 * `__isset()`的作用：当对不可访问属性调用 `isset()` 或 `empty()` 时，`__isset()` 会被调用。
 请看下面代码演示：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    private $name;
+    private $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        private $name;
-        private $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-    
-        /**
-         * @param $content
-         *
-         * @return bool
-         */
-        public function __isset($content) {
-            echo "当在类外部使用isset()函数测定私有成员{$content}时，自动调用<br>";
-            echo  isset($this->$content);
-        }
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
-    
-    $person = new Person("小明", 25); // 初始赋值
-    echo isset($person->sex),"<br>";
-    echo isset($person->name),"<br>";
-    echo isset($person->age),"<br>";
+
+    /**
+     * @param $content
+     *
+     * @return bool
+     */
+    public function __isset($content) {
+        echo "当在类外部使用isset()函数测定私有成员{$content}时，自动调用<br>";
+        echo  isset($this->$content);
+    }
+}
+
+$person = new Person("小明", 25); // 初始赋值
+echo isset($person->sex),"<br>";
+echo isset($person->name),"<br>";
+echo isset($person->age),"<br>";
 ```
 
 运行结果如下：
@@ -421,7 +421,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     当在类外部使用isset()函数测定私有成员age时，自动调用 // __isset() 内 第一个echo
     1 // __isset() 内第二个echo
 
-### 八、 __unset()，当对不可访问属性调用unset()时被调用。
+### 八、 `__unset()`，当对不可访问属性调用unset()时被调用。
 
 看这个方法之前呢，我们也先来看一下 `unset()` 函数，`unset()`这个函数的作用是删除指定的变量且传回true，参数为要删除的变量。
 
@@ -437,35 +437,35 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 请看如下代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    private $name;
+    private $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        private $name;
-        private $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-    
-        /**
-         * @param $content
-         *
-         * @return bool
-         */
-        public function __unset($content) {
-            echo "当在类外部使用unset()函数来删除私有成员时自动调用的<br>";
-            echo  isset($this->$content);
-        }
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
-    
-    $person = new Person("小明", 25); // 初始赋值
-    unset($person->sex);
-    unset($person->name);
-    unset($person->age);
+
+    /**
+     * @param $content
+     *
+     * @return bool
+     */
+    public function __unset($content) {
+        echo "当在类外部使用unset()函数来删除私有成员时自动调用的<br>";
+        echo  isset($this->$content);
+    }
+}
+
+$person = new Person("小明", 25); // 初始赋值
+unset($person->sex);
+unset($person->name);
+unset($person->age);
 ```
 运行结果：
 
@@ -473,7 +473,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     1当在类外部使用unset()函数来删除私有成员时自动调用的
     1
 
-### 九、 __sleep()，执行serialize()时，先会调用这个函数
+### 九、 `__sleep()`，执行`serialize()`时，先会调用这个函数
 
 `serialize()` 函数会检查类中是否存在一个魔术方法 `__sleep()`。如果存在，则该方法会优先被调用，然后才执行序列化操作。
 
@@ -493,40 +493,40 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 具体请参考如下代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    public $name;
+    public $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        public $name;
-        public $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-    
-        /**
-         * @return array
-         */
-        public function __sleep() {
-            echo "当在类外部使用serialize()时会调用这里的__sleep()方法<br>";
-            $this->name = base64_encode($this->name);
-            return array('name', 'age'); // 这里必须返回一个数值，里边的元素表示返回的属性名称
-        }
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
-    
-    $person = new Person('小明'); // 初始赋值
-    echo serialize($person);
-    echo '<br/>';
+
+    /**
+     * @return array
+     */
+    public function __sleep() {
+        echo "当在类外部使用serialize()时会调用这里的__sleep()方法<br>";
+        $this->name = base64_encode($this->name);
+        return array('name', 'age'); // 这里必须返回一个数值，里边的元素表示返回的属性名称
+    }
+}
+
+$person = new Person('小明'); // 初始赋值
+echo serialize($person);
+echo '<br/>';
 ```
 代码运行结果：
 
     当在类外部使用serialize()时会调用这里的__sleep()方法
     O:6:"Person":2:{s:4:"name";s:8:"5bCP5piO";s:3:"age";i:25;}
 
-### 十、 __wakeup()，执行unserialize()时，先会调用这个函数
+### 十、 `__wakeup()`，执行`unserialize()`时，先会调用这个函数
 
 如果说` __sleep()` 是白的，那么 `__wakeup()` 就是黑的了。
 
@@ -545,43 +545,43 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 还是看代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    public $name;
+    public $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        public $name;
-        public $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-    
-        /**
-         * @return array
-         */
-        public function __sleep() {
-            echo "当在类外部使用serialize()时会调用这里的__sleep()方法<br>";
-            $this->name = base64_encode($this->name);
-            return array('name', 'age'); // 这里必须返回一个数值，里边的元素表示返回的属性名称
-        }
-    
-        /**
-         * __wakeup
-         */
-        public function __wakeup() {
-            echo "当在类外部使用unserialize()时会调用这里的__wakeup()方法<br>";
-            $this->name = 2;
-            $this->sex = '男';
-            // 这里不需要返回数组
-        }
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
-    
-    $person = new Person('小明'); // 初始赋值
-    var_dump(serialize($person));
-    var_dump(unserialize(serialize($person)));
+
+    /**
+     * @return array
+     */
+    public function __sleep() {
+        echo "当在类外部使用serialize()时会调用这里的__sleep()方法<br>";
+        $this->name = base64_encode($this->name);
+        return array('name', 'age'); // 这里必须返回一个数值，里边的元素表示返回的属性名称
+    }
+
+    /**
+     * __wakeup
+     */
+    public function __wakeup() {
+        echo "当在类外部使用unserialize()时会调用这里的__wakeup()方法<br>";
+        $this->name = 2;
+        $this->sex = '男';
+        // 这里不需要返回数组
+    }
+}
+
+$person = new Person('小明'); // 初始赋值
+var_dump(serialize($person));
+var_dump(unserialize(serialize($person)));
 ```
 运行结果：
 
@@ -590,7 +590,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
     当在类外部使用unserialize()时会调用这里的__wakeup()方法
     object(Person)#2 (3) { ["sex"]=> string(3) "男" ["name"]=> int(2) ["age"]=> int(25) }
 
-### 十一、 __toString()，类被当成字符串时的回应方法
+### 十一、 `__toString()`，类被当成字符串时的回应方法
 
 作用：
 
@@ -609,28 +609,28 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    public $name;
+    public $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        public $name;
-        public $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-    
-        public function __toString()
-        {
-            return  'go go go';
-        }
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
-    
-    $person = new Person('小明'); // 初始赋值
-    echo $person;
+
+    public function __toString()
+    {
+        return  'go go go';
+    }
+}
+
+$person = new Person('小明'); // 初始赋值
+echo $person;
 ```
 结果：
 
@@ -640,24 +640,24 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    public $name;
+    public $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        public $name;
-        public $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-        
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
     
-    $person = new Person('小明'); // 初始赋值
-    echo $person;
+}
+
+$person = new Person('小明'); // 初始赋值
+echo $person;
 ```
 结果：
 
@@ -665,7 +665,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 很明显，页面报了一个致命错误，这是语法所不允许的。
 
-### 十二、 __invoke()，调用函数的方式调用一个对象时的回应方法
+### 十二、 `__invoke()`，调用函数的方式调用一个对象时的回应方法
 
 作用：
 
@@ -679,28 +679,28 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 直接上代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    public $name;
+    public $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        public $name;
-        public $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-    
-        public function __invoke() {
-            echo '这可是一个对象哦';
-        }
-    
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
-    
-    $person = new Person('小明'); // 初始赋值
-    $person();
+
+    public function __invoke() {
+        echo '这可是一个对象哦';
+    }
+
+}
+
+$person = new Person('小明'); // 初始赋值
+$person();
 ```
 查看运行结果：
 
@@ -710,7 +710,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
     Fatal error: Function name must be a string in D:\phpStudy\WWW\test\index.php on line 18
 
-### 十三、 __set_state()，调用var_export()导出类时，此静态方法会被调用。
+### 十三、 `__set_state()`，调用`var_export()`导出类时，此静态方法会被调用。
 
 作用：
 
@@ -725,24 +725,24 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 上代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    public $name;
+    public $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        public $name;
-        public $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-    
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
-    
-    $person = new Person('小明'); // 初始赋值
-    var_export($person);
+
+}
+
+$person = new Person('小明'); // 初始赋值
+var_export($person);
 ```
 看结果：
 
@@ -754,38 +754,38 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 继续上代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    public $name;
+    public $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        public $name;
-        public $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-    
-        public static function __set_state($an_array)
-        {
-            $a = new Person();
-            $a->name = $an_array['name'];
-            return $a;
-        }
-    
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
-    
-    $person = new Person('小明'); // 初始赋值
-    $person->name = '小红';
-    var_export($person);
+
+    public static function __set_state($an_array)
+    {
+        $a = new Person();
+        $a->name = $an_array['name'];
+        return $a;
+    }
+
+}
+
+$person = new Person('小明'); // 初始赋值
+$person->name = '小红';
+var_export($person);
 ```
 继续看结果：
 
     Person::__set_state(array( 'sex' => '男', 'name' => '小红', 'age' => 25, ))
 
-### 十四、 __clone()，当对象复制完成时调用
+### 十四、 `__clone()`，当对象复制完成时调用
 
 在多数情况下，我们并不需要完全复制一个对象来获得其中属性。但有一个情况下确实需要：如果你有一个 GTK 窗口对象，该对象持有窗口相关的资源。你可能会想复制一个新的窗口，保持所有属性与原来的窗口相同，但必须是一个新的对象（因为如果不是新的对象，那么一个窗口中的改变就会影响到另一个窗口）。还有一种情况：如果对象 A 中保存着对象 B 的引用，当你复制对象 A 时，你想其中使用的对象不再是对象 B 而是 B 的一个副本，那么你必须得到对象 A 的一个副本。
 
@@ -807,35 +807,35 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 看代码：
 ```php
-    <?php
-    class Person
+<?php
+class Person
+{
+    public $sex;
+    public $name;
+    public $age;
+
+    public function __construct($name="",  $age=25, $sex='男')
     {
-        public $sex;
-        public $name;
-        public $age;
-    
-        public function __construct($name="",  $age=25, $sex='男')
-        {
-            $this->name = $name;
-            $this->age  = $age;
-            $this->sex  = $sex;
-        }
-    
-        public function __clone()
-        {
-            echo __METHOD__."你正在克隆对象<br>";
-        }
-    
+        $this->name = $name;
+        $this->age  = $age;
+        $this->sex  = $sex;
     }
-    
-    $person = new Person('小明'); // 初始赋值
-    $person2 = clone $person;
-    
-    var_dump('persion1:');
-    var_dump($person);
-    echo '<br>';
-    var_dump('persion2:');
-    var_dump($person2);
+
+    public function __clone()
+    {
+        echo __METHOD__."你正在克隆对象<br>";
+    }
+
+}
+
+$person = new Person('小明'); // 初始赋值
+$person2 = clone $person;
+
+var_dump('persion1:');
+var_dump($person);
+echo '<br>';
+var_dump('persion2:');
+var_dump($person2);
 ```
 看结果：
 
@@ -845,7 +845,7 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 
 克隆成功。
 
-### 十五、__autoload()，尝试加载未定义的类
+### 十五、`__autoload()`，尝试加载未定义的类
 
 作用：
 
@@ -861,24 +861,24 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 先看看以往的方式：
 
 ```php
-    /** 
-     * 文件non_autoload.php 
-     */ 
-       
-    require_once('project/class/A.php');  
-    require_once('project/class/B.php');  
-    require_once('project/class/C.php');  
-       
-    if (条件A) {  
-        $a = new A();  
-        $b = new B();  
-        $c = new C();  
-        // … 业务逻辑  
-    } else if (条件B) {  
-        $a = newA();  
-        $b = new B();  
-        // … 业务逻辑  
-    }
+/** 
+ * 文件non_autoload.php 
+ */ 
+   
+require_once('project/class/A.php');  
+require_once('project/class/B.php');  
+require_once('project/class/C.php');  
+   
+if (条件A) {  
+    $a = new A();  
+    $b = new B();  
+    $c = new C();  
+    // … 业务逻辑  
+} else if (条件B) {  
+    $a = newA();  
+    $b = new B();  
+    // … 业务逻辑  
+}
 ```
 
 看到了吗？不用100个，只是3个看起来就有点烦了。而且这样就会有一个问题：如果脚本执行“条件B”这个分支时，`C.php`这个文件其实没有必要包含。因为，任何一个被包含的文件，无论是否使用，均会被php引擎编译。如果不使用，却被编译，这样可以被视作一种资源浪费。更进一步，如果`C.php`包含了`D.php`，`D.php`包含了`E.php`。并且大部分情况都执行“条件B”分支，那么就会浪费一部分资源去编译`C.php`,`D.php`,`E.php`三个“无用”的文件。
@@ -886,26 +886,26 @@ php中构造方法是对象创建完成后第一个被对象自动调用的方�
 那么如果使用 `__autoload()` 方式呢？
 
 ```php
-    /** 
-     * 文件autoload_demo.php 
-     */ 
-    function  __autoload($className) {  
-        $filePath = “project/class/{$className}.php”;  
-        if (is_readable($filePath)) {  
-            require($filePath);  
-        }  
+/** 
+ * 文件autoload_demo.php 
+ */ 
+function  __autoload($className) {  
+    $filePath = “project/class/{$className}.php”;  
+    if (is_readable($filePath)) {  
+        require($filePath);  
     }  
-       
-    if (条件A) {  
-        $a = new A();  
-        $b = new B();  
-        $c = new C();  
-        // … 业务逻辑  
-    } else if (条件B) {  
-        $a = newA();  
-        $b = new B();  
-        // … 业务逻辑  
-    }
+}  
+   
+if (条件A) {  
+    $a = new A();  
+    $b = new B();  
+    $c = new C();  
+    // … 业务逻辑  
+} else if (条件B) {  
+    $a = newA();  
+    $b = new B();  
+    // … 业务逻辑  
+}
 ```
 
 ok,不论效率怎么用，最起码界面看起来舒服多了，没有太多冗余的代。
@@ -924,7 +924,7 @@ ok,不论效率怎么用，最起码界面看起来舒服多了，没有太多�
     其实php发展到今天，已经有将 `spl_autoload_register` — 注册给定的函数作为 __autoload 的实现了，但是这个不在啊本文讲解之内，有兴趣可以自行看手册。
     
 
-### 十六、__debugInfo()，打印所需调试信息
+### 十六、`__debugInfo()`，打印所需调试信息
 
 注意：
 
@@ -933,25 +933,25 @@ ok,不论效率怎么用，最起码界面看起来舒服多了，没有太多�
 
 看代码：
 ```php
-    <?php
-    class C {
-        private $prop;
-    
-        public function __construct($val) {
-            $this->prop = $val;
-        }
-    
-        /**
-         * @return array
-         */
-        public function __debugInfo() {
-            return [
-                'propSquared' => $this->prop ** 2,
-            ];
-        }
+<?php
+class C {
+    private $prop;
+
+    public function __construct($val) {
+        $this->prop = $val;
     }
-    
-    var_dump(new C(42));
+
+    /**
+     * @return array
+     */
+    public function __debugInfo() {
+        return [
+            'propSquared' => $this->prop ** 2,
+        ];
+    }
+}
+
+var_dump(new C(42));
 ```
 结果：
 
@@ -964,7 +964,7 @@ ok,不论效率怎么用，最起码界面看起来舒服多了，没有太多�
 
 ## 总结
 
-以上就是PHP中我了解到的魔术方法了，常用的包括 `__set()``__get()``__autoload()` 等应该熟悉，其他的了解也没有关系，毕竟知识不怕多嘛。
+以上就是PHP中我了解到的魔术方法了，常用的包括 `__set()` `__get()` `__autoload()` 等应该熟悉，其他的了解也没有关系，毕竟知识不怕多嘛。
 
 好了，有兴趣的或者我这里没有说明白的，可以参考啊官方文档。
 

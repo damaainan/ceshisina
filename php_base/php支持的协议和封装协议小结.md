@@ -53,42 +53,39 @@ php://stdin 是只读的， php://stdout 和 php://stderr 是只写的。
 #### php://stdin
 
     
-```
+```php
 <?php
-    while($line = fopen('php://stdin','r'))
-    {//open our file pointer to read from stdin
-        echo $line."\n";
-        echo fgets($line);//读取
-    }
-?>
+while($line = fopen('php://stdin','r'))
+{//open our file pointer to read from stdin
+    echo $line."\n";
+    echo fgets($line);//读取
+}
 ```
 [![](./img/stdin.png)](./img/stdin.png)
 
 #### php://stdout
 
     
-```
+```php
 <?php
-    $fd = fopen('php://stdout', 'w');
-    if ($fd) {
-        echo $fd."\n";
-        fwrite($fd, "test");
-        fwrite($fd, "\n");
-        fclose($fd);
-    }
-?>
+$fd = fopen('php://stdout', 'w');
+if ($fd) {
+    echo $fd."\n";
+    fwrite($fd, "test");
+    fwrite($fd, "\n");
+    fclose($fd);
+}
 ```
 [![](./img/stdout.png)](./img/stdout.png)
 
 #### php://stderr
 
-```
+```php
 <?php
-    $stderr = fopen( 'php://stderr', 'w' );
-    echo $stderr."\n";
-    fwrite($stderr, "uknow" );
-    fclose($stderr);
-?>
+$stderr = fopen( 'php://stderr', 'w' );
+echo $stderr."\n";
+fwrite($stderr, "uknow" );
+fclose($stderr);
 ```
 [![](./img/stderr.png)](./img/stderr.png)
 
@@ -108,10 +105,9 @@ write=<写链的筛选列表> | 该参数可选。可以设定一个或多个过
 <；两个链的筛选列表> | 任何没有以 read= 或 write= 作前缀 的筛选器列表会视情况应用于读或写链。 
 
     
-```
+```php
 <?php
-    include($_GET['file'])
-?>
+include($_GET['file'])
 ```
     
     http://127.0.0.1/code/1.php?file=php://filter/read=convert.base64-encode/resource=./phpinfo.php
@@ -176,7 +172,7 @@ http://127.0.0.1/code/1.php?file=data://text/plain;base64,PD9waHAgcGhwaW5mbygpPz
 
 glob:// — 查找匹配的文件路径模式
 
-```
+```php
 <?php
 $it = new DirectoryIterator($_GET['file']);
 foreach($it as $f) {
@@ -184,7 +180,6 @@ foreach($it as $f) {
     echo'</br>'; 
 }
 
-?>
 ```
 [![](./img/glob.png)](./img/glob.png)
 

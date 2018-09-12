@@ -36,37 +36,37 @@ Symphony/Console是一个使用 Composer 管理的 PHP 扩展包，它简化了�
 ```
 * 将下面的代码添加到 HelloWorld 文件中（后面我将为每一行做注解），并在你的终端中执行 HelloWorld 这个应用程序. 
 ```php
-    #!/usr/bin/env php
-    <?php
-    require __DIR__.'/vendor/autoload.php';
-    
-    use Symfony\Component\Console\Application;
-    use Symfony\Component\Console\Input\InputArgument;
-    use Symfony\Component\Console\Input\InputInterface;
-    use Symfony\Component\Console\Input\InputOption;
-    use Symfony\Component\Console\Output\OutputInterface;
-    
-    (new Application('Hello World', '1.0.0'))
-          ->register('greet')
-          ->addArgument('name', InputArgument::OPTIONAL, 'Name of the person')
-          ->addOption('say', , InputOption::VALUE_REQUIRED, 'Custom greeting')
-          ->setCode(function (InputInterface $input, OutputInterface $output) {
-                  
-            $name = $input->getArgument('name');
-            $greeting = $input->getOption('say');
-    
-            if (!empty($name) && !empty($greeting)) {
-                return $output->writeln("<info>$greeting $name!</info>");
-            } else if (!empty($name)) {
-                return $output->writeln("<info>Hello $name!</info>");
-            } else if (!empty($greeting)) {
-                return $output->writeln("<info>$greeting World!</info>");
-            } else {
-                return $output->writeln("<info>Hello World!</info>");
-            }
-          })
-          ->getApplication()
-          ->run();
+#!/usr/bin/env php
+<?php
+require __DIR__.'/vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+(new Application('Hello World', '1.0.0'))
+      ->register('greet')
+      ->addArgument('name', InputArgument::OPTIONAL, 'Name of the person')
+      ->addOption('say', , InputOption::VALUE_REQUIRED, 'Custom greeting')
+      ->setCode(function (InputInterface $input, OutputInterface $output) {
+              
+        $name = $input->getArgument('name');
+        $greeting = $input->getOption('say');
+
+        if (!empty($name) && !empty($greeting)) {
+            return $output->writeln("<info>$greeting $name!</info>");
+        } else if (!empty($name)) {
+            return $output->writeln("<info>Hello $name!</info>");
+        } else if (!empty($greeting)) {
+            return $output->writeln("<info>$greeting World!</info>");
+        } else {
+            return $output->writeln("<info>Hello World!</info>");
+        }
+      })
+      ->getApplication()
+      ->run();
 ```
 看，就这样，你拥有了自己的 HelloWorld 控制台程序 
 
@@ -79,19 +79,19 @@ Symfony Console 组件给我们提供的应用程序有几个开箱可用的选�
 OK，让我们来看看我们的 HelloWorld 文件中的代码。 
 
 1. 我们引入 autoload.php 以使用由 composer 提供的自动加载以及控制台组件提供的各功能。 InputInterface 和 OutputInterface 将使应用程序的输入和输出功能变得简单， InputArgument 和 InputOption 将帮助我们处理传递给我们HelloWorld应用程序的选项和参数。
-```
-    require __DIR__.'/vendor/autoload.php'; 
-    
-    use Symfony\Component\Console\Application; 
-    use Symfony\Component\Console\Input\InputArgument; 
-    use Symfony\Component\Console\Input\InputInterface; 
-    use Symfony\Component\Console\Input\InputOption; 
-    use Symfony\Component\Console\Output\OutputInterface;
+```php
+require __DIR__.'/vendor/autoload.php'; 
+
+use Symfony\Component\Console\Application; 
+use Symfony\Component\Console\Input\InputArgument; 
+use Symfony\Component\Console\Input\InputInterface; 
+use Symfony\Component\Console\Input\InputOption; 
+use Symfony\Component\Console\Output\OutputInterface;
 ```
 1. symphony/console 通过名称实例化一个新的应用程序 HelloWorld (v1.0.0) ,并注册我们的 greet 命令。
-```
-    (new Application('Hello World', '1.0.0'))
-        ->register('greet')
+```php
+(new Application('Hello World', '1.0.0'))
+    ->register('greet')
 ```
 1. 我们添加一个可选的 name 参数（ addArgument() ），并提供参数的简短描述。然后,我们使用这个 addOption() 方法添加一个 say 选项。请注意，选项始终是可选的，但您可以指定要传递的值，也可以仅仅将其用作指boolean标识。
 ```

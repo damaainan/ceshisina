@@ -28,7 +28,7 @@ Software entities (classes, modules, functions, etc.) should be open for extensi
 
 举个例子（译者注：我对这里的例子做了一些修改，原文中并没有详细的说明）
 
-```js
+```groovy
 interface IRunner {
   run: () => void;
 }
@@ -52,7 +52,7 @@ class Jumper implements IJumper {
 
 假如现在我们需要提供一个既会跑又会跳的对象，如果我们使用继承的方式，可以这么写
 
-```js
+```groovy
 class RunnerAndJumper extends Runner {
   jump: () => void
 }
@@ -60,7 +60,7 @@ class RunnerAndJumper extends Runner {
 
 或者
 
-```js
+```groovy
 class RunnerAndJumper extends Jumper {
   run: () => void
 }
@@ -68,7 +68,7 @@ class RunnerAndJumper extends Jumper {
 
 但是使用继承的方式会使这个`RunnerAndJumper`与`Runner`（或者`Jumper`）耦合在一起（耦合在一起的原因是因为它会因它的父类改变而改变），我们再来用组合的方式试试看，如下：
 
-```js
+```groovy
 class RunnerAndJumper {
   private runnerClass: IRunner;
   private jumperClass: IJumper;

@@ -23,42 +23,40 @@
 基于接口去编程的好处就是分离设计和实现，这一点我们在[PHP设计模式(二)：抽象类和接口][5]已经介绍过了，下面我们举一个实际的例子来说明这个设计的好处。
 
 ```php
-    <?php
-    abstract class Animal {
-      protected $name;
-      abstract protected function eatFish();
-      abstract protected function eatMoss();
-      public function eat() {
-        if ($this->eatFish()) {
-          echo $this->name . " can eat fish.\n";
-        }
-        if ($this->eatMoss()) {
-          echo $this->name . " can eat moss.\n";
-        }
-      }
+<?php
+abstract class Animal {
+  protected $name;
+  abstract protected function eatFish();
+  abstract protected function eatMoss();
+  public function eat() {
+    if ($this->eatFish()) {
+      echo $this->name . " can eat fish.\n";
     }
-    ?>
+    if ($this->eatMoss()) {
+      echo $this->name . " can eat moss.\n";
+    }
+  }
+}
 ```
 我们创建一个鲸鱼类：
 
 ```php
-    <?php
-    include_once('Animal.php');
-    class Whale extends Animal {
-      public function __construct() {
-        $this->name = "Whale";
-      }
-      public function eatFish() {
-        return TRUE;
-      }
-      public function eatMoss() {
-        return FALSE;
-      }
-    }
-    
-    $whale = new Whale();
-    $whale->eat();
-    ?>
+<?php
+include_once('Animal.php');
+class Whale extends Animal {
+  public function __construct() {
+    $this->name = "Whale";
+  }
+  public function eatFish() {
+    return TRUE;
+  }
+  public function eatMoss() {
+    return FALSE;
+  }
+}
+
+$whale = new Whale();
+$whale->eat();
 ```
 运行一下：
 
@@ -68,20 +66,19 @@
 看上去没什么问题，对吧？我们创建一个鲤鱼类：
 
 ```php
-    <?php
-    include_once('Animal.php');
-    class Carp extends Animal {
-      public function __construct() {
-        $this->name = "Carp";
-      }
-      public function eatMoss() {
-        return TRUE;
-      }
-    }
-    
-    $carp = new Carp();
-    $carp->eat();
-    ?>
+<?php
+include_once('Animal.php');
+class Carp extends Animal {
+  public function __construct() {
+    $this->name = "Carp";
+  }
+  public function eatMoss() {
+    return TRUE;
+  }
+}
+
+$carp = new Carp();
+$carp->eat();
 ```
 运行一下：
 
@@ -98,88 +95,86 @@
 下面给出一个例子：
 
 ```php
-    <?php
-    abstract class Animal {
-      protected $name;
-      abstract protected function eatFish();
-      abstract protected function eatMoss();
-      public function eat() {
-        if ($this->eatFish()) {
-          echo $this->name . " can eat fish.\n";
-        }
-        if ($this->eatMoss()) {
-          echo $this->name . " can eat moss.\n";
-        }
-      }
+<?php
+abstract class Animal {
+  protected $name;
+  abstract protected function eatFish();
+  abstract protected function eatMoss();
+  public function eat() {
+    if ($this->eatFish()) {
+      echo $this->name . " can eat fish.\n";
     }
-    
-    class Whale extends Animal {
-      protected function __construct() {
-        $this->name = "Whale";
-      }
-      protected function eatFish() {
-        return TRUE;
-      }
-      protected function eatMoss() {
-        return FALSE;
-      }
+    if ($this->eatMoss()) {
+      echo $this->name . " can eat moss.\n";
     }
-    
-    class BullWhale extends Whale {
-      public function __construct() {
-        $this->name = "Bull Whale";
-      }
-      public function getGender() {
-        return "Male";
-      }
-    }
-    ?>
+  }
+}
+
+class Whale extends Animal {
+  protected function __construct() {
+    $this->name = "Whale";
+  }
+  protected function eatFish() {
+    return TRUE;
+  }
+  protected function eatMoss() {
+    return FALSE;
+  }
+}
+
+class BullWhale extends Whale {
+  public function __construct() {
+    $this->name = "Bull Whale";
+  }
+  public function getGender() {
+    return "Male";
+  }
+}
 ```
 这里的BullWhale其实非常冗余，实际的业务模型可能并不需要这么复杂，这就是多重继承的恶果。  
 而组件则不同，通过将行为拆分成不同的部分，又最终子类决定使用哪些组件。  
 下面给出一个例子：
 
 ```php
-    <?php
-    class Action {
-      private $name;
-      public function __construct($name) {
-        $this->name = $name;
-      }
-      public function eat($food) {
-        echo $this->name . " eat ". $food . ".\n";
-      }
-    }
-    
-    class Gender {
-      private $gender;
-      public function __construct($gender) {
-        $this->gender= $gender;
-      }
-      public function getGender() {
-        return $this->gender;
-      }
-    }
-    
-    class BullWhale {
-      private $action;
-      private $gender;
-      public function __construct() {
-        $this->action = new Action("Bull Whale");
-        $this->gender = new Gender("Male");
-      }
-      public function eatFood($food) {
-        $this->action->eat($food);
-      }
-      public function getGender() {
-        return $this->gender->getGender();
-      }
-    }
-    
-    $bullWhale = new BullWhale();
-    $bullWhale->eatFood("fish");
-    echo $bullWhale->getGender() . "\n";
-    ?>
+<?php
+class Action {
+  private $name;
+  public function __construct($name) {
+    $this->name = $name;
+  }
+  public function eat($food) {
+    echo $this->name . " eat ". $food . ".\n";
+  }
+}
+
+class Gender {
+  private $gender;
+  public function __construct($gender) {
+    $this->gender= $gender;
+  }
+  public function getGender() {
+    return $this->gender;
+  }
+}
+
+class BullWhale {
+  private $action;
+  private $gender;
+  public function __construct() {
+    $this->action = new Action("Bull Whale");
+    $this->gender = new Gender("Male");
+  }
+  public function eatFood($food) {
+    $this->action->eat($food);
+  }
+  public function getGender() {
+    return $this->gender->getGender();
+  }
+}
+
+$bullWhale = new BullWhale();
+$bullWhale->eatFood("fish");
+echo $bullWhale->getGender() . "\n";
 ```
 运行一下：
 

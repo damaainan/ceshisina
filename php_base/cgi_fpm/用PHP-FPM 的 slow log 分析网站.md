@@ -14,6 +14,7 @@
 
 修改配置
 
+```cfg
     ; The timeout for serving a single request after which a PHP backtrace will be
     ; dumped to the 'slowlog' file. A value of '0s' means 'off'.
     ; Available units: s(econds)(default), m(inutes), h(ours), or d(ays)
@@ -23,7 +24,7 @@
     ; The log file for slow requests
     ; Default Value: /usr/local/php/log/php-fpm.log.slow
     slowlog = /usr/local/php/log/php-fpm.log.slow
-
+```
 加上慢执行日志后，我们可以很容易从慢执行日志中看出问题所在，比如：
 
     [13-May-2013 05:17:12]  [pool www] pid 13557                                                                                                                    

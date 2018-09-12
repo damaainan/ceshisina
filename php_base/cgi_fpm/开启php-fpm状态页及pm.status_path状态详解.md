@@ -28,18 +28,18 @@ php-fpm 和 nginx 一样，内建了个状态页，可以通过该状态页了�
 在 nginx 的配置文件中添加以下配置。
 
 ```nginx
-    server {
-        ......
-        
-        # 在 server 中添加以下配置
-        location = /bcstatus {
-        include fastcgi_params;
-        fastcgi_pass 127.0.0.1:9000;
-        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
-        }
-        
-        .....
-    }
+server {
+    ......
+    
+    # 在 server 中添加以下配置
+    location = /bcstatus {
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    }
+    
+    .....
+}
 ```
 
 **特别说明：这里的 location 最后用 = 号，如我的配置 location = /bcstatus ，因为 = 的优先级最高，如果匹配成功后，就不会再匹配其它选项了。**
@@ -56,20 +56,20 @@ php-fpm 和 nginx 一样，内建了个状态页，可以通过该状态页了�
 ## pm.status_path 参数详解
 
 ```
-    pool            – fpm池子名称，大多数为www
-    process manager     – 进程管理方式,值：static, dynamic or ondemand. dynamic
-    start time      – 启动日期,如果reload了php-fpm，时间会更新
-    start since         – 运行时长
-    accepted conn       – 当前池子接受的请求数
-    listen queue        – 请求等待队列，如果这个值不为0，那么要增加FPM的进程数量
-    max listen queue    – 请求等待队列最高的数量
-    listen queue len    – socket等待队列长度
-    idle processes      – 空闲进程数量
-    active processes    – 活跃进程数量
-    total processes     – 总进程数量
-    max active processes    – 最大的活跃进程数量（FPM启动开始算）
-    max children reached    - 进程最大数量限制的次数，如果这个数量不为0，那说明你的最大进程数量太小了，请改大一点。
-    slow requests       – 启用了php-fpm slow-log，缓慢请求的数量
+pool            – fpm池子名称，大多数为www
+process manager     – 进程管理方式,值：static, dynamic or ondemand. dynamic
+start time      – 启动日期,如果reload了php-fpm，时间会更新
+start since         – 运行时长
+accepted conn       – 当前池子接受的请求数
+listen queue        – 请求等待队列，如果这个值不为0，那么要增加FPM的进程数量
+max listen queue    – 请求等待队列最高的数量
+listen queue len    – socket等待队列长度
+idle processes      – 空闲进程数量
+active processes    – 活跃进程数量
+total processes     – 总进程数量
+max active processes    – 最大的活跃进程数量（FPM启动开始算）
+max children reached    - 进程最大数量限制的次数，如果这个数量不为0，那说明你的最大进程数量太小了，请改大一点。
+slow requests       – 启用了php-fpm slow-log，缓慢请求的数量
 ```
 ## pm.status_path 显示样式
 

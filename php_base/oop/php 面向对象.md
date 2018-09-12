@@ -269,40 +269,39 @@ parent::Mothed;
 3、 类有一个静态属性存放对象
 
 ```php
-    <?php
-    class Single {
-        //设置私有，保存实例状态
-        static protected $ins = NULL;
-        //设置为私有，限制类外实例化，若没有子类可去掉final
-        final protected function __construct() {
-            echo '实例化成功！';
-        }
-        //设置为静态方法，类外能调用，实例化
-        static public function getinstance() {
-            //self代表当前类，判断是否实例化
-            if (self::$ins instanceof self) {
-                return self::$ins;
-            }
-            self::$ins = new self();
+<?php
+class Single {
+    //设置私有，保存实例状态
+    static protected $ins = NULL;
+    //设置为私有，限制类外实例化，若没有子类可去掉final
+    final protected function __construct() {
+        echo '实例化成功！';
+    }
+    //设置为静态方法，类外能调用，实例化
+    static public function getinstance() {
+        //self代表当前类，判断是否实例化
+        if (self::$ins instanceof self) {
             return self::$ins;
         }
-    }  
-
-    $s1 = Single::getinstance();
-    $s2 = Single::getinstance();  
-
-    //子类继承父类若还要单例，要用final修饰父类构造方法，
-    //阻止子类重写构造方法自己去new的问题
-    class Single2 extends Single {
-    }  
-
-    $s11 = Single2::getInstance();
-    $s12 = Single2::getInstance();  
-
-    if ($s11 === $s12) {
-        echo "相等";
+        self::$ins = new self();
+        return self::$ins;
     }
-    ?>
+}  
+
+$s1 = Single::getinstance();
+$s2 = Single::getinstance();  
+
+//子类继承父类若还要单例，要用final修饰父类构造方法，
+//阻止子类重写构造方法自己去new的问题
+class Single2 extends Single {
+}  
+
+$s11 = Single2::getInstance();
+$s12 = Single2::getInstance();  
+
+if ($s11 === $s12) {
+    echo "相等";
+}
 ```
 
 **final**
@@ -398,36 +397,35 @@ array_keys(array,value) ：获得数组中键名并以数组的形式 ； 前者
 **重写 / 覆盖 override:**子类重写了父类的同名方法。只要子类有该方法只调用子类的无论参数是否一致
 
 ```php
-    <?php
-    //模仿重载的功能
-    class Circle {
-        public function area() {
-            $a = func_get_args();
-            $num = count($a);
-            if ($num == 0) {
-                echo '传入参数' . "\n";
-            } else if ($num == 1) {
-                echo 3.14 * $a[0] . "\n"; //学会利用已有的条件进行分析
-                
-            } else if ($num == 2) {
-                echo $a[0] * $a[1] . "\n";
-            }
+<?php
+//模仿重载的功能
+class Circle {
+    public function area() {
+        $a = func_get_args();
+        $num = count($a);
+        if ($num == 0) {
+            echo '传入参数' . "\n";
+        } else if ($num == 1) {
+            echo 3.14 * $a[0] . "\n"; //学会利用已有的条件进行分析
+            
+        } else if ($num == 2) {
+            echo $a[0] * $a[1] . "\n";
         }
-    }  
+    }
+}  
 
-    $c = new Circle();
-    $c->area();
-    $c->area(3);  
+$c = new Circle();
+$c->area();
+$c->area(3);  
 
-    class P {
-        public function a() {
-            echo "nihao";
-        }
-    }  
+class P {
+    public function a() {
+        echo "nihao";
+    }
+}  
 
-    $b = new P();
-    $b->a(2123, 'sdf');
-    ?>
+$b = new P();
+$b->a(2123, 'sdf');
 ```
 
 **重载 overload:**指存在多个同名方法, 但参数类型 / 个数不同, 传不同的参数, 调用不同的方法。但是在 PHP 中, 不允许存在多个同名方法. 因此, 不能够完成 java,c++ 中的这种重载
@@ -435,15 +433,14 @@ array_keys(array,value) ：获得数组中键名并以数组的形式 ； 前者
 但是, PHP 的灵活, 能达到类似的效果
 
 ```php
-    <?php 
-        function __autoload($n){
-            require('./' . $n . '.php');
-            echo "加载成功！";
-        } 
-    
-        $test = new autoload_class();
-        $test->say();
-     ?>
+<?php 
+function __autoload($n){
+    require('./' . $n . '.php');
+    echo "加载成功！";
+} 
+
+$test = new autoload_class();
+$test->say();
 ```
 
 ## 常量 （常量名全大写，不带 $）
@@ -505,28 +502,27 @@ array_keys(array,value) ：获得数组中键名并以数组的形式 ； 前者
 // 所以面向对象是可插拔的
 
 ```php
-    <?php
-    //利用面向对象思想实现不同语言首页欢迎！
-    //抽象类就是个模板，你们子类继承我的类和方法自己搞自己想要弄的东西
-    //比如我想要开发英语语言，只要增加一个子类，不用修改父类的东西
-    //所以面向对象是可插拔的
-    abstract class Language { //抽象方法
-        public abstract function wel();
+<?php
+//利用面向对象思想实现不同语言首页欢迎！
+//抽象类就是个模板，你们子类继承我的类和方法自己搞自己想要弄的东西
+//比如我想要开发英语语言，只要增加一个子类，不用修改父类的东西
+//所以面向对象是可插拔的
+abstract class Language { //抽象方法
+    public abstract function wel();
+}
+class China extends Language {
+    public function wel() {
+        echo "欢迎！";
     }
-    class China extends Language {
-        public function wel() {
-            echo "欢迎！";
-        }
+}
+class English extends Language {
+    public function wel($a) {
+        echo "Welcome!";
     }
-    class English extends Language {
-        public function wel($a) {
-            echo "Welcome!";
-        }
-    }
-    $language = 'China';
-    $w = new $language(); //666
-    $w->wel();
-    ?>
+}
+$language = 'China';
+$w = new $language(); //666
+$w->wel();
 ```
 
 说明 ： 抽象类就是一个模板，我不用担心同类的类不会做，反正你只要根据我的模板做就不会错。从而达到兼容多种不同的情况 和 避免代码大量的修改 和 代码的规范（方法一致）
@@ -554,48 +550,47 @@ array_keys(array,value) ：获得数组中键名并以数组的形式 ； 前者
 5、接口就是供组装成类用的, 封闭起来没有意义, 因此方法只能是 public
 
 ```php
-    <?php
-    /*
-    接口 就更加抽象了，比如一个社交网站，关于用户的处理是核心应用。
-    登陆 退出 写信 看信 招呼 更换心情
-    吃饭 骂人 捣乱 示爱 撩骚
+<?php
+/*
+接口 就更加抽象了，比如一个社交网站，关于用户的处理是核心应用。
+登陆 退出 写信 看信 招呼 更换心情
+吃饭 骂人 捣乱 示爱 撩骚
+
+这么多的方法,都是用户的方法，可写一个user类,全包装起来
+但是，分析用户一次性使不了这么方法。于是分开多个类
+
+用户信息类:{登陆,写信,看信,招呼,更换心情,退出}
+用户娱乐类:{登陆,骂人,捣乱,示爱,撩骚,退出}
+*/
+interface UserBase { //注意没括号
+    public function login($u, $p);
+    public function logout(); //注意是抽象方法
     
-    这么多的方法,都是用户的方法，可写一个user类,全包装起来
-    但是，分析用户一次性使不了这么方法。于是分开多个类
-    
-    用户信息类:{登陆,写信,看信,招呼,更换心情,退出}
-    用户娱乐类:{登陆,骂人,捣乱,示爱,撩骚,退出}
-    */
-    interface UserBase { //注意没括号
-        public function login($u, $p);
-        public function logout(); //注意是抽象方法
-        
+}
+interface UserMsg {
+    public function wirteMsg($to, $title, $content);
+    public function readMsg($from, $title);
+}
+interface UserFun {
+    public function spit($to);
+    public function showLove($to);
+}
+/*
+作为调用者, 我不需要了解你的用户信息类,用户娱乐类,
+我就可以知道如何调用这两个类
+
+因为: 这两个类 都要实现 上述接口.
+通过这个接口,就可以规范开发.
+
+*/
+class User implements UserBase {
+    public function login($u, $p) {
+        echo "用户登录";
     }
-    interface UserMsg {
-        public function wirteMsg($to, $title, $content);
-        public function readMsg($from, $title);
+    public function logout() {
+        echo "用户注销";
     }
-    interface UserFun {
-        public function spit($to);
-        public function showLove($to);
-    }
-    /*
-    作为调用者, 我不需要了解你的用户信息类,用户娱乐类,
-    我就可以知道如何调用这两个类
-    
-    因为: 这两个类 都要实现 上述接口.
-    通过这个接口,就可以规范开发.
-    
-    */
-    class User implements UserBase {
-        public function login($u, $p) {
-            echo "用户登录";
-        }
-        public function logout() {
-            echo "用户注销";
-        }
-    }
-    ?>
+}
 ```
 
 ## 包含类进来
@@ -628,32 +623,31 @@ include/require 能够包含某个 php 文件，但是不知道是否调用过�
 
 ```php 
 <?php
- {
-     protected $conn = NULL;
+class mysql{
+    protected $conn = NULL;
 
-     public function __construct()
-     {
-         $this->conn = mysql_connect('localhost','root','111');
+    public function __construct()
+    {
+        $this->conn = mysql_connect('localhost','root','111');
 
-         if (!$this->conn) //如果连接失败了，抛出错误
-         {
-         $e = new Exception('失败了！',9); // 
-         throw $e;  //抛出异常
-         }
-     }
- }
+        if (!$this->conn) //如果连接失败了，抛出错误
+        {
+        $e = new Exception('失败了！',9); // 
+        throw $e;  //抛出异常
+        }
+    }
+}
 //若抛出异常，没有接受处理则会报错
- try  // 可能出现错误的代码并尝试捕捉错误信息
- {
-     $my = new mysql();
- }catch(Exception $e) // 注意括号，处理错误
- {
-         echo $e->getMessage();
-        echo '错误代码',$e->getCode();
-        echo '错误文件',$e->getFile();
-        echo '错误行',$e->getLine();//抛出错误的行
- }
-?>
+try  // 可能出现错误的代码并尝试捕捉错误信息
+{
+    $my = new mysql();
+}catch(Exception $e) // 注意括号，处理错误
+{
+    echo $e->getMessage();
+    echo '错误代码',$e->getCode();
+    echo '错误文件',$e->getFile();
+    echo '错误行',$e->getLine();//抛出错误的行
+}
 ```
 
 

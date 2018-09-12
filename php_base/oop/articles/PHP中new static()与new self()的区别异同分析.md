@@ -89,22 +89,22 @@ string(1) "B"
  
 ```php
 
-    class Father {
-    
-        public function getNewFather() {
-            return new self();
-        }
-    
-        public function getNewCaller() {
-            return new static();
-        }
-    
+class Father {
+
+    public function getNewFather() {
+        return new self();
     }
-    
-    $f = new Father();
-    
-    print get_class($f->getNewFather());
-    print get_class($f->getNewCaller());
+
+    public function getNewCaller() {
+        return new static();
+    }
+
+}
+
+$f = new Father();
+
+print get_class($f->getNewFather());
+print get_class($f->getNewCaller());
 ```
 
 注意，上面的代码get_class()方法是用于获取实例所属的类名。
@@ -118,21 +118,21 @@ string(1) "B"
  
 ```php
 
-    class Sun1 extends Father {
-    
-    }
-    
-    class Sun2 extends Father {
-    
-    }  
+class Sun1 extends Father {
 
-    $sun1 = new Sun1();  
-    $sun2 = new Sun2();  
+}
 
-    print get_class($sun1->getNewFather());
-    print get_class($sun1->getNewCaller());
-    print get_class($sun2->getNewFather());
-    print get_class($sun2->getNewCaller());
+class Sun2 extends Father {
+
+}  
+
+$sun1 = new Sun1();  
+$sun2 = new Sun2();  
+
+print get_class($sun1->getNewFather());
+print get_class($sun1->getNewCaller());
+print get_class($sun2->getNewFather());
+print get_class($sun2->getNewCaller());
 ```
 
 看上面的代码，现在这个Father类有两个子类，由于Father类的getNewFather()和getNewCaller()是public的，所以子类继承了这两个方法。

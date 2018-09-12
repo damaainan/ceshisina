@@ -24,7 +24,7 @@ Objects should be replaceable with instances of their subtypes without altering 
 
 代码如下：
 
-```js
+```groovy
 interface Store {
     store(message: string);
     retrieveMessages(): string[];
@@ -55,7 +55,7 @@ class BasicStore implements Store {
 
 之后通过继承`BasicStore`，我们又创建了一个新的`RotatingStore`实现类，如下：
 
-```js
+```groovy
 class RotatingStore extends BasicStore {
     makeMoreRoomForStore() {
         this.stash = this.stash.slice(1);
@@ -67,7 +67,7 @@ class RotatingStore extends BasicStore {
 
 在使用`RotatingStore`的过程中，我们会遇到一些奇怪的现象，这正式由于`RotatingStore`本身产生的，如下：
 
-```js
+```groovy
 const st: Store = new RotatingStore()
 
 st.store("hello")

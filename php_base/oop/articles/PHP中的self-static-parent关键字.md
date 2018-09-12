@@ -100,7 +100,7 @@ B::testStatic();
 
 输出结果：
 
-```php
+```
 this is class A
 this is class B
 ```
@@ -144,7 +144,7 @@ $obj->testNoS();
 
 输出结果
 
-```php
+```
 static
 this is function show with Nostatic
 ```
@@ -185,7 +185,7 @@ C::test();
 
 输出结果
 
-```php
+```
 A
 C
 C
@@ -244,7 +244,7 @@ C::test();
 
 输出结果：
 
-```php
+```
 A
 B
 B

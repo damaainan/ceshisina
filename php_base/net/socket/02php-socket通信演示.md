@@ -128,7 +128,6 @@ do {
     socket_close($msgsock);
 } while (true);
 socket_close($sock);
-?>
 ```
 
 然后php server.php,发现1935端口已经处于被监听状态;接下来我们只要运行客户端程序即可连接上。
@@ -190,7 +189,6 @@ while ($out = socket_read($socket, 8192)) {
 echo "关闭SOCKET...\n";
 socket_close($socket);
 echo "关闭OK\n";
-?>
 ```
 
 

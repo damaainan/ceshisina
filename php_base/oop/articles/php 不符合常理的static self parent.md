@@ -10,55 +10,55 @@
 一、php继承问题
 
 上代码。
+```php
+class father{
+    public function __construct(){
+      echo "类father";
+    }
+}
+class child extends father{
+    public function __construct(){
+      echo "类child";
+    }
+}
 
-    class father{
-        public function __construct(){
-          echo "类father";
-    }
-    }
-    class child extends father{
-        public function __construct(){
-          echo "类child";
-    }
-    }
-    
-    $p=new child();
-
+$p=new child();
+```
 输出结果: 类child
 
 如果我们接触过纯面向对象的语言 :c#/java;
 
 按照他们的语法，以上例子将会输出 :
 
-类father
+    类father
 
-类child
+    类child
 
 当我们在new子类对象的时候，编译器应该会实例化它的父类，以此来产生一个继承链条，我们看到表面上php仅仅实例化了一个子类对象，这并不科学，也是后续问题产生的一个根本原因：php到底存不存在继承链？
 
 二、static 、self、parent这些关键字
-
-    class father{
+```php
+class father{
     public $a="father";
     public function __construct(){
-          echo "类father";
+      echo "类father";
     }
     public function Say(){
-          echo __CLASS__."say";
+      echo __CLASS__."say";
     }
-    }
-    class child{
-        public function __construct(){
-            parent::construct();
+}
+class child{
+    public function __construct(){
+        parent::construct();
         self::Say();
-    static::Say();  
-    
-    $this->a;
-          echo "类 child";
-    }
-    }
-    $childs=new child();
+        static::Say();  
 
+        $this->a;
+        echo "类 child";
+    }
+}
+$childs=new child();
+```
 如果php不存在继承链，那么以上程序将报错。
 
 所以php是存在继承链。

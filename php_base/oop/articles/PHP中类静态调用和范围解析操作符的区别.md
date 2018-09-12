@@ -5,44 +5,44 @@
 原文[http://blog.p2hp.com/archives/4952][1]
 
 ```php
-    <?php
-    //在子类或类内部用“::”调用本类或父类时，不是静态调用方法，而是范围解析操作符。
-    
-    
-    class ParentClass {
-        public static $my_static = 'parent var ';
-        function test() {
-            self::who();    // 输出 'parent' 是范围解析，不是静态调用
-            $this->who();    // 输出 'child'
-            static::who();  // 延迟静态绑定 是范围解析，不是静态调用
-        }
-    
-        function who() {
-            echo 'parent<br>';
-        }
+<?php
+//在子类或类内部用“::”调用本类或父类时，不是静态调用方法，而是范围解析操作符。
+
+
+class ParentClass {
+    public static $my_static = 'parent var ';
+    function test() {
+        self::who();    // 输出 'parent' 是范围解析，不是静态调用
+        $this->who();    // 输出 'child'
+        static::who();  // 延迟静态绑定 是范围解析，不是静态调用
     }
-    
-    class ChildClass extends ParentClass {
-        public static $my_static = 'child var ';
-        function who() {
-            echo 'child<br>';
-        }
+
+    function who() {
+        echo 'parent<br>';
     }
-    
-    $obj = new ChildClass();
-    $obj->test();
-    
-    
-    echo ChildClass::$my_static;//静态调用
+}
+
+class ChildClass extends ParentClass {
+    public static $my_static = 'child var ';
+    function who() {
+        echo 'child<br>';
+    }
+}
+
+$obj = new ChildClass();
+$obj->test();
+
+
+echo ChildClass::$my_static;//静态调用
 ```
 上面输出
 
-parent
+    parent
 
-child
+    child
 
-child
+    child
 
-child var
+    child var
 
 [1]: http://blog.p2hp.com/archives/4952

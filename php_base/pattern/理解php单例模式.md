@@ -31,58 +31,58 @@ wiki百科：单例模式，也叫单子模式，是一种常用的软件设计�
 php 实现的单例模式
 
 ```php
-    <?php
-    
-    class XiaozhuaiSingleton
+<?php
+
+class XiaozhuaiSingleton
+{
+    // 私有化构造方法
+    private function __construct()
     {
-        // 私有化构造方法
-        private function __construct()
-        {
-    
-        }
-    
-        // 私有化clone方法
-        private function __clone()
-        {
-    
-        }
-    
-    
-        // 保存实例的静态对象
-        public static $singleInstance;
-    
-        /**
-         * 声明静态调用方法
-         * 目的：保证该方法的调用全局唯一
-         *
-         * @return XiaozhuaiSingleton
-         */
-        public static function getInstance()
-        {
-            if (!self::$singleInstance) {
-                self::$singleInstance = new self();
-            }
-    
-            return self::$singleInstance;
-        }
-    
-    
-        // 调用单例的方法
-        public function singletonFunc()
-        {
-            echo "call single ton method";
-        }
-    
+
     }
-    
-    $singleInstance = XiaozhuaiSingleton::getInstance();
-    $singleInstance->singletonFunc();
-    
-    $singleInstance2 = XiaozhuaiSingleton::getInstance();
-    $singleInstance2->singletonFunc();
-    
-    // 校验是否是一个实例
-    var_dump($singleInstance === $singleInstance2);  // true ，一个对象
+
+    // 私有化clone方法
+    private function __clone()
+    {
+
+    }
+
+
+    // 保存实例的静态对象
+    public static $singleInstance;
+
+    /**
+     * 声明静态调用方法
+     * 目的：保证该方法的调用全局唯一
+     *
+     * @return XiaozhuaiSingleton
+     */
+    public static function getInstance()
+    {
+        if (!self::$singleInstance) {
+            self::$singleInstance = new self();
+        }
+
+        return self::$singleInstance;
+    }
+
+
+    // 调用单例的方法
+    public function singletonFunc()
+    {
+        echo "call single ton method";
+    }
+
+}
+
+$singleInstance = XiaozhuaiSingleton::getInstance();
+$singleInstance->singletonFunc();
+
+$singleInstance2 = XiaozhuaiSingleton::getInstance();
+$singleInstance2->singletonFunc();
+
+// 校验是否是一个实例
+var_dump($singleInstance === $singleInstance2);  // true ，一个对象
 ```
 
 [0]: https://segmentfault.com/a/1190000009996347

@@ -35,43 +35,42 @@
 下面是一个PHP单例模式实现数据库操作类的框架
 
 ```php
-    <?php
-     class Db{
-     const DB_HOST='localhost';
-     const DB_NAME='';
-     const DB_USER='';
-     const DB_PWD='';
-     private $_db;
-     //保存实例的私有静态变量
-     private static $_instance;
-     //构造函数和克隆函数都声明为私有的
-     private function __construct(){
-         //$this->_db=mysql_connect();
+<?php
+ class Db{
+ const DB_HOST='localhost';
+ const DB_NAME='';
+ const DB_USER='';
+ const DB_PWD='';
+ private $_db;
+ //保存实例的私有静态变量
+ private static $_instance;
+ //构造函数和克隆函数都声明为私有的
+ private function __construct(){
+     //$this->_db=mysql_connect();
+ }
+ private function __clone(){
+ //实现
+ }
+ //访问实例的公共静态方法
+ public static function getInstance(){
+     if(!(self::$_instance instanceof self)){
+         self::$_instance=new self();
      }
-     private function __clone(){
-     //实现
+ //或者
+     if(self::$_instance===null){
+         self::$_instance=new Db();
      }
-     //访问实例的公共静态方法
-     public static function getInstance(){
-         if(!(self::$_instance instanceof self)){
-             self::$_instance=new self();
-         }
-     //或者
-         if(self::$_instance===null){
-             self::$_instance=new Db();
-         }
-         return self::$_instance;
-     }
-     public function fetchAll(){
-     //实现
-     }
-     public function fetchRow(){
-     //实现
-     }
-     }
-     //类外部获取实例的引用
-     $db=Db::getInstance();
-    ?>
+     return self::$_instance;
+ }
+ public function fetchAll(){
+ //实现
+ }
+ public function fetchRow(){
+ //实现
+ }
+ }
+ //类外部获取实例的引用
+ $db=Db::getInstance();
 ```
 
 感谢阅读，希望能帮助到大家，谢谢大家对本站的支持！

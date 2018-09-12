@@ -20,48 +20,48 @@
 * 静态属性只能被初始化为文字或常量，不能使用表达式；这一点发现给问题： 
 
 ```php
-    <?php
-    
-    class Person
+<?php
+
+class Person
+{
+    public static $name = 'person A';
+    public static $num;
+
+    public function __construct($val, $number=0)
     {
-        public static $name = 'person A';
-        public static $num;
-    
-        public function __construct($val, $number=0)
-        {
-            self::$name = $val;
-            self::$num = $number+1;
-        }
-    
-        public static function getName()
-        {
-            return self::$name;
-        }
-    
-        public static function getNum()
-        {
-            return self::$num;
-        }
+        self::$name = $val;
+        self::$num = $number+1;
     }
-    
-    
-    echo Person::$name."\n";  // person A
-    
-    $b = new Person('person B', 1);
-    echo Person::$name."\n";  // person B
-    echo $b->getName()."\n";  // person B
-    echo $b->getNum()."\n";   // 2
-    
-    $c = new Person('person C', 2);
-    echo Person::$name."\n";  // person C
-    echo $c->getName()."\n";  // person C
-    echo $c->getNum()."\n";   // 3
-    
-    /**
-     * 重点来了，怎么是 结果是：person C，我们上面输出的时候还是 person B 啊
-     */
-    echo $b->getName()."\n";  // person C
-    echo $b->getNum()."\n";   // 3
+
+    public static function getName()
+    {
+        return self::$name;
+    }
+
+    public static function getNum()
+    {
+        return self::$num;
+    }
+}
+
+
+echo Person::$name."\n";  // person A
+
+$b = new Person('person B', 1);
+echo Person::$name."\n";  // person B
+echo $b->getName()."\n";  // person B
+echo $b->getNum()."\n";   // 2
+
+$c = new Person('person C', 2);
+echo Person::$name."\n";  // person C
+echo $c->getName()."\n";  // person C
+echo $c->getNum()."\n";   // 3
+
+/**
+ * 重点来了，怎么是 结果是：person C，我们上面输出的时候还是 person B 啊
+ */
+echo $b->getName()."\n";  // person C
+echo $b->getNum()."\n";   // 3
 ```
 有图有真相：
 
@@ -89,46 +89,46 @@
 
 每个开发者，在Controller中定义对应客户端预期字段，调用我写的基础方法，只获取这些指定字段以内的信息！
 ```php
-    class Func
-    {
-        /**
-         * @Function    onlyParams
-         * @Author      wangxb
-         * @Description 只获取受控制请求参数
-         * @return mixed
-         */
-        protected function onlyParams(){
-            $curAction = $this->request->action();
-            // Func中并没有定义$allowParams这个静态属性，当调用这个方法时，后期静态绑定就开始了
-            // static:: 所调用的是代码当前运行类中的属性或者方法
-            $params = static::$allowParams[$curAction];
-            array_push($params, '__token__');
-            return $this->request->only($params);
-        }
+class Func
+{
+    /**
+     * @Function    onlyParams
+     * @Author      wangxb
+     * @Description 只获取受控制请求参数
+     * @return mixed
+     */
+    protected function onlyParams(){
+        $curAction = $this->request->action();
+        // Func中并没有定义$allowParams这个静态属性，当调用这个方法时，后期静态绑定就开始了
+        // static:: 所调用的是代码当前运行类中的属性或者方法
+        $params = static::$allowParams[$curAction];
+        array_push($params, '__token__');
+        return $this->request->only($params);
     }
+}
 ```
 
 ```php
-    class Resourceextends Func
+class Resourceextends Func
+{
+    protected static $allowParams = [
+        //key:操作方法名; value:可接受请求参数数组
+        'index'  => ['fullRegionId','phoneFullRegionId','plan','unit','keyword','page'],
+        'undist' => ['namePhone','fullRegionId','createTimeStart','createTimeEnd','pageRows'],
+    ];
+
+    public function index()
     {
-        protected static $allowParams = [
-            //key:操作方法名; value:可接受请求参数数组
-            'index'  => ['fullRegionId','phoneFullRegionId','plan','unit','keyword','page'],
-            'undist' => ['namePhone','fullRegionId','createTimeStart','createTimeEnd','pageRows'],
-        ];
-    
-        public function index()
-        {
-            $params = $this->onlyParams(); // 代码运行到这里，后期静态绑定开始
-            ...
-        }
-    
-        public function undist()
-        {
-            $params = $this->onlyParams();
-            ...
-        }
+        $params = $this->onlyParams(); // 代码运行到这里，后期静态绑定开始
+        ...
     }
+
+    public function undist()
+    {
+        $params = $this->onlyParams();
+        ...
+    }
+}
 ```
 
 是不是很神奇，宝宝都被震精到了：父类调用子类属性和方法！

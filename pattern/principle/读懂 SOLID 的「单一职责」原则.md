@@ -34,7 +34,7 @@ Synonyms: one, one only, sole, lone, solitary, isolated, by itself.
 
 **`单一`** 意味着某些工作是独立的。比如，在类中，类方法仅完成某家独立的事情，而不是两件，如下：
 
-```js
+```groovy
 class UserComponent { 
   // 这是第一件事情，获取用户详情数据
   getUserInfo(id) {
@@ -96,7 +96,7 @@ Too much responsibility leads to coupling.太多的职责导致耦合。
 
 低内聚性的组件在完成任务时，和它们本身的职责关联并不紧密。比如，我们现在有一个`User`类，这个类中我们保存了一些基本信息：
 
-```js
+```groovy
 class User {
   public age;  
   public name;
@@ -107,7 +107,7 @@ class User {
 
 对于属性本身，如果对于每个属性声明一些`getter`或者`setter`方法是没什么问题的。但是如果我们加一些别的方法，比如：
 
-```js
+```groovy
 class User {
   public age;  
   public name;
@@ -124,7 +124,7 @@ class User {
 
 仔细思考的话，这些方法的职责和校验和格式化用户信息的关系更紧密，因此，它们应当从`User`中被抽离出来，放入到另一个独立的`UserFieldValidation`类中，比如：
 
-```js
+```groovy
 class User {
   public age;  
   public name;
@@ -152,7 +152,7 @@ class UserFieldValidation {
 
 做为一个程序员，我们天天不都在做这三件事情吗？让我们来用一个例子完整的看一下什么是变更，比方说我们完成了一个组件，现在这个组件性能非常好，而且可读性也非常好，也许是你整个职业生涯中写的最好的一个组件了，所以我们给它一个炫酷的名字叫作`SuperDuper`（译者注：这个名字的意思是 **`超级大骗子`** ）
 
-```js
+```groovy
 class SuperDuper {
   makeThingsFastAndEasy() {
     // Super readable and efficient code
@@ -164,7 +164,7 @@ class SuperDuper {
 
 这个需求很简单，只需要增加一行调用的代码即可，然后你做了以下 **`变更(增加新功能)`** ：
 
-```js
+```groovy
 class SuperDuper {
   constructor(notDuper: NotSoDuper) {
     this.notDuper = notDuper
@@ -180,7 +180,7 @@ class SuperDuper {
 
 于是你针对这个问题又进行了一次 **`变更(修复缺陷或者bug)`** ，或许还会针对一些别的边界条件进行一些额外的修复和改动：
 
-```js
+```groovy
 class SuperDuper {
   constructor(notDuper: NotSoDuper) {
     this.notDuper = notDuper
@@ -201,7 +201,7 @@ class SuperDuper {
 
 这次实际是对已经代码的一次重构工作，你引入了事件驱动模型，并对已有的代码做出了 **`变更(重构代码以适配将来作出的变更)`** :
 
-```js
+```groovy
 class SuperDuper {
  
   makeThingsFastAndEasy() {

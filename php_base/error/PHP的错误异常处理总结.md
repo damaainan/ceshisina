@@ -42,49 +42,49 @@ eg. E_USER_WARNINGE_USER_ERRORE_USER_NOTICE
 
 测试代码如下：
 ```php
-    <?php
-    /* 让错误信息在标准输出可见 */
-    ini_set("display_errors","On");
-    
-    /**
-     * 回调函数原型 : bool handler ( int $errno , string $errstr [, string $errfile [, int $errline [, array $errcontext ]]] )
-     */
-    set_error_handler(function ($errno, $errstr) {
-        $err_type = '';
-        $return = true;
-        if (E_WARNING === $errno) {
-            $err_type = 'warning';
-            $return = false;
-        } elseif (E_NOTICE === $errno) {
-            $err_type = 'notice';
-        } elseif (E_ERROR === $errno) {
-            $err_type = 'error';
-        }
-        echo sprintf("This is error callback, err_type:%s, err_no:%d, err_str:%s \n", $err_type, $errno, $errstr);
-        return $return;
-    });
-    
-    function sayHere($line)
-    {
-        echo sprintf("I am here.Line:%d \n", $line);
+<?php
+/* 让错误信息在标准输出可见 */
+ini_set("display_errors","On");
+
+/**
+ * 回调函数原型 : bool handler ( int $errno , string $errstr [, string $errfile [, int $errline [, array $errcontext ]]] )
+ */
+set_error_handler(function ($errno, $errstr) {
+    $err_type = '';
+    $return = true;
+    if (E_WARNING === $errno) {
+        $err_type = 'warning';
+        $return = false;
+    } elseif (E_NOTICE === $errno) {
+        $err_type = 'notice';
+    } elseif (E_ERROR === $errno) {
+        $err_type = 'error';
     }
-    
-    /* warning */
-    function test($a) {}
-    test();
-    sayHere(__LINE__);
-    
-    /* notice */
-    echo $notice_msg;
-    sayHere(__LINE__);
-    
-    /* fatal */
-    $i = '';
-    while(1) {
-        $i .= 'a';
-    }
-    
-    sayHere(__LINE__);
+    echo sprintf("This is error callback, err_type:%s, err_no:%d, err_str:%s \n", $err_type, $errno, $errstr);
+    return $return;
+});
+
+function sayHere($line)
+{
+    echo sprintf("I am here.Line:%d \n", $line);
+}
+
+/* warning */
+function test($a) {}
+test();
+sayHere(__LINE__);
+
+/* notice */
+echo $notice_msg;
+sayHere(__LINE__);
+
+/* fatal */
+$i = '';
+while(1) {
+    $i .= 'a';
+}
+
+sayHere(__LINE__);
 ```
 结果如下：
 
@@ -111,41 +111,41 @@ E_NOTICE 返回 true 的时候，我们看到底层对标准错误的输出，�
 测试代码如下：
 
 ```php
-    <?php
-    /* 让错误信息在标准输出可见 */
-    ini_set("display_errors","On");
-    
-    /**
-     * 回调函数原型 : 参数由 register_shutdown_function 的参数决定
-     */
-    register_shutdown_function(function () {
-        echo "This will shutdown. \n";
-    });
-    
-    function sayHere($line)
-    {
-        echo sprintf("I am here.Line:%d \n", $line);
-    }
-    
-    function test($a)
-    {
-        return;
-    }
-    
-    /* warning */
-    test();
-    sayHere(__LINE__);
-    
-    /* notice */
-    echo $notice_msg;
-    sayHere(__LINE__);
-    
-    /* fatal */
-    $i = '';
-    while(1) {
-        $i .= 'a';
-    }
-    sayHere(__LINE__);
+<?php
+/* 让错误信息在标准输出可见 */
+ini_set("display_errors","On");
+
+/**
+ * 回调函数原型 : 参数由 register_shutdown_function 的参数决定
+ */
+register_shutdown_function(function () {
+    echo "This will shutdown. \n";
+});
+
+function sayHere($line)
+{
+    echo sprintf("I am here.Line:%d \n", $line);
+}
+
+function test($a)
+{
+    return;
+}
+
+/* warning */
+test();
+sayHere(__LINE__);
+
+/* notice */
+echo $notice_msg;
+sayHere(__LINE__);
+
+/* fatal */
+$i = '';
+while(1) {
+    $i .= 'a';
+}
+sayHere(__LINE__);
 ```
 结果如下：
 
@@ -164,23 +164,23 @@ E_NOTICE 返回 true 的时候，我们看到底层对标准错误的输出，�
 测试代码如下：
 
 ```php
-    <?php
-    /* 让错误信息在标准输出可见 */
-    ini_set("display_errors","On");
-    
-    class UserException extends \Exception
-    {
-    }
-    
-    try {
-        throw new \UserException('This is exception');
-    } catch (\UserException $e) {
-        echo 'UserException:' . $e->getMessage() . PHP_EOL;
-    } catch (\Exception $e) {
-        echo 'Exception:' . $e->getMessage() . PHP_EOL;
-    } finally {
-        echo 'here is finally' . PHP_EOL;
-    }
+<?php
+/* 让错误信息在标准输出可见 */
+ini_set("display_errors","On");
+
+class UserException extends \Exception
+{
+}
+
+try {
+    throw new \UserException('This is exception');
+} catch (\UserException $e) {
+    echo 'UserException:' . $e->getMessage() . PHP_EOL;
+} catch (\Exception $e) {
+    echo 'Exception:' . $e->getMessage() . PHP_EOL;
+} finally {
+    echo 'here is finally' . PHP_EOL;
+}
 ```
 结果如下：
 
@@ -196,13 +196,13 @@ E_NOTICE 返回 true 的时候，我们看到底层对标准错误的输出，�
 我们先看一下，未被 catch 会怎么样：
 
 ```php
-    <?php
-    /* 让错误信息在标准输出可见 */
-    ini_set("display_errors","On");
-    
-    throw new \Exception('I am an exception');
-    
-    echo 'I am here' . PHP_EOL;
+<?php
+/* 让错误信息在标准输出可见 */
+ini_set("display_errors","On");
+
+throw new \Exception('I am an exception');
+
+echo 'I am here' . PHP_EOL;
 ```
 结果如下：
 
@@ -220,19 +220,19 @@ E_NOTICE 返回 true 的时候，我们看到底层对标准错误的输出，�
 测试代码如下：
 
 ```php
-    <?php
-    /* 让错误信息在标准输出可见 */
-    ini_set("display_errors","On");
-    
-    /**
-     * 回调函数签名：void handler ( Exception $ex )
-     */
-    set_exception_handler(function ($e) {
-        echo sprintf("This is exception, msg:%s\n", $e->getMessage());
-    });
-    
-    throw new \Exception('I am an exception');
-    echo 'I am here' . PHP_EOL;
+<?php
+/* 让错误信息在标准输出可见 */
+ini_set("display_errors","On");
+
+/**
+ * 回调函数签名：void handler ( Exception $ex )
+ */
+set_exception_handler(function ($e) {
+    echo sprintf("This is exception, msg:%s\n", $e->getMessage());
+});
+
+throw new \Exception('I am an exception');
+echo 'I am here' . PHP_EOL;
 ```
 结果如下：
 

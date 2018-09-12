@@ -35,9 +35,9 @@ new self
 1.`self`返回的是 `new self` 中关键字 `new` 所在的类中，比如这里例子的 ：
 
 ```php
-    public static function getSelf() {
-      return new self(); // new 关键字在 Father 这里
-    }
+public static function getSelf() {
+  return new self(); // new 关键字在 Father 这里
+}
 ```
 始终返回 Father。
 

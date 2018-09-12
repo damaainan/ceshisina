@@ -35,41 +35,41 @@
 现在重点来了，原来自己认为**超时时间假如为 m 秒，那么访问接口最终响应（包括网络传输时间）超过 m 秒，调用程序就会报错。实际并不是这样，只要在 m 秒数据包一直在传输，那么调用程序就不会报错。**
 
 通过程序来演示下，先看接口代码，模拟网络传输慢的情况：
-
-    ob_implicit_flush(1);
-    for($i=0; $i<6; $i++){
-        echo $i; 
-        echo str_repeat(' ',1024*64);
-        sleep(1);
-    }
-
+```php
+ob_implicit_flush(1);
+for($i=0; $i<6; $i++){
+    echo $i; 
+    echo str_repeat(' ',1024*64);
+    sleep(1);
+}
+```
 现在看看调用代码，可以看出虽然接口最后输出需要 6 秒，但由于数据库包一直在传输，代码并不报错。
+```php
+ini_set("default_socket_timeout", 3);
+$url = "http://localhost/api.php";
 
-    ini_set("default_socket_timeout", 3);
-    $url = "http://localhost/api.php";
-    
-    function e_filegetcontents() {
-        global $url;
-        var_dump(file_get_contents($url));
-    }
-    
-    function e_fopenfgets(){
-        global $url;
-        $context = stream_context_create(array('http'=> array(
-        'timeout' => 3.0,
-        ))); 
-    
-        $handle = fopen($url, "r",true,$context);
-        if ($handle) {
-            while (($buffer = fgets($handle, 4096)) !== false) {
-            }
-            fclose($handle);
+function e_filegetcontents() {
+    global $url;
+    var_dump(file_get_contents($url));
+}
+
+function e_fopenfgets(){
+    global $url;
+    $context = stream_context_create(array('http'=> array(
+    'timeout' => 3.0,
+    ))); 
+
+    $handle = fopen($url, "r",true,$context);
+    if ($handle) {
+        while (($buffer = fgets($handle, 4096)) !== false) {
         }
+        fclose($handle);
     }
-    
-    e_filegetcontents();
-    e_fopenfgets();
+}
 
+e_filegetcontents();
+e_fopenfgets();
+```
 #### 还是让我们使用 cURL 扩展来处理超时控制吧
 
 假如你想更精确的处理超时，就使用 cURL 扩展，它可以设置连接超时和读取超时（CURLOPT_TIMEOUT，CURLOPT_CONNECTTIMEOUT）。
@@ -78,20 +78,21 @@
 注意假如使用这两个常量，必须设置 curl_setopt($ch, CURLOPT_NOSIGNAL, 1);神奇的来了，cURL 扩展机制很特别，**在指定的读取时间获取到多少数据就返回多少，然后调用也终止，程序并不报错**
 
 通过代码看一下：
-
-    function e_curl() {
-        global $url;
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 3);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
-        $response = curl_exec($ch);
-        if ($response === false) {
-            $info = curl_getinfo($ch);
-            if ($info['http_code'] === 0) {
-            return false;
-            }
+```php
+function e_curl() {
+    global $url;
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+    $response = curl_exec($ch);
+    if ($response === false) {
+        $info = curl_getinfo($ch);
+        if ($info['http_code'] === 0) {
+        return false;
         }
-        return true;
     }
-    e_curl();
+    return true;
+}
+e_curl();
+```

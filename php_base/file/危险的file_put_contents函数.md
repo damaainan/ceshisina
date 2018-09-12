@@ -33,21 +33,20 @@
 因此，猜测文件上传的代码是这样写的
 
 ```php
-    <?php 
+<?php 
+ 
+if(isset($_POST['content']) && isset($_POST['ext'])){
+    $data = $_POST['content'];
+    $ext = $_POST['ext'];
+ 
+    //var_dump(preg_match('/\</',$data));
+    if(preg_match('/\</',$data)){
+        die('hack');
+    }
+    $filename = time();
+    file_put_contents($filename.$ext, $data);
+}
      
-    if(isset($_POST['content']) && isset($_POST['ext'])){
-        $data = $_POST['content'];
-        $ext = $_POST['ext'];
-     
-        //var_dump(preg_match('/\</',$data));
-        if(preg_match('/\</',$data)){
-            die('hack');
-        }
-        $filename = time();
-        file_put_contents($filename.$ext, $data);
-    }
-     
-    ?>
 ```
     
 
@@ -58,23 +57,22 @@
 修复方法是使用 fwrite 函数来代替危险的 file_put_contents 函数,fwrite函数只能传入字符串，如果是数组会出错返回false 
 
 ```php
-    <?php 
+<?php 
+ 
+if(isset($_POST['content']) && isset($_POST['ext'])){
+    $data = $_POST['content'];
+    $ext = $_POST['ext'];
+ 
+    //var_dump(preg_match('/\</',$data));
+    if(preg_match('/\</',$data)){
+        die('hack');
+    }
+    $filename = time();
+    // file_put_contents($filename.$ext, $data);
+    $f = fopen($filename.$ext);
+    var_dump(fwrite($f,$data));
+}
      
-    if(isset($_POST['content']) && isset($_POST['ext'])){
-        $data = $_POST['content'];
-        $ext = $_POST['ext'];
-     
-        //var_dump(preg_match('/\</',$data));
-        if(preg_match('/\</',$data)){
-            die('hack');
-        }
-        $filename = time();
-        // file_put_contents($filename.$ext, $data);
-        $f = fopen($filename.$ext);
-        var_dump(fwrite($f,$data));
-    }
-     
-    ?>
 ```
 
 [1]: http://www.blogsir.com.cn/safe/459.html

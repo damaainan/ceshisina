@@ -41,14 +41,14 @@ client 表示用户的真实 IP，每经过一次代理服务器，代理服务�
 用户的 IP 为（A）,分别经过两个代理服务器（B，C），最后到达 Web 服务器，那么Web 服务器接收到的 X-Forwarded-For 就是 A,B。
 
 那么 PHP 如何获取真实客户端 IP 呢？
-
+```php
     $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? trim($_SERVER['HTTP_X_FORWARDED_FOR']) : '';
     if (!$ip) {
         $ip = isset($_SERVER['REMOTE_ADDR']) ? trim($_SERVER['REMOTE_ADDR']) : '';
     }
     $a = explode('|', str_replace(',', '|', $ip));
     $ip = trim($a[0]);
-
+```
 这里预先说明下，假设这两个代理服务器都是好的代理服务器，没有伪造 HTTP_X_FORWARDED_FOR。
 
 #### 配置反向代理
@@ -58,12 +58,12 @@ client 表示用户的真实 IP，每经过一次代理服务器，代理服务�
 现在只要是具备一定规模的网站（Web 服务器大于 1 台），为了安全和负载均衡考虑都会在 Web 服务器前面部署反向代理，反向代理有 HAproxy，Nginx，Apache 等等。
 
 这里通过 Nginx 来部署反向代理：
-
+```nginx
     proxy_set_header Host $http_host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
-
+```
 简单的解释下：
 
 * X-Forwarded-For 表示 Nginx 接收到的头，原样的转发过来（假如不转发，Web 服务器就不能获取这个头）。

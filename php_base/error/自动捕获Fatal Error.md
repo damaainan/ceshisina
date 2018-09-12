@@ -44,14 +44,16 @@
 
 说干就干，看看这两个函数的威力怎样,不一会,小五就写出了测试代码。
 
-    <?php
-    //设置异常捕获函数
-    set_exception_handler("my_exception");
-    function my_exception($exception){
-        echo 'Exception Catched:'.$exception->getMessage();
-    }
-    //抛出异常
-    throw new Exception("I am Exception");
+```php
+<?php
+//设置异常捕获函数
+set_exception_handler("my_exception");
+function my_exception($exception){
+    echo 'Exception Catched:'.$exception->getMessage();
+}
+//抛出异常
+throw new Exception("I am Exception");
+```
 
 ![][4]
 
@@ -59,19 +61,21 @@ Yes，抛出的一个Exception真的被捕获了！
 
 "接下来再测下set_error_handler()，你可不能让我失望啊！"小五心想。
 
-    <?php
-    set_error_handler("error_handler");
-    function error_handler($errno,$errstr,$errfile,$errline){
-        $str=<<<EOF
-             "errno":$errno
-             "errstr":$errstr
-             "errfile":$errfile
-             "errline":$errline
-    EOF;
-    //获取到错误可以自己处理，比如记Log、报警等等
-        echo $str;
-    }
-    echo $test;//$test未定义，会报一个notice级别的错误
+```php
+<?php
+set_error_handler("error_handler");
+function error_handler($errno,$errstr,$errfile,$errline){
+    $str=<<<EOF
+         "errno":$errno
+         "errstr":$errstr
+         "errfile":$errfile
+         "errline":$errline
+EOF;
+//获取到错误可以自己处理，比如记Log、报警等等
+    echo $str;
+}
+echo $test;//$test未定义，会报一个notice级别的错误
+```
 
 ![][5]
 
@@ -81,20 +85,22 @@ Yes，抛出的一个Exception真的被捕获了！
 
 抑制住激动的心情，小五很快写完了测试代码。
 
-    <?php
-    set_error_handler("error_handler");
-    function error_handler($errno,$errstr,$errfile,$errline){
-        $str=<<<EOF
-             "errno":$errno
-             "errstr":$errstr
-             "errfile":$errfile
-             "errline":$errline
-    EOF;
-    //获取到错误可以自己处理，比如记Log、报警等等
-        echo $str;
-    }
-    //调用一个不存在的函数，会出现Fatal Error
-    test();
+```php
+<?php
+set_error_handler("error_handler");
+function error_handler($errno,$errstr,$errfile,$errline){
+    $str=<<<EOF
+         "errno":$errno
+         "errstr":$errstr
+         "errfile":$errfile
+         "errline":$errline
+EOF;
+//获取到错误可以自己处理，比如记Log、报警等等
+    echo $str;
+}
+//调用一个不存在的函数，会出现Fatal Error
+test();
+```
 
 小五屏住呼吸，等待着奇迹的出现。"咣当"，手起指落，几行报错跃然屏上...
 
@@ -140,13 +146,13 @@ register_shutdown_function()，就把你要注册进去的function放进【假�
 
 返回的数组包含 4 个键和值：
 
-[type] - 错误类型
+`[type]` - 错误类型
 
-[message] - 错误消息
+`[message]` - 错误消息
 
-[file] - 发生错误所在的文件
+`[file]` - 发生错误所在的文件
 
-[line] - 发生错误所在的行
+`[line]` - 发生错误所在的行
 
 ### 强烈注意
 
@@ -158,13 +164,15 @@ register_shutdown_function()，就把你要注册进去的function放进【假�
 
 #### error_handler.php
 
-    <?php
-    register_shutdown_function("error_handler");
-    function error_handler(){
-        echo "Yeah,it's worked!";
-    }
-    function test(){}
-    function test(){}
+```php
+<?php
+register_shutdown_function("error_handler");
+function error_handler(){
+    echo "Yeah,it's worked!";
+}
+function test(){}
+function test(){}
+```
 
 执行结果如下：
 
@@ -178,15 +186,17 @@ register_shutdown_function()，就把你要注册进去的function放进【假�
 
 #### error_handler.php
 
-    <?php
-    register_shutdown_function("error_handler");
-    function error_handler(){
-        echo "Yeah,it's worked!";
-    }
-    if(true){
-       function test(){}
-    }
-    function test(){}
+```php
+<?php
+register_shutdown_function("error_handler");
+function error_handler(){
+    echo "Yeah,it's worked!";
+}
+if(true){
+   function test(){}
+}
+function test(){}
+```
 
 执行结果如下：
 
@@ -204,18 +214,22 @@ register_shutdown_function()，就把你要注册进去的function放进【假�
 
 #### error_handler.php
 
-    <?php
-    register_shutdown_function("error_handler");
-    function error_handler(){
-        echo "Yeah,it's worked!";
-    }
+```php
+<?php
+register_shutdown_function("error_handler");
+function error_handler(){
+    echo "Yeah,it's worked!";
+}
+```
 
 #### test.php
 
-    <?php
-    include './error_handler.php';
-    function test(){}
-    function test(){}
+```php
+<?php
+include './error_handler.php';
+function test(){}
+function test(){}
+```
 
 执行 test.php的结果如下
 
@@ -229,23 +243,29 @@ register_shutdown_function()，就把你要注册进去的function放进【假�
 
 #### error_handler.php
 
-    <?php
-    register_shutdown_function("error_handler");
-    function error_handler(){
-        echo "Yeah,it's worked!";
-    }
+```php
+<?php
+register_shutdown_function("error_handler");
+function error_handler(){
+    echo "Yeah,it's worked!";
+}
+```
 
 #### test.php
 
-    <?php
-    function test(){}
-    function test(){}
+```php
+<?php
+function test(){}
+function test(){}
+```
 
 #### include_all.php
 
-    <?php
-    require './error_handler.php';
-    require './test.php';
+```php
+<?php
+require './error_handler.php';
+require './test.php';
+```
 
 执行 include_all.php的结果如下
 
@@ -269,36 +289,37 @@ register_shutdown_function()，就把你要注册进去的function放进【假�
 
 "好了，我自己就写一个error_handler脚本吧，确保每次都能获取到想要的Fatal Error。"
 
-    <?php
-    register_shutdown_function( "fatal_handler" );
-    set_error_handler("error_handler");
-    
-    define('E_FATAL',  E_ERROR | E_USER_ERROR |  E_CORE_ERROR | 
-            E_COMPILE_ERROR | E_RECOVERABLE_ERROR| E_PARSE );
-    
-    //获取fatal error
-    function fatal_handler() {
-        $error = error_get_last();
-        if($error && ($error["type"]===($error["type"] & E_FATAL))) {
-            $errno   = $error["type"];
-            $errfile = $error["file"];
-            $errline = $error["line"];
-            $errstr  = $error["message"];
-            error_handler($errno,$errstr,$errfile,$errline);
-      }
-    }
-    //获取所有的error
-    function error_handler($errno,$errstr,$errfile,$errline){
-        $str=<<<EOF
-             "errno":$errno
-             "errstr":$errstr
-             "errfile":$errfile
-             "errline":$errline
-    EOF;
-    //获取到错误可以自己处理，比如记Log、报警等等
-        echo $str;
-    }
+```php
+<?php
+register_shutdown_function( "fatal_handler" );
+set_error_handler("error_handler");
 
+define('E_FATAL',  E_ERROR | E_USER_ERROR |  E_CORE_ERROR | 
+        E_COMPILE_ERROR | E_RECOVERABLE_ERROR| E_PARSE );
+
+//获取fatal error
+function fatal_handler() {
+    $error = error_get_last();
+    if($error && ($error["type"]===($error["type"] & E_FATAL))) {
+        $errno   = $error["type"];
+        $errfile = $error["file"];
+        $errline = $error["line"];
+        $errstr  = $error["message"];
+        error_handler($errno,$errstr,$errfile,$errline);
+  }
+}
+//获取所有的error
+function error_handler($errno,$errstr,$errfile,$errline){
+    $str=<<<EOF
+         "errno":$errno
+         "errstr":$errstr
+         "errfile":$errfile
+         "errline":$errline
+EOF;
+//获取到错误可以自己处理，比如记Log、报警等等
+    echo $str;
+}
+```
 有了这个脚本，我再按SO上说的第四种方法去执行，那这个需求就实现了！
 
 ## 不负众望

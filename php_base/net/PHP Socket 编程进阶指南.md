@@ -111,14 +111,14 @@ socket_close($socket);
  
 我们在命令行里运行服务端：
  
-```php
+```
 $ php socket_tcp_server.php 
 waiting client...
 ```
  
 新开终端使用telnet连接：
  
-```php
+```
 $ telnet 127.0.0.1 9201
 Trying 127.0.0.1...
 Connected to 127.0.0.1.
@@ -128,7 +128,7 @@ hello Server!
  
 我们发送了一条消息，服务端这边会收到：
  
-```php
+```
 client connect succ.
 recv: hello Server!
 ```
@@ -170,7 +170,7 @@ socket_close($socket);
  
 我们先在原来的telnet终端页面输入`quit`退出连接，因为此时我们的服务端还只能接受一个客户端连接。然后运行自己写的客户端：
  
-```php
+```
 $ php socket_tcp_client.php 
 from server: hello, I'm client!
 ```
@@ -287,14 +287,14 @@ socket_close($socket);
  
 我们先使用`Crtl+C`关闭上一次运行的TCP server，然后运行新写的server：
  
-```php
+```
 php socket_select.php
 waiting client...
 ```
  
 新开终端telnet客户端：
  
-```php
+```
 telnet 127.0.0.1 9201
 Trying 127.0.0.1...
 Connected to localhost.
@@ -305,7 +305,7 @@ hello world
  
 再打开终端新开一个telnet客户端，我们来看服务端的输出：
  
-```php
+```
 client connect succ. fd: Resource id #5
 client addr: 127.0.0.1:60065
 server addr: 127.0.0.1:9201
@@ -333,7 +333,7 @@ select 函数监视的文件描述符分为3类，分别是 writefds, readfds, e
  
 该函数用来设置socket选项，比如设置端口复用。函数原型：
  
-```php
+```
 bool socket_set_option ( resource $socket , int $level , int $optname , mixed $optval )
 ```
  
@@ -402,7 +402,7 @@ stream_socket系列函数相当于是socket函数的进一步封装。使用该�
  
 stream_socket_server：
  
-```php
+```
 resource stream_socket_server ( string $local_socket [, int &$errno [, string &$errstr [, int $flags = STREAM_SERVER_BIND | STREAM_SERVER_LISTEN [, resource $context ]]]] )
 ```
  
@@ -415,7 +415,7 @@ $context = stream_context_create($context_option);
  
 stream_socket_accept：
  
-```php
+```
 resource stream_socket_accept ( resource $server_socket [, float $timeout = ini_get("default_socket_timeout") [, string &$peername ]] )
 ```
  
@@ -481,7 +481,7 @@ fclose($socket);
  
 运行：
  
-```php
+```
 $ php stream_socket_server.php 
 waiting client...
 new Client! fd:6
@@ -490,7 +490,7 @@ recv: hello
  
 客户端使用telnet：
  
-```php
+```
 $ telnet 127.0.0.1 9201
 Trying 127.0.0.1...
 Connected to 127.0.0.1.
@@ -545,14 +545,14 @@ while(1){
  
 运行：
  
-```php
+```
 $ php stream_socket_server_udp.php 
 127.0.0.1:43172recv: hello
 ```
  
 客户端使用 netcat：
  
-```php
+```
 netcat -u 127.0.0.1 9201
 hello
 recv: hello
@@ -561,7 +561,7 @@ quit
  
 如果没有netcat需要安装：
  
-```php
+```
 sudo apt-get install netcat
 ```
  
@@ -664,7 +664,7 @@ fclose($socket);
  
 运行服务端并随后运行telnet客户端：
  
-```php
+```
 $ php stream_select.php 
 waiting client...
 new Client! fd:6
@@ -723,7 +723,7 @@ while(1){
  
 先运行tcp服务端程序stream_select.php，然后运行该客户端程序：
  
-```php
+```
 $ php tcp_client_select.php 
 ENTER MSG:hello!
 ENTER MSG:
@@ -736,7 +736,7 @@ ENTER MSG:
  
 ### 函数参考
  
-```php
+```
 stream_socket_server() - 创建server
 stream_socket_accept() - 接受由 stream_socket_server创建的socket连接
 stream_socket_get_name() - 获取本地或者远程的套接字名称

@@ -22,12 +22,12 @@ Composer Composer 将这样为你解决问题：
 
 例如，你正在创建一个项目，你需要一个库来做日志记录。你决定使用 monolog。为了将它添加到你的项目中，你所需要做的就是创建一个 `composer.json` 文件，其中描述了项目的依赖关系。
 
-```
-    {
-      "require": {
-        "monolog/monolog": "1.2.*"
-      }
-    }
+```json
+{
+  "require": {
+    "monolog/monolog": "1.2.*"
+  }
+}
 ```
 
 然后我们只要在项目里面直接use Monolog\Logger即可，神奇吧！
@@ -57,8 +57,8 @@ Composer Composer 将这样为你解决问题：
 laravel框架的初始化是需要composer自动加载协助的，所以laravel的入口文件index.php第一句就是利用composer来实现自动加载功能。
 
 ```php
-    <?php
-    require __DIR__.'/../bootstrap/autoload.php';
+<?php
+require __DIR__.'/../bootstrap/autoload.php';
 ```
 
 咱们接着去看bootstrap目录下的autoload.php：

@@ -23,9 +23,8 @@
 一个简单的PHP CLI程序，命名hello.php
 
 ```php
-    <?php
-    echo "Hello from the CLI";
-    ?>
+<?php
+echo "Hello from the CLI";
 ```
 现在，试着在命令行提示符下运行这个程序，方法是调用CLI可执行文件并提供脚本的文件名：
 
@@ -45,16 +44,15 @@ PHP CLI会定义三个常量，以便让在命令行提示符下与解释器进�
 使用范例：
 
 ```php
-    <?php
-    // ask for input
-    fwrite(STDOUT, "Enter your name: ");
-     
-    // get input
-    $name = trim(fgets(STDIN));
-     
-    // write input back
-    fwrite(STDOUT, "Hello, $name!");
-    ?>
+<?php
+// ask for input
+fwrite(STDOUT, "Enter your name: ");
+ 
+// get input
+$name = trim(fgets(STDIN));
+ 
+// write input back
+fwrite(STDOUT, "Hello, $name!");
 ```
 
 output:
@@ -75,9 +73,8 @@ PHP CLI带有两个特殊的变量，专门用来达到这个目的：
 使用范例：
 
 ```php
-    <?php
-    print_r($argv);
-    ?>
+<?php
+print_r($argv);
 ```
 
 output:
@@ -103,20 +100,19 @@ output:
 使用范例
 
 ```php
-    <?php
-            $shortopts = "";
-            $shortopts .= "f:";  // Required value
-            $shortopts .= "v::"; // Optional value
-            $shortopts .= "abc"; // These options do not accept values
-            $longopts = array(
-                "required:", // Required value
-                "optional::", // Optional value
-                "option", // No value
-                "opt", // No value
-            );
-            $options = getopt($shortopts, $longopts);
-            var_dump($options);
-    ?> 
+<?php
+$shortopts = "";
+$shortopts .= "f:";  // Required value
+$shortopts .= "v::"; // Optional value
+$shortopts .= "abc"; // These options do not accept values
+$longopts = array(
+    "required:", // Required value
+    "optional::", // Optional value
+    "option", // No value
+    "opt", // No value
+);
+$options = getopt($shortopts, $longopts);
+var_dump($options);
 ```
 
 ouput:

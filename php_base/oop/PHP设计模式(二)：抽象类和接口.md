@@ -20,37 +20,34 @@
 
 抽象类是一个编程概念，PHP中叫Abstract Classes。在设计模式中，抽象类不能够被实例化/初始化，但是可以依靠具体类的继承来实现。  
 有点抽象，对吧？用代码来解释：
-
-    <?php
-    abstract class Animal {
-      public $name;
-      abstract public function eat($food);
-    }
-    ?>
-
+```php
+<?php
+abstract class Animal {
+  public $name;
+  abstract public function eat($food);
+}
+```
 定义了动物这个抽象类，动物的属性是名字name，然后有一个方法是吃食物eat food。  
 为什么动物是抽象类？因为动物这个物种并不是一个存在于自然界的东西，它是人类脑海里抽象出的东西。存在自然界的是鲸鱼和鲤鱼这样的确定性动物。  
 比如鲸鱼的概念，应该是属于动物，继承Animal类，我们定义鲸鱼这个类以及吃东西的方法：
 
 ```php
-    <?php
-    class Whale extends Animal {
-      public function __construct() {
-        $this->name = "Whale";
-      }
-      public function eat($food) {
-        echo $this->name . " eat " . $food . ".\n";
-      }
-    }
-    ?>
+<?php
+class Whale extends Animal {
+  public function __construct() {
+    $this->name = "Whale";
+  }
+  public function eat($food) {
+    echo $this->name . " eat " . $food . ".\n";
+  }
+}
 ```
 现在我们可以初始鲸鱼类，并且调用吃的方法了：
 
 ```php
-    <?php
-      $whale = new Whale();
-      $whale->eat("fish");
-    ?>
+<?php
+$whale = new Whale();
+$whale->eat("fish");
 ```
 运行一下：
 
@@ -62,34 +59,31 @@
 PHP也支持面向过程编程概念中的接口，下面同样用鲸鱼的例子来讲述：
 
 ```php
-    <?php
-    interface IAction {
-      public function eat($food);
-      public function swim();
-    }
-    ?>
+<?php
+interface IAction {
+  public function eat($food);
+  public function swim();
+}
 ```
 同样定义一个鲸鱼类，来实现上述接口：
 
 ```php
-    <?php
-    class Whale implements IAction {
-      public function eat($food) {
-        echo "Whale eat " . $food . "\n.";
-      }
-      public swim() {
-        echo "Whale is swimming.\n";
-      }
-    }
-    ?>
+<?php
+class Whale implements IAction {
+  public function eat($food) {
+    echo "Whale eat " . $food . "\n.";
+  }
+  public swim() {
+    echo "Whale is swimming.\n";
+  }
+}
 ```
 现在我们可以初始鲸鱼类，并且调用吃的方法了：
 
 ```php
-    <?php
-      $whale = new Whale();
-      $whale->eat("fish");
-    ?>
+<?php
+$whale = new Whale();
+$whale->eat("fish");
 ```
 运行一下：
 
@@ -106,34 +100,33 @@ PHP也支持面向过程编程概念中的接口，下面同样用鲸鱼的例�
 此外，对于事物属性的更改，建议使用接口，而不是直接赋值或者别的方式，如：
 
 ```php
-    <?php
-    interface IAction {
-      public function eat();
-    }
-    class Whale implements IAction {
-      public function eat() {
-        echo "Whale eat fish.\n";
-      }
-    }
-    class Carp implements IAction {
-      public function eat() {
-        echo "Carp eat moss.\n";
-      }
-    }
-    
-    class Observer {
-      public function __construct() {
-        $whale = new Whale();
-        $carp = new Carp();
-        $this->observeEat($whale);
-        $this->observeEat($carp);
-      }
-      function observeEat(IAction $animal) {
-        $animal->eat();
-      }
-    }
-    $observer = new observer();
-    ?>
+<?php
+interface IAction {
+  public function eat();
+}
+class Whale implements IAction {
+  public function eat() {
+    echo "Whale eat fish.\n";
+  }
+}
+class Carp implements IAction {
+  public function eat() {
+    echo "Carp eat moss.\n";
+  }
+}
+
+class Observer {
+  public function __construct() {
+    $whale = new Whale();
+    $carp = new Carp();
+    $this->observeEat($whale);
+    $this->observeEat($carp);
+  }
+  function observeEat(IAction $animal) {
+    $animal->eat();
+  }
+}
+$observer = new observer();
 ```
 运行一下：
 

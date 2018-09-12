@@ -26,13 +26,14 @@
 
 大部分默认的nginx连接方式为php-fpm监听127.0.0.1:9000的方式，其实php-fpm还有一种socket连接配置，相比默认的速度更好（基于内存加载）
 
-    location ~ .*\.(php|php5)?$ {
-      fastcgi_pass unix:/dev/shm/php-fpm.sock;
-      fastcgi_index index.php;
-      fastcgi_param SCRIPT_FILENAME /data/server/51bbo.compublic_html$fastcgi_script_name;
-      include fastcgi_params;
-    }
-
+```nginx
+  location ~ .*\.(php|php5)?$ {
+    fastcgi_pass unix:/dev/shm/php-fpm.sock;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME /data/server/51bbo.compublic_html$fastcgi_script_name;
+    include fastcgi_params;
+  }
+```
 5.2.xx版本php
 
 php-fpm配置方法：

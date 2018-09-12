@@ -42,13 +42,10 @@ $someclass = new SomeClass;
     
 ```php
 <?php
-　　function __autoload($class_name) {
-
-  // __autoload只是在这里操作第三步
-
-　　     require_once ($class_name . "class.php");
-
-　　}
+function __autoload($class_name) {
+    // __autoload只是在这里操作第三步
+　　require_once ($class_name . "class.php");
+}
 
 $memo= new Demo();
 ```
@@ -64,13 +61,13 @@ $memo= new Demo();
     
 ```php
 <?php
-　　function __autoload($class_name) {
+function __autoload($class_name) {
 
     $path = str_replace("_", "/", $class_name);
 
     require_once $path.".php";
 
-　　}
+}
 
 $memo= new Demo();
 ```
