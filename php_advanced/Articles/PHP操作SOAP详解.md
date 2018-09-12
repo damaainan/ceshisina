@@ -11,23 +11,23 @@
 
 php.ini 开启扩展
 
-    extension=soap.so
-    extension=openssl.so
-    extension=curl.so
-     
+```ini
+extension=soap.so
+extension=openssl.so
+extension=curl.so
+```
     
-
 配置soap相关参数
-
-    [soap]
-    ; Enables or disables WSDL caching feature. 开启或禁用WSDL缓存特性
-    soap.wsdl_cache_enabled=1
-    ; Sets the directory name where SOAP extension will put cache files.设置SOAP扩展放置缓存文件的目录
-    soap.wsdl_cache_dir="/tmp"
-    ; (time to live) Sets the number of second while cached file will be used 设置缓存生效时间（秒）
-    ; instead of original one.
-    soap.wsdl_cache_ttl=86400
-     
+```ini
+[soap]
+; Enables or disables WSDL caching feature. 开启或禁用WSDL缓存特性
+soap.wsdl_cache_enabled=1
+; Sets the directory name where SOAP extension will put cache files.设置SOAP扩展放置缓存文件的目录
+soap.wsdl_cache_dir="/tmp"
+; (time to live) Sets the number of second while cached file will be used 设置缓存生效时间（秒）
+; instead of original one.
+soap.wsdl_cache_ttl=86400
+```
     
 
 ## 基础类介绍 
@@ -51,43 +51,42 @@ php.ini 开启扩展
 ## 服务端示例 
 
 ```php
-    <?php
-    Class RobotInfo
-    {
-        public function sayHello(){
-            return "Say Hello!";
-        }
-    }
-     
-    //wsdl方式
-    //$s = new SoapServer('RobotInfo.wsdl');
-     
-    //在non-wsdl方式中option服务端的location是选择性的，可以不提供  
-    $s = new SoapServer(, array("location" => "http://localhost/server.php", "uri" => "server.php"));
-    $s->setClass("RobotInfo");
-    $s->handle();
+<?php
+Class RobotInfo
+{
+    public function sayHello(){
+        return "Say Hello!";
+    }
+}
+ 
+//wsdl方式
+//$s = new SoapServer('RobotInfo.wsdl');
+ 
+//在non-wsdl方式中option服务端的location是选择性的，可以不提供  
+$s = new SoapServer(, array("location" => "http://localhost/server.php", "uri" => "server.php"));
+$s->setClass("RobotInfo");
+$s->handle();
 ```
     
-
 ## 客户端示例 
 
 ```php
-    <?php
-    try {
-        //wsdl方式
-        //$soap = new SoapClient("http://localhost/RobotInfo.wsdl");
-     
-        //在non-wsdl方式中option location系必须提供的
-        $soap = new SoapClient(, array('location' => "http://localhost/server.php", 'uri' => 'server.php'));
-     
-        //两种调用方式:直接调用方法和用__soapCall简接调用
-        $result = $soap->sayHello(); // $soap->__soapCall("sayHello", array());
-        echo $result;
-    } catch (SoapFault $e) {
-        echo $e->getMessage();
-    } catch (Exception $e) {
-        echo $e->getMessage();
-    }
+<?php
+try {
+    //wsdl方式
+    //$soap = new SoapClient("http://localhost/RobotInfo.wsdl");
+ 
+    //在non-wsdl方式中option location系必须提供的
+    $soap = new SoapClient(, array('location' => "http://localhost/server.php", 'uri' => 'server.php'));
+ 
+    //两种调用方式:直接调用方法和用__soapCall简接调用
+    $result = $soap->sayHello(); // $soap->__soapCall("sayHello", array());
+    echo $result;
+} catch (SoapFault $e) {
+    echo $e->getMessage();
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
 ```
 
 [1]: https://www.congcong.us/post/php_soap_server_client.html

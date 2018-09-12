@@ -71,6 +71,7 @@ function str_split_utf8($str)
 
 [http://www.ruanyifeng.com/blo...][2]
 [https://segmentfault.com/a/11...][3] 口语化叙述 utf-8 的来历
+
 ### Unicode
 
 Unicode 只是一个符号集，它只规定了符号的二进制代码，却没有规定这个二进制代码应该如何存储。

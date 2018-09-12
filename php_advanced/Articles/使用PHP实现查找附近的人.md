@@ -19,46 +19,46 @@
 具体推断过程有兴趣的推荐这篇文章：[根据经纬度计算地面两点间的距离-数学公式及推导][2]
 
 PHP函数代码如下：
-
-    /**
-         * 根据两点间的经纬度计算距离
-         * @param $lat1
-         * @param $lng1
-         * @param $lat2
-         * @param $lng2
-         * @return float
-         */
-        public static function getDistance($lat1, $lng1, $lat2, $lng2){
-            $earthRadius = 6367000; //approximate radius of earth in meters
-            $lat1 = ($lat1 * pi() ) / 180;
-            $lng1 = ($lng1 * pi() ) / 180;
-            $lat2 = ($lat2 * pi() ) / 180;
-            $lng2 = ($lng2 * pi() ) / 180;
-            $calcLongitude = $lng2 - $lng1;
-            $calcLatitude = $lat2 - $lat1;
-            $stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2);
-            $stepTwo = 2 * asin(min(1, sqrt($stepOne)));
-            $calculatedDistance = $earthRadius * $stepTwo;
-            return round($calculatedDistance);
-        }
-
+```php
+/**
+ * 根据两点间的经纬度计算距离
+ * @param $lat1
+ * @param $lng1
+ * @param $lat2
+ * @param $lng2
+ * @return float
+ */
+public static function getDistance($lat1, $lng1, $lat2, $lng2){
+    $earthRadius = 6367000; //approximate radius of earth in meters
+    $lat1 = ($lat1 * pi() ) / 180;
+    $lng1 = ($lng1 * pi() ) / 180;
+    $lat2 = ($lat2 * pi() ) / 180;
+    $lng2 = ($lng2 * pi() ) / 180;
+    $calcLongitude = $lng2 - $lng1;
+    $calcLatitude = $lat2 - $lat1;
+    $stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2);
+    $stepTwo = 2 * asin(min(1, sqrt($stepOne)));
+    $calculatedDistance = $earthRadius * $stepTwo;
+    return round($calculatedDistance);
+}
+```
 MySQL代码如下：
-
-    SELECT  
-      id, (  
-        3959 * acos (  
-          cos ( radians(78.3232) )  
-          * cos( radians( lat ) )  
-          * cos( radians( lng ) - radians(65.3234) )  
-          + sin ( radians(78.3232) )  
-          * sin( radians( lat ) )  
-        )  
-      ) AS distance  
-    FROM markers  
-    HAVING distance < 30  
-    ORDER BY distance  
-    LIMIT 0 , 20;
-
+```sql
+SELECT  
+  id, (  
+    3959 * acos (  
+      cos ( radians(78.3232) )  
+      * cos( radians( lat ) )  
+      * cos( radians( lng ) - radians(65.3234) )  
+      + sin ( radians(78.3232) )  
+      * sin( radians( lat ) )  
+    )  
+  ) AS distance  
+FROM markers  
+HAVING distance < 30  
+ORDER BY distance  
+LIMIT 0 , 20;
+```
 除了上面通过计算球面距离公式来获取，我们可以使用某些数据库服务得到，比如Redis和MongoDB：
 
 Redis 3.2提供GEO地理位置功能，不仅可以获取两个位置之间的距离，获取指定位置范围内的地理信息位置集合也很简单。[Redis命令文档][3]
@@ -114,88 +114,88 @@ MongoDB专门针对这种查询建立了地理空间索引。 2d和2dsphere索�
 1.基于MySql
 
 成员添加方法：
-
-    public function geoAdd($uin, $lon, $lat)
-    {
-        $pdo = $this->getPdo();
-        $sql = 'INSERT INTO `markers`(`uin`, `lon`, `lat`) VALUES (?, ?, ?)';
-        $stmt = $pdo->prepare($sql);
-        return $stmt->execute(array($uin, $lon, $lat));
-    }
-
+```php
+public function geoAdd($uin, $lon, $lat)
+{
+    $pdo = $this->getPdo();
+    $sql = 'INSERT INTO `markers`(`uin`, `lon`, `lat`) VALUES (?, ?, ?)';
+    $stmt = $pdo->prepare($sql);
+    return $stmt->execute(array($uin, $lon, $lat));
+}
+```
 查询附近的人(支持查询条件和分页)：
+```php
+public function geoNearFind($lon, $lat, $maxDistance = 0, $where = array(), $page = 0)
+{
+    $pdo = $this->getPdo();
+    $sql = "SELECT  
+              id, (  
+                3959 * acos (  
+                  cos ( radians(:lat) )  
+                  * cos( radians( lat ) )  
+                  * cos( radians( lon ) - radians(:lon) )  
+                  + sin ( radians(:lat) )  
+                  * sin( radians( lat ) )  
+                )  
+              ) AS distance  
+            FROM markers";
 
-    public function geoNearFind($lon, $lat, $maxDistance = 0, $where = array(), $page = 0)
-    {
-        $pdo = $this->getPdo();
-        $sql = "SELECT  
-                  id, (  
-                    3959 * acos (  
-                      cos ( radians(:lat) )  
-                      * cos( radians( lat ) )  
-                      * cos( radians( lon ) - radians(:lon) )  
-                      + sin ( radians(:lat) )  
-                      * sin( radians( lat ) )  
-                    )  
-                  ) AS distance  
-                FROM markers";
-    
-        $input[':lat'] = $lat;
-        $input[':lon'] = $lon;
-    
-        if ($where) {
-            $sqlWhere = ' WHERE ';
-            foreach ($where as $key => $value) {
-                $sqlWhere .= "`{$key}` = :{$key} ,";
-                $input[":{$key}"] = $value;
-            }
-            $sql .= rtrim($sqlWhere, ',');
+    $input[':lat'] = $lat;
+    $input[':lon'] = $lon;
+
+    if ($where) {
+        $sqlWhere = ' WHERE ';
+        foreach ($where as $key => $value) {
+            $sqlWhere .= "`{$key}` = :{$key} ,";
+            $input[":{$key}"] = $value;
         }
-    
-        if ($maxDistance) {
-            $sqlHaving = " HAVING distance < :maxDistance";
-            $sql .= $sqlHaving;
-            $input[':maxDistance'] = $maxDistance;
-        }
-    
-        $sql .= ' ORDER BY distance';
-    
-        if ($page) {
-            $page > 1 ? $offset = ($page - 1) * $this->pageCount : $offset = 0;
-            $sqlLimit = " LIMIT {$offset} , {$this->pageCount}";
-            $sql .= $sqlLimit;
-        }
-    
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($input);
-        $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        return $list;
+        $sql .= rtrim($sqlWhere, ',');
     }
 
+    if ($maxDistance) {
+        $sqlHaving = " HAVING distance < :maxDistance";
+        $sql .= $sqlHaving;
+        $input[':maxDistance'] = $maxDistance;
+    }
+
+    $sql .= ' ORDER BY distance';
+
+    if ($page) {
+        $page > 1 ? $offset = ($page - 1) * $this->pageCount : $offset = 0;
+        $sqlLimit = " LIMIT {$offset} , {$this->pageCount}";
+        $sql .= $sqlLimit;
+    }
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($input);
+    $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $list;
+}
+```
 2.基于Redis(3.2以上)
 
 PHP使用Redis可以安装[redis][5]扩展或者通过composer安装[predis][6]类库，本文使用redis扩展来实现。
 
 成员添加方法：
-
-    public function geoAdd($uin, $lon, $lat)
-    {
-        $redis = $this->getRedis();
-        $redis->geoAdd('markers', $lon, $lat, $uin);
-        return true;
-    }
-
+```php
+public function geoAdd($uin, $lon, $lat)
+{
+    $redis = $this->getRedis();
+    $redis->geoAdd('markers', $lon, $lat, $uin);
+    return true;
+}
+```
 查询附近的人(不支持查询条件和分页)：
-
-    public function geoNearFind($uin, $maxDistance = 0, $unit = 'km')
-    {
-        $redis = $this->getRedis();
-        $options = ['WITHDIST']; //显示距离
-        $list = $redis->geoRadiusByMember('markers', $uin, $maxDistance, $unit, $options);
-        return $list;
-    }
-
+```php
+public function geoNearFind($uin, $maxDistance = 0, $unit = 'km')
+{
+    $redis = $this->getRedis();
+    $options = ['WITHDIST']; //显示距离
+    $list = $redis->geoRadiusByMember('markers', $uin, $maxDistance, $unit, $options);
+    return $list;
+}
+```
 3.基于MongoDB
 
 PHP使用MongoDB的扩展有[mongo][7]([文档][8])和[mongodb][9]([文档][10])，两者写法差别很大，选择好扩展需要对应相应的文档查看，由于mongodb扩展是新版，本文选择mongodb扩展。
@@ -210,95 +210,95 @@ PHP使用MongoDB的扩展有[mongo][7]([文档][8])和[mongodb][9]([文档][10])
     #db.getCollection('location').ensureIndex({loc:"2d",uin:1})
 
 成员添加方法：
+```php
+public function geoAdd($uin, $lon, $lat)
+{
+    $document = array(
+        'uin' => $uin,
+        'loc' => array(
+            'lon' =>  $lon,
+            'lat' =>  $lat,
+        ),
+    );
 
-    public function geoAdd($uin, $lon, $lat)
-    {
-        $document = array(
-            'uin' => $uin,
-            'loc' => array(
-                'lon' =>  $lon,
-                'lat' =>  $lat,
-            ),
-        );
-    
-        $bulk = new MongoDB\Driver\BulkWrite;
-        $bulk->update(
-            ['uin' => $uin],
-            $document,
-            [ 'upsert' => true]
-        );
-        //出现noreply 可以改成确认式写入
-        $manager = $this->getMongoManager();
-        $writeConcern = new MongoDB\Driver\WriteConcern(1, 100);
-        //$writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 100);
-        $result = $manager->executeBulkWrite('db.location', $bulk, $writeConcern);
-    
-        if ($result->getWriteErrors()) {
-            return false;
-        }
-        return true;
-    }  
+    $bulk = new MongoDB\Driver\BulkWrite;
+    $bulk->update(
+        ['uin' => $uin],
+        $document,
+        [ 'upsert' => true]
+    );
+    //出现noreply 可以改成确认式写入
+    $manager = $this->getMongoManager();
+    $writeConcern = new MongoDB\Driver\WriteConcern(1, 100);
+    //$writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 100);
+    $result = $manager->executeBulkWrite('db.location', $bulk, $writeConcern);
 
+    if ($result->getWriteErrors()) {
+        return false;
+    }
+    return true;
+}  
+```
 查询附近的人(返回结果没有距离，支持查询条件，支持分页)
-
-    public function geoNearFind($lon, $lat, $maxDistance = 0, $where = array(), $page = 0)
-    {
-        $filter = array(
-            'loc' => array(
-                '$near' => array($lon, $lat),
-            ),
-        );
-        if ($maxDistance) {
-            $filter['loc']['$maxDistance'] = $maxDistance;
-        }
-        if ($where) {
-            $filter = array_merge($filter, $where);
-        }
-        $options = array();
-        if ($page) {
-            $page > 1 ? $skip = ($page - 1) * $this->pageCount : $skip = 0;
-            $options = [
-                'limit' => $this->pageCount,
-                'skip' => $skip
-            ];
-        }
-    
-        $query = new MongoDB\Driver\Query($filter, $options);
-        $manager = $this->getMongoManager();
-        $cursor = $manager->executeQuery('db.location', $query);
-        $list = $cursor->toArray();
-        return $list;
+```php
+public function geoNearFind($lon, $lat, $maxDistance = 0, $where = array(), $page = 0)
+{
+    $filter = array(
+        'loc' => array(
+            '$near' => array($lon, $lat),
+        ),
+    );
+    if ($maxDistance) {
+        $filter['loc']['$maxDistance'] = $maxDistance;
+    }
+    if ($where) {
+        $filter = array_merge($filter, $where);
+    }
+    $options = array();
+    if ($page) {
+        $page > 1 ? $skip = ($page - 1) * $this->pageCount : $skip = 0;
+        $options = [
+            'limit' => $this->pageCount,
+            'skip' => $skip
+        ];
     }
 
+    $query = new MongoDB\Driver\Query($filter, $options);
+    $manager = $this->getMongoManager();
+    $cursor = $manager->executeQuery('db.location', $query);
+    $list = $cursor->toArray();
+    return $list;
+}
+```
 查询附近的人(返回结果带距离，支持查询条件，支付返回数量，不支持分页)：
+```php
+public function geoNearFindReturnDistance($lon, $lat, $maxDistance = 0, $where = array(), $num = 0)
+{
+    $params = array(
+        'geoNear' => "location",
+        'near' => array($lon, $lat),
+        'spherical' => true, // spherical设为false（默认），dis的单位与坐标的单位保持一致，spherical设为true，dis的单位是弧度
+        'distanceMultiplier' => 6371, // 计算成公里，坐标单位distanceMultiplier: 111。 弧度单位 distanceMultiplier: 6371
+    );
 
-    public function geoNearFindReturnDistance($lon, $lat, $maxDistance = 0, $where = array(), $num = 0)
-    {
-        $params = array(
-            'geoNear' => "location",
-            'near' => array($lon, $lat),
-            'spherical' => true, // spherical设为false（默认），dis的单位与坐标的单位保持一致，spherical设为true，dis的单位是弧度
-            'distanceMultiplier' => 6371, // 计算成公里，坐标单位distanceMultiplier: 111。 弧度单位 distanceMultiplier: 6371
-        );
-    
-        if ($maxDistance) {
-            $params['maxDistance'] = $maxDistance;
-        }
-        if ($num) {
-            $params['num'] = $num;
-        }
-        if ($where) {
-            $params['query'] = $where;
-        }
-    
-        $command = new MongoDB\Driver\Command($params);
-        $manager = $this->getMongoManager();
-        $cursor = $manager->executeCommand('db', $command);
-        $response = (array) $cursor->toArray()[0];
-        $list = $response['results'];
-        return $list;
+    if ($maxDistance) {
+        $params['maxDistance'] = $maxDistance;
+    }
+    if ($num) {
+        $params['num'] = $num;
+    }
+    if ($where) {
+        $params['query'] = $where;
     }
 
+    $command = new MongoDB\Driver\Command($params);
+    $manager = $this->getMongoManager();
+    $cursor = $manager->executeCommand('db', $command);
+    $response = (array) $cursor->toArray()[0];
+    $list = $response['results'];
+    return $list;
+}
+```
 注意事项：
 
 1.选择好扩展，mongo和mongodb扩展写法差别很大

@@ -32,19 +32,20 @@ EventConfig则是一个配置类，实例化后的对象作为参数可以传递
 <?php
 // 给当前php进程安装一个alarm信号处理器
 // 当进程收到alarm时钟信号后会作出动作
-pcntl_signal( SIGALRM, function(){
-  echo "tick.".PHP_EOL;
-} );
+pcntl_signal(SIGALRM, function () {
+    echo "tick." . PHP_EOL;
+});
 // 定义一个时钟间隔时间，1秒钟吧
 $tick = 1;
-while( true ){
-  // 当过了tick时间后，向进程发送一个alarm信号
-  pcntl_alarm( $tick );
-  // 分发信号，呼唤起安装好的各种信号处理器
-  pcntl_signal_dispatch();
-  // 睡个1秒钟，继续
-  sleep( $tick );
+while (true) {
+    // 当过了tick时间后，向进程发送一个alarm信号
+    pcntl_alarm($tick);
+    // 分发信号，呼唤起安装好的各种信号处理器
+    pcntl_signal_dispatch();
+    // 睡个1秒钟，继续
+    sleep($tick);
 }
+
 ```
 
 代码保存成timer.php，然后php timer.php运行下，如果不出问题应该能跑起来。但是吧，这个代码有一坨问题。
@@ -61,17 +62,18 @@ while( true ){
 // 初始化一个EventConfig（舰岛），虽然是个仅用于演示的空配置
 $eventConfig = new EventConfig();
 // 根据EventConfig初始化一个EventBase（辽宁舰，根据舰岛配置下辽宁舰）
-$eventBase = new EventBase( $eventConfig );
+$eventBase = new EventBase($eventConfig);
 // 初始化一个定时器event（歼15，然后放到辽宁舰机库中）
-$timer = new Event( $eventBase, -1, Event::TIMEOUT | Event::PERSIST, function(){
-  echo microtime( true )." : 歼15，滑跃，起飞！".PHP_EOL;
-} );
+$timer = new Event($eventBase, -1, Event::TIMEOUT | Event::PERSIST, function () {
+    echo microtime(true) . " : 歼15，滑跃，起飞！" . PHP_EOL;
+});
 // tick间隔为0.05秒钟，我们还可以改成0.5秒钟甚至0.001秒，也就是毫秒级定时器
 $tick = 0.05;
 // 将定时器event添加（将歼15拖到甲板加上弹射器）
-$timer->add( $tick );
+$timer->add($tick);
 // eventBase进入loop状态（辽宁舰！走你！）
 $eventBase->loop();
+
 ```
 
 将代码保存为tick.php，然后php tick.php执行一下，如下图所示：
@@ -84,12 +86,13 @@ $eventBase->loop();
 
 ```php
 <?php
-$timer = new Event( $eventBase, -1, Event::TIMEOUT | Event::PERSIST, function() use( &$custom ){
-  //echo microtime( true )." : 歼15，滑跃，起飞！".PHP_EOL;
-  print_r( $custom );
+$timer = new Event($eventBase, -1, Event::TIMEOUT | Event::PERSIST, function () use (&$custom) {
+    //echo microtime( true )." : 歼15，滑跃，起飞！".PHP_EOL;
+    print_r($custom);
 }, $custom = array(
-  'name' => 'woshishui',
-) );
+    'name' => 'woshishui',
+));
+
 ```
 
 需要重点说明的是new Event()这行代码了，我把原型贴过来给大家看下：
@@ -121,16 +124,17 @@ public Event::__construct ( EventBase $base , mixed $fd , int $what , callable $
 // 依然是照例行事，尽管暂时没什么实际意义上的配置
 $eventConfig = new EventConfig();
 // 初始化eventBase
-$eventBase = new EventBase( $eventConfig );
+$eventBase = new EventBase($eventConfig);
 // 初始化event
-$event = new Event( $eventBase, SIGTERM, Event::SIGNAL, function(){
-  echo "signal term.".PHP_EOL;
-} );
+$event = new Event($eventBase, SIGTERM, Event::SIGNAL, function () {
+    echo "signal term." . PHP_EOL;
+});
 // 挂起event对象
 $event->add();
 // 进入循环
-echo "进入循环".PHP_EOL;
+echo "进入循环" . PHP_EOL;
 $eventBase->loop();
+
 ```
 
 将代码保存成tick.php，然后执行php tick.php，代码已经进入循环了，然后我们打开另外一个终端，输入ps aux|grep tick查看一个php进程的pid进程号，对这个进程发送term信号，如下图所示：
@@ -144,7 +148,7 @@ $eventBase->loop();
 ```php
 <?php
 $event = new Event( $eventBase, SIGTERM, Event::SIGNAL | Event::PERSIST, function(){
-  echo "signal term.".PHP_EOL;
+    echo "signal term.".PHP_EOL;
 } );
 ```
 
@@ -154,17 +158,18 @@ $event = new Event( $eventBase, SIGTERM, Event::SIGNAL | Event::PERSIST, functio
 <?php
 // 查看当前系统平台支持的IO多路复用的方法都有哪些？
 $method = Event::getSupportedMethods();
-print_r( $method );
+print_r($method);
 // 查看当前用的方法是哪一个？
 $eventBase = new EventBase();
-echo "当前event的方法是：".$eventBase->getMethod().PHP_EOL;
+echo "当前event的方法是：" . $eventBase->getMethod() . PHP_EOL;
 // 跑了许久龙套的config这次也得真的露露手脚了
 $eventConfig = new EventConfig;
 // 避免使用方法kqueue
 $eventConfig->avoidMethod('kqueue');
 // 利用config初始化event base
-$eventBase = new EventBase( $eventConfig );
-echo "当前event的方法是：".$eventBase->getMethod().PHP_EOL;
+$eventBase = new EventBase($eventConfig);
+echo "当前event的方法是：" . $eventBase->getMethod() . PHP_EOL;
+
 ```
 
 将代码保存了，然后执行一下，可以看到结果如下图所示：
@@ -176,18 +181,19 @@ echo "当前event的方法是：".$eventBase->getMethod().PHP_EOL;
 ```php
 <?php
 $base = new EventBase();
-echo "特性：".PHP_EOL;
+echo "特性：" . PHP_EOL;
 $features = $base->getFeatures();
 // 看不到这个判断条件的，请反思自己“位运算”相关欠缺
-if( $features & EventConfig::FEATURE_ET ){
-  echo "边缘触发".PHP_EOL;
+if ($features & EventConfig::FEATURE_ET) {
+    echo "边缘触发" . PHP_EOL;
 }
-if( $features & EventConfig::FEATURE_O1 ){
-  echo "O1添加删除事件".PHP_EOL;
+if ($features & EventConfig::FEATURE_O1) {
+    echo "O1添加删除事件" . PHP_EOL;
 }
-if( $features & EventConfig::FEATURE_FDS ){
-  echo "任意文件描述符，不光socket".PHP_EOL;
+if ($features & EventConfig::FEATURE_FDS) {
+    echo "任意文件描述符，不光socket" . PHP_EOL;
 }
+
 ```
 
 运行结果如下图所示：

@@ -8,7 +8,9 @@
 
 实际上PHP是有多进程的，有一些人再用，总体来说php的多进程还算凑合，只需要在安装PHP的时候开启pcntl模块（是不是跟UNIX中的fcntl有点儿.... ....）即可。在*NIX下，在终端命令行下使用php -m就可以看到是否开启了pcntl模块。
 
-所以我们只说php的多进程，至于php多线程就暂时放到一边儿。 **`注意：不要在apache或者fpm环境下使用php多进程，这将会产生不可预估的后果。`**  **`进程是程序执行的实例`** ，举个例子有个程序叫做 “ 病毒.exe ”，这个程序平时是以文件形式存储在硬盘上，当你双击运行后，就会形成一个该程序的进程。系统会给每一个进程分配一个唯一的非负整数用来标记进程，这个数字称作进程ID。当该进程被杀死或终止后，其进程ID就会被系统回收，然后分配给新的其余的进程。
+所以我们只说php的多进程，至于php多线程就暂时放到一边儿。
+ **`注意：不要在apache或者fpm环境下使用php多进程，这将会产生不可预估的后果。`** 
+ **`进程是程序执行的实例`** ，举个例子有个程序叫做 “ 病毒.exe ”，这个程序平时是以文件形式存储在硬盘上，当你双击运行后，就会形成一个该程序的进程。系统会给每一个进程分配一个唯一的非负整数用来标记进程，这个数字称作进程ID。当该进程被杀死或终止后，其进程ID就会被系统回收，然后分配给新的其余的进程。
 
 说了这么多，这鬼东西有什么用吗？我平时用CI、YII写个CURD跟这个也没啥关联啊。实际上，如果你了解APACHE PHP MOD或者FPM就知道这些东西就是多进程实现的。以FPM为例，一般都是nginx作为http服务器挡在最前面，静态文件请求则nginx自行处理，遇到php动态请求则转发给php-fpm进程来处理。如果你的php-fpm配置只开了5个进程，如果处理任意一个用户的请求都需要1秒钟，那么5个fpm进程1秒中就最多只能处5个用户的请求。所以结论就是：如果要单位时间内干活更快更多，就需要更多的进程，总之一句话就是多进程可以加快任务处理速度。
 
@@ -28,14 +30,15 @@
 
 ```php
 <?php
-        $pid = pcntl_fork();
-        if( $pid > 0 ){
-          echo "我是父亲".PHP_EOL;
-        } else if( 0 == $pid ) {
-          echo "我是儿子".PHP_EOL;
-        } else {
-          echo "fork失败".PHP_EOL;
-        }
+$pid = pcntl_fork();
+if ($pid > 0) {
+    echo "我是父亲" . PHP_EOL;
+} else if (0 == $pid) {
+    echo "我是儿子" . PHP_EOL;
+} else {
+    echo "fork失败" . PHP_EOL;
+}
+
 ```
 
 将文件保存为test.php，然后在使用cli执行，结果如下图所示：
@@ -46,18 +49,19 @@
 
 ```php
 <?php
-        // 初始化一个 number变量 数值为1
-        $number = 1;
-        $pid = pcntl_fork();
-        if( $pid > 0 ){
-          $number += 1;
-          echo "我是父亲，number+1 : { $number }".PHP_EOL;
-        } else if( 0 == $pid ) {
-          $number += 2;
-          echo "我是父亲，number+2 : { $number }".PHP_EOL;
-        } else {
-          echo "fork失败".PHP_EOL;
-        }
+// 初始化一个 number变量 数值为1
+$number = 1;
+$pid    = pcntl_fork();
+if ($pid > 0) {
+    $number += 1;
+    echo "我是父亲，number+1 : { $number }" . PHP_EOL;
+} else if (0 == $pid) {
+    $number += 2;
+    echo "我是父亲，number+2 : { $number }" . PHP_EOL;
+} else {
+    echo "fork失败" . PHP_EOL;
+}
+
 ```
 
 ![][1]
@@ -66,14 +70,14 @@
 
 ```php
 <?php
-        for( $i = 1; $i <= 3 ; $i++ ){
-            $pid = pcntl_fork();
-            if( $pid > 0 ){
-               // do nothing ...
-            } else if( 0 == $pid ){
-                echo "儿子".PHP_EOL;
-            }
-        }
+for( $i = 1; $i <= 3 ; $i++ ){
+    $pid = pcntl_fork();
+    if( $pid > 0 ){
+       // do nothing ...
+    } else if( 0 == $pid ){
+        echo "儿子".PHP_EOL;
+    }
+}
 ```
 
 上面代码执行结果如下：
@@ -85,15 +89,15 @@
 
 ```php
 <?php
-        for( $i = 1; $i <= 3 ; $i++ ){
-            $pid = pcntl_fork();
-            if( $pid > 0 ){
-               // do nothing ...
-            } else if( 0 == $pid ){
-                echo "儿子".PHP_EOL;
-                exit;
-            }
-        }
+for( $i = 1; $i <= 3 ; $i++ ){
+    $pid = pcntl_fork();
+    if( $pid > 0 ){
+       // do nothing ...
+    } else if( 0 == $pid ){
+        echo "儿子".PHP_EOL;
+        exit;
+    }
+}
 ```
 
 执行结果如下图所示：

@@ -27,33 +27,34 @@ XSI IPC结构有一个与之对应的权限结构，叫做ipc_perm，这个结�
 ```php
 <?php
 // 管道文件绝对路径
-$pipe_file = __DIR__.DIRECTORY_SEPARATOR.'test.pipe';
+$pipe_file = __DIR__ . DIRECTORY_SEPARATOR . 'test.pipe';
 // 如果这个文件存在，那么使用posix_mkfifo()的时候是返回false，否则，成功返回true
-if( !file_exists( $pipe_file ) ){
-  if( !posix_mkfifo( $pipe_file, 0666 ) ){
-    exit( 'create pipe error.'.PHP_EOL );
-  }
+if (!file_exists($pipe_file)) {
+    if (!posix_mkfifo($pipe_file, 0666)) {
+        exit('create pipe error.' . PHP_EOL);
+    }
 }
 // fork出一个子进程
 $pid = pcntl_fork();
-if( $pid < 0 ){
-  exit( 'fork error'.PHP_EOL );
-} else if( 0 == $pid ) {
-  // 在子进程中
-  // 打开命名管道，并写入一段文本
-  $file = fopen( $pipe_file, "w" );
-  fwrite( $file, "helo world." );
-  exit;
-} else if( $pid > 0 ) {
-  // 在父进程中
-  // 打开命名管道，然后读取文本
-  $file = fopen( $pipe_file, "r" );
-  // 注意此处fread会被阻塞
-  $content = fread( $file, 1024 );
-  echo $content.PHP_EOL;
-  // 注意此处再次阻塞，等待回收子进程，避免僵尸进程
-  pcntl_wait( $status );
+if ($pid < 0) {
+    exit('fork error' . PHP_EOL);
+} else if (0 == $pid) {
+    // 在子进程中
+    // 打开命名管道，并写入一段文本
+    $file = fopen($pipe_file, "w");
+    fwrite($file, "helo world.");
+    exit;
+} else if ($pid > 0) {
+    // 在父进程中
+    // 打开命名管道，然后读取文本
+    $file = fopen($pipe_file, "r");
+    // 注意此处fread会被阻塞
+    $content = fread($file, 1024);
+    echo $content . PHP_EOL;
+    // 注意此处再次阻塞，等待回收子进程，避免僵尸进程
+    pcntl_wait($status);
 }
+
 ```
 
 运行结果如下：
@@ -65,30 +66,31 @@ if( $pid < 0 ){
 ```php
 <?php
 // 使用ftok创建一个键名，注意这个函数的第二个参数“需要一个字符的字符串”
-$key = ftok( __DIR__, 'a' );
+$key = ftok(__DIR__, 'a');
 // 然后使用msg_get_queue创建一个消息队列
-$queue = msg_get_queue( $key, 0666 );
+$queue = msg_get_queue($key, 0666);
 // 使用msg_stat_queue函数可以查看这个消息队列的信息，而使用msg_set_queue函数则可以修改这些信息
-//var_dump( msg_stat_queue( $queue ) );  
+//var_dump( msg_stat_queue( $queue ) );
 // fork进程
 $pid = pcntl_fork();
-if( $pid < 0 ){
-  exit( 'fork error'.PHP_EOL );
-} else if( $pid > 0 ) {
-  // 在父进程中
-  // 使用msg_receive()函数获取消息
-  msg_receive( $queue, 0, $msgtype, 1024, $message );
-  echo $message.PHP_EOL;
-  // 用完了记得清理删除消息队列
-  msg_remove_queue( $queue );
-  pcnlt_wait( $status );
-} else if( 0 == $pid ) {
-  // 在子进程中
-  // 向消息队列中写入消息
-  // 使用msg_send()向消息队列中写入消息，具体可以参考文档内容
-  msg_send( $queue, 1, "helloword" );
-  exit;
+if ($pid < 0) {
+    exit('fork error' . PHP_EOL);
+} else if ($pid > 0) {
+    // 在父进程中
+    // 使用msg_receive()函数获取消息
+    msg_receive($queue, 0, $msgtype, 1024, $message);
+    echo $message . PHP_EOL;
+    // 用完了记得清理删除消息队列
+    msg_remove_queue($queue);
+    pcnlt_wait($status);
+} else if (0 == $pid) {
+    // 在子进程中
+    // 向消息队列中写入消息
+    // 使用msg_send()向消息队列中写入消息，具体可以参考文档内容
+    msg_send($queue, 1, "helloword");
+    exit;
 }
+
 ```
 
 运行结果如下：
@@ -115,48 +117,49 @@ if( $pid < 0 ){
 ```php
 <?php
 // sem key
-$sem_key = ftok( __FILE__, 'b' );
-$sem_id = sem_get( $sem_key );
+$sem_key = ftok(__FILE__, 'b');
+$sem_id  = sem_get($sem_key);
 // shm key
-$shm_key = ftok( __FILE__, 'm' );
-$shm_id = shm_attach( $shm_key, 1024, 0666 );
+$shm_key      = ftok(__FILE__, 'm');
+$shm_id       = shm_attach($shm_key, 1024, 0666);
 const SHM_VAR = 1;
-$child_pid = [];
+$child_pid    = [];
 // fork 2 child process
-for( $i = 1; $i <= 2; $i++ ){
-  $pid = pcntl_fork();
-  if( $pid < 0 ){
-    exit();
-  } else if( 0 == $pid ) {
-    // 获取锁
-    sem_acquire( $sem_id );
-    if( shm_has_var( $shm_id, SHM_VAR ) ){
-      $counter = shm_get_var( $shm_id, SHM_VAR );
-      $counter += 1;
-      shm_put_var( $shm_id, SHM_VAR, $counter );
-    } else {
-      $counter = 1;
-      shm_put_var( $shm_id, SHM_VAR, $counter );
+for ($i = 1; $i <= 2; $i++) {
+    $pid = pcntl_fork();
+    if ($pid < 0) {
+        exit();
+    } else if (0 == $pid) {
+        // 获取锁
+        sem_acquire($sem_id);
+        if (shm_has_var($shm_id, SHM_VAR)) {
+            $counter = shm_get_var($shm_id, SHM_VAR);
+            $counter += 1;
+            shm_put_var($shm_id, SHM_VAR, $counter);
+        } else {
+            $counter = 1;
+            shm_put_var($shm_id, SHM_VAR, $counter);
+        }
+        // 释放锁，一定要记得释放，不然就一直会被阻锁死
+        sem_release($sem_id);
+        exit;
+    } else if ($pid > 0) {
+        $child_pid[] = $pid;
     }
-    // 释放锁，一定要记得释放，不然就一直会被阻锁死
-    sem_release( $sem_id );
-    exit;
-  } else if( $pid > 0 ) {
-    $child_pid[] = $pid;
-  }
 }
-while( !empty( $child_pid ) ){
-  foreach( $child_pid as $pid_key => $pid_item ){
-    pcntl_waitpid( $pid_item, $status, WNOHANG );
-    unset( $child_pid[ $pid_key ] );
-  }
+while (!empty($child_pid)) {
+    foreach ($child_pid as $pid_key => $pid_item) {
+        pcntl_waitpid($pid_item, $status, WNOHANG);
+        unset($child_pid[$pid_key]);
+    }
 }
 // 休眠2秒钟，2个子进程都执行完毕了
-sleep( 2 );
-echo '最终结果'.shm_get_var( $shm_id, SHM_VAR ).PHP_EOL;
+sleep(2);
+echo '最终结果' . shm_get_var($shm_id, SHM_VAR) . PHP_EOL;
 // 记得删除共享内存数据，删除共享内存是有顺序的，先remove后detach，顺序反过来php可能会报错
-shm_remove( $shm_id );
-shm_detach( $shm_id );
+shm_remove($shm_id);
+shm_detach($shm_id);
+
 ```
 
 运行结果如下：

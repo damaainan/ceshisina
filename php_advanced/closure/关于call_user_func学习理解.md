@@ -1,6 +1,6 @@
 # 关于call_user_func学习理解
 
- 发表于 2017-10-05  |    更新于 2017-10-07    |    分类于  [技术tech][0]    |     |  本文总阅读量 7 次    字数统计  3,309  |    阅读时长  13
+ 发表于 2017-10-05  |    更新于 2017-10-07    字数统计  3,309  
 
 摘要：  
 有几个疑问：
@@ -17,7 +17,6 @@
 * call_user_func(PHP 4, PHP 5, PHP 7)
 
 ```
-<?php
 call_user_func — 把第一个参数作为回调函数调用。
 
 mixed call_user_func ( callable $callback [, mixed $parameter [, mixed $... ]] )
@@ -70,16 +69,16 @@ mixed call_user_func ( callable $callback [, mixed $parameter [, mixed $... ]] )
 <?php
 // 例子：0001
 function foo($n, $f='') {
-  if($n < 1) return;
-  for($i=0; $i<$n; $i++) {
-    echo $f ? $f($i) : $i;
-  }
+    if($n < 1) return;
+    for($i=0; $i<$n; $i++) {
+        echo $f ? $f($i) : $i;
+    }
 }
 //无回调时
 foo(5); //01234
 //有回调时
 function f1($v) {
-  return $v + $v;
+    return $v + $v;
 }
 // 通过 foo去调用 f1，不是自己调用，是别人调用
 foo(5, 'f1'); //02468
@@ -122,7 +121,7 @@ $b();
 <?php
 function odd($var)
 {
-   return($var % 2 == 1);
+    return($var % 2 == 1);
 }
 $array1 = array("a"=>1, "b"=>2, "c"=>3, "d"=>4, "e"=>5);
 echo "Odd :\n";

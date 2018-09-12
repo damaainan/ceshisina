@@ -28,30 +28,32 @@
 回到上文所说的问题，就是子进程在结束前，父进程就已经先调用了pcntl_waitpid()，导致子进程在结束后依然变成了僵尸进程。实际上在父进程不断while循环调用pcntl_waitpid()是个解决办法，大概代码如下：
 
 ```php
+<?php
 $pid = pcntl_fork();
-if( 0 > $pid ){
-  exit('fork error.'.PHP_EOL);
-} else if( 0 < $pid ) {
-  // 在父进程中
-  cli_set_process_title('php father process');
-  // 父进程不断while循环，去反复执行pcntl_waitpid()，从而试图解决已经退出的子进程
-  while( true ){
-    sleep( 1 );
-    pcntl_waitpid( $pid, &$status, WNOHANG );
-  }
-} else if( 0 == $pid ) {
-  // 在子进程中
-  // 子进程休眠3秒钟后直接退出
-  cli_set_process_title('php child process');
-  sleep( 20 );
-  exit;
+if (0 > $pid) {
+    exit('fork error.' . PHP_EOL);
+} else if (0 < $pid) {
+    // 在父进程中
+    cli_set_process_title('php father process');
+    // 父进程不断while循环，去反复执行pcntl_waitpid()，从而试图解决已经退出的子进程
+    while (true) {
+        sleep(1);
+        pcntl_waitpid($pid, &$status, WNOHANG);
+    }
+} else if (0 == $pid) {
+    // 在子进程中
+    // 子进程休眠3秒钟后直接退出
+    cli_set_process_title('php child process');
+    sleep(20);
+    exit;
 }
+
 ```
 
 下图是运行结果：
 
 ![][0]
-##### 解析一下这个结果，我先后三次执行了ps -aux | grep php去查看这两个php进程。
+##### 解析一下这个结果，我先后三次执行了`ps -aux | grep php`去查看这两个php进程。
 
 * 第一次：子进程正在休眠中，父进程依旧在循环中。
 * 第二次：子进程已经退出了，父进程依旧在循环中，但是代码还没有执行到pcntl_waitpid()，所以在子进程退出后到父进程执行回收前这段空隙内子进程变成了僵尸进程。
@@ -71,31 +73,33 @@ if( 0 > $pid ){
 下面结合新引入的两个函数来解决一下楼上的丑陋代码：
 
 ```php
+<?php
 $pid = pcntl_fork();
-if( 0 > $pid ){
-  exit('fork error.'.PHP_EOL);
-} else if( 0 < $pid ) {
-  // 在父进程中
-  // 给父进程安装一个SIGCHLD信号处理器
-  pcntl_signal( SIGCHLD, function() use( $pid ) {
-    echo "收到子进程退出".PHP_EOL;
-    pcntl_waitpid( $pid, $status, WNOHANG );
-  } );
-  cli_set_process_title('php father process');
-  // 父进程不断while循环，去反复执行pcntl_waitpid()，从而试图解决已经退出的子进程
-  while( true ){
-    sleep( 1 );
-    // 注释掉原来老掉牙的代码，转而使用pcntl_signal_dispatch()
-    //pcntl_waitpid( $pid, &$status, WNOHANG );
-    pcntl_signal_dispatch();
-  }
-} else if( 0 == $pid ) {
-  // 在子进程中
-  // 子进程休眠3秒钟后直接退出
-  cli_set_process_title('php child process');
-  sleep( 20 );
-  exit;
+if (0 > $pid) {
+    exit('fork error.' . PHP_EOL);
+} else if (0 < $pid) {
+    // 在父进程中
+    // 给父进程安装一个SIGCHLD信号处理器
+    pcntl_signal(SIGCHLD, function () use ($pid) {
+        echo "收到子进程退出" . PHP_EOL;
+        pcntl_waitpid($pid, $status, WNOHANG);
+    });
+    cli_set_process_title('php father process');
+    // 父进程不断while循环，去反复执行pcntl_waitpid()，从而试图解决已经退出的子进程
+    while (true) {
+        sleep(1);
+        // 注释掉原来老掉牙的代码，转而使用pcntl_signal_dispatch()
+        //pcntl_waitpid( $pid, &$status, WNOHANG );
+        pcntl_signal_dispatch();
+    }
+} else if (0 == $pid) {
+    // 在子进程中
+    // 子进程休眠3秒钟后直接退出
+    cli_set_process_title('php child process');
+    sleep(20);
+    exit;
 }
+
 ```
 
 运行结果如下：

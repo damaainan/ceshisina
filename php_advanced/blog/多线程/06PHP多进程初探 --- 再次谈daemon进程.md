@@ -11,18 +11,15 @@
 三个概念，理（bei）解（song）一下：
 
 * 进程组。一坨相关的进程可以组成一个进程组，每个进程组都会有一个组ID（正整数），每个进程组都会有一个组长进程，组长进程的ID等于进程组ID。组长进程可以创建新的进程组以及该进程组中的其他进程。一个进程组的是有生命周期的，即便是组长进程挂了，只有组里还有其他的活口，那就就算该进程组依然存活，只有到组里最后一个活口也挂了，那真的就是彻底没了。
-* 会话。一坨相关的进程组组成了一个会话。在*NIX下，是通过setsid()创建一个新的会话。但是值得注意的是，组长进程不能创建会话，简单理解就是在组长进程中，执行setsid函数会报错，这点很重要。所以一般都是组长进程执行fork，然后主进程退出，因为子进程的进程ID是新分配的，而子进程的进程组ID是继承父进程的，所以子进程就注定不可能是组长进程，从而可以确保子进程中一定可以执行setsid函数。在执行setsid函数时候，一般会发生下面三个比较重要的事情：
-
-* 该进程会创建一个新的进程组，该进程为进程组组长（或者你可以认为这是一种提升）
-* 该进程会创建一个会话组并成为该会话的会话首进程（会话首进程就是创建该会话的进程）
-* 该进程会失去控制终端。如果该进程本来就没有控制终端，则罢了（liao）。如果有，那么该进程也将脱离该控制终端，与之失去联系。
-
-
+* 会话。一坨相关的进程组组成了一个会话。在*NIX下，是通过setsid()创建一个新的会话。但是值得注意的是，组长进程不能创建会话，简单理解就是在组长进程中，执行setsid函数会报错，这点很重要。所以一般都是组长进程执行fork，然后主进程退出，因为子进程的进程ID是新分配的，而子进程的进程组ID是继承父进程的，所以子进程就注定不可能是组长进程，从而可以确保子进程中一定可以执行setsid函数。在执行setsid函数时候，一般会发生下面三个比较重要的事情：  
+    * 该进程会创建一个新的进程组，该进程为进程组组长（或者你可以认为这是一种提升）
+    * 该进程会创建一个会话组并成为该会话的会话首进程（会话首进程就是创建该会话的进程）
+    * 该进程会失去控制终端。如果该进程本来就没有控制终端，则罢了（liao）。如果有，那么该进程也将脱离该控制终端，与之失去联系。
 
 * 控制终端。每个会话可能会拥有一个控制终端（看着比较玄学，你可以暂时理解为就一个那种黑乎乎的命令行窗口），建立与控制终端连接的会话首进程叫做控制进程。
 
 
-结合Linux命令ps来查看一下上述几个概念的恩怨情仇，我们看下我们常用的 ps -o pid,ppid,pgid,sid,comm | less 执行结果：
+结合Linux命令ps来查看一下上述几个概念的恩怨情仇，我们看下我们常用的 `ps -o pid,ppid,pgid,sid,comm | less` 执行结果：
 
 ![][0]
 
@@ -45,29 +42,30 @@
 啦啦啦，下面通过引入代码直接分析：
 
 ```php
+<?php
 $pid = pcntl_fork();
-if( $pid < 0 ){
-  exit('fork error.');
-} else if( $pid > 0 ) {
-  // 主进程退出
-  exit();
+if ($pid < 0) {
+    exit('fork error.');
+} else if ($pid > 0) {
+    // 主进程退出
+    exit();
 }
 // 子进程继续执行
 
 // 最关键的一步来了，执行setsid函数！
-if( !posix_setsid() ){
-  exit('setsid error.');
+if (!posix_setsid()) {
+    exit('setsid error.');
 }
 
 // 理论上一次fork就可以了
 // 但是，二次fork，这里的历史渊源是这样的：在基于system V的系统中，通过再次fork，父进程退出，子进程继续，保证形成的daemon进程绝对不会成为会话首进程，不会拥有控制终端。
 
 $pid = pcntl_fork();
-if( $pid  < 0 ){
-  exit('fork error');
-} else if( $pid > 0 ) {
-  // 主进程退出
-  exit;
+if ($pid < 0) {
+    exit('fork error');
+} else if ($pid > 0) {
+    // 主进程退出
+    exit;
 }
 
 // 子进程继续执行
@@ -75,7 +73,7 @@ if( $pid  < 0 ){
 // 啦啦啦，啦啦啦，啦啦啦，已经变成daemon啦，开心
 cli_set_process_title('testtesttest');
 // 睡眠1000000，防止进程执行完毕挂了
-sleep( 1000000 );
+sleep(1000000);
 
 ```
 
@@ -88,29 +86,30 @@ sleep( 1000000 );
 然而，实际上，上述代码仅仅完成了一个标准daemon的80%，还有20%需要我们进一步完善。那么，需要完善什么呢？我们修改一下上述代码，让程序在最终的代码段中执行一些文本输出：
 
 ```php
+<?php
 $pid = pcntl_fork();
-if( $pid < 0 ){
-  exit('fork error.');
-} else if( $pid > 0 ) {
-  // 主进程退出
-  exit();
+if ($pid < 0) {
+    exit('fork error.');
+} else if ($pid > 0) {
+    // 主进程退出
+    exit();
 }
 // 子进程继续执行
 
 // 最关键的一步来了，执行setsid函数！
-if( !posix_setsid() ){
-  exit('setsid error.');
+if (!posix_setsid()) {
+    exit('setsid error.');
 }
 
 // 理论上一次fork就可以了
 // 但是，二次fork，这里的历史渊源是这样的：在基于system V的系统中，通过再次fork，父进程退出，子进程继续，保证形成的daemon进程绝对不会成为会话首进程，不会拥有控制终端。
 
 $pid = pcntl_fork();
-if( $pid  < 0 ){
-  exit('fork error');
-} else if( $pid > 0 ) {
-  // 主进程退出
-  exit;
+if ($pid < 0) {
+    exit('fork error');
+} else if ($pid > 0) {
+    // 主进程退出
+    exit;
 }
 
 // 子进程继续执行
@@ -118,10 +117,11 @@ if( $pid  < 0 ){
 // 啦啦啦，啦啦啦，啦啦啦，已经变成daemon啦，开心
 cli_set_process_title('testtesttest');
 // 循环1000次，每次睡眠1s，输出一个字符test
-for( $i = 1; $i <= 1000; $i++ ){
-  sleep( 1 );
-  echo "test".PHP_EOL;
+for ($i = 1; $i <= 1000; $i++) {
+    sleep(1);
+    echo "test" . PHP_EOL;
 }
+
 ```
 
 将文件保存为daemon.php，然后php daemon.php执行文件，嗯，是不是有怪怪的现象，大概类似于下图：
@@ -134,32 +134,33 @@ for( $i = 1; $i <= 1000; $i++ ){
 ##### 最后一个问题是，要在第一次fork后设置umask(0)，避免权限上的一些问题。所以较为完整的代码如下：
 
 ```php
+<?php
 // 设置umask为0，这样，当前进程创建的文件权限则为777
-umask( 0 );
+umask(0);
 
 $pid = pcntl_fork();
-if( $pid < 0 ){
-  exit('fork error.');
-} else if( $pid > 0 ) {
-  // 主进程退出
-  exit();
+if ($pid < 0) {
+    exit('fork error.');
+} else if ($pid > 0) {
+    // 主进程退出
+    exit();
 }
 // 子进程继续执行
 
 // 最关键的一步来了，执行setsid函数！
-if( !posix_setsid() ){
-  exit('setsid error.');
+if (!posix_setsid()) {
+    exit('setsid error.');
 }
 
 // 理论上一次fork就可以了
 // 但是，二次fork，这里的历史渊源是这样的：在基于system V的系统中，通过再次fork，父进程退出，子进程继续，保证形成的daemon进程绝对不会成为会话首进程，不会拥有控制终端。
 
 $pid = pcntl_fork();
-if( $pid  < 0 ){
-  exit('fork error');
-} else if( $pid > 0 ) {
-  // 主进程退出
-  exit;
+if ($pid < 0) {
+    exit('fork error');
+} else if ($pid > 0) {
+    // 主进程退出
+    exit;
 }
 
 // 子进程继续执行
@@ -168,7 +169,8 @@ if( $pid  < 0 ){
 cli_set_process_title('testtesttest');
 // 一般服务器软件都有写配置项，比如以debug模式运行还是以daemon模式运行。如果以debug模式运行，那么标准输出和错误输出大多数都是直接输出到当前终端上，如果是daemon形式运行，那么错误输出和标准输出可能会被分别输出到两个不同的配置文件中去
 // 连工作目录都是一个配置项目，通过php函数chdir可以修改当前工作目录
-chdir( $dir );
+chdir($dir);
+
 
 ```
 

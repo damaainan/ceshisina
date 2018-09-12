@@ -13,43 +13,43 @@
 
 闭包可以 **通过拷贝的方式** 让函数使用父作用域中的变量。如： 
 ```php
-    $global = 'hello';
-    
-    $bbb = function()use($global){
-        echo $global."\n";
-    };
-    $bbb();
-    //输出 'hello'
+$global = 'hello';
+
+$bbb = function()use($global){
+    echo $global."\n";
+};
+$bbb();
+//输出 'hello'
 ```
 #### global关键字声明变量
 
 通过global声明变量同样可以使函数体调用到函数外部的变量，不过global与use不同，globle关键字会使创建 **一个与外部变量同名的引用** ，并且在函数内对变量作出修改同样会作用域外部变量。 
 
 ```php
-    $global = 'hello';
-    $fun = function(){
-        global $global;
-        $global =' world';
-        echo $global."\n";
-    };
-    $fun();
-    // 输出 'world'
+$global = 'hello';
+$fun = function(){
+    global $global;
+    $global =' world';
+    echo $global."\n";
+};
+$fun();
+// 输出 'world'
 ```
 这里只是创建一个同名引用而已，并不会改变原本外部变量$global的作用域，也就是说在另外一个函数中调用该依旧需要声明或者使用闭包
 
 ```php
-    $global = 'hello';
-    $fun = function(){
-        global $global;
-        $global =' world';
-        echo 'a:'.$global."\n";
-    };
-    
-    $ccc = function(){
-        echo 'b:'.$global;
-    };
-    $fun()
-    $ccc()
+$global = 'hello';
+$fun = function(){
+    global $global;
+    $global =' world';
+    echo 'a:'.$global."\n";
+};
+
+$ccc = function(){
+    echo 'b:'.$global;
+};
+$fun()
+$ccc()
 ```
 
     /*
@@ -62,24 +62,24 @@
 再稍微改一下代码，这样更容易对比闭包和global关键字声明变量这两种访问外部变量方式的区别。
 
 ```php
-    <?php
-    $global = 'hello';
-    $fun = function(){
-        global $global;
-        $global ='world';
-        echo 'a:'.$global."\n";
-    };
-    
-    $bbb = function()use($global){
-        $global = 'china';
-        echo 'c:'.$global."\n";
-    };
-    
-    $fun();
-    
-    echo 'b:'.$global."\n";
-    $bbb();
-    echo 'd:'.$global;
+<?php
+$global = 'hello';
+$fun = function(){
+    global $global;
+    $global ='world';
+    echo 'a:'.$global."\n";
+};
+
+$bbb = function()use($global){
+    $global = 'china';
+    echo 'c:'.$global."\n";
+};
+
+$fun();
+
+echo 'b:'.$global."\n";
+$bbb();
+echo 'd:'.$global;
 ```
 这里b和d两个输出可以看出来，global改变了外部变量的值，而闭包方式并没有。
 
@@ -93,49 +93,49 @@
 最后再贴一个官方文档中比较经典的使用匿名函数，闭包与回调函数配合的例子：
 
 ```php
-    class Cart
+class Cart
+{
+    const PRICE_BUTTER  = 1.00;
+    const PRICE_MILK    = 3.00;
+    const PRICE_EGGS    = 6.95;
+
+    protected   $products = array();
+
+    public function add($product, $quantity)
     {
-        const PRICE_BUTTER  = 1.00;
-        const PRICE_MILK    = 3.00;
-        const PRICE_EGGS    = 6.95;
-    
-        protected   $products = array();
-    
-        public function add($product, $quantity)
-        {
-            $this->products[$product] = $quantity;
-        }
-    
-        public function getQuantity($product)
-        {
-            return isset($this->products[$product]) ? $this->products[$product] :
-                FALSE;
-        }
-    
-        public function getTotal($tax)
-        {
-            $total = 0.00;
-    
-            $callback =
-                function ($quantity, $product) use ($tax, &$total)
-                {
-                    $pricePerItem = constant(__CLASS__ . "::PRICE_" .
-                        strtoupper($product));
-                    $total += ($pricePerItem * $quantity) * ($tax + 1.0);
-                };
-            array_walk($this->products, $callback);
-            return round($total, 2);
-        }
+        $this->products[$product] = $quantity;
     }
-    
-    $my_cart = new Cart;
-    
-    $my_cart->add('butter', 1);
-    $my_cart->add('milk', 3);
-    $my_cart->add('eggs', 6);
-    
-    
-    print $my_cart->getTotal(0.05) . "\n";
+
+    public function getQuantity($product)
+    {
+        return isset($this->products[$product]) ? $this->products[$product] :
+            FALSE;
+    }
+
+    public function getTotal($tax)
+    {
+        $total = 0.00;
+
+        $callback =
+            function ($quantity, $product) use ($tax, &$total)
+            {
+                $pricePerItem = constant(__CLASS__ . "::PRICE_" .
+                    strtoupper($product));
+                $total += ($pricePerItem * $quantity) * ($tax + 1.0);
+            };
+        array_walk($this->products, $callback);
+        return round($total, 2);
+    }
+}
+
+$my_cart = new Cart;
+
+$my_cart->add('butter', 1);
+$my_cart->add('milk', 3);
+$my_cart->add('eggs', 6);
+
+
+print $my_cart->getTotal(0.05) . "\n";
 ```
 
 

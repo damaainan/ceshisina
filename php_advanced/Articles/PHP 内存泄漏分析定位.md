@@ -10,8 +10,6 @@
 
 #### 目录
 
-
-
 * 场景一 程序操作数据过大
 * 场景二 程序操作大数据时产生拷贝
 * 场景三 配置不合理系统资源耗尽
@@ -33,10 +31,13 @@ php 提提供了两个方法来获取当前程序的内存使用情况。
 
 
 
-* memory_get_usage()，这个函数的作用是获取目前PHP脚本所用的内存大小。
-* memory_get_peak_usage()，这个函数的作用返回当前脚本到目前位置所占用的内存峰值，这样就可能获取到目前的脚本的内存需求情况。
+* `memory_get_usage()`，这个函数的作用是获取目前PHP脚本所用的内存大小。
+* `memory_get_peak_usage()`，这个函数的作用返回当前脚本到目前位置所占用的内存峰值，这样就可能获取到目前的脚本的内存需求情况。
   
-`int memory_get_usage ([ bool $real_usage = false ] )``int memory_get_peak_usage ([ bool $real_usage = false ] )`场景一：程序操作数据过大  
+`int memory_get_usage ([ bool $real_usage = false ] )`   
+`int memory_get_peak_usage ([ bool $real_usage = false ] )`
+
+#### 场景一：程序操作数据过大  
 
 情景还原：一次性读取超过php可用内存上限的数据导致内存耗尽
 
@@ -44,7 +45,6 @@ php 提提供了两个方法来获取当前程序的内存使用情况。
 <?php
 ini_set('memory_limit', '128M');
 $string = str_pad('1', 128 * 1024 * 1024);
-?>
 ```
 `Fatal error: Allowed memory size of 134217728 bytes exhausted (tried to allocate 134217729 bytes) in /Users/zouyi/php-oom/bigfile.php on line 3`这是告诉我们程序运行时试图分配新内存时由于达到了PHP允许分配的内存上限而抛出致命错误，无法继续执行了，在 java 开发中一般称之为 OOM ( Out Of Memory ) 。
 
@@ -54,7 +54,7 @@ PHP 配置内存上限是在 php.ini 中设置 memory_limit，PHP 5.2 以前这�
 
 
 #### 解决方法：
-`能用钱解决的问题都不是问题，如果程序要读大文件的机会不是很多，且上限可预期，那么通过 ini_set('memory_limit', '1G'); 来设置一个更大的值或者 memory_limit=-1。内存管够的话让程序一直跑也可以。``如果程序需要考虑在小内存机器上也能正常使用，那就需要优化程序了。如下，代码复杂了很多。
+`能用钱解决的问题都不是问题，如果程序要读大文件的机会不是很多，且上限可预期，那么通过 ini_set('memory_limit', '1G'); 来设置一个更大的值或者 memory_limit=-1。内存管够的话让程序一直跑也可以。`  如果程序需要考虑在小内存机器上也能正常使用，那就需要优化程序了。如下，代码复杂了很多。
 
 ```php
 <?php
@@ -108,7 +108,7 @@ zend_mm_heap corrupted
 
 #### 问题分析：
 
-php 是写时复制（Copy On Write），也就是说，当新变量被赋值时内存不发生变化，直到新变量的内容被操作时才会产生复制。
+php 是**`写时复制`（Copy On Write）**，也就是说，**`当新变量被赋值时内存不发生变化，直到新变量的内容被操作时才会产生复制`**。
 
 
 #### 解决方法：
@@ -183,7 +183,7 @@ pm.max_requests = 500 //最大请求数，注意这个参数是一个php-fpm如�
 
 一个 php-fpm 进程按 30MB 内存算，50 个 php-fpm 进程就需要 1500MB 内存，这里需要简单估算一下在负载最重的情况下所有 php-fpm 进程都启动后是否会把系统内存耗尽。  
 
-场景四：无用的数据未及时释放  
+#### 场景四：无用的数据未及时释放  
 
 情景还原：这种问题从程序逻辑上不是问题，但是无用的数据大量占用内存导致资源不够用，应该有针对性的做代码优化。
 
@@ -191,10 +191,10 @@ Laravel开发中用于监听数据库操作时有如下代码:
 
 ```php
 DB::listen(function ($query) {
-            // $query->sql
-            // $query->bindings
-            // $query->time
-        });
+    // $query->sql
+    // $query->bindings
+    // $query->time
+});
 ```
 
 启用数据库监听后，每当有 SQL 执行时会 new 一个 QueryExecuted 对象并传入匿名函数以便后续操作，对于执行完毕就结束进程释放资源的 php 程序来说没有什么问题，而如果是一个常驻进程的程序，程序每执行一条 SQL 内存中就会增加一个 QueryExecuted 对象，程序不结束内存就会始终增长。

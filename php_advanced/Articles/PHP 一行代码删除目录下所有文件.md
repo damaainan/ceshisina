@@ -4,10 +4,10 @@
 
 > **例子 1**
 
-    <?php
-    print_r(glob("*.txt"));
-    ?>
-
+```php
+<?php
+print_r(glob("*.txt"));
+```
 > **输出类似：**
 
     Array
@@ -20,27 +20,28 @@
 
 > **例子 2**
 
-    <?php
-    print_r(glob("*.*"));
-    ?>
-
+```php
+<?php
+print_r(glob("*.*"));
+```
 > **输出类似：**
 
     Array
     (
-    [0] => contacts.csv
-    [1] => default.php
-    [2] => target.txt
-    [3] => source.txt
-    [4] => tem1.tmp
-    [5] => test.htm
-    [6] => test.ini
-    [7] => test.php
-    [8] => test.txt
-    [9] => test2.txt
+        [0] => contacts.csv
+        [1] => default.php
+        [2] => target.txt
+        [3] => source.txt
+        [4] => tem1.tmp
+        [5] => test.htm
+        [6] => test.ini
+        [7] => test.php
+        [8] => test.txt
+        [9] => test2.txt
     )
 
 > **删除目录下所有文件**
 
-    array_map('unlink', glob('*'));
-
+```php
+array_map('unlink', glob('*'));
+```

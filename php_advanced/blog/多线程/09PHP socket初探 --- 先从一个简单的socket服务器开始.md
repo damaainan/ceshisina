@@ -17,25 +17,26 @@ socket赋予了我们操控传输层和网络层的能力，从而得到更强�
 $host = '0.0.0.0';
 $port = 9999;
 // 创建一个tcp socket
-$listen_socket = socket_create( AF_INET, SOCK_STREAM, SOL_TCP );
+$listen_socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 // 将socket bind到IP：port上
-socket_bind( $listen_socket, $host, $port );
+socket_bind($listen_socket, $host, $port);
 // 开始监听socket
-socket_listen( $listen_socket );
+socket_listen($listen_socket);
 // 进入while循环，不用担心死循环死机，因为程序将会阻塞在下面的socket_accept()函数上
-while( true ){
-  // 此处将会阻塞住，一直到有客户端来连接服务器。阻塞状态的进程是不会占据CPU的
-  // 所以你不用担心while循环会将机器拖垮，不会的 
-  $connection_socket = socket_accept( $listen_socket );
-  // 向客户端发送一个helloworld
-  $msg = "helloworld\r\n";
-  socket_write( $connection_socket, $msg, strlen( $msg ) );
-  socket_close( $connection_socket );
+while (true) {
+    // 此处将会阻塞住，一直到有客户端来连接服务器。阻塞状态的进程是不会占据CPU的
+    // 所以你不用担心while循环会将机器拖垮，不会的
+    $connection_socket = socket_accept($listen_socket);
+    // 向客户端发送一个helloworld
+    $msg = "helloworld\r\n";
+    socket_write($connection_socket, $msg, strlen($msg));
+    socket_close($connection_socket);
 }
-socket_close( $listen_socket );
+socket_close($listen_socket);
+
 ```
 
-将文件保存为server.php，然后执行php server.php运行起来。客户端我们使用telnet就可以了，打开另外一个终端执行telnet 127.0.0.1 9999按下回车即可。运行结果如下：
+将文件保存为server.php，然后执行`php server.php`运行起来。客户端我们使用`telnet`就可以了，打开另外一个终端执行telnet 127.0.0.1 9999按下回车即可。运行结果如下：
 
 ![][0]
 
@@ -60,31 +61,32 @@ socket_close( $listen_socket );
 $host = '0.0.0.0';
 $port = 9999;
 // 创建一个tcp socket
-$listen_socket = socket_create( AF_INET, SOCK_STREAM, SOL_TCP );
+$listen_socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 // 将socket bind到IP：port上
-socket_bind( $listen_socket, $host, $port );
+socket_bind($listen_socket, $host, $port);
 // 开始监听socket
-socket_listen( $listen_socket );
+socket_listen($listen_socket);
 // 进入while循环，不用担心死循环死机，因为程序将会阻塞在下面的socket_accept()函数上
-while( true ){
-  // 此处将会阻塞住，一直到有客户端来连接服务器。阻塞状态的进程是不会占据CPU的
-  // 所以你不用担心while循环会将机器拖垮，不会的 
-  $connection_socket = socket_accept( $listen_socket );
-  // 当accept了新的客户端连接后，就fork出一个子进程专门处理
-  $pid = pcntl_fork();
-  // 在子进程中处理当前连接的请求业务
-  if( 0 == $pid ){
-    // 向客户端发送一个helloworld
-    $msg = "helloworld\r\n";
-    socket_write( $connection_socket, $msg, strlen( $msg ) );
-    // 休眠5秒钟，可以用来观察时候可以同时为多个客户端提供服务
-    echo time().' : a new client'.PHP_EOL;
-    sleep( 5 );
-    socket_close( $connection_socket );
-    exit;
-  }
+while (true) {
+    // 此处将会阻塞住，一直到有客户端来连接服务器。阻塞状态的进程是不会占据CPU的
+    // 所以你不用担心while循环会将机器拖垮，不会的
+    $connection_socket = socket_accept($listen_socket);
+    // 当accept了新的客户端连接后，就fork出一个子进程专门处理
+    $pid = pcntl_fork();
+    // 在子进程中处理当前连接的请求业务
+    if (0 == $pid) {
+        // 向客户端发送一个helloworld
+        $msg = "helloworld\r\n";
+        socket_write($connection_socket, $msg, strlen($msg));
+        // 休眠5秒钟，可以用来观察时候可以同时为多个客户端提供服务
+        echo time() . ' : a new client' . PHP_EOL;
+        sleep(5);
+        socket_close($connection_socket);
+        exit;
+    }
 }
-socket_close( $listen_socket );
+socket_close($listen_socket);
+
 ```
 
 将代码保存为server.php，然后执行php server.php，客户端依然使用telnet 127.0.0.1 9999，只不过这次我们开启两个终端来执行telnet。重点观察当第一个客户端连接上去后，第二个客户端时候也可以连接上去。运行结果如下：
@@ -100,35 +102,36 @@ socket_close( $listen_socket );
 $host = '0.0.0.0';
 $port = 9999;
 // 创建一个tcp socket
-$listen_socket = socket_create( AF_INET, SOCK_STREAM, SOL_TCP );
+$listen_socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 // 将socket bind到IP：port上
-socket_bind( $listen_socket, $host, $port );
+socket_bind($listen_socket, $host, $port);
 // 开始监听socket
-socket_listen( $listen_socket );
+socket_listen($listen_socket);
 // 给主进程换个名字
-cli_set_process_title( 'phpserver master process' );
+cli_set_process_title('phpserver master process');
 // 按照数量fork出固定个数子进程
-for( $i = 1; $i <= 10; $i++ ){
-  $pid = pcntl_fork();
-  if( 0 == $pid ){
-    cli_set_process_title( 'phpserver worker process' );
-    while( true ){
-      $conn_socket = socket_accept( $listen_socket );
-      $msg = "helloworld\r\n";
-      socket_write( $conn_socket, $msg, strlen( $msg ) );
-      socket_close( $conn_socket );
+for ($i = 1; $i <= 10; $i++) {
+    $pid = pcntl_fork();
+    if (0 == $pid) {
+        cli_set_process_title('phpserver worker process');
+        while (true) {
+            $conn_socket = socket_accept($listen_socket);
+            $msg         = "helloworld\r\n";
+            socket_write($conn_socket, $msg, strlen($msg));
+            socket_close($conn_socket);
+        }
     }
-  }
 }
 // 主进程不可以退出，代码演示比较粗暴，为了不保证退出直接走while循环，休眠一秒钟
 // 实际上，主进程真正该做的应该是收集子进程pid，监控各个子进程的状态等等
-while( true ){
-  sleep( 1 );
+while (true) {
+    sleep(1);
 }
-socket_close( $connection_socket );
+socket_close($connection_socket);
+
 ```
 
-将文件保存为server.php后php server.php执行，然后再用ps -ef | grep phpserver | grep -v grep来看下服务器进程状态：
+将文件保存为server.php后php server.php执行，然后再用`ps -ef | grep phpserver | grep -v grep`来看下服务器进程状态：
 
 ![][2]
 

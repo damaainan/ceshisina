@@ -46,8 +46,6 @@ $object = new TestClass();
 // 调用一个方法    
      
 $object->PrintVariable();    
-     
-?>
 ```
 
 在这个代码中，文件定义了一个`TestClass`类，在类中定义了`$variable`变量，以及函数`PrintVariable`。然后实例化这个类并调用它的方法。运行结果如下。
@@ -56,7 +54,7 @@ $object->PrintVariable();
  
 当然，上面的代码是正常情况下的调用。但是php中存在一些特殊的类成员在某些特定情况下会自动调用，称之为magic函数，magic函数命名是以符号`__`开头的。举个例子：
  
-```php
+```
 __construct
 __destruct
 __toString
@@ -118,13 +116,11 @@ echo $object;
 
 // End of PHP script
 // 脚本结束__destruct会被调用
-     
-?>
 ```
 
 总结几个常用魔术方法及触发条件。
 
-```php
+```
 __wakeup() //使用unserialize时触发
 __sleep() //使用serialize时触发
 __destruct() //对象被销毁时触发
@@ -142,7 +138,7 @@ __invoke() //当脚本尝试将对象调用为函数时触发
  
 boolean
 
-```php
+```
 b:;
 b:1; // True
 b:0; // False
@@ -150,7 +146,7 @@ b:0; // False
 
 integer
 
-```php
+```
 i:;
 i:1; // 1
 i:-3; // -3
@@ -158,27 +154,27 @@ i:-3; // -3
 
 double
 
-```php
+```
 d:;
 d:1.2345600000000001; // 1.23456（php弱类型所造成的四舍五入现象）
 ```
 
 NULL
 
-```php
+```
 N; //NULL
 ```
 
 string
 
-```php
+```
 s::"";
 s"INSOMNIA"; // "INSOMNIA"
 ```
 
 array
 
-```php
+```
 a::{key, value pairs};
 a{s"key1";s"value1";s"value2";} // array("key1" => "value1", "key2" => "value2")
 ```
@@ -205,8 +201,6 @@ $example->sex = "woman";
 $example->age = "18";
 
 echo serialize($example);
-
-?>
 ```
 
 解释下这个序列化的字符串
@@ -215,7 +209,7 @@ echo serialize($example);
  
 #### PHP序列化格式如下所示：
 
-```php
+```
 O:4:"Test":2:{s:1:"a";s:5:"Hello";s:1:"b";i:20;}
 类型:长度:"名字":类中变量的个数:{类型:长度:"名字";类型:长度:"值";......}
 ```
@@ -259,8 +253,6 @@ $test1 = serialize($example);
 echo $test1."\n";
 $test = unserialize($test1);
 echo $test->age;
-
-?>
 ```
 
 结果： 
@@ -278,7 +270,7 @@ echo $test->age;
  
 所以在传入序列化字符串的时候，需要补齐这些空字节。
 
-```php
+```
 O:4:"test":1:{s:10:"%00test%00flag";s:6:"Active";}
 ```
 
@@ -298,7 +290,6 @@ class A{
 }
 $a = $_GET['test'];
 $a_unser = unserialize($a);
-?>
 ```
 
 这串代码，我们可以看到变量`$a`从url中test参数获取到内容，并且在反序列化的时候通过`__destruct()`直接将传入的数据不经过任何处理，echo出来，这里就存在反射型xss漏洞了。
@@ -309,7 +300,7 @@ $a_unser = unserialize($a);
  
 命令执行：
 
-```php
+```
 exec()
 passthru()
 popen()
@@ -318,7 +309,7 @@ system()
 
 文件操作：
 
-```php
+```
 file_put_contents()
 file_get_contents()
 unlink()
@@ -345,8 +336,7 @@ class popdemo
     }
 }
 
-unserialize(file_get_contents('./serialized.txt));
-?>
+unserialize(file_get_contents('./serialized.txt'));
 ```
 
 这是一个很简单的示例代码，且这个代码存在反序列化漏洞。该文件还定义了一个 popdemo 类,并且该类实现了`__wakeup`函数,然后在该函数中又调用了save函数，且参数对象是文件名。跟进save函数，我们看到在该函数中通过调用`file_put_contents`函数，这个函数的`$filename`和`data`属性值是从save函数中传出来的，并且创建了一个文件。由于`__wakeup()`函数在序列化时自动调用，这里还定义了一个保存文件的函数，在这个反序列化过程中对象的属性值可控。于是这里就存在一个任意文件写入任意文件内容的反序列化漏洞了。这就是所谓的POP。就是关注整个函数的调用过程中参数的传递情况,找到可利用的点,这和一般的Web漏洞没什么区别,只是可控制的值有直接传递给程序的参数转变为了对象中的属性值。
@@ -372,7 +362,6 @@ class popdemo
 $demo = new popdemo();
 echo serialize($demo);
 file_put_contents("./serialized.txt",serialize($demo));
-?>
 ```
 
 这里定义了`$data`和`$filename`，然后序列化字符串后存储到serialized.txt文件中，序列化字符串：
@@ -412,7 +401,6 @@ $test = file_get_contents('./ser.txt');
 unserialize($test);
 
 require "shell.php";
-?>
 ```
 
 这里代码主要是通过get方法通过test传入序列化好的字符串，然后在反序列化的时候自动调用`__wakeup()`函数，在`__wakeup()`函数中通过new pocdemo()会自动调用对象pocdemo中的`__construct()`，从而把`<?php phpinfo(); ?>`写入到shell.php中。
@@ -434,7 +422,6 @@ $ser = new l1nk3r();
 $result = serialize($ser);
 print $result;
 file_put_contents('./ser.txt',$result);
-?>
 ```
 
 ![][7]
@@ -468,7 +455,6 @@ class CodeMonster1 {
 }
 $class6 = new l1nk3r();
 unserialize($_GET['test']);
-?>
 ```
 
 从代码上来看，来通过new 实例化一个新的l1nk3r对象后，调用`__construct()`，其中该函数又new了一个新的CodeMonster对象；这个对象的功能是定义了action()函数，并且打印CodeMonster。然后结束的时候调用`__destruct()`,在`__destruct()`会调用action()，因此页面会输出CodeMonster。
@@ -495,12 +481,11 @@ class CodeMonster1 {
 $class6 = new l1nk3r();
 print_r(serialize($class6));
 
-?>
 ```
 
 #### 生成的序列化字符串：
 
-```php
+```
 O:6:"l1nk3r":1:{s:4:"test";O:11:"CodeMonster1":1:{s:5:"test2";s:10:"phpinfo();";}}
 ```
 

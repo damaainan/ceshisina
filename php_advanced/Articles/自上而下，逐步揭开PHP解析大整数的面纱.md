@@ -4,9 +4,9 @@
 
 最近遇到一个PHP大整数的问题，问题代码是这样的
 
-```
-    $shopId = 17978812896666957068;
-    var_dump($shopId);
+```php
+$shopId = 17978812896666957068;
+var_dump($shopId);
 ```
 上面的代码输出，会把$shopId转换成float类型，且使用了科学计数法来表示，输出如下：
 
@@ -14,9 +14,9 @@
 
 但在程序里需要的是完整的数字作为查找数据的参数，所以需要用的是完整的数字，当时以为只是因为数据被转换成科学计数法了，于是想到的解决方案是强制让它不使用科学计数法表示：
 
-```
-    $shopId= number_format(17978812896666957068);
-    var_dump($shopId);
+```php
+$shopId= number_format(17978812896666957068);
+var_dump($shopId);
 ```
 这时候奇怪的事情出现了，输出的是：
 
@@ -26,12 +26,12 @@
 
 这里使用number_format失败的原因在后面会讲到，当时就想到将原来的数据转成字符串的，但是使用了以下方法仍然不行
 
-```
-    $shopId= strval(17978812896666957068);
-    var_dump($shopId);
-    
-    $shopId = 17978812896666957068 . ‘’;
-    var_dump($shopId);
+```php
+$shopId= strval(17978812896666957068);
+var_dump($shopId);
+
+$shopId = 17978812896666957068 . ‘’;
+var_dump($shopId);
 ```
 输出的结果都是
 
@@ -39,12 +39,12 @@
 
 最后只有下面这种方案是可行的：
 
-```
-    $shopId = ‘17978812896666957068’;
-    var_dump($shopId);
-    
-    // 输出
-    //string(20) "17978812896666957068"
+```php
+$shopId = ‘17978812896666957068’;
+var_dump($shopId);
+
+// 输出
+//string(20) "17978812896666957068"
 ```
 众所周知，PHP是一门解释型语言，所以当时就大胆地猜测PHP是在编译期间就将数字的字面量常量转换成float类型，并用科学计数法表示。但仅仅猜测不能满足自己的好奇心，想要看到真正实现代码才愿意相信。于是就逐步分析、探索，直到找到背后的实现。
 
@@ -52,10 +52,10 @@
 
 示例代码：
 
-```
-    // test.php
-    $var = 17978812896666957068;
-    var_dump($var);
+```php
+// test.php
+$var = 17978812896666957068;
+var_dump($var);
 ```
 ## 追查过程
 
@@ -174,49 +174,49 @@
 
 上网搜索了PHP语法分析相关的文章，有一篇里面讲到了解析整数的过程，因此找到了PHP真正将大整数做转换的地方：
 
-```
-    <ST_IN_SCRIPTING>{LNUM} {
-    char *end;
-    if (yyleng < MAX_LENGTH_OF_LONG - 1) { /* Won't overflow */
+```c
+<ST_IN_SCRIPTING>{LNUM} {
+char *end;
+if (yyleng < MAX_LENGTH_OF_LONG - 1) { /* Won't overflow */
+    errno = 0;
+    ZVAL_LONG(zendlval, ZEND_STRTOL(yytext, &end, 0));
+    /* This isn't an assert, we need to ensure 019 isn't valid octal
+    * Because the lexing itself doesn't do that for us
+    */
+    if (end != yytext + yyleng) {
+        zend_throw_exception(zend_ce_parse_error, "Invalid numeric literal", 0);
+        ZVAL_UNDEF(zendlval);
+        RETURN_TOKEN(T_LNUMBER);
+    }
+} else {
+    errno = 0;
+    ZVAL_LONG(zendlval, ZEND_STRTOL(yytext, &end, 0));
+    if (errno == ERANGE) { /* Overflow */
         errno = 0;
-        ZVAL_LONG(zendlval, ZEND_STRTOL(yytext, &end, 0));
-        /* This isn't an assert, we need to ensure 019 isn't valid octal
-        * Because the lexing itself doesn't do that for us
-        */
-        if (end != yytext + yyleng) {
-            zend_throw_exception(zend_ce_parse_error, "Invalid numeric literal", 0);
-            ZVAL_UNDEF(zendlval);
-            RETURN_TOKEN(T_LNUMBER);
+        if (yytext[0] == '0') { /* octal overflow */
+            ZVAL_DOUBLE(zendlval, zend_oct_strtod(yytext, (const char **)&end));
+        } else {
+            ZVAL_DOUBLE(zendlval, zend_strtod(yytext, (const char **)&end));
         }
-    } else {
-        errno = 0;
-        ZVAL_LONG(zendlval, ZEND_STRTOL(yytext, &end, 0));
-        if (errno == ERANGE) { /* Overflow */
-            errno = 0;
-            if (yytext[0] == '0') { /* octal overflow */
-                ZVAL_DOUBLE(zendlval, zend_oct_strtod(yytext, (const char **)&end));
-            } else {
-                ZVAL_DOUBLE(zendlval, zend_strtod(yytext, (const char **)&end));
-            }
-            /* Also not an assert for the same reason */
-            if (end != yytext + yyleng) {
-                zend_throw_exception(zend_ce_parse_error,
-                "Invalid numeric literal", 0);
-                ZVAL_UNDEF(zendlval);
-                RETURN_TOKEN(T_DNUMBER);
-            }
-            RETURN_TOKEN(T_DNUMBER);
-        }    
         /* Also not an assert for the same reason */
         if (end != yytext + yyleng) {
-            zend_throw_exception(zend_ce_parse_error, "Invalid numeric literal", 0);
+            zend_throw_exception(zend_ce_parse_error,
+            "Invalid numeric literal", 0);
             ZVAL_UNDEF(zendlval);
             RETURN_TOKEN(T_DNUMBER);
         }
+        RETURN_TOKEN(T_DNUMBER);
+    }    
+    /* Also not an assert for the same reason */
+    if (end != yytext + yyleng) {
+        zend_throw_exception(zend_ce_parse_error, "Invalid numeric literal", 0);
+        ZVAL_UNDEF(zendlval);
+        RETURN_TOKEN(T_DNUMBER);
     }
-    ZEND_ASSERT(!errno);
-    RETURN_TOKEN(T_LNUMBER);
-    }
+}
+ZEND_ASSERT(!errno);
+RETURN_TOKEN(T_LNUMBER);
+}
 ```
 可以看到，zend引擎在对PHP代码在对纯数字的表达式做词法分析的时候，先判断数字是否有可能会溢出，如果有可能溢出，先尝试将其用LONG类型保存，如果溢出，先用zend_strtod将其转换为double类型，然后用double类型的zval结构体保存之。
 
@@ -232,9 +232,9 @@ number_format失败的原因
 ```
 这里接收的参数num是一个double类型，因此，如果传入的是字符串类型数字的话，number_format函数也会将其转成double类型传入到php_conf_fp函数里。而这个double类型的num最终之所以输出为17978812896666957824，是因为进行科学计数法之后的精度丢失了，重新转成double时就恢复不了原来的值。在C语言下验证：
 
-```
-    double local_dval = 1.7978812896666958E+19;
-    printf("%f\n", local_dval);
+```c
+double local_dval = 1.7978812896666958E+19;
+printf("%f\n", local_dval);
 ```
 输出的结果就是
 
@@ -246,13 +246,13 @@ number_format失败的原因
 对于存储，超过PHP最大表示范围的纯整数，在MySQL中可以使用bigint/varchar保存，MySQL在查询出来的时候会将其使用string类型保存的。  
 对于赋值，在PHP里，如果遇到有大整数需要赋值的话，不要尝试用整型类型去赋值，比如，不要用以下这种：
 
-```
-    $var = 17978812896666957068;
+```php
+$var = 17978812896666957068;
 ```
 而用这种：
 
-```
-    $var = '17978812896666957068';
+```php
+$var = '17978812896666957068';
 ```
 而对于number_format，在64位操作系统下，它能解析的精度不会丢失的数，建议的最大值是这个：9007199254740991。参考鸟哥博客：[http://www.laruence.com/2011/12/19/2399.html][24]
 
