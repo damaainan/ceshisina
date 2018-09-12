@@ -1,7 +1,5 @@
 # [对 PHP SESSION 的深刻认识（四）---- 缓存（memcache和redis）存储session][0]
 
- 标签： [session][1][redis][2][php][3][memcached][4]
-
  2016-12-13 21:14  268人阅读 
 
 版权声明：本文为博主原创文章，未经博主允许不得转载。
@@ -48,58 +46,58 @@ session 的 key 被存储在前缀 memc.sess.key. 之下，因此, 如果你对s
 配置好之后我们就可以使用了，非常简单：
 
 第二步，在代码中使用会话：
+```php
+// test1.php 文件
 
-    ＃test1.php 文件
-    
-    <?php
-    
-    //如果你没有修改配置文件 php.ini，则用下面两行代码
-    ini_set('session.save_handler','memcached');
-    ini_set('session.save_path','127.0.0.1:11211');
-    
-    //开启会话
-    session_start();
-    
-    if(!isset($_SESSION['name'])){
-        $_SESSION['name'] = 'default';
-    }else{
-        $_SESSION['name'] = 'lsgogroup';
-    }
-    $_SESSION['age'] = 20;
-    
-    echo session_id();  //获取客户端的sessionId,即 PHPSESSID，后面会用到
+<?php
 
+//如果你没有修改配置文件 php.ini，则用下面两行代码
+ini_set('session.save_handler','memcached');
+ini_set('session.save_path','127.0.0.1:11211');
+
+//开启会话
+session_start();
+
+if(!isset($_SESSION['name'])){
+    $_SESSION['name'] = 'default';
+}else{
+    $_SESSION['name'] = 'lsgogroup';
+}
+$_SESSION['age'] = 20;
+
+echo session_id();  //获取客户端的sessionId,即 PHPSESSID，后面会用到
+```
 
 在浏览器中打开 test1.php，然后我们在 test2.php 中验证是否操作成功。
+```php
+#test2.php 文件
 
-    #test2.php 文件
-    
-    <?php
-    
-    //如果你没有修改配置文件 php.ini，则用下面两行代码
-    ini_set('session.save_handler','memcached');
-    ini_set('session.save_path','127.0.0.1:11211');
-    
-    //开启会话
-    session_start();
-    
-    var_dump($_SESSION);
+<?php
 
+//如果你没有修改配置文件 php.ini，则用下面两行代码
+ini_set('session.save_handler','memcached');
+ini_set('session.save_path','127.0.0.1:11211');
+
+//开启会话
+session_start();
+
+var_dump($_SESSION);
+```
 在浏览器中打开 test2.php ，返回：
 
     array(2) { ["name"]=> string(7) "default" ["age"]=> int(20) }
 
 
 我们在 test3.php 中验证 session 是否是存储到了 memcached 中，由于前面说了session 的 key 被存储在前缀 memc.sess.key. 之下，因此当我们要从 memcached 中读取 session数据，我们指定的 key 是 memc.sess.key.sessionId，其中 sessionId 我们在 test1.php 中输出了，直接复制，或者从浏览器中的 cookie 中复制（我这里输出的是 g5ef37mnb7dstkf1kesegbajb7）。
+```php
+#test3.php 文件
+#这里假设大家知道 memcached 的一些操作
 
-    #test3.php 文件
-    #这里假设大家知道 memcached 的一些操作
-    
-    <?php
-    $mem = new memcached();
-    $mem->addServer("127.0.0.1",11211);
-    echo $mem->get('memc.sess.key.g5ef37mnb7dstkf1kesegbajb7');
-
+<?php
+$mem = new memcached();
+$mem->addServer("127.0.0.1",11211);
+echo $mem->get('memc.sess.key.g5ef37mnb7dstkf1kesegbajb7');
+```
 
 返回：
 
@@ -165,113 +163,113 @@ Memcached主要的cache机制是LRU（最近最少用）[算法][18]+超时失�
 第二步，编写会话函数
 
 新建 session.inc.php（结构跟session存储在数据库中的代码结构一样），代码如下：
+```php
+#session.inc.php 文件
 
-    #session.inc.php 文件
-    
-    <?php
-    
-    /**
-     * Created by PhpStorm.
-     * User: lsgozj
-     * File: session.inc.php
-     * Desc: 处理 session 的自定义类
-     * Date: 16-12-13
-     * Time: 下午2:45
-     */
-    class memcachedSession implements SessionHandlerInterface
+<?php
+
+/**
+ * Created by PhpStorm.
+ * User: lsgozj
+ * File: session.inc.php
+ * Desc: 处理 session 的自定义类
+ * Date: 16-12-13
+ * Time: 下午2:45
+ */
+class memcachedSession implements SessionHandlerInterface
+{
+
+    private $_mem = null;   //memcached链接句柄
+    //这些信息应该放在配置文件中。。。。
+    private $_configs = array(
+        'host' => '127.0.0.1',     //主机域
+        'port' => 11211,           //端口
+        'prefix' => '',              //key前缀
+        'expire' => 0                //有效时间
+    );
+
+    public function __construct()
     {
-    
-        private $_mem = null;   //memcached链接句柄
-        //这些信息应该放在配置文件中。。。。
-        private $_configs = array(
-            'host' => '127.0.0.1',     //主机域
-            'port' => 11211,           //端口
-            'prefix' => '',              //key前缀
-            'expire' => 0                //有效时间
-        );
-    
-        public function __construct()
-        {
-            //默认获取配置文件中的配置
-            $this->_configs['prefix'] = ini_get('memcached.sess_prefix');
-            $this->_configs['expire'] = ini_get('session.gc_maxlifetime');
-        }
-    
-        //自定义session_start()函数
-        public static function my_session_start()
-        {
-            $sess = new self;
-            session_set_save_handler($sess);     //注册自定义函数，在php5.4之后，session_set_save_handler()参数直接传SessionHandlerInterface类型的对象即可。
-            session_start();
-        }
-    
-        /**
-         * session_start() 开始会话后第一个调用的函数，类似于构造函数的作用
-         * @param string $save_path 默认的保存路径
-         * @param string $session_name 默认的参数名（PHPSESSID）
-         * @return bool
-         */
-        public function open($save_path, $session_name)
-        {
-            $mem = new memcached();
-            $mem->addServer($this->_configs['host'], $this->_configs['port']);
-            $this->_mem = $mem;
-            return true;
-        }
-    
-        /**
-         * 类似于析构函数，在write()之后调用或者session_write_close()函数之调用
-         * @return bool
-         */
-        public function close()
-        {
-            $this->_mem = null;
-            return true;
-        }
-    
-        /**
-         * 读取session信息
-         * @param string $sessionId 通过该ID（客户端的PHPSESSID）唯一确定对应的session数据
-         * @return session信息或者空串（没有存储session信息）
-         */
-        public function read($sessionId)
-        {
-            //根据配置文件获取前缀（当然也可以自定义）
-            return $this->_mem->get($this->_configs['prefix'] . $sessionId);
-        }
-    
-        /**
-         * 写入或修改session数据
-         * @param string $sessionId 要写入数据的session对应的id（PHPSESSID）
-         * @param string $sessionData 要写入的是数据，已经序列化过的
-         * @return bool
-         */
-        public function write($sessionId, $sessionData)
-        {
-            return $this->_mem->set($this->_configs['prefix'] . $sessionId, $sessionData, $this->_configs['expire']);
-        }
-    
-        /**
-         * 主动销毁session会话
-         * @param string $sessionId 要销毁的会话的唯一ID
-         * @return bool
-         */
-        public function destroy($sessionId)
-        {
-            return $this->_mem->delete($this->_configs['prefix'] . $sessionId);
-        }
-    
-        /**
-         * 清理会话中的过期数据
-         * @param int $maxlifetime 有效期（自动读取配置文件 php.ini 中的 session.gc_maxlifetime 配置项）
-         * @return bool
-         */
-        public function gc($maxlifetime)
-        {
-            return true;
-        }
+        //默认获取配置文件中的配置
+        $this->_configs['prefix'] = ini_get('memcached.sess_prefix');
+        $this->_configs['expire'] = ini_get('session.gc_maxlifetime');
     }
 
+    //自定义session_start()函数
+    public static function my_session_start()
+    {
+        $sess = new self;
+        session_set_save_handler($sess);     //注册自定义函数，在php5.4之后，session_set_save_handler()参数直接传SessionHandlerInterface类型的对象即可。
+        session_start();
+    }
+
+    /**
+     * session_start() 开始会话后第一个调用的函数，类似于构造函数的作用
+     * @param string $save_path 默认的保存路径
+     * @param string $session_name 默认的参数名（PHPSESSID）
+     * @return bool
+     */
+    public function open($save_path, $session_name)
+    {
+        $mem = new memcached();
+        $mem->addServer($this->_configs['host'], $this->_configs['port']);
+        $this->_mem = $mem;
+        return true;
+    }
+
+    /**
+     * 类似于析构函数，在write()之后调用或者session_write_close()函数之调用
+     * @return bool
+     */
+    public function close()
+    {
+        $this->_mem = null;
+        return true;
+    }
+
+    /**
+     * 读取session信息
+     * @param string $sessionId 通过该ID（客户端的PHPSESSID）唯一确定对应的session数据
+     * @return session信息或者空串（没有存储session信息）
+     */
+    public function read($sessionId)
+    {
+        //根据配置文件获取前缀（当然也可以自定义）
+        return $this->_mem->get($this->_configs['prefix'] . $sessionId);
+    }
+
+    /**
+     * 写入或修改session数据
+     * @param string $sessionId 要写入数据的session对应的id（PHPSESSID）
+     * @param string $sessionData 要写入的是数据，已经序列化过的
+     * @return bool
+     */
+    public function write($sessionId, $sessionData)
+    {
+        return $this->_mem->set($this->_configs['prefix'] . $sessionId, $sessionData, $this->_configs['expire']);
+    }
+
+    /**
+     * 主动销毁session会话
+     * @param string $sessionId 要销毁的会话的唯一ID
+     * @return bool
+     */
+    public function destroy($sessionId)
+    {
+        return $this->_mem->delete($this->_configs['prefix'] . $sessionId);
+    }
+
+    /**
+     * 清理会话中的过期数据
+     * @param int $maxlifetime 有效期（自动读取配置文件 php.ini 中的 session.gc_maxlifetime 配置项）
+     * @return bool
+     */
+    public function gc($maxlifetime)
+    {
+        return true;
+    }
+}
+```
 
 对以上代码的必要解释：
 
@@ -280,30 +278,30 @@ Memcached主要的cache机制是LRU（最近最少用）[算法][18]+超时失�
 3、在使用 memcached 存储session数据的时候，有效时间不能超过30天。
 
 我们在 test.php 文件中[测试][22]一下是否可用：
+```php
+#test.php 文件
 
-    #test.php 文件
-    
-    <?php
-    require_once('./session.inc.php');
-    memcachedSession::my_session_start();     //开启会话
-    
-    $_SESSION['name'] = 'LSGOZJ';
-    $_SESSION['age'] = 22;
-    
-    var_dump($_SESSION);
-    echo '<br>'.session_id();   //获取SESSIONID,我们后面测试会用到，我现在测试得到的是 g5ef37mnb7dstkf1kesegbajb7
+<?php
+require_once('./session.inc.php');
+memcachedSession::my_session_start();     //开启会话
 
+$_SESSION['name'] = 'LSGOZJ';
+$_SESSION['age'] = 22;
+
+var_dump($_SESSION);
+echo '<br>'.session_id();   //获取SESSIONID,我们后面测试会用到，我现在测试得到的是 g5ef37mnb7dstkf1kesegbajb7
+```
 
 在浏览器中访问 test.php，然后我们在 test1.php 中看看memcached 中是否已经存储了 session 数据：
+```php
+#test1.php 文件
 
-    #test1.php 文件
-    
-    <?php
-    $mem = new memcached();
-    $mem->addServer('127.0.0.1',11211);
-    $prefix = ini_get("memcached.sess_prefix");
-    echo $mem->get($prefix."g5ef37mnb7dstkf1kesegbajb7");
-
+<?php
+$mem = new memcached();
+$mem->addServer('127.0.0.1',11211);
+$prefix = ini_get("memcached.sess_prefix");
+echo $mem->get($prefix."g5ef37mnb7dstkf1kesegbajb7");
+```
 在浏览器打开 test1.php 返回：
 
     name|s:6:"LSGOZJ";age|i:22;
@@ -322,26 +320,22 @@ Memcached主要的cache机制是LRU（最近最少用）[算法][18]+超时失�
 **1、使用 redis 提供的 session 支持实现(最简单的方法)**
 
 修改配置文件 php.ini：
-
-    session.save_handler = redis
-    session.save_path = 'tcp://127.0.0.1:6379'
-
+```ini
+session.save_handler = redis
+session.save_path = 'tcp://127.0.0.1:6379'
+```
 或是：
-
-    #某个php文件
-    ini_set('session.save_handler','redis');
-    ini_set('session.save_path','tcp://127.0.0.1:6379');
-
+```php
+#某个php文件
+ini_set('session.save_handler','redis');
+ini_set('session.save_path','tcp://127.0.0.1:6379');
+```
 
 **2、通过php提供的接口，自己改写 session 的处理函数**
 
 关于这一部分，跟上面 memcached 的内容非常像，就只有个别函数比如设置有效时间，redis使用setex()函数，等等跟memcached 不一样，我就不再举例子了。
 
 [0]: http://www.csdn.net/baidu_30000217/article/details/53609790
-[1]: http://www.csdn.net/tag/session
-[2]: http://www.csdn.net/tag/redis
-[3]: http://www.csdn.net/tag/php
-[4]: http://www.csdn.net/tag/memcached
 [9]: #
 [10]: #t0
 [11]: #t1

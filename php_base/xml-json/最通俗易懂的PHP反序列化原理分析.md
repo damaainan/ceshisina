@@ -29,11 +29,9 @@ PHP反序列化漏洞虽然利用的条件比较苛刻，但是如果可以利�
  
 我们先讲一讲比较简单的序列化，我们就用序列化json来举例子吧。虽然序列化Json和我们讲PHP反序列化的漏洞没有什么关系。但是在理解序列化这个概念和之后的内容会有所帮助
  
-```php
+```
 json_encode()
 json_decode()
-
-
 ```
  
 这两个函数，一眼就能看出来是做什么用的吧，直接上例子：
@@ -88,14 +86,12 @@ json_decode()
  
 在研究反序列化漏洞的时候，碰见这几个魔法函数就要仔细研究研究了：
  
-```php
+```
 __construct()当一个对象创建时被调用
 __destruct()当一个对象销毁时被调用
 __toString()当一个对象被当作一个字符串使用
 __sleep() 在对象在被序列化之前运行
 __wakeup将在序列化之后立即被调用
-
-
 ```
  
 这些就是我们要关注的几个魔术方法了，如果服务器能够接收我们反序列化过的字符串、并且未经过滤的把其中的变量直接放进这些魔术方法里面的话，就容易造成很严重的漏洞了。
@@ -112,7 +108,6 @@ class A{
 }
 $a = $_GET['test'];
 $a_unser = unserialize($a);
-?>
 ```
  
 这里我们只要构造payload：
@@ -127,14 +122,13 @@ $a_unser = unserialize($a);
  
 ```php
 <?php 
-    require_once('shield.php');
-    $x = new Shield();
-    isset($_GET['class']) && $g = $_GET['class'];
-    if (!empty($g)) {
-        $x = unserialize($g);
-    }
-    echo $x->readfile();
-?>
+require_once('shield.php');
+$x = new Shield();
+isset($_GET['class']) && $g = $_GET['class'];
+if (!empty($g)) {
+    $x = unserialize($g);
+}
+echo $x->readfile();
 ```
  
 可以看见 先是包含了shield.php 然后从中new了个新的实例出来 最后接收用户的反序列化 输出readfile()方法
@@ -143,20 +137,19 @@ $a_unser = unserialize($a);
  
 ```php
 <?php
-    //flag is in pctf.php
-    class Shield {
-        public $file;
-        function __construct($filename = '') {
-            $this -> file = $filename;
-        }
-        function readfile() {
-            if (!empty($this->file) && stripos($this->file,'..')===FALSE  
-            && stripos($this->file,'/')===FALSE && stripos($this->file,'\\')==FALSE) {
-                return @file_get_contents($this->file);
-            }
+//flag is in pctf.php
+class Shield {
+    public $file;
+    function __construct($filename = '') {
+        $this -> file = $filename;
+    }
+    function readfile() {
+        if (!empty($this->file) && stripos($this->file,'..')===FALSE  
+        && stripos($this->file,'/')===FALSE && stripos($this->file,'\\')==FALSE) {
+            return @file_get_contents($this->file);
         }
     }
-?>
+}
 ```
  
 这里我们可以看见只要操控$file这个参数为pctf.php就可以了，这里construct函数在实例被创建的时候(也就是new Shield()的时候)执行，所以不会影响我们对$file的操作
@@ -185,9 +178,9 @@ $a_unser = unserialize($a);
 [9]: http://p0sec.net/index.php/archives/114/
 [10]: http://paper.tuisec.win/detail/fa497a4e50b5d83
 [11]: https://www.anquanke.com/post/id/84922
-[0]: https://img1.tuicool.com/QJBriqV.jpg 
-[1]: https://img0.tuicool.com/rEb6je2.jpg 
-[2]: https://img1.tuicool.com/ZVfUZzA.jpg 
-[3]: https://img2.tuicool.com/zMF3umz.jpg 
-[4]: https://img1.tuicool.com/ABj6Bje.jpg 
-[5]: https://img0.tuicool.com/EZBVB3y.jpg 
+[0]: ../img/QJBriqV.jpg 
+[1]: ../img/rEb6je2.jpg 
+[2]: ../img/ZVfUZzA.jpg 
+[3]: ../img/zMF3umz.jpg 
+[4]: ../img/ABj6Bje.jpg 
+[5]: ../img/EZBVB3y.jpg 

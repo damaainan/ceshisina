@@ -13,7 +13,7 @@
  
 ```php
 <?php
-	$items = array(
+$items = array(
   array('id'=>1,'name'=>"衣服",'parId'=>0),
   array('id'=>2,'name'=>"书籍",'parId'=>0),
   array('id'=>3,'name'=>"T恤",'parId'=>1),
@@ -30,8 +30,8 @@
   array('id'=>14,'name'=>"文学",'parId'=>2),
   array('id'=>15,'name'=>"四书五经",'parId'=>14)
 );
-	$message = json_encode($items,JSON_UNESCAPED_UNICODE);
-	echo $message;
+$message = json_encode($items,JSON_UNESCAPED_UNICODE);
+echo $message;
 ```
  
 效果：
@@ -44,12 +44,10 @@
  
 ```php
 <?php
-	$str = '[{"id":1,"name":"衣服","parId":0},{"id":2,"name":"书籍","parId":0},{"id":3,"name":"T恤","parId":1},{"id":4,"name":"裤子","parId":1},
-{"id":5,"name":"鞋子","parId":1},{"id":6,"name":"皮鞋","parId":5},{"id":7,"name":"运动鞋","parId":5},{"id":8,"name":"耐克","parId":7},
-{"id":9,"name":"耐克","parId":3},{"id":10,"name":"鸿星尔克","parId":7},{"id":11,"name":"小说","parId":2},{"id":12,"name":"科幻小说","parId":11},
-{"id":13,"name":"古典名著","parId":11},{"id":14,"name":"文学","parId":2},{"id":15,"name":"四书五经","parId":14}]';
-	$res = json_decode($str, true);
-	var_dump($res);
+$str = '[{"id":1,"name":"衣服","parId":0},{"id":2,"name":"书籍","parId":0},{"id":3,"name":"T恤","parId":1},{"id":4,"name":"裤子","parId":1},{"id":5,"name":"鞋子","parId":1},{"id":6,"name":"皮鞋","parId":5},{"id":7,"name":"运动鞋","parId":5},{"id":8,"name":"耐克","parId":7},
+{"id":9,"name":"耐克","parId":3},{"id":10,"name":"鸿星尔克","parId":7},{"id":11,"name":"小说","parId":2},{"id":12,"name":"科幻小说","parId":11},{"id":13,"name":"古典名著","parId":11},{"id":14,"name":"文学","parId":2},{"id":15,"name":"四书五经","parId":14}]';
+$res = json_decode($str, true);
+var_dump($res);
 ```
  
 效果：
@@ -64,10 +62,10 @@
  
 ```php
 <?php
-	function data_to_xml($data) {
+function data_to_xml($data) {
     $xml = '';
     foreach ($data as $key => $val) {
-        if(is_numeric($key)) $key = "item id=\"$key\"";
+        if(is_numeric($key)) $key = "item id=$key";
         $xml    .=  "<$key>";
         $xml    .=  is_array($val) ? data_to_xml($val) : $val;
         list($key) = explode(' ', $key);

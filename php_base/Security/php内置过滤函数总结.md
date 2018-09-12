@@ -25,8 +25,8 @@ SQL注入过滤函数有`addslashes()`,`mysql_real_escape_string()`以及`mysql_
 
 预定义字符是：
 
-* 单引号（`’`）
-* 双引号（`”`）
+* 单引号（`'`）
+* 双引号（`"`）
 * 反斜杠（`\`）
 * `NULL`
 
@@ -37,15 +37,13 @@ SQL注入过滤函数有`addslashes()`,`mysql_real_escape_string()`以及`mysql_
 参数 描述 `string` 必需。规定要转义的字符串。 
 
 ```php
-    <?php
-    
-    $id=$_GET["id"];
-    
-    $str = addslashes($id);
-    
-    echo $str;
-    
-    ?>
+<?php
+
+$id=$_GET["id"];
+
+$str = addslashes($id);
+
+echo $str;
 ```
 
 ![][4]
@@ -59,14 +57,13 @@ SQL注入过滤函数有`addslashes()`,`mysql_real_escape_string()`以及`mysql_
 ```
 
 ```php
-    <?php
-    
-    $id=$_GET["id"];
-    
-    $str = mysql_escape_string($id);
-    
-    echo $str;
-    ?>
+<?php
+
+$id=$_GET["id"];
+
+$str = mysql_escape_string($id);
+
+echo $str;
 ```
 
 ![][5]
@@ -91,15 +88,14 @@ SQL注入过滤函数有`addslashes()`,`mysql_real_escape_string()`以及`mysql_
 参数 描述 string 必需。规定要转义的字符串。 connection 可选。规定 MySQL 连接。如果未规定，则使用上一个连接。 
 
 ```php
-    <?php
-    
-    $id=$_GET["id"];
-    
-    if($str = mysql_real_escape_string($id))
-        echo $str;
-    else
-        echo 'false';
-    ?>
+<?php
+
+$id=$_GET["id"];
+
+if($str = mysql_real_escape_string($id))
+    echo $str;
+else
+    echo 'false';
 ```
 
 ![][6]
@@ -114,7 +110,7 @@ XSS过滤函数有`htmlspecialchars()`和`strip_tags()`
 
 预定义的字符是：
 
-```php
+```
     &转换成&
     "转换成"
     '转换成'
@@ -123,14 +119,13 @@ XSS过滤函数有`htmlspecialchars()`和`strip_tags()`
 ```
 
 ```php
-    <?php
-    
-    $id=$_GET["id"];
-    
-    $str = htmlspecialchars($id);
-    
-    echo $str;
-    ?>
+<?php
+
+$id=$_GET["id"];
+
+$str = htmlspecialchars($id);
+
+echo $str;
 ```
 
 ![][7]
@@ -146,14 +141,13 @@ XSS过滤函数有`htmlspecialchars()`和`strip_tags()`
 参数 描述 string 必需。规定要检查的字符串。 allow 可选。规定允许的标签。这些标签不会被删除。 
 
 ```php
-    <?php
-    
-    $id=$_GET["id"];
-    
-    $str = strip_tags($id);
-    
-    echo $str;
-    ?>
+<?php
+
+$id=$_GET["id"];
+
+$str = strip_tags($id);
+
+echo $str;
 ```
 
 ![][8]
@@ -196,14 +190,13 @@ PHP提供了`escapeshellcmd()`和`escapeshellarg()`两个函数对参数进行�
 ```
 
 ```php
-    <?php
-    
-    $id=$_GET["id"];
-    
-    $str = escapeshellcmd($id);
-    
-    echo $str;
-    ?>
+<?php
+
+$id=$_GET["id"];
+
+$str = escapeshellcmd($id);
+
+echo $str;
 ```
 
 ![][9]
@@ -213,14 +206,13 @@ PHP提供了`escapeshellcmd()`和`escapeshellarg()`两个函数对参数进行�
 给所有参数加上一对双引号，强制为字符串
 
 ```php
-    <?php
-    
-    $id=$_GET["id"];
-    
-    $str = escapeshellarg($id);
-    
-    echo $str;
-    ?>
+<?php
+
+$id=$_GET["id"];
+
+$str = escapeshellarg($id);
+
+echo $str;
 ```
 
 ![][10]

@@ -35,23 +35,22 @@ B、在服务器端，一旦开启`sessioin_start()`的时候，会根据客户�
 接下来，我们来看一点代码！当我们 **第一次运行这个脚本** ，脚本代码如下 脚本A中的代码： 
 
 ```php
-     <?php
-     session_start();
-     $_SESSION['name']='maweibin';
-     ?>
+<?php
+session_start();
+$_SESSION['name']='maweibin';
 ```
 
 在 **服务器端** 保存session文件夹中的的文件入下： 
 
-![请输入图片描述][4]
+![][4]
 
 代码中的保值至如下：
 
-![请输入图片描述][5]
+![][5]
 
 在客户端保存了一个cookie文件，内容如下：
 
-![请输入图片描述][6]
+![][6]
 
 通过观察我们可以发现：`PHPSESSIONID`对应的value值和服务器端session文件的文件名是一致的！
 
@@ -59,22 +58,22 @@ B、在服务器端，一旦开启`sessioin_start()`的时候，会根据客户�
 
 在客户端，发起http请求的时候，我们可以看到：
 
-![请输入图片描述][7]
+![][7]
 
 请求的时候会字段的将`cookie`中的`PHPSESSID`带到服务器端！服务器端，会通过提供的`sessionid`值，将`session`文件中的数据读取出来!
 
 ##### 3）同cookie不同的是，session中的数据不仅可以存放字符串，还可以存放数组和对象！
 
 ```php
-    <?php
-    session_start();
-    $name = array('name'=>'jay', 'age'=>'23', 'addr'=>'吉林省');
-    $_SESSION['voice'] = $name;
-    ?>
-    <?php
-    session_start();
-    var_dump($_SESSION['voice']);
-    ?>
+<?php
+session_start();
+$name = array('name'=>'jay', 'age'=>'23', 'addr'=>'吉林省');
+$_SESSION['voice'] = $name;
+?>
+<?php
+session_start();
+var_dump($_SESSION['voice']);
+?>
 ```
 
 运行的结果如下：
@@ -84,11 +83,10 @@ B、在服务器端，一旦开启`sessioin_start()`的时候，会根据客户�
 注意：这里我们有必要讨论一下，为什么cookie中不能存放数组之类的变量，而只能够存放字符串！我们来看几段代码：
 
 ```php
-    <?php
-    session_start();
-    $name = array('name'=>'jay', 'age'=>'23', 'addr'=>'吉林省');
-    $_SESSION['voice'] = $name;
-    ?>
+<?php
+session_start();
+$name = array('name'=>'jay', 'age'=>'23', 'addr'=>'吉林省');
+$_SESSION['voice'] = $name;
 ```
 
 在session文件中存储的数据如下：
@@ -96,28 +94,25 @@ B、在服务器端，一旦开启`sessioin_start()`的时候，会根据客户�
     name|s:8:"maweibin";voice|a:3:{s:4:"name";s:3:"jay";s:3:"age";s:2:"23";s:4:"addr";s:9:"吉林省";}
 
 ```php    
-    <?php
-    $expires = time()+3600;
-    $name = array('name'=>'jay', 'age'=>'23', 'addr'=>'吉林省');
-    setcookie('name',$name, $expires, '/talkphp/secondtalk/', 'php.test.com');
-    ?>
+<?php
+$expires = time()+3600;
+$name = array('name'=>'jay', 'age'=>'23', 'addr'=>'吉林省');
+setcookie('name',$name, $expires, '/talkphp/secondtalk/', 'php.test.com');
 ```
 
 此时，我们调用一下这段脚本：
 ```php
-    <?php
-    $name = $_COOKIE['name'];
-    var_dump($name);
-    //得到的结果是null，由此可见这样的写法是不支持的！
-    ?>
+<?php
+$name = $_COOKIE['name'];
+var_dump($name);
+//得到的结果是null，由此可见这样的写法是不支持的！
 ```
 我们再看一段代码：
 ```php
-    <?php
-    $expires = time()+3600;
-    setcookie('person["name"]','liangbo' , $expires, '/talkphp/secondtalk/', 'php.test.com');
-    setcookie('person["age"]','23' , $expires, '/talkphp/secondtalk/','php.test.com');
-    ?>
+<?php
+$expires = time()+3600;
+setcookie('person["name"]','liangbo' , $expires, '/talkphp/secondtalk/', 'php.test.com');
+setcookie('person["age"]','23' , $expires, '/talkphp/secondtalk/','php.test.com');
 ```
 
 运行结果如下：
@@ -157,14 +152,13 @@ php.test.com/talkphp/secondtalk/
 
 我们来看一段代码：
 ```php
-    <?php
-    var_dump($_SESSION);
-    session_start();
-    var_dump($_SESSION);
-    unset($_SESSION);
-    session_start();
-    var_dump($_SESSION);
-    ?>
+<?php
+var_dump($_SESSION);
+session_start();
+var_dump($_SESSION);
+unset($_SESSION);
+session_start();
+var_dump($_SESSION);
 ```
 
  运行如下：

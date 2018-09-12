@@ -13,15 +13,14 @@
 先看例子：
 
 ```php
-    <?php  
-    //测试时文件的编码方式为gbk
-    $str='中文a字1符';  
-    echo strlen($str).'<br>';//10 
-    echo mb_strlen($str,'utf8').'<br>';//7  
-    echo mb_strlen($str,'gbk').'<br>';//6  
-    echo mb_strlen($str,'gb2312').'<br>';//6 
-    echo mb_strlen($str).'<br>';//10
-    ?> 
+<?php  
+//测试时文件的编码方式为gbk
+$str='中文a字1符';  
+echo strlen($str).'<br>';//10 
+echo mb_strlen($str,'utf8').'<br>';//7  
+echo mb_strlen($str,'gbk').'<br>';//6  
+echo mb_strlen($str,'gb2312').'<br>';//6 
+echo mb_strlen($str).'<br>';//10
 ```
 结果分析：在`strlen`计算时，对待 一个gbk的中文字符是2个长度，所以“中文a字1符”长度是2*4+2=10,在`mb_strlen`计算时，选内码为gbk时，会 将一个中文当做一个字符长度来处理。
 

@@ -92,14 +92,13 @@ HTML常用字符实体一览：
 我们还是以上面代码为例，对比 `htmlentities`和`htmlspecialchars`查看下效果：
 
 ```php
-    <?php
-    $str = "<a href='http://www.chanzhi.org'>蝉知企业门户系统©</a>";
-    
-    //使用htmlspecialchars()函数将特殊字符转换为实体字符
-    $str2 = htmlspecialchars($str);
-    
-    echo $str2;
-    ?>
+<?php
+$str = "<a href='http://www.chanzhi.org'>蝉知企业门户系统©</a>";
+
+//使用htmlspecialchars()函数将特殊字符转换为实体字符
+$str2 = htmlspecialchars($str);
+
+echo $str2;
 ```
 
 运行效果如下：

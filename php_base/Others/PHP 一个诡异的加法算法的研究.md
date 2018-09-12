@@ -24,9 +24,9 @@ echo $result;
 //第一题
 <?php
 function test(){
- $a=1;
- $b=&$a;
- echo (++$a)+(++$a);
+    $a=1;
+    $b=&$a;
+    echo (++$a)+(++$a);
 }
 test();
 //执行的值为6  php7 为 5
@@ -37,9 +37,9 @@ test();
 //第二题
 <?php
 function test(){
- $a=1;
- $b=&$a;
- echo (++$a)+(++$a)+(++$a);
+    $a=1;
+    $b=&$a;
+    echo (++$a)+(++$a)+(++$a);
 }
 test();
 //执行的值为10
@@ -182,7 +182,7 @@ $a=$a+$c; //6+4=10
 
 
 
-[0]: https://segmentfault.com/img/remote/1460000006772923
-[1]: https://segmentfault.com/img/remote/1460000005821751
-[2]: https://segmentfault.com/img/remote/1460000005821754
-[3]: https://segmentfault.com/img/remote/1460000005821756
+[0]: ../img/1460000006772923.png
+[1]: ../img/1460000005821751.png
+[2]: ../img/1460000005821754.png
+[3]: ../img/1460000005821756.png

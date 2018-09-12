@@ -8,12 +8,12 @@
 Python脚本中：
 
 ```python
-    def hex_to_asc(ch):
-        return '{:c}'.format(int(float.fromhex(ch)))
-     
-    for i in range(100):
-        s = '%02d' % i
-        print "s:%s,hex_to_asc(s):%s" % (s,hex_to_asc(s))
+def hex_to_asc(ch):
+    return '{:c}'.format(int(float.fromhex(ch)))
+ 
+for i in range(100):
+    s = '%02d' % i
+    print "s:%s,hex_to_asc(s):%s" % (s,hex_to_asc(s))
 ```
 
 可以得到如下结果：
@@ -101,13 +101,12 @@ ASCII 值可被指定为十进制值、八进制值或十六进制值。八进�
 #### script 1
 
 ```php
-    <?php
-    for($k=0;$k<=255;$k++)
-    {
-        $a='shell.php'.chr($k)."1.jpg";
-        echo 'k:'.$k.'   '.'$a:'.$a.'   '.'iconv("UTF-8","gbk",$a):'.iconv("UTF-8","gbk",$a)."<br>";
-    }
-    ?>
+<?php
+for($k=0;$k<=255;$k++)
+{
+    $a='shell.php'.chr($k)."1.jpg";
+    echo 'k:'.$k.'   '.'$a:'.$a.'   '.'iconv("UTF-8","gbk",$a):'.iconv("UTF-8","gbk",$a)."<br>";
+}
 ```
 
 其中`iconv(“UTF-8″,”gbk”,$a)`或是`iconv(“UTF-8″,”gb2313”,$a)`都会在`chr(128)`到`chr(255)`之间截断，使结果为shell.php,如图：
@@ -119,36 +118,35 @@ ASCII 值可被指定为十进制值、八进制值或十六进制值。八进�
 #### script 2
 
 ```php
-    <?php
-      function asc2hex($str) {  
-          return '/x'.substr(chunk_split(bin2hex($str), 2, '/x'),0,-2);  
-      }
-     
-     
-      function hex2asc($str) {  
-          $str = join('',explode('/x',$str));  
-          $len = strlen($str);  
-          for ($i=0;$i<$len;$i+=2) $data.=chr(hexdec(substr($str,$i,2)));  
-              return $data;  
-          }  
-         
-         
-          for($k=0;$k<256;$k++)
-          {
-              $a=sprintf("/x%02x",$k);
-              echo '$k:'.$k.' ';
-              echo '$a:'.$a.' ';
-              echo 'hex2asc($a):'.hex2asc($a);
-              $file_name="shell.php".hex2asc($a)."1.jpg";
-              echo '$file_name:'.$file_name.'  ';
-              $file_name=iconv("UTF-8","gb2312",$file_name);
-              echo 'iconv("UTF-8","gb2312",$file_name):'.$file_name."<br>";
-          }
-      }
-      /*
-      echo hex2asc('/x00');
-      */
-      ?>
+<?php
+function asc2hex($str) {  
+    return '/x'.substr(chunk_split(bin2hex($str), 2, '/x'),0,-2);  
+}
+ 
+ 
+function hex2asc($str) {  
+    $str = join('',explode('/x',$str));  
+    $len = strlen($str);  
+    for ($i=0;$i<$len;$i+=2) $data.=chr(hexdec(substr($str,$i,2)));  
+        return $data;  
+    }  
+   
+   
+    for($k=0;$k<256;$k++)
+    {
+        $a=sprintf("/x%02x",$k);
+        echo '$k:'.$k.' ';
+        echo '$a:'.$a.' ';
+        echo 'hex2asc($a):'.hex2asc($a);
+        $file_name="shell.php".hex2asc($a)."1.jpg";
+        echo '$file_name:'.$file_name.'  ';
+        $file_name=iconv("UTF-8","gb2312",$file_name);
+        echo 'iconv("UTF-8","gb2312",$file_name):'.$file_name."<br>";
+    }
+}
+/*
+echo hex2asc('/x00');
+*/
 ```
 执行结果：
 
@@ -159,14 +157,14 @@ ASCII 值可被指定为十进制值、八进制值或十六进制值。八进�
 相同情况下的python脚本为：
 
 ```python
-    def hex_to_asc(ch):
-        return '{:c}'.format(int(float.fromhex(ch)))
-     
-    for i in range(256):
-        s = '%02x' % i
-        print "s:",s,"    ",
-        print "hex_to_asc(s):",hex_to_asc(s)
-        #print "s:%s,hex_to_asc(s):%s" % (s,hex_to_asc(s))
+def hex_to_asc(ch):
+    return '{:c}'.format(int(float.fromhex(ch)))
+ 
+for i in range(256):
+    s = '%02x' % i
+    print "s:",s,"    ",
+    print "hex_to_asc(s):",hex_to_asc(s)
+    #print "s:%s,hex_to_asc(s):%s" % (s,hex_to_asc(s))
 ```
 具体截断效果可用在post数据到web server中，看web server目录处理结果，可参考http://www.wooyun.org/bugs/wooyun-2014-048293
 

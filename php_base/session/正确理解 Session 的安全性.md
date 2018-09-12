@@ -32,18 +32,18 @@ Cookie 本身也是不安全的，所以提升 Cookie 安全性的方法也同�
 ## Session Time-Outs
 
 由于 Session 的 GC 不能依赖，所以很多类库通过一些方案来解决该问题，考虑这样一个场景“假如你登陆了一个网站，并且很长时间没有操作了”，那么这个会话有效吗？理论上来说应该不算有效，会话的有效时间应该是“变化的”，当用户触发了会话，则更新一次（等于将过期时间延长）。
-
-    session_start();
-    $activeTime = 3600;
-    $t = time();
-    $lastactivetime = $_SESSION["lastactivetime"] ;
-    if (isset($lastactivetime)) {
-        if (($lastactivetime + $activeTime) > $t) {
-            return;
-        }
+```php
+session_start();
+$activeTime = 3600;
+$t = time();
+$lastactivetime = $_SESSION["lastactivetime"] ;
+if (isset($lastactivetime)) {
+    if (($lastactivetime + $activeTime) > $t) {
+        return;
     }
-    $_SESSION["lastactivetime"] = $t;
-
+}
+$_SESSION["lastactivetime"] = $t;
+```
 在 PHP CodeIgniter 框架中，这个激活有效时间称为 sess_time_to_update。  
 当然这个方法也并不是特别安全，因为一般来说攻击者会不断的维持会话处于“激活状态”。
 
@@ -67,18 +67,18 @@ Cookie 本身也是不安全的，所以提升 Cookie 安全性的方法也同�
 第二种解决方案是 PHP 提供的，session.use_strict_mode 指令假如开启，未初始化的 Session ID PHP 会重新生成一个，很大程度上解决了安全问题。
 
 在这个指令没出现的情况下，一般通过如下方式去解决：
+```php
+//使用 session_id 作为校验 ID
+session_destory();
+session_regenerate_id();
+$_SESSION['valid_id'] = session_id(); 
 
-    //使用 session_id 作为校验 ID
-    session_destory();
-    session_regenerate_id();
-    $_SESSION['valid_id'] = session_id(); 
-    
-    //校验 session_id 是否初始化
-    if ($_SESSION['valid_id'] !== session_id()) {
-      session_regenerate_id();
-      $_SESSION['valid_id'] = session_id(); 
-    }
-
+//校验 session_id 是否初始化
+if ($_SESSION['valid_id'] !== session_id()) {
+  session_regenerate_id();
+  $_SESSION['valid_id'] = session_id(); 
+}
+```
 最后，安全问题是相对的，没有绝对的安全，尽量让其更安全，并通过应用解决方案去提升安全。
 
 并且这里也没有提到如何进行 Session 劫持的问题，这已经不属于 PHP 解决的范畴了。
@@ -86,17 +86,17 @@ Cookie 本身也是不安全的，所以提升 Cookie 安全性的方法也同�
 ## 正确的关闭会话方式
 
 很多开发者在用户退出的时候，不会主动或者正确的关闭会话，关闭会话包含三个方面，第一就是传递 Session ID 的 Cookie 应该删除，第二就是 Session 文件应该删除，第三在 PHP 进程中的 Session 全局变量也应该清除，用代码来说明下：
-
-    $_SESSION = array();
-    session_unset();
-    $name = session_name();
-    if (isset($_COOKIE[$name])) {
-        $r = session_get_cookie_params();
-        setcookie($name, '', time() - 3600, $r['path'], $r['domain'], $r['
-        secure'], $r['httponly']);
-    }
-    session_destroy();
-
+```php
+$_SESSION = array();
+session_unset();
+$name = session_name();
+if (isset($_COOKIE[$name])) {
+    $r = session_get_cookie_params();
+    setcookie($name, '', time() - 3600, $r['path'], $r['domain'], $r['
+    secure'], $r['httponly']);
+}
+session_destroy();
+```
 推荐阅读 : [http://www.acros.si/papers/session_fixation.pdf][1]
 
 

@@ -32,29 +32,29 @@
 （2）在 WEB 开发中，建议对数据都进行 urlencode，这个编码与 WWW 表单 POST 数据的编码方式是一样的，同时与 application/x-www-form-urlencoded 的媒体类型编码方式一样。
 
 （3）`$_GET` 和 `$_REQUEST` 会自动 urldecode，所以需要注意，尤其对于+字符来说，假如二次 urldecode，则会丢失该字符，因为系统进行二次解码，会将“+”符号变为空格符号。**201704备注**：`$_POST` 变量也会主动 urldecode。同时假如服务器端程序自己构建数据发送请求，需要确保进行 urlencode，举个例子仔细体会下：
+```php
+$url = 'http://localhost/t.php?parama=' . urlencode('a+b c');
+$url = 'http://localhost/t.php?a=a+b c'; //比较没有 urlencode 处理的区别
+$data = array(
+    'paramb' => "a+b c",
+);
 
-    $url = 'http://localhost/t.php?parama=' . urlencode('a+b c');
-    $url = 'http://localhost/t.php?a=a+b c'; //比较没有 urlencode 处理的区别
-    $data = array(
-        'paramb' => "a+b c",
-    );
-    
-    $headers = array(
-       'Content-Type: application/x-www-form-urlencoded',
-    );
-    
-    $options = array(
-        'http' => array(
-            'method' => 'POST',
-            //http_build_query 是 urlencode 的封装版，本质没有太大区别
-            'content' => http_build_query($data),
-            'header' => implode("\r\n", $headers),
-        )
-    );
-    
-    $rs = stream_context_create($options) ;
-    echo file_get_contents($url, false, $rs);
+$headers = array(
+   'Content-Type: application/x-www-form-urlencoded',
+);
 
+$options = array(
+    'http' => array(
+        'method' => 'POST',
+        //http_build_query 是 urlencode 的封装版，本质没有太大区别
+        'content' => http_build_query($data),
+        'header' => implode("\r\n", $headers),
+    )
+);
+
+$rs = stream_context_create($options) ;
+echo file_get_contents($url, false, $rs);
+```
 ### htmlentities
 
 这个函数的基本定义如下：在 HTML 中，某些字符具有特殊含义（称为应用字符），那么为了表达这些字符的本来含义，就必须使用该函数进行处理。

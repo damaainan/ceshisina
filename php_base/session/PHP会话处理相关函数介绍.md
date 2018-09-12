@@ -21,7 +21,7 @@
 函数功能：登记一个新的变量为会话变量  
 函数原型：boolean session_register(string name);  
 返回值：布尔值。  
-功能说明：这个函数是在全局变量中增加一个变量到当前的SESSION中，参数name就是想要加入的变量名，成功则返回逻辑值true。可以用$_SESSION[name]或$HTTP_SESSION_VARS[name]的形式来取值或赋值。
+功能说明：这个函数是在全局变量中增加一个变量到当前的SESSION中，参数name就是想要加入的变量名，成功则返回逻辑值true。可以用`$_SESSION[name]`或`$HTTP_SESSION_VARS[name]`的形式来取值或赋值。
 
 **PHP处理会话函数3、 session_is_registered**
 
@@ -80,4 +80,4 @@
 功能说明：这个函数和Session_destroy不同，它不结束会话。就如同用函数session_unregister逐一注销掉所有的会话变量。
 
 
-[1]: http://www.php100.com/uploadfile/2015/0322/20150322033941246.jpg
+[1]: ../img/20150322033941246.jpg

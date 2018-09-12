@@ -35,34 +35,34 @@ Medoo支持Composer安装和直接下载。
 引入Medoo并配置数据库：
 
 ```php
-    <?php
+<?php
+
+//使用Composer安装的这样引入
+//require 'vendor/autoload.php';
+
+// 直接下载的这样引入
+require_once 'medoo.php';
+ 
+// 初始化
+$db = new medoo([
+    'database_type' => 'mysql',
+    'database_name' => 'test',
+    'server' => 'localhost',
+    'username' => 'root',
+    'password' => '123456',
+    'charset' => 'utf8',
     
-    //使用Composer安装的这样引入
-    //require 'vendor/autoload.php';
-    
-    // 直接下载的这样引入
-    require_once 'medoo.php';
-     
-    // 初始化
-    $db = new medoo([
-        'database_type' => 'mysql',
-        'database_name' => 'test',
-        'server' => 'localhost',
-        'username' => 'root',
-        'password' => '123456',
-        'charset' => 'utf8',
-        
-        //可选：端口
-        'port' => 3306,
-     
-        //可选：表前缀
-        'prefix' => '',
-     
-        // PDO驱动选项 http://www.php.net/manual/en/pdo.setattribute.php
-        'option' => [
-            PDO::ATTR_CASE => PDO::CASE_NATURAL
-        ]
-    ]);
+    //可选：端口
+    'port' => 3306,
+ 
+    //可选：表前缀
+    'prefix' => '',
+ 
+    // PDO驱动选项 http://www.php.net/manual/en/pdo.setattribute.php
+    'option' => [
+        PDO::ATTR_CASE => PDO::CASE_NATURAL
+    ]
+]);
 ```
 
 

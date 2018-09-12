@@ -36,26 +36,26 @@ PHP字符串最强大的部分就是变量解析，可以在运行时根据上�
 简单的变量解析就是在字符串中可以包含“变量”，“数组”，“对象属性”，复杂的语法规则就是使用{}符号来进行操作（组成一个表达式）。
 
 通过一个例子看看变量解析的强大之处
+```php
+class beers {
+    const softdrink = 'softdrink';
+    public static $ale = 'ale';
+    public $data = array(1,3,"k"=>4);
+}
 
-    class beers {
-        const softdrink = 'softdrink';
-        public static $ale = 'ale';
-        public $data = array(1,3,"k"=>4);
-    }
-    
-    $softdrink = "softdrink";
-    $ale = "ale";
-    $arr = array("arr1","arr2","arr3"=>"arr4","arr4"=>array(1,2));
-    $arr4 = "arr4";
-    $obj = new beers;
-    echo "line1:{$arr[1]}\n";
-    echo "line2:{$arr['arr4'][0]}\n"; 
-    echo "line3:{$obj->data[1]}\n";
-    echo "line4:{${$arr['arr3']}}\n";
-    echo "line5:{${$arr['arr3']}[1]}\n";
-    echo "line6:{${beers::softdrink}}\n";
-    echo "line7:{${beers::$ale}}\n";
-
+$softdrink = "softdrink";
+$ale = "ale";
+$arr = array("arr1","arr2","arr3"=>"arr4","arr4"=>array(1,2));
+$arr4 = "arr4";
+$obj = new beers;
+echo "line1:{$arr[1]}\n";
+echo "line2:{$arr['arr4'][0]}\n"; 
+echo "line3:{$obj->data[1]}\n";
+echo "line4:{${$arr['arr3']}}\n";
+echo "line5:{${$arr['arr3']}[1]}\n";
+echo "line6:{${beers::softdrink}}\n";
+echo "line7:{${beers::$ale}}\n";
+```
 ## 字符串转换
 
 PHP 语言比 Python 简单的另外一个原因就是类型的隐式转换，会简化很多操作，这里通过字符串转换来说明。

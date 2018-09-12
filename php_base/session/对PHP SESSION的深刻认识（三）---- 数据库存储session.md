@@ -43,7 +43,7 @@
     );
 
 
-![这里写图片描述][18]
+![][18]
 
 PS：如果程序需要在会话保存大量的数据，则 data 字段可能就需要定义为 MEDIUMTEXT 或 LONGTEXT 类型了。
 
@@ -78,183 +78,184 @@ PS：如果程序需要在会话保存大量的数据，则 data 字段可能就
 
 php5.4及之后可以直接实现 SessionHandlerInterface 接口，代码会更加简洁。该接口的结构如下：
 
-    SessionHandlerInterface {
-        /* 方法 */
-        abstract public bool close ( void )
-        abstract public bool destroy ( string $session_id )
-        abstract public bool gc ( int $maxlifetime )
-        abstract public bool open ( string $save_path , string $session_name )
-        abstract public string read ( string $session_id )
-        abstract public bool write ( string $session_id , string $session_data )
-    }
-
+```c
+SessionHandlerInterface {
+    /* 方法 */
+    abstract public bool close ( void )
+    abstract public bool destroy ( string $session_id )
+    abstract public bool gc ( int $maxlifetime )
+    abstract public bool open ( string $save_path , string $session_name )
+    abstract public string read ( string $session_id )
+    abstract public bool write ( string $session_id , string $session_data )
+}
+```
 
 我们新建 session.inc.php，代码如下：
+```php
+<?php
+/**
+ * Created by PhpStorm.
+ * User: lsgozj
+ * File: session.inc.php
+ * Desc: 处理 session 的自定义类
+ * Date: 16-12-10
+ * Time: 下午4:39
+ */
 
-    <?php
-    /**
-     * Created by PhpStorm.
-     * User: lsgozj
-     * File: session.inc.php
-     * Desc: 处理 session 的自定义类
-     * Date: 16-12-10
-     * Time: 下午4:39
-     */
-    
-    class mysqlSession implements SessionHandlerInterface
+class mysqlSession implements SessionHandlerInterface
+{
+
+    private $_pdo = null;   //数据库链接句柄
+    //这些信息应该放在配置文件中。。。。
+    private $_configs = array(
+        'dbms' => 'mysql',          //数据库类型
+        'dbhost' => 'localhost',    //主机
+        'dbname' => 'test',         //数据库名
+        'dbtable' => 'sessions',    //数据库表
+        'dbuser' => 'sess_user',    //用户
+        'dbpwd' => 'sess_pwd',      //密码
+    );
+
+    //自定义session_start()函数
+    public static function my_session_start()
     {
-    
-        private $_pdo = null;   //数据库链接句柄
-        //这些信息应该放在配置文件中。。。。
-        private $_configs = array(
-            'dbms' => 'mysql',          //数据库类型
-            'dbhost' => 'localhost',    //主机
-            'dbname' => 'test',         //数据库名
-            'dbtable' => 'sessions',    //数据库表
-            'dbuser' => 'sess_user',    //用户
-            'dbpwd' => 'sess_pwd',      //密码
-        );
-    
-        //自定义session_start()函数
-        public static function my_session_start()
-        {
-            $sess = new self;
-            session_set_save_handler($sess);     //注册自定义函数，在php5.4之后，session_set_save_handler()参数直接传SessionHandlerInterface类型的对象即可。
-            session_start();
-        }
-    
-        /**
-         * session_start() 开始会话后第一个调用的函数，类似于构造函数的作用
-         * @param string $save_path 默认的保存路径
-         * @param string $session_name 默认的参数名（PHPSESSID）
-         * @return bool
-         */
-        public function open($save_path, $session_name)
-        {
-            $dsn = $this->_configs['dbms'] . ":host=" . $this->_configs['dbhost'] . ";dbname=" . $this->_configs['dbname'];
-            try {
-                $this->_pdo = new PDO($dsn, $this->_configs['dbuser'], $this->_configs['dbpwd']);
-                return true;
-            } catch (PDOException $e) {
-                return false;
-            }
-        }
-    
-        /**
-         * 类似于析构函数，在write()之后调用或者session_write_close()函数之调用
-         * @return bool
-         */
-        public function close()
-        {
-            $this->_pdo = null;
+        $sess = new self;
+        session_set_save_handler($sess);     //注册自定义函数，在php5.4之后，session_set_save_handler()参数直接传SessionHandlerInterface类型的对象即可。
+        session_start();
+    }
+
+    /**
+     * session_start() 开始会话后第一个调用的函数，类似于构造函数的作用
+     * @param string $save_path 默认的保存路径
+     * @param string $session_name 默认的参数名（PHPSESSID）
+     * @return bool
+     */
+    public function open($save_path, $session_name)
+    {
+        $dsn = $this->_configs['dbms'] . ":host=" . $this->_configs['dbhost'] . ";dbname=" . $this->_configs['dbname'];
+        try {
+            $this->_pdo = new PDO($dsn, $this->_configs['dbuser'], $this->_configs['dbpwd']);
             return true;
-        }
-    
-        /**
-         * 读取session信息
-         * @param string $sessionId 通过该ID（客户端的PHPSESSID）唯一确定对应的session数据
-         * @return session信息或者空串（没有存储session信息）
-         */
-        public function read($sessionId)
-        {
-            try {
-                $sql = 'SELECT * FROM ' . $this->_configs['dbtable'] . ' WHERE id = ? LIMIT 1';
-                $res = $this->_pdo->prepare($sql);
-                $res->execute(array($sessionId));
-    
-                if ($ret = $res->fetch(PDO::FETCH_ASSOC)) {
-                    return $ret['data'];
-                } else {
-                    return '';
-                }
-            } catch (PDOException $e) {
-                return '';
-            }
-        }
-    
-        /**
-         * 写入或修改session数据
-         * @param string $sessionId 要写入数据的session对应的id（PHPSESSID）
-         * @param string $sessionData 要写入的是数据，已经序列化过的
-         * @return bool
-         */
-        public function write($sessionId, $sessionData)
-        {
-            try {
-                $sql = 'REPLACE INTO ' . $this->_configs['dbtable'] . '(id,data) VALUES(?,?)';
-                $res = $this->_pdo->prepare($sql);
-                $res->execute(array($sessionId, $sessionData));
-                return true;
-            } catch (PDOException $e) {
-                return false;
-            }
-        }
-    
-        /**
-         * 主动销毁session会话
-         * @param string $sessionId 要销毁的会话的唯一ID
-         * @return bool
-         */
-        public function destroy($sessionId)
-        {
-            try {
-                $sql = 'DELETE FROM ' . $this->_configs['dbtable'] . ' WHERE id = ?';
-                $res = $this->_pdo->prepare($sql);
-                $res->execute(array($sessionId));
-                return true;
-            } catch (PDOException $e) {
-                return false;
-            }
-        }
-    
-        /**
-         * 清理会话中的过期数据
-         * @param int $maxlifetime 有效期（自动读取配置文件 php.ini 中的 session.gc_maxlifetime 配置项）
-         * @return bool
-         */
-        public function gc($maxlifetime)
-        {
-            try {
-                $sql = 'DELETE FROM ' . $this->_configs['dbtable'] . ' WHERE DATE_ADD(last_accessed,INTERVAL ? SECOND) < NOW()';
-                $res = $this->_pdo->prepare($sql);
-                $res->execute(array($maxlifetime));
-                return true;
-            } catch (PDOException $e) {
-                return false;
-            }
+        } catch (PDOException $e) {
+            return false;
         }
     }
 
+    /**
+     * 类似于析构函数，在write()之后调用或者session_write_close()函数之调用
+     * @return bool
+     */
+    public function close()
+    {
+        $this->_pdo = null;
+        return true;
+    }
+
+    /**
+     * 读取session信息
+     * @param string $sessionId 通过该ID（客户端的PHPSESSID）唯一确定对应的session数据
+     * @return session信息或者空串（没有存储session信息）
+     */
+    public function read($sessionId)
+    {
+        try {
+            $sql = 'SELECT * FROM ' . $this->_configs['dbtable'] . ' WHERE id = ? LIMIT 1';
+            $res = $this->_pdo->prepare($sql);
+            $res->execute(array($sessionId));
+
+            if ($ret = $res->fetch(PDO::FETCH_ASSOC)) {
+                return $ret['data'];
+            } else {
+                return '';
+            }
+        } catch (PDOException $e) {
+            return '';
+        }
+    }
+
+    /**
+     * 写入或修改session数据
+     * @param string $sessionId 要写入数据的session对应的id（PHPSESSID）
+     * @param string $sessionData 要写入的是数据，已经序列化过的
+     * @return bool
+     */
+    public function write($sessionId, $sessionData)
+    {
+        try {
+            $sql = 'REPLACE INTO ' . $this->_configs['dbtable'] . '(id,data) VALUES(?,?)';
+            $res = $this->_pdo->prepare($sql);
+            $res->execute(array($sessionId, $sessionData));
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * 主动销毁session会话
+     * @param string $sessionId 要销毁的会话的唯一ID
+     * @return bool
+     */
+    public function destroy($sessionId)
+    {
+        try {
+            $sql = 'DELETE FROM ' . $this->_configs['dbtable'] . ' WHERE id = ?';
+            $res = $this->_pdo->prepare($sql);
+            $res->execute(array($sessionId));
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * 清理会话中的过期数据
+     * @param int $maxlifetime 有效期（自动读取配置文件 php.ini 中的 session.gc_maxlifetime 配置项）
+     * @return bool
+     */
+    public function gc($maxlifetime)
+    {
+        try {
+            $sql = 'DELETE FROM ' . $this->_configs['dbtable'] . ' WHERE DATE_ADD(last_accessed,INTERVAL ? SECOND) < NOW()';
+            $res = $this->_pdo->prepare($sql);
+            $res->execute(array($maxlifetime));
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+}
+```
 
 到了这一步我们的任务基本上是完成了，现在我们来[测试][19]一下是否可用：
 
     # test.php 文件
-    
-    <?php
-    
-    require_once('./session.inc.php');
-    mysqlSession::my_session_start();     //开启会话
-    
-    $_SESSION['name'] = 'LSGOZJ';
-    $_SESSION['age'] = 22;
-    
-    var_dump($_SESSION);
+```php
+<?php
 
+require_once('./session.inc.php');
+mysqlSession::my_session_start();     //开启会话
+
+$_SESSION['name'] = 'LSGOZJ';
+$_SESSION['age'] = 22;
+
+var_dump($_SESSION);
+```
 在浏览器访问 test.php，然后去数据库里看看，是否已经成功插入数据库：
 
-![这里写图片描述][20]
+![][20]
 
 你可以在另一个 php 文件里面看看是否能够读取：
+```php
+# test1.php
 
-    # test1.php
-    
-    <?php
-    
-    require_once('./session.inc.php');
-    mysqlSession::my_session_start();     //开启会话
-    
-    echo $_SESSION['name'];
+<?php
 
+require_once('./session.inc.php');
+mysqlSession::my_session_start();     //开启会话
+
+echo $_SESSION['name'];
+```
 
 如果发现不能读取的话，就得检查上面的步骤了。
 
@@ -272,13 +273,13 @@ php5.4及之后可以直接实现 SessionHandlerInterface 接口，代码会更�
 我在我的第一篇博客 [《对 PHP SESSION 的深刻认识（一）》][13] 中对 session 的清理有过分析，在这里在给大家复习复习：
 
 配置文件 php.ini 中有如下三个配置项：
-
+```ini
 session.gc_maxlifetime
 
 session.gc_probability 
 
 session.gc_divisor 
-
+```
 这三个配置项的组合构建服务端 session 的垃圾回收机制。
 
 session.gc_probability 和 session.gc_divisor 构成在每个会话初始化时启动 gc（garbage collection 垃圾回收）进程的概率，此概率用 gc_probability/gc_divisor 计算得来。例如 1/100 意味着在每个请求中有 1% 的概率启动 gc 进程。而清理的标准为 session.gc_maxlifetime 定义的时间。

@@ -3,15 +3,15 @@
 **empty：**判断变量是否为空，为空则返回TRUE。这里需要普及一下哪些值是属于空：**""、0、"0"、NULL、FALSE、array()以及定义一个变量但不赋值（例：$a;）。**这里同样有一个需要注意的点**（再次敲黑板）：如果一个变量不存在，empty此变量，此变量返回的是TRUE。还**有一点值得争议的地方是，我在网上看到，如果变量是一个无任何属性和方法的类的对象，那此empty此变量，结果是什么呢，我们来看下面的例子：
 
 ```php
-    #PHP Version 5.4.16 
-    class demo{}
-    $a = new demo;
-    if(empty($a)) {
-        echo 'yes';
-    } else {
-        echo 'no';
-    }
+#PHP Version 5.4.16 
+class demo{}
+$a = new demo;
+if(empty($a)) {
+    echo 'yes';
+} else {
+    echo 'no';
+}
 ```
 
-**最终的结果是：**返回 no，说明无任何属性和方法的类的对象，empty判断不为空。
+**最终的结果是：**返回 no，说明**`无任何属性和方法的类的对象，empty判断不为空`**。
 

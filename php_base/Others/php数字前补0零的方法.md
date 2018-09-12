@@ -17,11 +17,11 @@ str_pad(带填补的字符串,填补后的长度，填补字符串，填补位�
 
 其中填补后的长度必须是个正整数，填补位置有三个选项，
 
-左边：STR_PAD_LEFT,
+左边：`STR_PAD_LEFT`,
 
-右边：STR_PAD_RIGHT,
+右边：`STR_PAD_RIGHT`,
 
-两端：STR_PAD_BOTH
+两端：`STR_PAD_BOTH`
 
 例如：
 

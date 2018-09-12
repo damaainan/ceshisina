@@ -36,21 +36,19 @@
 2）在cookie中是只能够保存字符串的，但是，如果我们想将一个数组变量保存到cookie中，在不进行序列化的情况下，其实也是可以办到的，代码如下：
 
 ```php
-    <?php
-    $expires = time()+3600;
-    setcookie('user["name"]["xing"]','liang');
-    setcookie('user["name"]["ming"]', 'bo');
-    
-    setcookie('user["age"]', '23', $expires);
-    setcookie('user["addr"]','吉林', $expires);
-    ?>
+<?php
+$expires = time()+3600;
+setcookie('user["name"]["xing"]','liang');
+setcookie('user["name"]["ming"]', 'bo');
+
+setcookie('user["age"]', '23', $expires);
+setcookie('user["addr"]','吉林', $expires);
 ```
 
 ```php
-    <?php
-    $name = $_COOKIE['name'];
-    var_dump($name);
-    ?>
+<?php
+$name = $_COOKIE['name'];
+var_dump($name);
 ```
 
 
@@ -73,11 +71,11 @@
 3）cookie的$path参数，只有在指定的路径下的网页才可以获取cookie中的值！demo如下：
 
 ```php
-    <?php
-    if(!$_COOKIE['name']) {
+<?php
+if(!$_COOKIE['name']) {
     $expires = time()+3600;
     setcookie('name','liangbo', $expires, '/talkphp/secondtalk/');
-    }
+}
 ```
 
 该页面所处的路径**"/"**,也就是网站的根目录！
@@ -85,10 +83,10 @@
 接受的代码如下：
 
 ```php
-    <?php
-        header('Content-type:text/html;charset=utf-8');
-        $name = $_COOKIE['user'];
-        var_dump($name);
+<?php
+header('Content-type:text/html;charset=utf-8');
+$name = $_COOKIE['user'];
+var_dump($name);
 ```
 
 改代码文件所在的路径如下：/talkphp/secondtalk/  
@@ -102,20 +100,19 @@
 在cookie中，如果设置的domain参数是一级域名的话，那么cookie中的数据在各个二级域名之间是都可用的！demo如下：
 
 ```php
-    <?php
-    if(!$_COOKIE['name']) {
+<?php
+if(!$_COOKIE['name']) {
     $expires = time()+3600;
     setcookie('name','liangbo', $expires, '/talkphp/secondtalk/', '.test.com');
-    }
+}
 ```
 
 - - -
 
 ```php
-    <?php
-        $name = $_COOKIE['name'];
-        var_dump($name);
-    ?>
+<?php
+$name = $_COOKIE['name'];
+var_dump($name);
 ```
 
 该代码所在的网站域名是：php.test.com 页面路径是：/talkphp/secondtalk/getcookie.php  
@@ -129,19 +126,19 @@
 我们来看另外一种情况：
 
 ```php
-    <?php
-    if(!$_COOKIE['name']) {
+<?php
+if(!$_COOKIE['name']) {
     $expires = time()+3600;
     setcookie('name','liangbo', $expires, '/talkphp/secondtalk/','php.test.com');
-    }
+}
 ```
 
 这里，我们将domain设置为了二级域名php.test.com
 
 ```php
-    <?php
-        $name = $_COOKIE['name'];
-        var_dump($name);
+<?php
+$name = $_COOKIE['name'];
+var_dump($name);
 ```
 
 该代码所在的网站域名是：php.test.com 页面路径是：/talkphp/secondtalk/getcookie.php  

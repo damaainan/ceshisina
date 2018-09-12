@@ -15,92 +15,92 @@ PDO(php data object)扩展类库为php访问数据库定义了轻量级的、一
 PDO大大简化了数据库的操作并能够屏蔽不同数据库之间的差异，使用pdo可以很方便地进行跨数据库程序的开发,以及不同数据库间的移植,是将来php在数据库处理方面的主要发展方向。
 
 ```php
-    <?php
-    
-    $db = array(
-        'dsn' => 'mysql:host=localhost;dbname=test;port=3306;charset=utf8',
-        'host' => 'localhost',
-        'port' => '3306',
-        'dbname' => 'test',
-        'username' => 'root',
-        'password' => '123456',
-        'charset' => 'utf8',
-    );
-    
-    //连接
-    $options = array(
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, //默认是PDO::ERRMODE_SILENT, 0, (忽略错误模式)
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // 默认是PDO::FETCH_BOTH, 4
-    );
-    
-    try{
-        $pdo = new PDO($db['dsn'], $db['username'], $db['password'], $options);
-    }catch(PDOException $e){
-        die('数据库连接失败:' . $e->getMessage());
-    }
-    
-    //或者更通用的设置属性方式:
-    //$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);    //设置异常处理方式
-    //$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);   //设置默认关联索引遍历
-    
-    echo '<pre></pre>';
-    
-    //1 查询
-    
-    //1)使用query
-    $stmt = $pdo->query('select * from user limit 2'); //返回一个PDOStatement对象
-    
-    //$row = $stmt->fetch(); //从结果集中获取下一行，用于while循环
-    $rows = $stmt->fetchAll(); //获取所有
-    
-    $row_count = $stmt->rowCount(); //记录数，2
-    //print_r($rows);
-    
-    echo '<br>';
-    
-    //2)使用prepare 推荐!
-    $stmt = $pdo->prepare("select * from user where name = ? and age = ? ");
-    $stmt->bindValue(1,'test');
-    $stmt->bindValue(2,22);
-    $stmt->execute();  //执行一条预处理语句 .成功时返回 TRUE, 失败时返回 FALSE 
-    $rows = $stmt->fetchAll();
-    print_r($rows);
-    
-    
-    
-    //2 新增、更新、删除
-    //1)普通操作
-    //$count  =  $pdo->exec("insert into user(name,gender,age)values('test',2,23)"); //返回受影响的行数 
-    //echo $pdo->lastInsertId();
-    
-    //$count  =  $pdo->exec("update user set name='test2' where id = 15"); //返回受影响的行数
-    //$count  =  $pdo->exec("delete from  user where id = 15"); //返回受影响的行数
-    
-    
-    //2)使用prepare 推荐!
-    /*
-    $stmt = $pdo->prepare("insert into user(name,gender,age)values(?,?,?)");
-    $stmt->bindValue(1, 'test');
-    $stmt->bindValue(2, 2);
-    $stmt->bindValue(3, 23);
+<?php
+
+$db = array(
+    'dsn' => 'mysql:host=localhost;dbname=test;port=3306;charset=utf8',
+    'host' => 'localhost',
+    'port' => '3306',
+    'dbname' => 'test',
+    'username' => 'root',
+    'password' => '123456',
+    'charset' => 'utf8',
+);
+
+//连接
+$options = array(
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, //默认是PDO::ERRMODE_SILENT, 0, (忽略错误模式)
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // 默认是PDO::FETCH_BOTH, 4
+);
+
+try{
+    $pdo = new PDO($db['dsn'], $db['username'], $db['password'], $options);
+}catch(PDOException $e){
+    die('数据库连接失败:' . $e->getMessage());
+}
+
+//或者更通用的设置属性方式:
+//$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);    //设置异常处理方式
+//$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);   //设置默认关联索引遍历
+
+echo '<pre></pre>';
+
+//1 查询
+
+//1)使用query
+$stmt = $pdo->query('select * from user limit 2'); //返回一个PDOStatement对象
+
+//$row = $stmt->fetch(); //从结果集中获取下一行，用于while循环
+$rows = $stmt->fetchAll(); //获取所有
+
+$row_count = $stmt->rowCount(); //记录数，2
+//print_r($rows);
+
+echo '<br>';
+
+//2)使用prepare 推荐!
+$stmt = $pdo->prepare("select * from user where name = ? and age = ? ");
+$stmt->bindValue(1,'test');
+$stmt->bindValue(2,22);
+$stmt->execute();  //执行一条预处理语句 .成功时返回 TRUE, 失败时返回 FALSE 
+$rows = $stmt->fetchAll();
+print_r($rows);
+
+
+
+//2 新增、更新、删除
+//1)普通操作
+//$count  =  $pdo->exec("insert into user(name,gender,age)values('test',2,23)"); //返回受影响的行数 
+//echo $pdo->lastInsertId();
+
+//$count  =  $pdo->exec("update user set name='test2' where id = 15"); //返回受影响的行数
+//$count  =  $pdo->exec("delete from  user where id = 15"); //返回受影响的行数
+
+
+//2)使用prepare 推荐!
+/*
+$stmt = $pdo->prepare("insert into user(name,gender,age)values(?,?,?)");
+$stmt->bindValue(1, 'test');
+$stmt->bindValue(2, 2);
+$stmt->bindValue(3, 23);
+$stmt->execute();
+*/
+
+//3)使用prepare 批量新增
+$stmt = $pdo->prepare("insert into user(name,gender,age)values(?,?,?)");
+$stmt->bindParam(1, $name);
+$stmt->bindParam(2, $gender);
+$stmt->bindParam(3, $age);
+
+$data = array(
+    array('t1', 1, 22),
+    array('t2', 2, 23),
+);
+
+foreach ($data as $vo){
+    list($name, $gender, $age) = $vo;
     $stmt->execute();
-    */
-    
-    //3)使用prepare 批量新增
-    $stmt = $pdo->prepare("insert into user(name,gender,age)values(?,?,?)");
-    $stmt->bindParam(1, $name);
-    $stmt->bindParam(2, $gender);
-    $stmt->bindParam(3, $age);
-    
-    $data = array(
-        array('t1', 1, 22),
-        array('t2', 2, 23),
-    );
-    
-    foreach ($data as $vo){
-        list($name, $gender, $age) = $vo;
-        $stmt->execute();
-    }
+}
 ```
 
 
@@ -244,23 +244,20 @@ pdo::exec()方法
 
  
 ```php
-    <?php
-    try{
-    　　$m=new PDO("mysql:host=localhost;dbname=test","root","123");
-    }catch(PDOException $e){
-    　　die('数据库连接失败:' . $e->getMessage());
-    }
-    
-    $stmt=$m->query("select * from stu");//返回PDOStatement对象$stmt
-    echo $stmt->rowCount();
-    ?>
+<?php
+try{
+　　$m=new PDO("mysql:host=localhost;dbname=test","root","123");
+}catch(PDOException $e){
+　　die('数据库连接失败:' . $e->getMessage());
+}
+
+$stmt=$m->query("select * from stu");//返回PDOStatement对象$stmt
+echo $stmt->rowCount();
 ```
 
 -------------------------------------------------------------------------------------------
-
   
 02)PDOStatement对象中的成员方法
-
  
 
     1.PDOStatement::bindColumn — 绑定一列到一个 PHP 变量(*)

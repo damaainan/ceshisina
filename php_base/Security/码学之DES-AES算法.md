@@ -36,42 +36,42 @@ PKCS5Padding与PKCS7Padding基本上是可以通用的。在PKCS5Padding中，�
 填充算法实现：
 
 * PHP
-```
-    function pkcs5_pad($text) {
-        $pad = 8 - (strlen($text) % 8);
-        //$pad = 8 - (strlen($text) & 7); //也可以使用这种方法
-        return $text . str_repeat(chr($pad), $pad);
-    }
-    
-    function pkcs7_pad ($text, $blocksize) {
-        $pad = $blocksize - (strlen($text) % $blocksize);
-        return $text . str_repeat(chr($pad), $pad);
-    }
+```php
+function pkcs5_pad($text) {
+    $pad = 8 - (strlen($text) % 8);
+    //$pad = 8 - (strlen($text) & 7); //也可以使用这种方法
+    return $text . str_repeat(chr($pad), $pad);
+}
+
+function pkcs7_pad ($text, $blocksize) {
+    $pad = $blocksize - (strlen($text) % $blocksize);
+    return $text . str_repeat(chr($pad), $pad);
+}
 ```
 
 反填充（去掉填充的字符）只需要根据解密后内容最后一个字符，就知道填充了什么、填充了几个，然后截取掉即可：
-
-    function _unpad($text){
-        $pad = ord(substr($text, -1));//取最后一个字符的ASCII 码值 
-        if ($pad < 1 || $pad > strlen($text)) {
-            $pad = 0;
-        }
-        return substr($text, 0, (strlen($text) - $pad));
+```php
+function _unpad($text){
+    $pad = ord(substr($text, -1));//取最后一个字符的ASCII 码值 
+    if ($pad < 1 || $pad > strlen($text)) {
+        $pad = 0;
     }
-
-* Python
+    return substr($text, 0, (strlen($text) - $pad));
+}
 ```
-    from Crypto.Cipher import AES
+* Python
+```python
+from Crypto.Cipher import AES
+
+def pkcs7_pad(str):
+    x = AES.block_size - (len(str) % AES.block_size)
+    if x != 0:
+        str = str + chr(x)*x
+    return str
     
-    def pkcs7_pad(str):
-        x = AES.block_size - (len(str) % AES.block_size)
-        if x != 0:
-            str = str + chr(x)*x
-        return str
-        
-    def _unpad(msg):
-        paddingLen = ord(msg[len(msg)-1])
-        return msg[0:-paddingLen]
+def _unpad(msg):
+    paddingLen = ord(msg[len(msg)-1])
+    return msg[0:-paddingLen]
 ```
 ### 加密解密步骤
 
@@ -116,22 +116,22 @@ PKCS5Padding与PKCS7Padding基本上是可以通用的。在PKCS5Padding中，�
 示例：
 
 * Crypt_DES.php
-```
-    <?php
-    include('Crypt_DES.php');
-    $des = new Crypt_DES();//默认是CBC模式
-    $plaintext = '123456';
-    $des->setKey('pwd');
-    //$des->setIV("\0\0\0\0\0\0\0\0");//默认填0，注意是双引号
-    $encode = base64_encode($des->encrypt($plaintext));
-    
-    echo $encode. PHP_EOL;
-    echo $des->decrypt(base64_decode($encode));
+```php
+<?php
+include('Crypt_DES.php');
+$des = new Crypt_DES();//默认是CBC模式
+$plaintext = '123456';
+$des->setKey('pwd');
+//$des->setIV("\0\0\0\0\0\0\0\0");//默认填0，注意是双引号
+$encode = base64_encode($des->encrypt($plaintext));
+
+echo $encode. PHP_EOL;
+echo $des->decrypt(base64_decode($encode));
 ```
 注意：Crypt_DES类里默认是MCRYPT_MODE_CBC模式，且默认会把加密向量截取或填充至8位：
-
+```
     str_pad(substr($key, 0, 8), 8, chr(0))
-
+```
 也就是如果加密向量大于8位，只会截取前8位；少于则补0。  
 另外加密向量iv会被设置成\0\0\0\0\0\0\0\0，CRYPT_DES_MODE_ECB模式该变量则不是必须的。所以，如果使用了其它语言需要注意到这点。加密结果请务必base64_decode。
 
@@ -141,125 +141,125 @@ PKCS5Padding与PKCS7Padding基本上是可以通用的。在PKCS5Padding中，�
     123456
 
 * PHP使用Mcrypt扩展
-```
-    /**
-     * DES/AES加密封装
-     *
-     * 1、默认使用Pkcs7填充加密内容。
-     * 2、默认加密向量是"\0\0\0\0\0\0\0\0"
-     * 3、默认情况下key做了处理：过长截取，过短填充
-     *
-     * @author 52fhy
-     * @github https://github.com/52fhy/
-     * @date 2017-5-13 17:08:57
-     * Class Crypt
-     */
-    class Crypt {
-    
-        private $key;//加密key：如果密钥长度不是加解密算法能够支持的有效长度，会自动填充"\0"。过长则会截取
-        private $iv;//加密向量：这里默认填充"\0"。假设为空，程序会随机产生，导致加密的结果是不确定的。ECB模式下会忽略该变量
-        private $mode; //分组密码模式：MCRYPT_MODE_modename 常量中的一个，或以下字符串中的一个："ecb"，"cbc"，"cfb"，"ofb"，"nofb" 和 "stream"。
-        private $cipher; //算法名称：MCRYPT_ciphername 常量中的一个，或者是字符串值的算法名称。
-    
-        public function __construct($key, $cipher = MCRYPT_RIJNDAEL_128, $mode = MCRYPT_MODE_ECB, $iv = "\0\0\0\0\0\0\0"){
-            $this->key = $key;
-            $this->iv = $iv;
-            $this->mode = $mode;
-            $this->cipher = $cipher;
-        }
-    
-        public function encrypt($input){
-            $block_size = mcrypt_get_block_size($this->cipher, $this->mode);
-            $key = $this->_pad0($this->key, $block_size);//将key填充至block大小
-            $td = mcrypt_module_open($this->cipher, '', $this->mode, '');
-            $iv = $this->iv ? $this->_pad0($this->iv, $block_size) : @mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-    
-            $input = $this->pkcs7_pad($input, $block_size);
-    
-            //加密方法一：
-    //        @mcrypt_generic_init($td, $key, $iv);//ECB模式下，初始向量iv会被忽略
-    //        $data = mcrypt_generic($td, $input);
-    //        mcrypt_generic_deinit($td);
-    //        mcrypt_module_close($td);
-    
-            //加密方法二：
-            $data = mcrypt_encrypt(
-                $this->cipher,
-                $key,
-                $input,
-                $this->mode,
-                $iv  //ECB模式下，向量iv会被忽略
-            );
-    
-            $data = base64_encode($data);//如需转换二进制可改成  bin2hex 转换
-            return $data;
-        }
-    
-        public function decrypt($encrypted){
-            $block_size = mcrypt_get_block_size($this->cipher, $this->mode);
-            $key = $this->_pad0($this->key, $block_size);
-            $td = mcrypt_module_open($this->cipher, '', $this->mode, '');
-            $iv = $this->iv ? $this->_pad0($this->iv, $block_size) : @mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-    
-            //解密方法一：
-    //        $encrypted = base64_decode($encrypted); //如需转换二进制可改成  bin2hex 转换
-    //        @mcrypt_generic_init($td, $key, $iv);
-    //        $decrypted = mdecrypt_generic($td, $encrypted);
-    //        mcrypt_generic_deinit($td);
-    //        mcrypt_module_close($td);
-    
-            //解密方法二：
-            $decrypted = mcrypt_decrypt(
-                $this->cipher,
-                $key,
-                base64_decode($encrypted),
-                $this->mode,
-                $iv  //ECB模式下，向量iv会被忽略
-            );
-    
-            return $this->_unpad($decrypted);
-        }
-    
-        /**
-         * 当使用“PKCS＃5”或“PKCS5Padding”别名引用该算法时，不应该假定支持8字节以外的块大小。
-         * @url http://www.users.zetnet.co.uk/hopwood/crypto/scan/cs.html#pad_PKCSPadding
-         * @param $text
-         * @return string
-         */
-        public  function pkcs5_pad($text) {
-            $pad = 8 - (strlen($text) % 8);
-            //$pad = 8 - (strlen($text) & 7); //也可以使用这种方法
-            return $text . str_repeat(chr($pad), $pad);
-        }
-    
-        public  function pkcs7_pad ($text, $blocksize) {
-            $pad = $blocksize - (strlen($text) % $blocksize);
-            return $text . str_repeat(chr($pad), $pad);
-        }
-    
-        public  function _unpad($text){
-            $pad = ord(substr($text, -1));//取最后一个字符的ASCII 码值 
-            if ($pad < 1 || $pad > strlen($text)) {
-                $pad = 0;
-            }
-            return substr($text, 0, (strlen($text) - $pad));
-        }
-    
-        /**
-         * 秘钥key和向量iv填充算法：大于block_size则截取，小于则填充"\0"
-         * @param $str
-         * @param $block_size
-         * @return string
-         */
-        private  function _pad0($str, $block_size) {
-            return str_pad(substr($str, 0, $block_size), $block_size, chr(0)); //chr(0) 与 "\0" 等效,因为\0转义后表示空字符，与ASCII表里的0代表的字符一样
-        }
+```php
+/**
+ * DES/AES加密封装
+ *
+ * 1、默认使用Pkcs7填充加密内容。
+ * 2、默认加密向量是"\0\0\0\0\0\0\0\0"
+ * 3、默认情况下key做了处理：过长截取，过短填充
+ *
+ * @author 52fhy
+ * @github https://github.com/52fhy/
+ * @date 2017-5-13 17:08:57
+ * Class Crypt
+ */
+class Crypt {
+
+    private $key;//加密key：如果密钥长度不是加解密算法能够支持的有效长度，会自动填充"\0"。过长则会截取
+    private $iv;//加密向量：这里默认填充"\0"。假设为空，程序会随机产生，导致加密的结果是不确定的。ECB模式下会忽略该变量
+    private $mode; //分组密码模式：MCRYPT_MODE_modename 常量中的一个，或以下字符串中的一个："ecb"，"cbc"，"cfb"，"ofb"，"nofb" 和 "stream"。
+    private $cipher; //算法名称：MCRYPT_ciphername 常量中的一个，或者是字符串值的算法名称。
+
+    public function __construct($key, $cipher = MCRYPT_RIJNDAEL_128, $mode = MCRYPT_MODE_ECB, $iv = "\0\0\0\0\0\0\0"){
+        $this->key = $key;
+        $this->iv = $iv;
+        $this->mode = $mode;
+        $this->cipher = $cipher;
     }
-    
-    $key = 'pwd';
-    $des = new Crypt($key, MCRYPT_DES, MCRYPT_MODE_CBC);//DES
-    echo $ret = $des->encrypt("123456").PHP_EOL;//加密字符串，结果默认已经base64了
-    echo $ret = $des->decrypt($ret);//解密结果
+
+    public function encrypt($input){
+        $block_size = mcrypt_get_block_size($this->cipher, $this->mode);
+        $key = $this->_pad0($this->key, $block_size);//将key填充至block大小
+        $td = mcrypt_module_open($this->cipher, '', $this->mode, '');
+        $iv = $this->iv ? $this->_pad0($this->iv, $block_size) : @mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+
+        $input = $this->pkcs7_pad($input, $block_size);
+
+        //加密方法一：
+//        @mcrypt_generic_init($td, $key, $iv);//ECB模式下，初始向量iv会被忽略
+//        $data = mcrypt_generic($td, $input);
+//        mcrypt_generic_deinit($td);
+//        mcrypt_module_close($td);
+
+        //加密方法二：
+        $data = mcrypt_encrypt(
+            $this->cipher,
+            $key,
+            $input,
+            $this->mode,
+            $iv  //ECB模式下，向量iv会被忽略
+        );
+
+        $data = base64_encode($data);//如需转换二进制可改成  bin2hex 转换
+        return $data;
+    }
+
+    public function decrypt($encrypted){
+        $block_size = mcrypt_get_block_size($this->cipher, $this->mode);
+        $key = $this->_pad0($this->key, $block_size);
+        $td = mcrypt_module_open($this->cipher, '', $this->mode, '');
+        $iv = $this->iv ? $this->_pad0($this->iv, $block_size) : @mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+
+        //解密方法一：
+//        $encrypted = base64_decode($encrypted); //如需转换二进制可改成  bin2hex 转换
+//        @mcrypt_generic_init($td, $key, $iv);
+//        $decrypted = mdecrypt_generic($td, $encrypted);
+//        mcrypt_generic_deinit($td);
+//        mcrypt_module_close($td);
+
+        //解密方法二：
+        $decrypted = mcrypt_decrypt(
+            $this->cipher,
+            $key,
+            base64_decode($encrypted),
+            $this->mode,
+            $iv  //ECB模式下，向量iv会被忽略
+        );
+
+        return $this->_unpad($decrypted);
+    }
+
+    /**
+     * 当使用“PKCS＃5”或“PKCS5Padding”别名引用该算法时，不应该假定支持8字节以外的块大小。
+     * @url http://www.users.zetnet.co.uk/hopwood/crypto/scan/cs.html#pad_PKCSPadding
+     * @param $text
+     * @return string
+     */
+    public  function pkcs5_pad($text) {
+        $pad = 8 - (strlen($text) % 8);
+        //$pad = 8 - (strlen($text) & 7); //也可以使用这种方法
+        return $text . str_repeat(chr($pad), $pad);
+    }
+
+    public  function pkcs7_pad ($text, $blocksize) {
+        $pad = $blocksize - (strlen($text) % $blocksize);
+        return $text . str_repeat(chr($pad), $pad);
+    }
+
+    public  function _unpad($text){
+        $pad = ord(substr($text, -1));//取最后一个字符的ASCII 码值 
+        if ($pad < 1 || $pad > strlen($text)) {
+            $pad = 0;
+        }
+        return substr($text, 0, (strlen($text) - $pad));
+    }
+
+    /**
+     * 秘钥key和向量iv填充算法：大于block_size则截取，小于则填充"\0"
+     * @param $str
+     * @param $block_size
+     * @return string
+     */
+    private  function _pad0($str, $block_size) {
+        return str_pad(substr($str, 0, $block_size), $block_size, chr(0)); //chr(0) 与 "\0" 等效,因为\0转义后表示空字符，与ASCII表里的0代表的字符一样
+    }
+}
+
+$key = 'pwd';
+$des = new Crypt($key, MCRYPT_DES, MCRYPT_MODE_CBC);//DES
+echo $ret = $des->encrypt("123456").PHP_EOL;//加密字符串，结果默认已经base64了
+echo $ret = $des->decrypt($ret);//解密结果
 ```
 使用MCRYPT_MODE_CBC + Pkcs7。注意和其它语言联调的时候需要注意加密key已经过处理、加密向量默认值的设置。
 
@@ -271,47 +271,47 @@ PKCS5Padding与PKCS7Padding基本上是可以通用的。在PKCS5Padding中，�
 #### JS
 
 * CryptoJS
-```
-    //字符串重复
-    function str_repeat(target, n) {return (new Array(n + 1)).join(target);}
-    
-    //使用"\0"填充秘钥或向量
-    function _pad0(str, block_size) {
-        if(str.length >= block_size){
-            return str.substr(0, block_size);
-        }else{
-            return str + str_repeat("\0", block_size - (str.length % block_size));
-        }
+```js
+//字符串重复
+function str_repeat(target, n) {return (new Array(n + 1)).join(target);}
+
+//使用"\0"填充秘钥或向量
+function _pad0(str, block_size) {
+    if(str.length >= block_size){
+        return str.substr(0, block_size);
+    }else{
+        return str + str_repeat("\0", block_size - (str.length % block_size));
     }
-    
-    function des_encrypt(data,key,iv){//加密
-        var key  = CryptoJS.enc.Utf8.parse(key);
-        var iv   = CryptoJS.enc.Utf8.parse(iv);
-        var encrypted = CryptoJS.DES.encrypt(data,key,
-                {
-                    iv:iv,
-                    mode:CryptoJS.mode.CBC,
-                    padding:CryptoJS.pad.Pkcs7
-                });
-        return encrypted.toString();
-    }
-    
-    function des_decrypt(encrypted,key,iv){//解密
-        var key  = CryptoJS.enc.Utf8.parse(key);
-        var iv   = CryptoJS.enc.Utf8.parse(iv);
-        var decrypted = CryptoJS.DES.decrypt(encrypted,key,
-                {
-                    iv:iv,
-                    mode:CryptoJS.mode.CBC,
-                    padding:CryptoJS.pad.Pkcs7
-                });
-        return decrypted.toString(CryptoJS.enc.Utf8);
-    }
-    
-    var key  = _pad0("pwd", 8);
-    var iv   = _pad0("\0", 8);
-    encrypted = des_encrypt("123456",key,iv);//pQSWMWLBGQg=
-    decryptedStr = des_decrypt(encrypted,key,iv);//123456
+}
+
+function des_encrypt(data,key,iv){//加密
+    var key  = CryptoJS.enc.Utf8.parse(key);
+    var iv   = CryptoJS.enc.Utf8.parse(iv);
+    var encrypted = CryptoJS.DES.encrypt(data,key,
+            {
+                iv:iv,
+                mode:CryptoJS.mode.CBC,
+                padding:CryptoJS.pad.Pkcs7
+            });
+    return encrypted.toString();
+}
+
+function des_decrypt(encrypted,key,iv){//解密
+    var key  = CryptoJS.enc.Utf8.parse(key);
+    var iv   = CryptoJS.enc.Utf8.parse(iv);
+    var decrypted = CryptoJS.DES.decrypt(encrypted,key,
+            {
+                iv:iv,
+                mode:CryptoJS.mode.CBC,
+                padding:CryptoJS.pad.Pkcs7
+            });
+    return decrypted.toString(CryptoJS.enc.Utf8);
+}
+
+var key  = _pad0("pwd", 8);
+var iv   = _pad0("\0", 8);
+encrypted = des_encrypt("123456",key,iv);//pQSWMWLBGQg=
+decryptedStr = des_decrypt(encrypted,key,iv);//123456
 ```
 #### Python
 
@@ -322,47 +322,48 @@ PKCS5Padding与PKCS7Padding基本上是可以通用的。在PKCS5Padding中，�
     pip install pycrypto
     pip install Crypto
 
-    # -*- coding=utf-8-*-
-    from Crypto.Cipher import DES
-    import base64
-    
-    """
-    des cbc加密算法
-    padding : PKCS5
-    """
-    
-    class DESUtil:
-    
-        __BLOCK_SIZE_8 = BLOCK_SIZE_8 = DES.block_size
-        __IV = "\0\0\0\0\0\0\0\0" # __IV = chr(0)*8
-    
-        @staticmethod
-        def encryt(str, key):
-            cipher = DES.new(key, DES.MODE_CBC, DESUtil.__IV)
-            x = DESUtil.__BLOCK_SIZE_8 - (len(str) % DESUtil.__BLOCK_SIZE_8)
-            if x != 0:
-                str = str + chr(x)*x
-            msg = cipher.encrypt(str)
-            # msg = base64.urlsafe_b64encode(msg).replace('=', '')
-            msg = base64.b64encode(msg)
-            return msg
-    
-        @staticmethod
-        def decrypt(enStr, key):
-            cipher = DES.new(key, DES.MODE_CBC,DESUtil.__IV)
-            # enStr += (len(enStr) % 4)*"="
-            # decryptByts = base64.urlsafe_b64decode(enStr)
-            decryptByts = base64.b64decode(enStr)
-            msg = cipher.decrypt(decryptByts)
-            paddingLen = ord(msg[len(msg)-1])
-            return msg[0:-paddingLen]
-    
-    if __name__ == "__main__":
-        key = "12345678"
-        res = DESUtil.encryt("123456", key)
-        print res
-        print DESUtil.decrypt(res, key)
+```python
+# -*- coding=utf-8-*-
+from Crypto.Cipher import DES
+import base64
 
+"""
+des cbc加密算法
+padding : PKCS5
+"""
+
+class DESUtil:
+
+    __BLOCK_SIZE_8 = BLOCK_SIZE_8 = DES.block_size
+    __IV = "\0\0\0\0\0\0\0\0" # __IV = chr(0)*8
+
+    @staticmethod
+    def encryt(str, key):
+        cipher = DES.new(key, DES.MODE_CBC, DESUtil.__IV)
+        x = DESUtil.__BLOCK_SIZE_8 - (len(str) % DESUtil.__BLOCK_SIZE_8)
+        if x != 0:
+            str = str + chr(x)*x
+        msg = cipher.encrypt(str)
+        # msg = base64.urlsafe_b64encode(msg).replace('=', '')
+        msg = base64.b64encode(msg)
+        return msg
+
+    @staticmethod
+    def decrypt(enStr, key):
+        cipher = DES.new(key, DES.MODE_CBC,DESUtil.__IV)
+        # enStr += (len(enStr) % 4)*"="
+        # decryptByts = base64.urlsafe_b64decode(enStr)
+        decryptByts = base64.b64decode(enStr)
+        msg = cipher.decrypt(decryptByts)
+        paddingLen = ord(msg[len(msg)-1])
+        return msg[0:-paddingLen]
+
+if __name__ == "__main__":
+    key = "12345678"
+    res = DESUtil.encryt("123456", key)
+    print res
+    print DESUtil.decrypt(res, key)
+```
 输出：
 
     ED5wLgc3Mnw=
@@ -404,17 +405,17 @@ ECB模式是将明文按照固定大小的块进行加密的，块大小不足�
 
 * PHP使用Mcrypt扩展
 这里还是使用上文的Crypt类。
-```
-    $key = 'pwd';
-    $des = new Crypt($key);//AES，默认是MCRYPT_RIJNDAEL_128+MCRYPT_MODE_ECB
-    echo $ret = $des->encrypt("123456").PHP_EOL;//加密字符串，结果默认已经base64了
-    echo $ret = $des->decrypt($ret);//解密结果
-    echo PHP_EOL.'--------------'.PHP_EOL;
-    
-    $key = '1234567812345678';
-    $des = new Crypt($key);//AES，默认是MCRYPT_RIJNDAEL_128+MCRYPT_MODE_ECB
-    echo $ret = $des->encrypt("123456").PHP_EOL;//加密字符串，结果默认已经base64了
-    echo $ret = $des->decrypt($ret);//解密结果
+```php
+$key = 'pwd';
+$des = new Crypt($key);//AES，默认是MCRYPT_RIJNDAEL_128+MCRYPT_MODE_ECB
+echo $ret = $des->encrypt("123456").PHP_EOL;//加密字符串，结果默认已经base64了
+echo $ret = $des->decrypt($ret);//解密结果
+echo PHP_EOL.'--------------'.PHP_EOL;
+
+$key = '1234567812345678';
+$des = new Crypt($key);//AES，默认是MCRYPT_RIJNDAEL_128+MCRYPT_MODE_ECB
+echo $ret = $des->encrypt("123456").PHP_EOL;//加密字符串，结果默认已经base64了
+echo $ret = $des->decrypt($ret);//解密结果
 ```
 使用ECB + Pkcs7。和其它语言联调的时候需要注意加密key已经过处理、加密向量默认值的设置。
 
@@ -432,47 +433,47 @@ ECB模式是将明文按照固定大小的块进行加密的，块大小不足�
 
 * CryptoJS
 和DES代码基本一样，只要把DES改为AES即可，CBC改为ECB，块大小改为16。
-```
-    //字符串重复
-    function str_repeat(target, n) {return (new Array(n + 1)).join(target);}
-    
-    //使用"\0"填充秘钥或向量
-    function _pad0(str, block_size) {
-        if(str.length >= block_size){
-            return str.substr(0, block_size);
-        }else{
-            return str + str_repeat("\0", block_size - (str.length % block_size));
-        }
+```js
+//字符串重复
+function str_repeat(target, n) {return (new Array(n + 1)).join(target);}
+
+//使用"\0"填充秘钥或向量
+function _pad0(str, block_size) {
+    if(str.length >= block_size){
+        return str.substr(0, block_size);
+    }else{
+        return str + str_repeat("\0", block_size - (str.length % block_size));
     }
-    
-    function aes_encrypt(data,key,iv){//加密
-        var key  = CryptoJS.enc.Utf8.parse(key);
-        var iv   = CryptoJS.enc.Utf8.parse(iv);
-        var encrypted = CryptoJS.AES.encrypt(data,key,
-                {
-                    iv:iv,
-                    mode:CryptoJS.mode.ECB,
-                    padding:CryptoJS.pad.Pkcs7
-                });
-        return encrypted.toString();
-    }
-    
-    function aes_decrypt(encrypted,key,iv){//解密
-        var key  = CryptoJS.enc.Utf8.parse(key);
-        var iv   = CryptoJS.enc.Utf8.parse(iv);
-        var decrypted = CryptoJS.AES.decrypt(encrypted,key,
-                {
-                    iv:iv,
-                    mode:CryptoJS.mode.ECB,
-                    padding:CryptoJS.pad.Pkcs7
-                });
-        return decrypted.toString(CryptoJS.enc.Utf8);
-    }
-    
-    var key  = _pad0("pwd", 16);
-    var iv   = _pad0("\0", 16);
-    encrypted = aes_encrypt("123456",key,iv);//3+WQyhMavuxzPzy40PZhJg==
-    decryptedStr = aes_decrypt(encrypted,key,iv);//123456
+}
+
+function aes_encrypt(data,key,iv){//加密
+    var key  = CryptoJS.enc.Utf8.parse(key);
+    var iv   = CryptoJS.enc.Utf8.parse(iv);
+    var encrypted = CryptoJS.AES.encrypt(data,key,
+            {
+                iv:iv,
+                mode:CryptoJS.mode.ECB,
+                padding:CryptoJS.pad.Pkcs7
+            });
+    return encrypted.toString();
+}
+
+function aes_decrypt(encrypted,key,iv){//解密
+    var key  = CryptoJS.enc.Utf8.parse(key);
+    var iv   = CryptoJS.enc.Utf8.parse(iv);
+    var decrypted = CryptoJS.AES.decrypt(encrypted,key,
+            {
+                iv:iv,
+                mode:CryptoJS.mode.ECB,
+                padding:CryptoJS.pad.Pkcs7
+            });
+    return decrypted.toString(CryptoJS.enc.Utf8);
+}
+
+var key  = _pad0("pwd", 16);
+var iv   = _pad0("\0", 16);
+encrypted = aes_encrypt("123456",key,iv);//3+WQyhMavuxzPzy40PZhJg==
+decryptedStr = aes_decrypt(encrypted,key,iv);//123456
 ```
 ECB模式没有用到向量。本例如果改为CBC，只需要把ECB改为CBC即可，加密结果还是：3+WQyhMavuxzPzy40PZhJg==。换了加密向量则不一样了。
 
@@ -485,50 +486,51 @@ ECB模式没有用到向量。本例如果改为CBC，只需要把ECB改为CBC�
     pip install pycrypto
     pip install Crypto
 
-    # -*- coding=utf-8-*-
-    
-    from Crypto.Cipher import AES
-    import os
-    from Crypto import Random
-    import base64
-    
-    """
-    aes加密算法
-    padding : PKCS7
-    """
-    
-    class AESUtil:
-    
-        __BLOCK_SIZE_16 = BLOCK_SIZE_16 = AES.block_size
-    
-        @staticmethod
-        def encryt(str, key):
-            #cipher = AES.new(key, AES.MODE_ECB,b'0000000000000000') #第三个参数是加密向量iv，ECB模式不需要
-            cipher = AES.new(key, AES.MODE_ECB)
-            x = AESUtil.__BLOCK_SIZE_16 - (len(str) % AESUtil.__BLOCK_SIZE_16)
-            if x != 0:
-                str = str + chr(x)*x
-            msg = cipher.encrypt(str)
-            # msg = base64.urlsafe_b64encode(msg).replace('=', '')
-            msg = base64.b64encode(msg)
-            return msg
-    
-        @staticmethod
-        def decrypt(enStr, key):
-            cipher = AES.new(key, AES.MODE_ECB)
-            # enStr += (len(enStr) % 4)*"="
-            # decryptByts = base64.urlsafe_b64decode(enStr)
-            decryptByts = base64.b64decode(enStr)
-            msg = cipher.decrypt(decryptByts)
-            paddingLen = ord(msg[len(msg)-1])
-            return msg[0:-paddingLen]
-    
-    if __name__ == "__main__":
-        key = "1234567812345678"
-        res = AESUtil.encryt("123456", key)
-        print(res)
-        print(AESUtil.decrypt(res, key))
+```python
+# -*- coding=utf-8-*-
 
+from Crypto.Cipher import AES
+import os
+from Crypto import Random
+import base64
+
+"""
+aes加密算法
+padding : PKCS7
+"""
+
+class AESUtil:
+
+    __BLOCK_SIZE_16 = BLOCK_SIZE_16 = AES.block_size
+
+    @staticmethod
+    def encryt(str, key):
+        #cipher = AES.new(key, AES.MODE_ECB,b'0000000000000000') #第三个参数是加密向量iv，ECB模式不需要
+        cipher = AES.new(key, AES.MODE_ECB)
+        x = AESUtil.__BLOCK_SIZE_16 - (len(str) % AESUtil.__BLOCK_SIZE_16)
+        if x != 0:
+            str = str + chr(x)*x
+        msg = cipher.encrypt(str)
+        # msg = base64.urlsafe_b64encode(msg).replace('=', '')
+        msg = base64.b64encode(msg)
+        return msg
+
+    @staticmethod
+    def decrypt(enStr, key):
+        cipher = AES.new(key, AES.MODE_ECB)
+        # enStr += (len(enStr) % 4)*"="
+        # decryptByts = base64.urlsafe_b64decode(enStr)
+        decryptByts = base64.b64decode(enStr)
+        msg = cipher.decrypt(decryptByts)
+        paddingLen = ord(msg[len(msg)-1])
+        return msg[0:-paddingLen]
+
+if __name__ == "__main__":
+    key = "1234567812345678"
+    res = AESUtil.encryt("123456", key)
+    print(res)
+    print(AESUtil.decrypt(res, key))
+```
 输出：
 
     mdSm0RmB+xAKrTah3DG31A==
@@ -601,16 +603,16 @@ Python的hashlib提供了常见的摘要算法，如MD5，SHA1等等。
 [https://my.oschina.net/u/9956...][4]
 
 通过纯PHP实现的DES加密。示例：
+```php
+<?php
 
-    <?php
-    
-    include('Crypt_DES.php');
-    
-    $des = new Crypt_DES();
-    $des->setKey('abcdefgh');
-    $plaintext = 'test';
-    echo $des->decrypt($des->encrypt($plaintext));
+include('Crypt_DES.php');
 
+$des = new Crypt_DES();
+$des->setKey('abcdefgh');
+$plaintext = 'test';
+echo $des->decrypt($des->encrypt($plaintext));
+```
 ## 在线工具
 
 1、在线加密解密  

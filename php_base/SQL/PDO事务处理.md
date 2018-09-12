@@ -26,27 +26,27 @@ MySQL常用的表类型：MyISAM(非事务)增删改速度快、InnodB（事务�
 
  
 ```php
-    $m = new PDO($dsn,$user,$pwd);
-    $m->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-    try{
-        $m->beginTransaction();//开启事务处理
-    
-        $stmt=$m->prepare("insert into stu(name,sex,age,classid)values(?,?,?,?)");
-        $data=array(
-            array("user1",1,22,"lamp76"),
-            array("user2",1,20,"lamp76"),
-            array("user3",0,22,"lamp76")
-        );
-        foreach($data as $v){
-            $stmt->execute($v);
-            echo $m->lastInsertId();
-        }
-        $m->commit();
-        echo "提交成功！";
-    }catch(PDOException $e){
-        $m->rollBack();//回滚
-        die("提交失败！");
+$m = new PDO($dsn,$user,$pwd);
+$m->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+try{
+    $m->beginTransaction();//开启事务处理
+
+    $stmt=$m->prepare("insert into stu(name,sex,age,classid)values(?,?,?,?)");
+    $data=array(
+        array("user1",1,22,"lamp76"),
+        array("user2",1,20,"lamp76"),
+        array("user3",0,22,"lamp76")
+    );
+    foreach($data as $v){
+        $stmt->execute($v);
+        echo $m->lastInsertId();
     }
+    $m->commit();
+    echo "提交成功！";
+}catch(PDOException $e){
+    $m->rollBack();//回滚
+    die("提交失败！");
+}
 ```
 
 **作者：飞鸿影~**

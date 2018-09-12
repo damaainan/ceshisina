@@ -146,34 +146,33 @@
 尝试让php与mysql,nginx 进行联动,看看php能不能被正常解析 
 
     #vi connect.php
-    
 
-    <?php
-        $link = mysql_connect("localhost","root","admin") or die(mysql_error());
-        if($link){
-            echo "yeah , mysql connect succeed!";
-        }else{
-            echo mysql_error();
-        }
-    ?>
-    
+```php
+<?php
+$link = mysql_connect("localhost","root","admin") or die(mysql_error());
+if($link){
+    echo "yeah , mysql connect succeed!";
+}else{
+    echo mysql_error();
+}
+```
 
-0x06 最后,我们就来好好关注下php解析器自身的安全,php解析器的设置全部依靠 php.ini 文件来实现,所以,下面就来详细说明一下针对 php.ini的安全配置    #vi /usr/local/php/etc/php.ini
-    
+0x06 最后,我们就来好好关注下php解析器自身的安全,php解析器的设置全部依靠 php.ini 文件来实现,所以,下面就来详细说明一下针对 php.ini的安全配置
+
+    #vi /usr/local/php/etc/php.ini
 
 将 register_globals 项设为Off ,本身的意思就是注册为全局变量,也就是说,设置为On的时候,从客户端传过来的参数值会被直接注册到php全局变量中后端直接可以拿到该变量进行使用,如果为Off,则表示只能到特定的全局数组中才能取到该数据,建议关闭,容易造成变量覆盖问题,不过在php高版本[如,> 5.6.x]中,已经去除对此项的设置,官方给的说明是这样的 本特性已自 PHP 5.3.0 起废弃并将自 PHP 5.4.0 起移除 ,如果你用的还是低版本的php就需要注意把此项关闭 
 
     register_globals = Off
-    
 
-    <?php
-        if($mark){
-            echo "login succeed! "; # 此处会直接显示登陆成功,因事先没有定义$mark,导致$mark直接被覆盖掉了
-        }else{
-            echo "login failed!";
-        }
-    ?>
-    
+```php
+<?php
+if($mark){
+    echo "login succeed! "; # 此处会直接显示登陆成功,因事先没有定义$mark,导致$mark直接被覆盖掉了
+}else{
+    echo "login failed!";
+}
+```
 
 将 cgi.fix_pathinfo的值设为 0 ,默认cgi.fix_pathinfo 项是开启的,即值为1,它会对文件路径自动进行修正,我们要把它改成0,不要让php自动修正文件路径,防止入侵者利用此特性构造解析漏洞来配合上传webshell 
 
@@ -208,43 +207,36 @@
     log_errors_max_len = 2048           # 指定php错误日志的最大长度
     ignore_repeated_errors = Off            # 不要忽略重复的错误
     display_startup_errors = Off            # 另外,不要把php启动过程中的错误输出到前端页面上
-    
 
 隐藏php的详细版本号,即 X-Powered-By 中显示的内容,不得不再次强调,有些漏洞只能针对特定的类型版本,在实际渗透过程中,如果让入侵者看到详细的版本号,他很可能就会直接去尝试利用该版本所具有的一些漏洞特性再配合着其它漏洞一起使用 
 
     expose_php = Off
-    
 
 限制php对本地文件系统的访问,即把所有的文件操作都限制指定的目录下,让php其实就是限制了像 fopen() 这类函数的访问范围,一般主要用来防止旁站跨目录,把webshell死死控制在当前站点目录下,此项默认为空,不建议直接写到php.ini中,可以参考前面nginx安全部署中的,直接在每个站点目录下新建一个 .user.ini 然后再把下面的配置写进去即可,比较灵活 
 
     open_basedir = "/usr/local/nginx/html/bwapp/bWAPP:/usr/local/nginx/html/dvws/"
-    
 
 关于对服务端session的一些处理
 
 隐藏后端使用的真正脚本类型,扰乱入侵者的渗透思路,另外,切记不要把敏感数据直接明文存在session中,有泄露风险 
 
     session.name = JSESSIONID   表示jsp程序,php的则是PHPSESSID
-    
 
 修改session文件存放路径,最好不要直接放在默认的 /tmp 目录下,实际中可能是一台单独的session服务器,比如,memcached 
 
     session.save_handler = memcache
     session.save_path = "tcp://192.168.3.42:11211"
-    
 
 安全模式可根据实际业务需求选择性开启,安全模式的意思就是操作文件的函数只能操作与php进程UID相同的文件,但php进程的uid并不一定就是web服务用户的uid,这也就造成了麻烦,也就是说,你想避免这种麻烦,可能就需要在最开始配置时就让php进程和web服务使用同一个系统用户身份,但这又正好跟我前面说的相背了,我们在前面说过,最好把php进程用户和web服务用户分开,这样更容易进行权限控制,另外,高版本的php [ > php5.4 ] 已不再支持安全模式,因为官方可能也觉得它并没什么卵用,而且低版本php的安全模式,还可被绕过,所以,如果你用的是低版本的php,请根据自身实际业务做取舍 
 
     safe_mode = On
     safe_mode_gid = off
-    
 
 限制php单脚本执行时长,防止服务器资源被长期滥用而产生拒绝服务的效果 
 
     max_execution_time = 30
     max_input_time = 60
     memory_limit = 8M
-    
 
 关于上传,如果实际的业务根本不涉及到上传,直接把上传功能关掉即可,如果需要上传,再根据需求做出调整即可,对防入侵来讲,这里对我们意义并不是非常大 
 
@@ -252,7 +244,6 @@
     upload_tmp_dir =        # 文件传上来的临时存放目录
     upload_max_filesize = 8M    # 允许上传文件的文件大小最大为多少
     post_max_size = 8M      # 通过POST表单给php的所能接收的文件大小最多为多少
-    
 
 0x07 利用 chattr 锁定一些不需要经常改动的重要配置文件,如,php-fpm.conf,php.ini,my.cnf…,为了防止chattr工具被别人滥用,你可以把它改名隐藏到系统的某个角落里,用的时候再拿出来 
 
@@ -261,14 +252,12 @@
     #chattr +i /usr/local/php/etc/php.ini
     #chattr +i /usr/local/php/etc/php-fpm.conf
     #chattr +i /etc/my.cnf
-    
 
 解锁 
 
     #chattr -i /usr/local/php/etc/php.ini
     #chattr -i /usr/local/php/etc/php-fpm.conf
     #chattr -i /etc/my.cnf
-    
 
 0x08 务必勤于关注php官方的高危补丁发布及说明,和其它工具不同,php 自身bug多,因为关注的人多,搞的人更多,所以暴露出来的各种安全问题也就更多更多
 

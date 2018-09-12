@@ -81,7 +81,7 @@ $_COOKIE有值了
 
 ![][3]
 
-所以可以很明显的看出，setcookie()对于 $_COOKIE 的影响并不是立即生效的.这是因为setcookie()是用来给客户端发送一个HTTP Cookie 的值， 但是 $_COOKIE 则是来获取客户端传递的 Cookie 值。所以两者的作用域不一样。因此才会出现这种情况。
+所以可以很明显的看出，`setcookie()`对于 `$_COOKIE` 的影响并不是立即生效的.这是因为`setcookie()`是用来给客户端发送一个HTTP Cookie 的值， 但是 `$_COOKIE` 则是来获取客户端传递的 Cookie 值。所以两者的作用域不一样。因此才会出现这种情况。
 ## 5、写在最后
 
 关于 Session 和 Cookie 的理解就到此为止，我觉得应该设计到更多知识，包括但不限于浏览器的运行机制，Cookie 实现机制， Session 持久化，php.ini 对session的影响etc.

@@ -64,17 +64,17 @@ Web 应用程序最重要的部分是什么？根据回答问题的人不同，�
 对用户输入进行清理的一个简单方法是，使用正则表达式来处理它。在这个示例中，只希望接受字母。将字符串限制为特定数量的字符，或者要求所有字母都是小写的，这可能也是个好主意。
 
 清单 3. 使用户输入变得安全
-
+```php
     $myUsername = cleanInput($_POST['username']); //clean!
     $arrayUsers = array($myUsername, 'tom', 'tommy'); //clean!
     define("GREETING", 'hello there' . $myUsername); //clean!
     function cleanInput($input){
-    $clean = strtolower($input);
-    $clean = preg_replace("/[^a-z]/", "", $clean);
-    $clean = substr($clean,0,12);
-    return $clean;
+        $clean = strtolower($input);
+        $clean = preg_replace("/[^a-z]/", "", $clean);
+        $clean = substr($clean,0,12);
+        return $clean;
     }
-
+```
 ### 规则 2：禁用那些使安全性难以实施的 PHP 设置 
 
 已经知道了不能信任用户输入，还应该知道不应该信任机器上配置 PHP 的方式。例如，要确保禁用 `register_globals`。如果启用了 `register_globals`，就可能做一些粗心的事情，比如使用 `$variable` 替换同名的 `GET` 或 `POST` 字符串。通过禁用这个设置，PHP 强迫您在正确的名称空间中引用正确的变量。要使用来自表单 `POST` 的变量，应该引用 `$_POST['variable']`。这样就不会将这个特定变量误会成 `cookie`、会话或 `GET` 变量。
@@ -88,7 +88,7 @@ Web 应用程序最重要的部分是什么？根据回答问题的人不同，�
 例如，您喜欢下面两段代码中的哪一段？
 
 清单 4. 使代码容易得到保护
-
+```php
     //obfuscated code
     $input = (isset($_POST['username']) ? $_POST['username']:");
     //unobfuscated code
@@ -98,7 +98,7 @@ Web 应用程序最重要的部分是什么？根据回答问题的人不同，�
     }else{
     $input = ";
     }
-
+```
 在第二个比较清晰的代码段中，很容易看出 `$input` 是有瑕疵的，需要进行清理，然后才能安全地处理。
 
 ### 规则 4："纵深防御" 是新的法宝 
@@ -122,24 +122,23 @@ Web 应用程序最重要的部分是什么？根据回答问题的人不同，�
 清单 16 给出一个示例，这个示例是在前一个示例的基础上构建的。
 
 清单 16. 从用户输入中清除 HTML 标记
-
+```php
     if ($_POST['submit'] == "go"){
-    //strip_tags
-    $name = strip_tags($_POST['name']);
-    $name = substr($name,0,40);
-    //clean out any potential hexadecimal characters
-    $name = cleanHex($name);
-    //continue processing….
+        //strip_tags
+        $name = strip_tags($_POST['name']);
+        $name = substr($name,0,40);
+        //clean out any potential hexadecimal characters
+        $name = cleanHex($name);
+        //continue processing….
     }
     function cleanHex($input){
-    $clean = preg_replace\
-    ("![\][xX]([A-Fa-f0-9]{1,3})!", "",$input);
-    return $clean;
+        $clean = preg_replace("![\][xX]([A-Fa-f0-9]{1,3})!", "",$input);
+        return $clean;
     }
     "" method="post"
     Name
     "text" name="name" id="name" size="20″ maxlength="40″/>
-
+```
 从安全的角度来看，对公共用户输入使用 `strip_tags()` 是必要的。如果表单在受保护区域（比如内容管理系统）中，而且您相信用户会正确地执行他们的任务（比如为 Web 站点创建 HTML 内容），那么使用 `strip_tags()` 可能是不必要的，会影响工作效率。
 
 还有一个问题：如果要接受用户输入，比如对贴子的评论或来客登记项，并需要将这个输入向其他用户显示，那么一定要将响应放在 PHP 的 `htmlspecialchars()` 函数中。这个函数将与符号、`<` 和 `>` 符号转换为 HTML 实体。例如，与符号`（&）`变成 `&`。这样的话，即使恶意内容躲开了前端 `strip_tags()` 的处理，也会在后端被 `htmlspecialchars()` 处理掉。
@@ -153,24 +152,23 @@ Web 应用程序最重要的部分是什么？根据回答问题的人不同，�
 让我们回到前面建立的示例。已经检查了字符串长度、清除了 HTML 标记并删除了十六进制字符。但是，添加了一些隐藏的文本字段，如下所示：
 
 清单 17. 隐藏变量
-
+```php
     if ($_POST['submit'] == "go"){
-    //strip_tags
-    $name = strip_tags($_POST['name']);
-    $name = substr($name,0,40);
-    //clean out any potential hexadecimal characters
-    $name = cleanHex($name);
-    //continue processing….
+        //strip_tags
+        $name = strip_tags($_POST['name']);
+        $name = substr($name,0,40);
+        //clean out any potential hexadecimal characters
+        $name = cleanHex($name);
+        //continue processing….
     }
     function cleanHex($input){
-    $clean = \
-    preg_replace("![\][xX]([A-Fa-f0-9]{1,3})!", "",$input);
-    return $clean;
+        $clean = preg_replace("![\][xX]([A-Fa-f0-9]{1,3})!", "",$input);
+        return $clean;
     }
     " method="post"
     Name
     "text" name="name" id="name" size="20″ maxlength="40″/>
-
+```
 注意，隐藏变量之一暴露了表名：users。还会看到一个值为 create 的 action 字段。只要有基本的 SQL 经验，就能够看出这些命令可能控制着中间件中的一个 SQL 引擎。想搞大破坏的人只需改变表名或提供另一个选项，比如 delete。
 
 图 1 说明了 Tamper Data 能够提供的破坏范围。注意，Tamper Data 不但允许用户访问表单数据元素，还允许访问 HTTP 头和 cookie。
@@ -205,26 +203,26 @@ Web 的好处是可以分享信息和服务。坏处也是可以分享信息和�
 
 清单 18. 防御远程表单提交
 
-```
+```php
     session_start();
     if ($_POST['submit'] == "go"){
-    //check token
-    if ($_POST['token'] == $_SESSION['token']){
-    //strip_tags
-    $name = strip_tags($_POST['name']);
-    $name = substr($name,0,40);
-    //clean out any potential hexadecimal characters
-    $name = cleanHex($name);
-    //continue processing….
-    }else{
-    //stop all processing! remote form posting attempt!
-    }
+        //check token
+        if ($_POST['token'] == $_SESSION['token']){
+            //strip_tags
+            $name = strip_tags($_POST['name']);
+            $name = substr($name,0,40);
+            //clean out any potential hexadecimal characters
+            $name = cleanHex($name);
+            //continue processing….
+        }else{
+            //stop all processing! remote form posting attempt!
+        }
     }
     $token = md5(uniqid(rand(), true));
     $_SESSION['token']= $token;
     function cleanHex($input){
-    $clean = preg_replace("![\][xX]([A-Fa-f0-9]{1,3})!", "",$input);
-    return $clean;
+        $clean = preg_replace("![\][xX]([A-Fa-f0-9]{1,3})!", "",$input);
+        return $clean;
     }
     " method="post"
     Name
