@@ -49,29 +49,27 @@ PHPServer 完整的源代码，可前往 [fan-haobai/php-server][8] 获取。
 ```php
 protected static function daemonize()
 {
- umask(0);
- $pid = pcntl_fork();
- if (-1 === $pid) {
- exit("process fork fail\n");
- } elseif ($pid > 0) {
- exit(0);
- }
+    umask(0);
+    $pid = pcntl_fork();
+    if (-1 === $pid) {
+        exit("process fork fail\n");
+    } elseif ($pid > 0) {
+        exit(0);
+    }
 
- // 将当前进程提升为会话leader
- if (-1 === posix_setsid()) {
- exit("process setsid fail\n");
- }
+    // 将当前进程提升为会话leader
+    if (-1 === posix_setsid()) {
+        exit("process setsid fail\n");
+    }
 
- // 再次fork以避免SVR4这种系统终端再一次获取到进程控制
- $pid = pcntl_fork();
- if (-1 === $pid) {
- exit("process fork fail\n");
- } elseif (0 !== $pid) {
- exit(0);
- }
+    // 再次fork以避免SVR4这种系统终端再一次获取到进程控制
+    $pid = pcntl_fork();
+    if (-1 === $pid) {
+        exit("process fork fail\n");
+    } elseif (0 !== $pid) {
+        exit(0);
+    }
 }
-
-
 ```
 
  
@@ -82,15 +80,13 @@ protected static function daemonize()
 ```php
 protected static function resetStdFd()
 {
- global $STDERR, $STDOUT;
- //重定向标准输出和错误输出
- @fclose(STDOUT);
- fclose(STDERR);
- $STDOUT = fopen(static::$stdoutFile, 'a');
- $STDERR = fopen(static::$stdoutFile, 'a');
+    global $STDERR, $STDOUT;
+    //重定向标准输出和错误输出
+    @fclose(STDOUT);
+    fclose(STDERR);
+    $STDOUT = fopen(static::$stdoutFile, 'a');
+    $STDERR = fopen(static::$stdoutFile, 'a');
 }
-
-
 ```
 
  
@@ -101,13 +97,13 @@ protected static function resetStdFd()
 ```php
 protected static function saveMasterPid()
 {
- // 保存pid以实现重载和停止
- static::$_masterPid = posix_getpid();
- if (false === file_put_contents(static::$pidFile, static::$_masterPid)) {
- exit("can not save pid to" . static::$pidFile . "\n");
- }
+    // 保存pid以实现重载和停止
+    static::$_masterPid = posix_getpid();
+    if (false === file_put_contents(static::$pidFile, static::$_masterPid)) {
+        exit("can not save pid to" . static::$pidFile . "\n");
+    }
 
- echo "PHPServer start\t \033[32m [OK] \033[0m\n";
+    echo "PHPServer start\t \033[32m [OK] \033[0m\n";
 }
 
 
@@ -123,30 +119,30 @@ protected static function saveMasterPid()
 ```php
 protected static function installSignal()
 {
- pcntl_signal(SIGINT, array('\PHPServer\Worker', 'signalHandler'), false);
- pcntl_signal(SIGTERM, array('\PHPServer\Worker', 'signalHandler'), false);
+    pcntl_signal(SIGINT, array('\PHPServer\Worker', 'signalHandler'), false);
+    pcntl_signal(SIGTERM, array('\PHPServer\Worker', 'signalHandler'), false);
 
- pcntl_signal(SIGUSR1, array('\PHPServer\Worker', 'signalHandler'), false);
- pcntl_signal(SIGQUIT, array('\PHPServer\Worker', 'signalHandler'), false);
+    pcntl_signal(SIGUSR1, array('\PHPServer\Worker', 'signalHandler'), false);
+    pcntl_signal(SIGQUIT, array('\PHPServer\Worker', 'signalHandler'), false);
 
- // 忽略信号
- pcntl_signal(SIGUSR2, SIG_IGN, false);
- pcntl_signal(SIGHUP, SIG_IGN, false);
+    // 忽略信号
+    pcntl_signal(SIGUSR2, SIG_IGN, false);
+    pcntl_signal(SIGHUP, SIG_IGN, false);
 }
 
 protected static function signalHandler($signal)
 {
- switch($signal) {
- case SIGINT:
- case SIGTERM:
- static::stop();
- break;
- case SIGQUIT:
- case SIGUSR1:
- static::reload();
- break;
- default: break;
- }
+    switch($signal) {
+        case SIGINT:
+        case SIGTERM:
+            static::stop();
+            break;
+        case SIGQUIT:
+        case SIGUSR1:
+            static::reload();
+            break;
+        default: break;
+    }
 }
 
 
@@ -162,32 +158,30 @@ Master 进程通过`fork`系统调用，就能创建多个 Worker 进程。实�
 ```php
 protected static function forkOneWorker()
 {
- $pid = pcntl_fork();
+    $pid = pcntl_fork();
 
- // 父进程
- if ($pid > 0) {
- static::$_workers[] = $pid;
- } else if ($pid === 0) { // 子进程
- static::setProcessTitle('PHPServer: worker');
+    // 父进程
+    if ($pid > 0) {
+        static::$_workers[] = $pid;
+    } else if ($pid === 0) { // 子进程
+        static::setProcessTitle('PHPServer: worker');
 
- // 子进程会阻塞在这里
- static::run();
+        // 子进程会阻塞在这里
+        static::run();
 
- // 子进程退出
- exit(0);
- } else {
- throw new \Exception("fork one worker fail");
- }
+        // 子进程退出
+        exit(0);
+    } else {
+        throw new \Exception("fork one worker fail");
+    }
 }
 
 protected static function forkWorkers()
 {
- while(count(static::$_workers) < static::$workerCount) {
- static::forkOneWorker();
- }
+    while(count(static::$_workers) < static::$workerCount) {
+        static::forkOneWorker();
+    }
 }
-
-
 ```
 
  
@@ -202,19 +196,17 @@ Worker 进程的持续运行，见。其内部调度流程，如下图：
 ```php
 public static function run()
 {
- // 模拟调度,实际用event实现
- while (1) {
- // 捕获信号
- pcntl_signal_dispatch();
+    // 模拟调度,实际用event实现
+    while (1) {
+        // 捕获信号
+        pcntl_signal_dispatch();
 
- call_user_func(function(){
- // do something
- usleep(200);
- });
- }
+        call_user_func(function(){
+            // do something
+            usleep(200);
+        });
+    }
 }
-
-
 ```
 
  
@@ -233,23 +225,21 @@ Master 进程的持续监控，见。其内部调度流程，如下图：
 ```php
 protected static function monitor()
 {
- while (1) {
- // 这两处捕获触发信号,很重要
- pcntl_signal_dispatch();
- // 挂起当前进程的执行直到一个子进程退出或接收到一个信号
- $status = 0;
- $pid = pcntl_wait($status, WUNTRACED);
- pcntl_signal_dispatch();
+    while (1) {
+        // 这两处捕获触发信号,很重要
+        pcntl_signal_dispatch();
+        // 挂起当前进程的执行直到一个子进程退出或接收到一个信号
+        $status = 0;
+        $pid = pcntl_wait($status, WUNTRACED);
+        pcntl_signal_dispatch();
 
- if ($pid >= 0) {
- // worker健康检查
- static::checkWorkerAlive();
- }
- // 其他你想监控的
- }
+        if ($pid >= 0) {
+            // worker健康检查
+            static::checkWorkerAlive();
+        }
+        // 其他你想监控的
+    }
 }
-
-
 ```
 
  
@@ -268,17 +258,15 @@ protected static function monitor()
 ```php
 protected static function checkWorkerAlive()
 {
- $allWorkerPid = static::getAllWorkerPid();
- foreach ($allWorkerPid as $index => $pid) {
- if (!static::isAlive($pid)) {
- unset(static::$_workers[$index]);
- }
- }
+    $allWorkerPid = static::getAllWorkerPid();
+    foreach ($allWorkerPid as $index => $pid) {
+        if (!static::isAlive($pid)) {
+            unset(static::$_workers[$index]);
+        }
+    }
 
- static::forkWorkers();
+    static::forkWorkers();
 }
-
-
 ```
 
  
@@ -293,22 +281,20 @@ Master 进程的持续监控，见。其详细流程，如下图：
 ```php
 protected static function stop()
 {
- // 主进程给所有子进程发送退出信号
- if (static::$_masterPid === posix_getpid()) {
- static::stopAllWorkers();
+    // 主进程给所有子进程发送退出信号
+    if (static::$_masterPid === posix_getpid()) {
+        static::stopAllWorkers();
 
- if (is_file(static::$pidFile)) {
- @unlink(static::$pidFile);
- }
- exit(0);
- } else { // 子进程退出
+        if (is_file(static::$pidFile)) {
+            @unlink(static::$pidFile);
+        }
+        exit(0);
+    } else { // 子进程退出
 
- // 退出前可以做一些事
- exit(0);
- }
+        // 退出前可以做一些事
+        exit(0);
+    }
 }
-
-
 ```
 
  
@@ -319,24 +305,22 @@ protected static function stop()
 ```php
 protected static function stopAllWorkers()
 {
- $allWorkerPid = static::getAllWorkerPid();
- foreach ($allWorkerPid as $workerPid) {
- posix_kill($workerPid, SIGINT);
- }
+    $allWorkerPid = static::getAllWorkerPid();
+    foreach ($allWorkerPid as $workerPid) {
+        posix_kill($workerPid, SIGINT);
+    }
 
- // 子进程退出异常,强制kill
- usleep(1000);
- if (static::isAlive($allWorkerPid)) {
- foreach ($allWorkerPid as $workerPid) {
- static::forceKill($workerPid);
- }
- }
+    // 子进程退出异常,强制kill
+    usleep(1000);
+    if (static::isAlive($allWorkerPid)) {
+        foreach ($allWorkerPid as $workerPid) {
+            static::forceKill($workerPid);
+        }
+    }
 
- // 清空worker实例
- static::$_workers = array();
+    // 清空worker实例
+    static::$_workers = array();
 }
-
-
 ```
 
  
@@ -351,8 +335,8 @@ protected static function stopAllWorkers()
 ```php
 protected static function reload()
 {
- // 停止所有worker即可,master会自动fork新worker
- static::stopAllWorkers();
+    // 停止所有worker即可,master会自动fork新worker
+    static::stopAllWorkers();
 }
 
 
@@ -379,8 +363,6 @@ Options:
 -d to start in DAEMON mode.
 
 Use "--help" for more information about a command.
-
-
 ```
 
  
@@ -389,8 +371,6 @@ Use "--help" for more information about a command.
 ```
 $ php server.php start -d
 PHPServer start [OK]
-
-
 ```
 
  
@@ -401,7 +381,6 @@ init(1)-+-init(3)---bash(4)
  |-php(1286)-+-php(1287)
  `-php(1288)
 
-
 ```
 
  
@@ -411,7 +390,6 @@ init(1)-+-init(3)---bash(4)
 $ php server.php stop
 PHPServer stopping ...
 PHPServer stop success
-
 
 ```
 

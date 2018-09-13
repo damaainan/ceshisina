@@ -9,6 +9,7 @@ Xdebug 是一个开放源代码的php程序调试器(及一个Debug工具）)可
 
 窝的xdebug的设置如下:
 
+```ini
     xdebug.auto_trace = 1
     xdebug.trace_format = 0
     xdebug.trace_output_dir ="D:\Database\phpStudy\phpStudy\tmp\xdebug"
@@ -28,8 +29,7 @@ Xdebug 是一个开放源代码的php程序调试器(及一个Debug工具）)可
     xdebug.remote_handler = "dbgp"
     xdebug.remote_host = "127.0.0.1:82"
     zend_extension="D:\Database\phpStudy\phpStudy\php55n\ext\xdebug.dll"
-     
-    
+```
 
 #### 代码跟踪相关配置
 

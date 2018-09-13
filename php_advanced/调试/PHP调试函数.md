@@ -50,26 +50,26 @@
 所以想了想，我就决定判断是否ajax请求，是的话我就返回一个json，不然就输出HTML，于是进一步的版本变成了这样:
 
 ```php
-    <?php
-    function debug($data, $isStop = false){
-        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest' || isset($_GET['_isAjax']) || isset($_POST['_isAjax']);
-        
-        $trace = (new \Exception())->getTrace()[0];
-        if($isAjax){
-            header('Content-type:application/json;charset=utf-8');
-            exit(json_encode(array(
-                'file' => $trace['file'],
-                'line' => $trace['line'],
-                'dataStr' => var_export($data, true),
-                'data' => $data,
-            )));
-        }else{
-            echo '文件行号:' . $trace['file'] . ':' . $trace['line'];
-            echo '';
-        }
+<?php
+function debug($data, $isStop = false){
+    $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest' || isset($_GET['_isAjax']) || isset($_POST['_isAjax']);
     
-        $isStop && exit;
+    $trace = (new \Exception())->getTrace()[0];
+    if($isAjax){
+        header('Content-type:application/json;charset=utf-8');
+        exit(json_encode(array(
+            'file' => $trace['file'],
+            'line' => $trace['line'],
+            'dataStr' => var_export($data, true),
+            'data' => $data,
+        )));
+    }else{
+        echo '文件行号:' . $trace['file'] . ':' . $trace['line'];
+        echo '';
     }
+
+    $isStop && exit;
+}
 ```
 
 从此，我只要暂时在前端回调里将代码改成alert(result.dataStr)或者看浏览器开发者控工具的网络选项卡的请求响应报文就行了

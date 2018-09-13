@@ -13,90 +13,90 @@
 > 简单使用
 
 ```php
-    <?php
-    
-    trait Test
+<?php
+
+trait Test
+{
+    public function echoHello()
     {
-        public function echoHello()
-        {
-            echo 'Hello Trait';
-        }
+        echo 'Hello Trait';
     }
-    
-    class Base
+}
+
+class Base
+{
+    public function index()
     {
-        public function index()
-        {
-            echo 'index';
-        }
+        echo 'index';
     }
-    
-    class One extends Base
-    {
-        use Test;
-    }
-    
-    class Two extends Base
-    {
-        use Test;
-    }
-    
-    $one = new One();
-    $two = new Two();
-    
-    echo $one->echoHello();
-    echo $one->index();
-    echo $two->echoHello();
+}
+
+class One extends Base
+{
+    use Test;
+}
+
+class Two extends Base
+{
+    use Test;
+}
+
+$one = new One();
+$two = new Two();
+
+echo $one->echoHello();
+echo $one->index();
+echo $two->echoHello();
 ```
 结果输出 Hello Trait index Hello Trait。
 
 > 从基类继承的成员会被 Trait 插入的成员所覆盖。优先顺序是来自当前类的成员覆盖了 Trait 的方法，而 Trait 则覆盖了被继承的方法。
 
 ```php
-    <?php
-    
-    trait Test
+<?php
+
+trait Test
+{
+    public function echoHello()
     {
-        public function echoHello()
-        {
-            echo 'Hello Trait';
-        }
+        echo 'Hello Trait';
     }
-    
-    class Base
+}
+
+class Base
+{
+    use Test;
+
+    public function echoHello()
     {
-        use Test;
-    
-        public function echoHello()
-        {
-            echo 'Hello Base';
-        }
+        echo 'Hello Base';
     }
-    
-    class One extends Base
+}
+
+class One extends Base
+{
+    use Test;
+
+    public function echoHello()
     {
-        use Test;
-    
-        public function echoHello()
-        {
-            echo 'Hello One';
-        }
+        echo 'Hello One';
     }
-    
-    class Two extends Base
-    {
-        use Test;
-    }
-    
-    $one = new One();
-    $two = new Two();
-    $base = new Base();
-    
-    echo $one->echoHello();
-    
-    echo $two->echoHello();
-    
-    echo $base->echoHello();
+}
+
+class Two extends Base
+{
+    use Test;
+}
+
+$one = new One();
+$two = new Two();
+$base = new Base();
+
+echo $one->echoHello();
+
+echo $two->echoHello();
+
+echo $base->echoHello();
 ```
 结果输出 Hello One Hello Trait Hello Base。
 
@@ -108,139 +108,139 @@
 > 通过逗号分隔，在 use 声明列出多个 trait，可以都插入到一个类中。
 
 ```php
-    <?php
-    
-    trait Test
+<?php
+
+trait Test
+{
+    public function echoHello()
     {
-        public function echoHello()
-        {
-            echo 'Hello ';
-        }
+        echo 'Hello ';
     }
-    
-    trait TestTwo
+}
+
+trait TestTwo
+{
+    public function echoWord()
     {
-        public function echoWord()
-        {
-            echo 'word !';
-        }
+        echo 'word !';
     }
-    
-    
-    class One
-    {
-        use Test,TestTwo;
-    }
-    
-    $one  = new One();
-    
-    echo $one->echoHello();
-    echo $one->echoWord();
+}
+
+
+class One
+{
+    use Test,TestTwo;
+}
+
+$one  = new One();
+
+echo $one->echoHello();
+echo $one->echoWord();
 ```
 结果输出 Hello word !。
 
 > 如果两个 Trait 都插入了一个同名的方法，如果没有明确解决冲突将会产生一个致命错误。
 
 ```php
-    <?php
-    
-    trait Test
+<?php
+
+trait Test
+{
+    public function echoHello()
     {
-        public function echoHello()
-        {
-            echo 'Hello Test';
-        }
-    
-        public function echoWord()
-        {
-            echo 'word Test';
-        }
+        echo 'Hello Test';
     }
-    
-    trait TestTwo
+
+    public function echoWord()
     {
-        public function echoHello()
-        {
-            echo 'Hello TestTwo ';
-        }
-    
-        public function echoWord()
-        {
-            echo 'word TestTwo';
-        }
+        echo 'word Test';
     }
-    
-    class One
+}
+
+trait TestTwo
+{
+    public function echoHello()
     {
-        use Test, TestTwo {
-            Test::echoHello as echoTest;
-            Test::echoWord insteadof TestTwo;
-            TestTwo::echoHello insteadof Test;
-        }
+        echo 'Hello TestTwo ';
     }
-    
-    $one = new One();
-    
-    echo $one->echoTest();
-    echo $one->echoWord();
-    echo $one->echoHello();
+
+    public function echoWord()
+    {
+        echo 'word TestTwo';
+    }
+}
+
+class One
+{
+    use Test, TestTwo {
+        Test::echoHello as echoTest;
+        Test::echoWord insteadof TestTwo;
+        TestTwo::echoHello insteadof Test;
+    }
+}
+
+$one = new One();
+
+echo $one->echoTest();
+echo $one->echoWord();
+echo $one->echoHello();
 ```
 
 输出结果：Hello Test word Test Hello TestTwo。
 
-* 使用 as 作为别名，即 Test::echoHello as echoTest; 输出 Trait Test 中的 echoHello.
-* 使用 insteadof 操作符用来排除掉其他 Trait,即 Test::echoWord insteadof TestTwo; 输出的是 word Test,使用 Trait Test 中的 echoWord
+* 使用 `as` 作为别名，即 Test::echoHello as echoTest; 输出 Trait Test 中的 echoHello.
+* 使用 `insteadof` 操作符用来排除掉其他 Trait,即 Test::echoWord insteadof TestTwo; 输出的是 word Test,使用 Trait Test 中的 echoWord
 
 
 > 修改 方法的控制权限
 
 ```php
-    <?php
-    
-    trait Test
+<?php
+
+trait Test
+{
+    public function echoHello()
     {
-        public function echoHello()
-        {
-            echo 'Hello';
-        }
-    
-        public function echoWord()
-        {
-            echo 'word';
-        }
+        echo 'Hello';
     }
-    
-    trait TestTwo
+
+    public function echoWord()
     {
-        public function echoHello()
-        {
-            echo 'Hello TestTwo ';
-        }
-    
-        public function echoWord()
-        {
-            echo 'word TestTwo';
-        }
+        echo 'word';
     }
-    
-    class One
+}
+
+trait TestTwo
+{
+    public function echoHello()
     {
-        use Test {
-            echoHello as private;
-        }
+        echo 'Hello TestTwo ';
     }
-    
-    class Two
+
+    public function echoWord()
     {
-        use Test {
-            echoHello as private echoTwo;
-        }
+        echo 'word TestTwo';
     }
-    
-    $one = new One();
-    $two = new Two();
-    
-    echo $two->echoHello();
+}
+
+class One
+{
+    use Test {
+        echoHello as private;
+    }
+}
+
+class Two
+{
+    use Test {
+        echoHello as private echoTwo;
+    }
+}
+
+$one = new One();
+$two = new Two();
+
+echo $two->echoHello();
 ```
 
 * 输出结果 Hello。

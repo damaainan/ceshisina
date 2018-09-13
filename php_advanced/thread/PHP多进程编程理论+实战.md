@@ -63,13 +63,13 @@
 叉子？叉子是分岔的，一个变多个嘛！差不多就是这个意思。创建子进程就用这个命令。这里需要用到`pcntl_fork()`函数。（可以先简单看一下PHP手册关于这个函数的介绍。）创建一个PHP脚本： 
 
 ```php
-    <?php  
-    $pid = pcntl_fork(); // 一旦调用成功，事情就变得有些不同了
-    if ($pid == -1) {
-        die('fork failed');
-    } else if ($pid == 0) {
-    } else {
-    }
+<?php  
+$pid = pcntl_fork(); // 一旦调用成功，事情就变得有些不同了
+if ($pid == -1) {
+    die('fork failed');
+} else if ($pid == 0) {
+} else {
+}
 ```
   
 `pcntl_fork()`函数创建一个子进程，子进程和父进程唯一的区别就是PID（进程ID）和PPID（父进程ID）不同。在终端下查看进程用ps命令（问问man看ps怎么用：man ps）。当函数返回值为-1的时候，说明fork失败了。试试在if前面加一句：echo $pid . PHP_EOL;。运行你的脚本，输出可能像下面这样（结果说明子进程和父进程的代码是相同的）： 
@@ -84,17 +84,17 @@
 然后我们来说说鸣人16岁那次影分身的事儿，给原身和分身分配两个简单的输出任务： 
 
 ```php
-    <?php  
-    $parentPid = getmypid(); // 这就是传说中16岁之前的记忆
-    $pid = pcntl_fork(); // 一旦调用成功，事情就变得有些不同了
-    if ($pid == -1) {
-        die('fork failed');
-    } else if ($pid == 0) {
-        $mypid = getmypid(); // 用getmypid()函数获取当前进程的PID
-        echo 'I am child process. My PID is ' . $mypid . ' and my father's PID is ' . $parentPid . PHP_EOL;
-    } else {
-        echo 'Oh my god! I am a father now! My child's PID is ' . $pid . ' and mine is ' . $parentPid . PHP_EOL;
-    }
+<?php  
+$parentPid = getmypid(); // 这就是传说中16岁之前的记忆
+$pid = pcntl_fork(); // 一旦调用成功，事情就变得有些不同了
+if ($pid == -1) {
+    die('fork failed');
+} else if ($pid == 0) {
+    $mypid = getmypid(); // 用getmypid()函数获取当前进程的PID
+    echo 'I am child process. My PID is ' . $mypid . ' and my father\'s PID is ' . $parentPid . PHP_EOL;
+} else {
+    echo 'Oh my god! I am a father now! My child\'s PID is ' . $pid . ' and mine is ' . $parentPid . PHP_EOL;
+}
 ```
 输出的结果可能是这样： 
 
@@ -122,20 +122,20 @@
 人是活的程序也是活的，只不过程序需要遵循人制定的规则来运行。现在开始给信号重新设定规则，这里用到的函数是`pcntl_signal()`（继续之前为啥不先查查PHP手册呢？）。下面这段程序将给SIGINT重新定义行为，注意看好： 
 
 ```php
-    <?php  
-    // 定义一个处理器，接收到SIGINT信号后只输出一行信息
-    function signalHandler($signal) {
-        if ($signal == SIGINT) {
-            echo 'signal received' . PHP_EOL;
-        }
+<?php  
+// 定义一个处理器，接收到SIGINT信号后只输出一行信息
+function signalHandler($signal) {
+    if ($signal == SIGINT) {
+        echo 'signal received' . PHP_EOL;
     }
-    // 信号注册：当接收到SIGINT信号时，调用signalHandler()函数
-    pcntl_signal(SIGINT, 'signalHandler');
-    while (true) {
-        sleep(1);
-        // do something
-        pcntl_signal_dispatch(); // 接收到信号时，调用注册的signalHandler()
-    }
+}
+// 信号注册：当接收到SIGINT信号时，调用signalHandler()函数
+pcntl_signal(SIGINT, 'signalHandler');
+while (true) {
+    sleep(1);
+    // do something
+    pcntl_signal_dispatch(); // 接收到信号时，调用注册的signalHandler()
+}
 ```
 执行一下，随时按下 Ctrl+C 看看会发生什么事。 
 
@@ -144,11 +144,11 @@
 说明一下：`pcntl_signal()`函数仅仅是注册信号和它的处理方法，真正接收到信号并调用其处理方法的是`pcntl_signal_dispatch()`函数。试试把// do something替换成下面这段代码： 
 
 ```php
-    <?php  
-    for ($i = 0; $i < 1000000; $i++) {
-        echo $i . PHP_EOL;
-        usleep(100000);
-    }
+<?php  
+for ($i = 0; $i < 1000000; $i++) {
+    echo $i . PHP_EOL;
+    usleep(100000);
+}
 ```
 在终端下执行这个脚本，当它不停输出数字的时候尝试按下 Ctrl+C 。看看程序有什么响应？嗯……什么都没有，除了屏幕可能多了个^C以外，程序一直在不停地输出数字。因为程序一直没有执行到`pcntl_signal_dispatch()`，所以就并没有调用`signalHandler()`，所以就没有输出signal received。 
 
@@ -189,54 +189,53 @@ CentOS 6 下yum安装php的，默认是不安装`pcntl`的，因此需要单独�
 ### 6.1.演示一：
 
 ```php
-    <?php  
-        // 总进程的数量  
-        $intSum = 5;  
-        // 执行的脚本数量  
-        $cmdArr = array();  
-        // 需要执行的脚本路径
-        $strPath = '/home/root/running.php';
-        // 执行的脚本数量的数组  
-        for ($i = 0; $i < $totals; $i++) {  
-            $cmdArr[] = array( "path" => $strPath,  'pid' => $i ,'sum' => $intSum );  
-        }  
-        /* 
-        展开：$cmdArr 
-        Array 
+<?php  
+// 总进程的数量  
+$intSum = 5;  
+// 执行的脚本数量  
+$cmdArr = array();  
+// 需要执行的脚本路径
+$strPath = '/home/root/running.php';
+// 执行的脚本数量的数组  
+for ($i = 0; $i < $totals; $i++) {  
+    $cmdArr[] = array( "path" => $strPath,  'pid' => $i ,'sum' => $intSum );  
+}  
+/* 
+展开：$cmdArr 
+Array 
+( 
+    [0] => Array 
         ( 
-            [0] => Array 
-                ( 
-                    [path] => /home/root/running.php 
-                    [pid] => 0 
-                    [total] => 3 
-                ) 
-         ...
-         ...
+            [path] => /home/root/running.php 
+            [pid] => 0 
+            [total] => 3 
         ) 
-        */  
-        
-        pcntl_signal(SIGCHLD, SIG_IGN); // 如果父进程不关心子进程什么时候结束,子进程结束后，内核会回收。  
-        
-        foreach ($cmdArr as $cmd) {  
-            $pid = pcntl_fork();    // 创建子进程  
-            // 父进程和子进程都会执行下面代码  
-            if ( $pid == -1 ) {  
-                // 错误处理：创建子进程失败时返回-1.  
-                die('could not fork');  
-            } else if ( $pid == 0 ) {
-                // 子进程得到的$pid为0, 所以这里是子进程执行的逻辑。  
-                $path = $cmd["path"];  
-                $pid = $cmd['pid'] ;  
-                $total = $cmd['total'] ;  
-                echo exec("/usr/bin/php {$path} {$pid} {$total}")."\n";  
-                exit(0) ;  
-            } else {  
-                // 父进程会得到子进程号，所以这里是父进程执行的逻辑  
-                // 如果不需要阻塞进程，而又想得到子进程的退出状态，则可以注释掉pcntl_wait($status)语句，或写成：  
-                pcntl_wait( $status, WNOHANG ); // 等待子进程中断，防止子进程成为僵尸进程。  
-            }  
-        }  
-    ?>  
+ ...
+ ...
+) 
+*/  
+
+pcntl_signal(SIGCHLD, SIG_IGN); // 如果父进程不关心子进程什么时候结束,子进程结束后，内核会回收。  
+
+foreach ($cmdArr as $cmd) {  
+    $pid = pcntl_fork();    // 创建子进程  
+    // 父进程和子进程都会执行下面代码  
+    if ( $pid == -1 ) {  
+        // 错误处理：创建子进程失败时返回-1.  
+        die('could not fork');  
+    } else if ( $pid == 0 ) {
+        // 子进程得到的$pid为0, 所以这里是子进程执行的逻辑。  
+        $path = $cmd["path"];  
+        $pid = $cmd['pid'] ;  
+        $total = $cmd['total'] ;  
+        echo exec("/usr/bin/php {$path} {$pid} {$total}")."\n";  
+        exit(0) ;  
+    } else {  
+        // 父进程会得到子进程号，所以这里是父进程执行的逻辑  
+        // 如果不需要阻塞进程，而又想得到子进程的退出状态，则可以注释掉pcntl_wait($status)语句，或写成：  
+        pcntl_wait( $status, WNOHANG ); // 等待子进程中断，防止子进程成为僵尸进程。  
+    }  
+}  
 ```
 ### 6.2.演示二：
 
@@ -244,34 +243,31 @@ CentOS 6 下yum安装php的，默认是不安装`pcntl`的，因此需要单独�
 Running.php文件：
 
 ```php    
-    <?php
-    $cmds=array(
-            array('/home/lhc/Debug_Test/Doing.php','mobile',1),
-            array('/home/lhc/Debug_Test/Doing.php','mobile',2),
-    );
-    
-    foreach($cmds as $cmd){
-            $pid=pcntl_fork();
-            if($pid==-1){ //进程创建失败
-                    die('fork child process failure!');
-            }
-            else if($pid){ //父进程处理逻辑
-                    pcntl_wait($status,WNOHANG);
-            }
-            else{ //子进程处理逻辑
-                    pcntl_exec('/usr/local/php/bin/php',$cmd);
-            }
+<?php
+$cmds=array(
+    array('/home/lhc/Debug_Test/Doing.php','mobile',1),
+    array('/home/lhc/Debug_Test/Doing.php','mobile',2),
+);
+
+foreach($cmds as $cmd){
+    $pid=pcntl_fork();
+    if($pid==-1){ //进程创建失败
+        die('fork child process failure!');
     }
-    
-    ?>
+    else if($pid){ //父进程处理逻辑
+        pcntl_wait($status,WNOHANG);
+    }
+    else{ //子进程处理逻辑
+        pcntl_exec('/usr/local/php/bin/php',$cmd);
+    }
+}
 ```
 
 Doing.php文件：
 
 ```php
-    <?php
-        file_put_contents( "1.txt","##aa##\r\n",FILE_APPEND);
-    ?>
+<?php
+file_put_contents( "1.txt","##aa##\r\n",FILE_APPEND);
 ```
 执行结果： 
 

@@ -98,32 +98,32 @@ PHP 将线程 封装成了 Thread 类，线程的创建通过实例化一个线�
 ## 实例代码
 
 下面是一个线程类，用来请求某一接口。接下来根据它写两个多线程的应用实例：
-
-    class Request extends Thread {
-        public $url;
-        public $response;
-        public function __construct($url) {
-            $this->url = $url;
-        }
-        public function run() {
-            $this->response = file_get_contents($this->url);
-        }
+```php
+class Request extends Thread {
+    public $url;
+    public $response;
+    public function __construct($url) {
+        $this->url = $url;
     }
-
+    public function run() {
+        $this->response = file_get_contents($this->url);
+    }
+}
+```
 ### 异步请求
 
 将同步的请求拆分为多个线程异步调用，以提升程序的运行效率。
+```php
+$chG = new Request("www.google.com");
+$chB = new Request("www.baidu.com");
+$chG ->start();
+$chB ->start();
+$chG->join();
+$chB->join();
 
-    $chG = new Request("www.google.com");
-    $chB = new Request("www.baidu.com");
-    $chG ->start();
-    $chB ->start();
-    $chG->join();
-    $chB->join();
-    
-    $gl = $chG->response;
-    $bd = $chB->response;
-
+$gl = $chG->response;
+$bd = $chB->response;
+```
 ### 超时控制
 
 偶然间发现公司网站某一网页上的一块内容时有时无，不知道具体实现，但这给了我使用多线程的灵感：利用线程异步实现快速失败和超时控制。
@@ -135,22 +135,22 @@ PHP 将线程 封装成了 Thread 类，线程的创建通过实例化一个线�
 此时主线程相当于旗舰，而各子线程相当于巡航舰，旗舰到达某地后不必要一直等待巡航舰也归来，等待一段时间后离开即可，从而避免巡航舰意外时旗舰白白空等。
 
 代码：
+```php
+$chG = new Request("www.google.com");
+$chB = new Request("www.baidu.com");
+$chG->start();
+$chB->start();
+$chB->join();
+// 此处不对chG执行join方法
 
-    $chG = new Request("www.google.com");
-    $chB = new Request("www.baidu.com");
-    $chG->start();
-    $chB->start();
-    $chB->join();
-    // 此处不对chG执行join方法
-    
-    sleep(1); // sleep一个能接受的超时时间
-    $gl = $chG->response;
-    $bd = $chB->response;
-    $bd->kill();
-    if (!$gl) {
-        $gl = ""; // 处理异常，或在线程类内给$gl一个默认值
-    }
-
+sleep(1); // sleep一个能接受的超时时间
+$gl = $chG->response;
+$bd = $chB->response;
+$bd->kill();
+if (!$gl) {
+    $gl = ""; // 处理异常，或在线程类内给$gl一个默认值
+}
+```
 ### 总结
 
 PHP 对多线程进行的封(yan)装(ge)，让人用线程用得非常不尽兴。虽然安全，也保持 PHP 简单易用的一贯风格，却无法完全发挥多线程的能力。不过各个语言各有特色和侧重点，也不必强求，爱她就要包容她 =_=。

@@ -17,22 +17,21 @@ pthreads的windows扩展文件下载地址：http://windows.php.net/downloads/pe
 官方测试代码：
 
 ```php
-    <?php
-    class AsyncOperation extends Thread {
-      public function __construct($arg){
-        $this->arg = $arg;
-      }
-    
-      public function run(){
-        if($this->arg){
-          printf("Hello %s\n", $this->arg);
-        }
-      }
+<?php
+class AsyncOperation extends Thread {
+  public function __construct($arg){
+    $this->arg = $arg;
+  }
+
+  public function run(){
+    if($this->arg){
+      printf("Hello %s\n", $this->arg);
     }
-    $thread = new AsyncOperation("World");
-    if($thread->start())
-      $thread->join();
-    ?>
+  }
+}
+$thread = new AsyncOperation("World");
+if($thread->start())
+  $thread->join();
 ```
 
 ## windows 下 php 添加 pthreads 后，apache 无法启动怎么解决？？

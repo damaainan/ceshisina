@@ -20,60 +20,60 @@ _原文_[https://segmentfault.com/a/1190000009148494][1]
 这两个看起来有点相似，其实功能也是差不多的，下面我就以一个简单的例子向大家演示下他们的使用。
 
 ## 实例
+```php
+<?php
+/**
+ * PHP回溯
+ * @author chenyanphp@qq.com
+ */
+header("Content-Type:text/html;charset=utf-8");
 
-    <?php
-    /**
-     * PHP回溯
-     * @author chenyanphp@qq.com
-     */
-    header("Content-Type:text/html;charset=utf-8");
-    
-    /**
-     *
-     * 调试函数
-     * @param $content
-     */
-    function dump($content)
-    {
-        echo '<pre>';
-        var_dump($content);
-        echo '</pre>';
-    }
-    
-    /**
-     * Class A
-     */
-    class A
-    {
-        public function say()
-        {
-            // 这里打印回溯内容
-            dump(debug_backtrace());
-            // 调用本身方法打印
-            debug_print_backtrace();
-            echo '<br>';
-            echo 'Hello World!';
-        }
-    }
-    
-    /**
-     * Class B
-     */
-    class B
-    {
-        public function sayB(A $obj)
-        {
-            $obj->say();
-        }
-    }
-    
-    /**
-     * 测试结果
-     */
-    $a = new A();
-    $b = new B();
-    $b->sayB($a);
+/**
+ *
+ * 调试函数
+ * @param $content
+ */
+function dump($content)
+{
+    echo '<pre>';
+    var_dump($content);
+    echo '</pre>';
+}
 
+/**
+ * Class A
+ */
+class A
+{
+    public function say()
+    {
+        // 这里打印回溯内容
+        dump(debug_backtrace());
+        // 调用本身方法打印
+        debug_print_backtrace();
+        echo '<br>';
+        echo 'Hello World!';
+    }
+}
+
+/**
+ * Class B
+ */
+class B
+{
+    public function sayB(A $obj)
+    {
+        $obj->say();
+    }
+}
+
+/**
+ * 测试结果
+ */
+$a = new A();
+$b = new B();
+$b->sayB($a);
+```
 下面是运行结果：
 
     array(2) {

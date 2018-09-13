@@ -7,15 +7,15 @@ For Wampp (Windows)
  3.  Extract the zip -
 
 ```
-       Move php_pthreads.dll to the 'bin\php\ext\' directory.  
-       Move pthreadVC2.dll to the 'bin\php\' directory.  
-       Move pthreadVC2.dll to the 'bin\apache\bin' directory.  
-       Move pthreadVC2.dll to the 'C:\windows\system32' directory.  
+Move php_pthreads.dll to the 'bin\php\ext\' directory.  
+Move pthreadVC2.dll to the 'bin\php\' directory.  
+Move pthreadVC2.dll to the 'bin\apache\bin' directory.  
+Move pthreadVC2.dll to the 'C:\windows\system32' directory.  
 ```
 
  4.  Open php\php.ini and add
 ```
-       extension=php_pthreads.dll
+extension=php_pthreads.dll
 ```
 
 

@@ -57,19 +57,19 @@ int pcntl_wexitstatus(int $status)
 
 ```php
 function process_execute($input) {
-        $pid = pcntl_fork(); //创建子进程
-        if ($pid == 0) {//子进程
-                $pid = posix_getpid();
-                echo "* Process {$pid} was created, and Executed:\n\n";
-                eval($input); //解析命令
-                exit;
-        } else {//主进程
-                $pid = pcntl_wait($status, WUNTRACED); //取得子进程结束状态
-                if (pcntl_wifexited($status)) {
-                        echo "\n\n* Sub process: {$pid} exited with {$status}";
-                }
+    $pid = pcntl_fork(); //创建子进程
+    if ($pid == 0) {//子进程
+        $pid = posix_getpid();
+        echo "* Process {$pid} was created, and Executed:\n\n";
+        eval($input); //解析命令
+        exit;
+    } else {//主进程
+        $pid = pcntl_wait($status, WUNTRACED); //取得子进程结束状态
+        if (pcntl_wifexited($status)) {
+            echo "\n\n* Sub process: {$pid} exited with {$status}";
         }
     }
+}
 ```
 
 通过调用php创建子进程接口完成一个子进程的创建，pcntl_fork返回值为0证明进入到子进程内，非0则进入到父进程内部，-1则父进程创建子进程失败。
@@ -79,16 +79,16 @@ function process_execute($input) {
 
 ```php
 foreach ($clusterList as $key=>$value) {
-            $pid = pcntl_fork();//创建子进程
-            if($pid == 0) {//子进程
-                //do something
-            } else if($pid == -1) {
-                //fork error occured
-            } else {
-                pcntl_wait($status);
-            }
+        $pid = pcntl_fork();//创建子进程
+    if($pid == 0) {//子进程
+        //do something
+    } else if($pid == -1) {
+        //fork error occured
+    } else {
+        pcntl_wait($status);
+    }
 
-        }
+}
 ```
 
 
@@ -101,31 +101,31 @@ foreach ($clusterList as $key=>$value) {
 
 ```php
 foreach ($clusterList as $key=>$value) {
-            $pid = pcntl_fork();//创建子进程
-            if($pid == 0) {//子进程
-                //do something
-            } else if($pid == -1) {
-                return false;
-            }
+    $pid = pcntl_fork();//创建子进程
+    if($pid == 0) {//子进程
+        //do something
+    } else if($pid == -1) {
+        return false;
+    }
+}
+for (;;) {
+    $ret = pcntl_waitpid(-1,$status,WNOHANG);
+    if ($ret == -1) {
+        // error occured 
+    } else if ($ret == 0) {
+        //all child are existed
+        break;
+    } else {
+        //check sub process exit status
+        $extFlag = pcntl_wifexited($status);
+        if(!$extFlag){
+            //exited unnormally
+        }else {
+            $extCode = pcntl_wexitstatus($status);
+            //exited normally
         }
-        for (;;) {
-            $ret = pcntl_waitpid(-1,$status,WNOHANG);
-            if ($ret == -1) {
-                // error occured 
-            } else if ($ret == 0) {
-                //all child are existed
-                break;
-            } else {
-                //check sub process exit status
-                $extFlag = pcntl_wifexited($status);
-                if(!$extFlag){
-                    //exited unnormally
-                }else {
-                    $extCode = pcntl_wexitstatus($status);
-                    //exited normally
-                }
-            }
-        }
+    }
+}
 ```
 
 该逻辑通过for循环不断获取子进程的退出状态，直到所有的子进程都退出，真正实现多进程处理。

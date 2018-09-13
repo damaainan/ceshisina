@@ -14,27 +14,27 @@ php不像C++一样，是多继承语言，它是一种单继承语言，如果�
 
  
 ```php
-    <?php
+<?php
 
-    class Base {
-        public function sayHello() {
-            echo 'Hello';
-        }
+class Base {
+    public function sayHello() {
+        echo 'Hello';
     }
+}
 
-    trait SayWorld {
-        public function sayHello(){
-            parent::sayHello();
-            echo 'World';
-        }
+trait SayWorld {
+    public function sayHello(){
+        parent::sayHello();
+        echo 'World';
     }
+}
 
-    class MyHelloWorld extends Base {
-        use SayWorld;
-    }
+class MyHelloWorld extends Base {
+    use SayWorld;
+}
 
-    $o = new MyHelloWorld();
-    $o->sayHello();
+$o = new MyHelloWorld();
+$o->sayHello();
 ```
 
  
@@ -45,9 +45,9 @@ php不像C++一样，是多继承语言，它是一种单继承语言，如果�
 
  
 ```php
-    trait first_trait{
-        function first_method(){}
-    }
+trait first_trait{
+    function first_method(){}
+}
 ```
 
  
@@ -55,11 +55,11 @@ php不像C++一样，是多继承语言，它是一种单继承语言，如果�
 
  
 ```php
-    class first_class{
-        use first_trait;
-    }
-    $obj = new first_class();
-    $obj->first_method(); // valid
+class first_class{
+    use first_trait;
+}
+$obj = new first_class();
+$obj->first_method(); // valid
 ```
 
  
@@ -67,20 +67,20 @@ php不像C++一样，是多继承语言，它是一种单继承语言，如果�
 
  
 ```php
-    trait first_trait{
-        function first_method(){}
-    }
-    trait second_trait{
-        function second_metod(){}
-    }
-    class first_class{
-        use first_trait,second_trait;
-    }
-    $obj= new first_class();
-    // Valid
-    $obj->first_method();
-    // Valid
-    $obj->second_method();
+trait first_trait{
+    function first_method(){}
+}
+trait second_trait{
+    function second_metod(){}
+}
+class first_class{
+    use first_trait,second_trait;
+}
+$obj= new first_class();
+// Valid
+$obj->first_method();
+// Valid
+$obj->second_method();
 ```
 
  
@@ -88,22 +88,22 @@ php不像C++一样，是多继承语言，它是一种单继承语言，如果�
 
  
 ```php
-    trait first_trait{
-        function first_method(){}
-    }
-    trait second_trait{
-        use first_trait;
-        function second_method(){}
-    }
-    class first_class {
-        // now using
-        use second_trait;
-    }
-    $obj= new first_class();
-    // Valid
-    $obj->first_method();
-    // Valid
-    $obj->second_method();
+trait first_trait{
+    function first_method(){}
+}
+trait second_trait{
+    use first_trait;
+    function second_method(){}
+}
+class first_class {
+    // now using
+    use second_trait;
+}
+$obj= new first_class();
+// Valid
+$obj->first_method();
+// Valid
+$obj->second_method();
 ```
 
  
@@ -114,46 +114,46 @@ php不像C++一样，是多继承语言，它是一种单继承语言，如果�
 
  
 ```php
-    trait first_trait{
-        function first_method(){}
-        //这里可以加入修饰符，说明调用类必须实现它
-        abstract public function second_method();
-    }
-    class first_method{
-        use first_trait;
-        function second_method(){/*核心代码*/}
-    }
+trait first_trait{
+    function first_method(){}
+    //这里可以加入修饰符，说明调用类必须实现它
+    abstract public function second_method();
+}
+class first_method{
+    use first_trait;
+    function second_method(){/*核心代码*/}
+}
 ```
 
  
 ## 5.Trait冲突：
 
  
-多个 Trait 之间同时使用难免会冲突，这需要我们去解决。PHP5.4 从语法方面带入了相关 的关键字语法：insteadof 以及 as 。
+多个 Trait 之间同时使用难免会冲突，这需要我们去解决。PHP5.4 从语法方面带入了相关 的关键字语法：`insteadof` 以及 `as` 。
 
  
 ```php
-    trait first_trait{
-        function first_function(){
-            echo 'aaaa';
-        }
+trait first_trait{
+    function first_function(){
+        echo 'aaaa';
     }
-    trait second_trait {
-        // 这里的名称和 first_trait 一样，会有冲突
-        function first_function() {
-            echo "From Second Trait";
-        }
+}
+trait second_trait {
+    // 这里的名称和 first_trait 一样，会有冲突
+    function first_function() {
+        echo "From Second Trait";
     }
-    class first_class {
-        use first_trait, second_trait {
-            // 在这里声明使用 first_trait 的 first_function 替换
-            // second_trait 中声明的
-            first_trait::first_function insteadof second_trait;
-        }
+}
+class first_class {
+    use first_trait, second_trait {
+        // 在这里声明使用 first_trait 的 first_function 替换
+        // second_trait 中声明的
+        first_trait::first_function insteadof second_trait;
     }
-    $obj = new first_class();
-    // Output: aaaa
-    $obj->first_function();
+}
+$obj = new first_class();
+// Output: aaaa
+$obj->first_function();
 ```
 
  

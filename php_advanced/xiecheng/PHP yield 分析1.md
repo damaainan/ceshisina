@@ -15,16 +15,16 @@
 PHP的 yield 关键字是php5.5版本推出的一个特性，算是比较古老的了，其他很多语言中也有类似的特性存在。但是在实际的项目中，目前用到还比较少。网上相关的文章最出名的就是鸟哥的那篇了，但是都不够细致理解起来较为困难，今天我来给大家超详细的介绍一下这个特性。 
 
 ```php
-    function gen(){
-    　　while(true){
-    　　　　yield "gen\n";
-    　　}
-    }
-    
-    $gen = gen();
-    
-    var_dump($gen instanceof Iterator);
-    echo "hello, world!";
+function gen(){
+　　while(true){
+　　　　yield "gen\n";
+　　}
+}
+
+$gen = gen();
+
+var_dump($gen instanceof Iterator);
+echo "hello, world!";
 ```
 
 如果事先没了解过yield，可能会觉得这段代码一定会进入死循环。但是我们将这段代码直接运行会发现，输出hello, world!，预想的死循环没出现。
@@ -36,42 +36,42 @@ PHP的 yield 关键字是php5.5版本推出的一个特性，算是比较古老�
 以下面的代码为例:
 
 ```php
-    class Number implements Iterator{
-    　　protected $key;
-    　　protected $val;
-    　　protected $count;
-    
-    　　public function __construct(int $count){
-    　　　　$this->count = $count;
-    　　}
-    
-    　　public function rewind(){
-    　　　　$this->key = 0;
-    　　　　$this->val = 0;
-    　　}
-    
-    　　public function next(){
-    　　$this->key += 1;
-    　　$this->val += 2;
-    　　}
-    
-    　　public function current(){
-    　　　　return $this->val;
-    　　}
-    
-    　　public function key(){
-    　　return $this->key + 1;
-    　　}
-    
-    　　public function valid(){
-    　　　　return $this->key < $this->count;
-    　　}
-    }
-    
-    
-    foreach (new Number(5) as $key => $value){
-    　　echo "{$key} - {$value}\n";
-    }
+class Number implements Iterator{
+　　protected $key;
+　　protected $val;
+　　protected $count;
+
+　　public function __construct(int $count){
+　　　　$this->count = $count;
+　　}
+
+　　public function rewind(){
+　　　　$this->key = 0;
+　　　　$this->val = 0;
+　　}
+
+　　public function next(){
+　　$this->key += 1;
+　　$this->val += 2;
+　　}
+
+　　public function current(){
+　　　　return $this->val;
+　　}
+
+　　public function key(){
+　　return $this->key + 1;
+　　}
+
+　　public function valid(){
+　　　　return $this->key < $this->count;
+　　}
+}
+
+
+foreach (new Number(5) as $key => $value){
+　　echo "{$key} - {$value}\n";
+}
 ```
 
 这个例子将输出
@@ -89,51 +89,51 @@ PHP的 yield 关键字是php5.5版本推出的一个特性，算是比较古老�
 关于上面的number对象，被遍历的过程。如果是初学者，可能会出现有点懵的情况。为了深入的了解Number对象被遍历的时候内部是怎么工作的，我将代码改了一下，将接口内的每个方法都尽心输出，借此来窥探一下遍历时对象内部方法的的执行情况。
 
 ```php
-    　　class Number implements Iterator{  
-            protected $i = 1;
-            protected $key;
-            protected $val;
-            protected $count; 
-            public function __construct(int $count){
-                $this->count = $count;
-                echo "第{$this->i}步:对象初始化.\n";
-                $this->i++;
-            }
-            public function rewind(){
-                $this->key = 0;
-                $this->val = 0;
-                echo "第{$this->i}步:rewind()被调用.\n";
-                $this->i++;
-            }
-            public function next(){
-                $this->key += 1;
-                $this->val += 2;
-                echo "第{$this->i}步:next()被调用.\n";
-                $this->i++;
-            }
-            public function current(){
-                echo "第{$this->i}步:current()被调用.\n";
-                $this->i++;
-                return $this->val;
-            }
-            public function key(){
-                echo "第{$this->i}步:key()被调用.\n";
-                $this->i++;
-                return $this->key;
-            }
-            public function valid(){
-                echo "第{$this->i}步:valid()被调用.\n";
-                $this->i++;
-                return $this->key < $this->count;
-            }
-        }
-    
-        $number = new Number(5);
-        echo "start...\n";
-        foreach ($number as $key => $value){
-            echo "{$key} - {$value}\n";
-        }
-        echo "...end...\n";
+　　class Number implements Iterator{  
+    protected $i = 1;
+    protected $key;
+    protected $val;
+    protected $count; 
+    public function __construct(int $count){
+        $this->count = $count;
+        echo "第{$this->i}步:对象初始化.\n";
+        $this->i++;
+    }
+    public function rewind(){
+        $this->key = 0;
+        $this->val = 0;
+        echo "第{$this->i}步:rewind()被调用.\n";
+        $this->i++;
+    }
+    public function next(){
+        $this->key += 1;
+        $this->val += 2;
+        echo "第{$this->i}步:next()被调用.\n";
+        $this->i++;
+    }
+    public function current(){
+        echo "第{$this->i}步:current()被调用.\n";
+        $this->i++;
+        return $this->val;
+    }
+    public function key(){
+        echo "第{$this->i}步:key()被调用.\n";
+        $this->i++;
+        return $this->key;
+    }
+    public function valid(){
+        echo "第{$this->i}步:valid()被调用.\n";
+        $this->i++;
+        return $this->key < $this->count;
+    }
+}
+
+$number = new Number(5);
+echo "start...\n";
+foreach ($number as $key => $value){
+    echo "{$key} - {$value}\n";
+}
+echo "...end...\n";
 ```
 
 以上代码输出如下
@@ -197,13 +197,13 @@ PHP的 yield 关键字是php5.5版本推出的一个特性，算是比较古老�
 代码如下:
 
 ```php
-        $i = 0;
-        foreach ($gen as $key => $value) {
-            echo "{$key} - {$value}";
-            if(++$i >= 10){
-                break;
-            }
-        }
+$i = 0;
+foreach ($gen as $key => $value) {
+    echo "{$key} - {$value}";
+    if(++$i >= 10){
+        break;
+    }
+}
 ```
 
 以上代码输出为
@@ -243,16 +243,16 @@ next方法则执行从当前到下一个yield、或者return、或者函数结�
 下面我们再做一个简单的测试，以便更直观的展示他的特性。
 
 ```php
-        function gen1(){
-            yield 1;
-            echo "i\n";
-            yield 2;
-            yield 3+1;
-        }
-        $gen = gen1();
-        foreach ($gen as $key => $value) {
-            echo "{$key} - {$value}\n";
-        }
+function gen1(){
+    yield 1;
+    echo "i\n";
+    yield 2;
+    yield 3+1;
+}
+$gen = gen1();
+foreach ($gen as $key => $value) {
+    echo "{$key} - {$value}\n";
+}
 ```
 
 以上的代码输出
@@ -284,17 +284,17 @@ foreach开始，valid因为当前为第一个yield,所以返回true。正常输�
 下面我们用代码来验证一下
 
 ```php
-        $gen = gen1();
-        var_dump($gen->valid());
-        echo $gen->key().' - '.$gen->current()."\n";
-        $gen->next(); 
-        var_dump($gen->valid());
-        echo $gen->key().' - '.$gen->current()."\n";
-        $gen->next(); 
-        var_dump($gen->valid());
-        echo $gen->key().' - '.$gen->current()."\n";
-        $gen->next(); 
-        var_dump($gen->valid());
+$gen = gen1();
+var_dump($gen->valid());
+echo $gen->key().' - '.$gen->current()."\n";
+$gen->next(); 
+var_dump($gen->valid());
+echo $gen->key().' - '.$gen->current()."\n";
+$gen->next(); 
+var_dump($gen->valid());
+echo $gen->key().' - '.$gen->current()."\n";
+$gen->next(); 
+var_dump($gen->valid());
 ```
 
 输出值如下
@@ -320,17 +320,17 @@ bool(false)
 我们可以写一个方法
 
 ```php
-        function gen2(){
-            yield getUserData();
-            yield getBannerList();
-            yield getContext();
-        }
-        #中间其他操作
-        #然后在view中获得数据
-        $data = gen2();
-        foreach ($data as $key => $value) {
-            handleView($key, $value);
-        }
+function gen2(){
+    yield getUserData();
+    yield getBannerList();
+    yield getContext();
+}
+#中间其他操作
+#然后在view中获得数据
+$data = gen2();
+foreach ($data as $key => $value) {
+    handleView($key, $value);
+}
 ```
 
 通过以上的代码，我们将几个获取数据的操作都延迟到了数据被渲染的时候执行。节省了中间进行其他操作时获取回来的数据占用的内存空间。然而实际开放项目的过程中，这些数据往往被多处使用。而且这样的结构让我们单独控制数据变得艰难，以此带来的性能提升相对于便利性来说，好处微乎其微。不过还好的是，我们对yield的了解才刚刚到一半，已经有这样的功效了。相信我们在了解完另外一半之后，它的功效将大大提升。
@@ -340,16 +340,16 @@ bool(false)
 首先大家考虑一下下面的代码
 
 ```php
-        function gen3(){
-            echo "test\n";
-            echo (yield 1)."I\n";
-            echo (yield 2)."II\n";
-            echo (yield 3 + 1)."III\n";
-        }
-        $gen = gen3();
-        foreach ($gen as $key => $value) {
-            echo "{$key} - {$value}\n";
-        }
+function gen3(){
+    echo "test\n";
+    echo (yield 1)."I\n";
+    echo (yield 2)."II\n";
+    echo (yield 3 + 1)."III\n";
+}
+$gen = gen3();
+foreach ($gen as $key => $value) {
+    echo "{$key} - {$value}\n";
+}
 ```
 
 执行以后输出
@@ -369,10 +369,10 @@ III
 可能这段输出比较难理解，我们接下来，一步一步分析一下为什么得出这样的输入。由于我们知道了foreach的时候gen内部是如何操作的，那么我们便用代码来实现一次。
 
 ```php
-        $gen = gen3();
-        $gen->rewind();
-        echo $gen->key().' - '.$gen->current()."\n"; 
-        $gen->next(); 
+$gen = gen3();
+$gen->rewind();
+echo $gen->key().' - '.$gen->current()."\n"; 
+$gen->next(); 
 ```
 
 执行后输出
@@ -396,10 +396,10 @@ public mixed Generator::send ( mixed $value )
 下面我们来尝试一下
 
 ```php
-        $gen = gen3(); 
-        $gen->rewind();
-        echo $gen->key().' - '.$gen->current()."\n"; 
-        echo $gen->send("send value - ");  
+$gen = gen3(); 
+$gen->rewind();
+echo $gen->key().' - '.$gen->current()."\n"; 
+echo $gen->send("send value - ");  
 ```
 
 执行后输出
@@ -415,14 +415,14 @@ send value - I
 虽然我们知道了send可以完成内部对函数内部的yield表达式传值，也知道了可以通过$gen->current()获得当前yield表达式之后的值，但是这个有什么用呢。可以看一下这个函数
 
 ```php
-        function gen4(){
-            $id = 2;
-            $id = yield $id;
-            echo $id;
-        }
-    
-        $gen = gen4();
-        $gen->send($gen->current() + 3);
+function gen4(){
+    $id = 2;
+    $id = yield $id;
+    echo $id;
+}
+
+$gen = gen4();
+$gen->send($gen->current() + 3);
 ```
 
 根据上面对yield代码的理解，我们不难发现这个函数会输出5,因为current()为2，而当我们send之后 yield的值为 2 + 3，也就是5.同时yield到函数结束之间的代码被执行。也就是$id = 5; echo $id;

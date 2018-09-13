@@ -20,25 +20,23 @@ PHP5.5中加入了一个新特性—迭代生成器和协程。
 生成器继承了实现了迭代器，在php代码中和函数的定义类似，不过内部使用了yield关键字，如： 
 
 ```php
-    <?php
-    function gen(){
-        echo "hello gen".PHP_EOL;//step1
-        $ret = (yield "gen1");   //step2
-        var_dump($ret);  //step3
-        $ret = (yield "gen2");   //step4
-        var_dump($ret);  //step5
-    }
-    ?>
+<?php
+function gen(){
+    echo "hello gen".PHP_EOL;//step1
+    $ret = (yield "gen1");   //step2
+    var_dump($ret);  //step3
+    $ret = (yield "gen2");   //step4
+    var_dump($ret);  //step5
+}
 ```
 
 使用时,这样子：
 
 ```php
-    <?php
-    $my_gen = gen();
-    var_dump($my_gen->current());
-    var_dump($my_gen->send("main send"));
-    ?>
+<?php
+$my_gen = gen();
+var_dump($my_gen->current());
+var_dump($my_gen->send("main send"));
 ```
 
 好了，这样使用代表什么意思呢？   

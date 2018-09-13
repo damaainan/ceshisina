@@ -46,30 +46,30 @@ Xdebug是一个PHP扩展,安装配置好后,可以自动记录运行了哪些函
 然后通过浏览器访问任何一个http入口脚本,脚本内容可以复制我下面的演示代码:
 
 ```php
-    <?php
-    $str = 'abc';
-    $str1 = substr($str, 0, 2);
-    
-    function xx($a, $b){
-        $x = array();
-        array_push($x, $a);
-        array_push($x, $b);
-        yy();
-        return $x;
-    }
-    
-    function yy(){
-        print_r(123);
-    }
+<?php
+$str = 'abc';
+$str1 = substr($str, 0, 2);
+
+function xx($a, $b){
+    $x = array();
+    array_push($x, $a);
+    array_push($x, $b);
+    yy();
+    return $x;
+}
+
+function yy(){
+    print_r(123);
+}
 ```
 
 运行后就会在回溯信息输出目录下产生类似这样的一个文件 
 
-![](../../img/xdebug-trace-file.jpg)
+![](./img/xdebug-trace-file.jpg)
 
 而打开它文件内容则是这样的:
 
-![](../../img/xdebug-trace1.jpg)
+![](./img/xdebug-trace1.jpg)
 
 内容中每一行都显示了在哪个文件的哪一行执行了哪个函数,其中你注意一下第1次出现的array_push函数相对于上一行的xx函数缩进了的,这意思是说array_push函数是在xx函数里面执行的
 
@@ -89,12 +89,13 @@ Xdebug是一个PHP扩展,安装配置好后,可以自动记录运行了哪些函
 
 样本配置:
 
-    xdebug.auto_trace=on
-    xdebug.trace_output_dir="E:\xdebug"
-    xdebug.collect_params=0
-    #重点是下面这个,值为%R表示以请求地址来命名,这样不同地址就会有不同的调试信息文件
-    xdebug.trace_output_name="%R"
-    
+```ini
+xdebug.auto_trace=on
+xdebug.trace_output_dir="E:\xdebug"
+xdebug.collect_params=0
+#重点是下面这个,值为%R表示以请求地址来命名,这样不同地址就会有不同的调试信息文件
+xdebug.trace_output_name="%R"
+```
 
 然后访问http://xxx.com/a.php就会产生_a_php.xt这个文件
 
@@ -123,14 +124,14 @@ Xdebug是一个PHP扩展,安装配置好后,可以自动记录运行了哪些函
 于是可以尝试开启函数参数记录来看看每一次调用函数时,传给那些函数的参数都是什么,那么结果能进一步明了
 
 * 复制如下配置
-```
-    xdebug.auto_trace=on
-    xdebug.trace_output_dir="E:\xdebug"
-    #通过设置collect_params选项值为3开启参数记录
-    xdebug.collect_params=3
+```ini
+xdebug.auto_trace=on
+xdebug.trace_output_dir="E:\xdebug"
+#通过设置collect_params选项值为3开启参数记录
+xdebug.collect_params=3
 ```
 于是跑一趟代码下来,调试信息文件内容就是这样的,看到了吧,函数的括号里多了参数,而没有开启collect_params时函数后面只有一个空括号的
-![](../../img/xdebug-collect-param.jpg)
+![](./img/xdebug-collect-param.jpg)
 ## 5、手动触发记录
 
 ### 请求参数触发
@@ -141,10 +142,11 @@ Xdebug是一个PHP扩展,安装配置好后,可以自动记录运行了哪些函
 
 配置样本:
 
-    xdebug.auto_trace=off
-    xdebug.trace_enable_trigger=on
-    xdebug.trace_output_dir="E:\xdebug"
-    
+```ini
+xdebug.auto_trace=off
+xdebug.trace_enable_trigger=on
+xdebug.trace_output_dir="E:\xdebug"
+```
 
 这样你访问/index.php不会产生回溯记录,但是你如果修改一下URL参数,加上XDEBUG_TRACE这个参数名,不用参数值,只要有参数名就行了
 
@@ -153,14 +155,14 @@ Xdebug是一个PHP扩展,安装配置好后,可以自动记录运行了哪些函
 而通过POST请求也是这样,如果你的POST参数中带有XDEBUG_TRACE才会有回溯
 
 ```js
-    $.ajax({
-        url : '/index.php',
-        type : 'post',
-        data : {
-            a : 1,
-            XDEBUG_TRACE : 11 //这个值随便设置,如果你不设置就不会POST这个字段上去!
-        }
-    });
+$.ajax({
+    url : '/index.php',
+    type : 'post',
+    data : {
+        a : 1,
+        XDEBUG_TRACE : 11 //这个值随便设置,如果你不设置就不会POST这个字段上去!
+    }
+});
 ```
 
 - - -
@@ -174,25 +176,25 @@ Xdebug是一个PHP扩展,安装配置好后,可以自动记录运行了哪些函
 样例代码:
 
 ```php
-    <?php
-    $str = 'abc';
-    $str1 = substr($str, 0, 2);
-    xx('a', 'b');
-    
-    function xx($a, $b){
-        xdebug_start_trace(); //开始记录回溯
-        $x = array();
-        array_push($x, $a);
-        print(222);
-        array_push($x, $b);
-        xdebug_stop_trace(); //结束记录回溯
-        yy();
-        return $x;
-    }
-    
-    function yy(){
-        print_r(123);
-    }
+<?php
+$str = 'abc';
+$str1 = substr($str, 0, 2);
+xx('a', 'b');
+
+function xx($a, $b){
+    xdebug_start_trace(); //开始记录回溯
+    $x = array();
+    array_push($x, $a);
+    print(222);
+    array_push($x, $b);
+    xdebug_stop_trace(); //结束记录回溯
+    yy();
+    return $x;
+}
+
+function yy(){
+    print_r(123);
+}
 ```
 
 并且要注意,通过函数触发的话并不需要什么配置,你只要开启了扩展就可以,就是只保留zend_extension="xdebug.dll"就可以,其它xdebug的相关配置可以完全不配置,如果有文件名定制需求就再保留xdebug.trace_output_name选项就足够了
@@ -208,27 +210,27 @@ Xdebug是一个PHP扩展,安装配置好后,可以自动记录运行了哪些函
 记录了函数参数还不足够,想要记录每一次函数的返回值也可以,设置xdebug.collect_return=on以下是我的演示代码:
 
 ```php
-    <?php
-    $str = 'abc';
-    $str1 = substr($str, 0, 2);
-    xx('a', 'b');
-    
-    function xx($a, $b){
-        $x = array();
-        array_push($x, $a);
-        print(222);
-        array_push($x, $b);
-        yy();
-        return $x;
-    }
-    
-    function yy(){
-        print_r(123);
-    }
+<?php
+$str = 'abc';
+$str1 = substr($str, 0, 2);
+xx('a', 'b');
+
+function xx($a, $b){
+    $x = array();
+    array_push($x, $a);
+    print(222);
+    array_push($x, $b);
+    yy();
+    return $x;
+}
+
+function yy(){
+    print_r(123);
+}
 ```
 
 运行后所得出的调试信息如下
-![](../../img/xdebug-collect-return.jpg)
+![](./img/xdebug-collect-return.jpg)
 其中>=>符号后面的值就是相关函数的返回值,然而并不是每一次>=>的值都是上一行调用的返回值,至于它是属于谁的返回值,还要看我红色线所连接的行
 
 比如>=> array (0 => 'a', 1 => 'b')则表示-> xx('a', 'b') E:\test\index.php:4的返回值,并且大家细心的话一定能发现它们的缩进是一样的

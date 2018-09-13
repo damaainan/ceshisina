@@ -13,39 +13,39 @@
 如果我们想知道某个方法被谁调用了? **debug_backtrace**可以解决。debug_backtrace() 可以打印出一个页面的调用过程 , 从哪儿来到哪儿去一目了然. 不过这是一个PHP5的专有函数,好在pear中已经有了实现,[http://pear.php.net/package/P...][12]
 
 测试代码
+```php
+<?php 
+class a
+{ 
+   function say($msg) 
+  { 
+    echo "msg:".$msg; 
+    echo "<pre>";
+    // print_r(debug_backtrace()); 
+    print_r(print_message_class());
+  } 
+} 
 
-    <?php 
-    class a
+class b
+{ 
+    function say($msg)
     { 
-       function say($msg) 
-      { 
-        echo "msg:".$msg; 
-        echo "<pre>";
-        // print_r(debug_backtrace()); 
-        print_r(print_message_class());
-      } 
-    } 
-    
-    class b
-    { 
-        function say($msg)
-        { 
-          $a = new a(); 
-         $a->say($msg); 
-       } 
-    } 
-    
-    class c
-    { 
-       function __construct($msg)
-     { 
-       $b = new b(); 
-       $b->say($msg); 
-      } 
-    } 
-    
-    $c = new c("test"); 
+      $a = new a(); 
+     $a->say($msg); 
+   } 
+} 
 
+class c
+{ 
+   function __construct($msg)
+ { 
+   $b = new b(); 
+   $b->say($msg); 
+  } 
+} 
+
+$c = new c("test"); 
+```
 输出结果：
 
     msg:test 
