@@ -10,7 +10,7 @@ php自5.3.0开始，引入了一个namespace关键字以及`__NAMESPACE__`魔术
 
 1. 用户编写的代码与PHP内部的类/函数/常量或第三方类/函数/常量之间的名字冲突。
 1. 为了缓解麻烦1，通常编写各种class时会使用较长的类名或为实现不同功能的class添加名称前缀（或后缀）。
-1. 不使用魔法函数__autoload的情况下，而每个class又独占一个php文件时，为了调用不同的class，会在使用这些class的另外的php文件的开头位置书写较多的include（或require或require_once）语句。
+1. 不使用魔法函数`__autoload`的情况下，而每个class又独占一个php文件时，为了调用不同的class，会在使用这些class的另外的php文件的开头位置书写较多的include（或require或require_once）语句。
 
 ### 命名空间的使用概要： 
 
@@ -31,17 +31,15 @@ class Demo {
         echo 'This is namespace of PHP demo ,The Demo magic constant "__NAMESPACE__" is '.__NAMESPACE__;
     }
 }
-?>
 ```
 
 index.php文件代码 
 
 ```php
 <?php
-    include 'Demo.php';
-    use DemoNameSpace\Demo;
-    $DemoObj = new Demo();
-?>
+include 'Demo.php';
+use DemoNameSpace\Demo;
+$DemoObj = new Demo();
 ```
 
 输出结果1：“This is namespace of PHP demo ,The Demo magic constant "**`__NAMESPACE__`**" is DemoNameSpace” 
@@ -54,9 +52,8 @@ Demo.php不做变动，改动index.php文件，如下：
 
 ```php
 <?php
-    include 'Demo.php';
-    $Demo = new Demo();
-?>
+include 'Demo.php';
+$Demo = new Demo();
 ```
 
 输出结果2：“Fatal error: Class 'Demo' not found in F:\JJserver\demo\index.php on line 4” 
@@ -97,7 +94,6 @@ class Demo {
         echo 'The const constant inside class is: '.self::constDefine;
     }
 }
-?>
 ```
 
 index.php文件代码 
@@ -139,7 +135,6 @@ class Demo {
     }
 }
 $Demo = new Demo();
-?>
 ```
 
 运行上述代码，会出现致命错误：“Fatal error: Namespace declaration statement has to be the very first statement in xxxx” 
@@ -165,10 +160,9 @@ class Demo {
     }
 }
 $Demo = new Demo();
-?>
 ```
 
-运行结果4：“This is namespace of PHP demo ,The Demo magic constant "__NAMESPACE__" is DemoNameSpace” 
+运行结果4：“This is namespace of PHP demo ,The Demo magic constant "`__NAMESPACE__`" is DemoNameSpace” 
 
 这个结果表明，同一脚本下new一个没有指定use哪个命名空间时，会顺着该脚本，使用最靠近new语句之前的一个命名空间中的class 
 

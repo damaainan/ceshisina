@@ -4,8 +4,6 @@
 
 时间 2018-08-28 16:08:00
 
-
-
 ## 简介
 
 字节码缓存不是php的新特性，有很多独立性的扩展可以实现缓存，比如PHP Cache（APC），eAccelerator，ionCube和XCache等等。但是到目前为止，这些独立的扩展并没有集成到php核心当中。所有在php5.5.0之后，php内置了字节码缓存功能，叫做Zend Opcache。
@@ -37,25 +35,18 @@ Opcode cache 的目地是避免重复编译，减少 CPU 和内存开销。需�
 
 3. 修改php.ini下[php]配置（注意路径要修改成你自己的）：
 
-```
-
-
+```ini
 [php]
 engine = On
 extension = php_opcache.dll
 zend_extension = "c:/xxx/php/ext/php_opcache.dll"
-
-
 ```
 
 
 4. 添加php.ini下的 **`[opcache]`** 配置：       
 
-```
-
-
+```ini
 [opcache] 
-
 
 opcache.memory_consumption=128
 opcache.interned_strings_buffer=8
@@ -63,10 +54,6 @@ opcache.max_accelerated_files=4000
 opcache.revalidate_freq=60
 opcache.fast_shutdown=1
 opcache.enable_cli=1
-
-
-
-
 ```
 
 5. 重启apache服务，检查opcache是否开启成功   
@@ -78,90 +65,58 @@ opcache.enable_cli=1
 #### 源码安装
 
 ```
-
-
 wget http://pecl.php.net/get/zendopcache-7.0.5.tgz
 tar zxvf zendopcache-7.0.5.tgz
 cd zendopcache-7.0.5
 /path/to/php/bin/phpize
 ./configure --with-php-config=/path/to/php/bin/php-config
 make && make install
-
-
 ```
 
 在php.ini下的[php]添加如下配置：   
 
-```
-
-
+```ini
 zend_extension=php_opcache.so
-
-
 ```
 
 在php.ini的[opcache]下添加：   
 
-```
-
-
-
+```ini
 opcache.memory_consumption=128
 opcache.interned_strings_buffer=8
 opcache.max_accelerated_files=4000
 opcache.revalidate_freq=60
 opcache.fast_shutdown=1
 opcache.enable_cli=1
-
-
-
 ```
  **`pecl 版本安装`**        
 
 ```
-
-
 yum install php-pecl-zendopcache
-
-
 ```
 
 安装时产生的 opcache 的配置文件位于默认的 /etc/php.d 目录中：   
 
 ```
-
-
 opcache-default.blacklist 
 opcache.ini
-
-
 ```
 
 修改该配置：   
 
 ```
-
-
 vi /etc/php.d/opcache.ini  
-  
-
 ```
 
 对照修改：   
 
-```
-
-
-
+```ini
 opcache.memory_consumption=128
 opcache.interned_strings_buffer=8
 opcache.max_accelerated_files=4000
 opcache.revalidate_freq=60
 opcache.fast_shutdown=1
 opcache.enable_cli=1
-
-
-
 ```
 
 不需要修改php.ini，重启apache服务．   
@@ -169,9 +124,7 @@ opcache.enable_cli=1
 
 ## 常用配置
 
-```
-
-
+```ini
 ;开关打开
 opcache.enable=1
 
@@ -199,21 +152,15 @@ opcache.revalidate_freq=0
 ;如果启用，那么 OPcache 会每隔 opcache.revalidate_freq 设定的秒数 检查脚本是否更新。
 ;如果禁用此选项，你必须使用 opcache_reset() 或者 opcache_invalidate() 函数来手动重置 OPcache，也可以 通过重启 Web 服务器来使文件系统更改生效。
 opcache.validate_timestamps=0  
-  
-
 ```
 
 注意：如果设置opcache的opcache.validate_timestamps的指令设成０，那么zend opcache就察觉不到ＰＨＰ脚本的变化，我们必须手动清空zend opcache缓存的字节码，让他发现php脚本的变动．这个设置适合在生产环境中设置成０，在开发环境下最好还是设置成1．   
 
 我们可以这样配置，启用自动重新验证缓存功能：
 
-```
-
-
+```ini
 opcache.validate_timestamps=1
 opcache.revalidate_freq=0
-
-
 ```
 
 更多的配置指令可以看这里：    [http://php.net/manual/zh/opcache.configuration.php][1]
@@ -224,8 +171,6 @@ opcache.revalidate_freq=0
 zend opcache使用很简单，因为它启动后会自动运行．zend opcache会自动在内存中缓存预先编译好的php字节码，如果缓存了某个文件的字节码，就执行对应的字节码．常见的关于zend opcache扩展的函数：
 
 ```
-
-
 opcache_compile_file($php_file); #预生成opcode缓存
 
 opcache_is_script_cached($php_file) #查看是否生成opcode缓存
@@ -237,8 +182,6 @@ opcache_reset(); #清空缓存
 opcache_get_status(); #获取缓存的状态信息
 
 opcache_get_configuration(); #获取缓存的配置信息
-
-
 ```
 
 以上

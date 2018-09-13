@@ -414,9 +414,9 @@ class OuterImpl extends IteratorIterator
 [参考教程：站在巨人的肩膀上写代码—SPL][6]
 
 [6]: https://www.imooc.com/learn/150
-[0]: https://segmentfault.com/img/bV8K4R
-[1]: https://segmentfault.com/img/bV8UTE
-[2]: https://segmentfault.com/img/bV8Oz3
-[3]: https://segmentfault.com/img/bV8SqG
-[4]: https://segmentfault.com/img/bV8Umq
-[5]: https://segmentfault.com/img/bV8UpN
+[0]: ../img/bV8K4R.png
+[1]: ../img/bV8UTE.png
+[2]: ../img/bV8Oz3.png
+[3]: ../img/bV8SqG.png
+[4]: ../img/bV8Umq.png
+[5]: ../img/bV8UpN.png

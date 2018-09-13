@@ -15,16 +15,16 @@
 S1：
 
 在项目根目录创建composer.json文件，写入代码
-
-    {
-        "type": "project",
-        "autoload": {
-            "psr-4": {
-                "Admin\\": "admin/"
-            }
+```json
+{
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Admin\\": "admin/"
         }
     }
-  
+}
+```
 S2：在项目根目录打开命令，写入命令
 
     composer update
@@ -38,8 +38,8 @@ S3：
 说明：使用之前需要require一下"/vendor/autoload.php"文件。
 
 ```php
-    $autoLoadFilePath = dirname($_SERVER['DOCUMENT_ROOT']).DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
-    require_once $autoLoadFilePath;
+$autoLoadFilePath = dirname($_SERVER['DOCUMENT_ROOT']).DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+require_once $autoLoadFilePath;
 ```
 
 说明：我的入口文件在根目录下的"\public\"文件夹下。
@@ -49,30 +49,27 @@ S4：
 在"/admin/"目录下新建test.php文件，文件内容如下
 
 ```php
-    <?php
-    
-    namespace Admin;
-    
-    class test
+<?php
+namespace Admin;
+class test
+{
+    public function sayHi()
     {
-        public function sayHi()
-        {
-            echo 'hi';
-        }
+        echo 'hi';
     }
+}
 ```
 
 在"/public/"目录下新建index.php文件，文件内容如下
 
 ```php
-    <?php
-    
-    //装载自动加载函数
-    $autoLoadFilePath = dirname($_SERVER['DOCUMENT_ROOT']).DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
-    require_once $autoLoadFilePath;
-    
-    $test = new \Admin\test();
-    $test->sayHi();
+<?php
+//装载自动加载函数
+$autoLoadFilePath = dirname($_SERVER['DOCUMENT_ROOT']).DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+require_once $autoLoadFilePath;
+
+$test = new \Admin\test();
+$test->sayHi();
 ```
 
 S5：配置apache，访问路径，得到如下

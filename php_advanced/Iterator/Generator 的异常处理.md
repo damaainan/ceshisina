@@ -12,13 +12,13 @@
 从 PHP 5 开始，PHP 为我们提供了 `try catch` 来进行异常处理。当我们使用 `catch` 将异常捕获，那么一场后续的代码就会执行。我们看看下面的例子。
 
 ```php
-    try {
-        throw new Exception('e');
-    } catch (Exception $e) {
-        echo $e->getMessage(); // output: e
-    }
-    
-    echo 2; // output: 2
+try {
+    throw new Exception('e');
+} catch (Exception $e) {
+    echo $e->getMessage(); // output: e
+}
+
+echo 2; // output: 2
 ```
 
 如果我们没有将异常捕获，那么后面的代码就不会执行了。
@@ -32,59 +32,59 @@
 在 PHP 中，Generator 提供了 `throw` 方法来抛出异常。用法和普通的异常一样，只不过把 `throw` 关键字改成了方法调用。 
 
 ```php
-    function gen()
-    {
-        yield 0;
-        yield 1;
-        yield 2;
-        yield 3;
-    }
-    
-    $gen = gen();
-    
-    $gen->throw(new Exception('e')); // throw an exception
-    
-    var_dump($gen->valid()); // output: false
-    
-    echo 2; // not execute
+function gen()
+{
+    yield 0;
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+$gen = gen();
+
+$gen->throw(new Exception('e')); // throw an exception
+
+var_dump($gen->valid()); // output: false
+
+echo 2; // not execute
 ```
 
 同样的，我们可以这个异常捕获，通过 try catch 来进行。
 
 ```php
-    try {
-        $gen->throw(new Exception('e'));
-    } catch (Exception $e) {
-        echo $e->getMessage(); // output: e
-    }
-    
-    var_dump($gen->valid()); // output: false
-    
-    echo 2; // output: 2
+try {
+    $gen->throw(new Exception('e'));
+} catch (Exception $e) {
+    echo $e->getMessage(); // output: e
+}
+
+var_dump($gen->valid()); // output: false
+
+echo 2; // output: 2
 ```
 
 我们可以看到，当我们使用 `throw` 抛出异常后，当前的生成器的 valid 变成了 false。但是考虑下面一种情况，当我们在外面调用 `throw` 方法后，在生成器函数中捕获异常，会发生什么呢？我们来看下面的例子。
 
 ```php
-    function gen()
-    {
-        yield 0;
-        try {
-            yield;
-        } catch (Exception $e) {
-            echo $e->getMessage(); // output: e
-        }
-        yield 2;
-        yield 3;
+function gen()
+{
+    yield 0;
+    try {
+        yield;
+    } catch (Exception $e) {
+        echo $e->getMessage(); // output: e
     }
-    
-    $gen = gen();
-    $gen->next(); // reach the point of catching exception
-    $gen->throw(new Exception('e'));
-    
-    var_dump($gen->valid()); // output: true
-    
-    echo 2; // output: 2
+    yield 2;
+    yield 3;
+}
+
+$gen = gen();
+$gen->next(); // reach the point of catching exception
+$gen->throw(new Exception('e'));
+
+var_dump($gen->valid()); // output: true
+
+echo 2; // output: 2
 ```
 
 当我们在生成器函数捕获来自 `throw` 方法抛出的异常后，生成器依然是 valid 的。但是如果像刚才一样只是在调用 `throw` 方法，那么生成器就结束了。
@@ -92,23 +92,23 @@
 ### 在生成器函数中抛出异常
 
 ```php
-    function gen()
-    {
-        yield 0;
-        throw new Exception('e');
-        yield 2;
-        yield 3;
-    }
-    
-    $gen = gen();
-    
-    $gen->next();
-    
-    $gen->current(); // throw an exception
-    
-    var_dump($gen->valid()); // output: false
-    
-    echo 2; // not execute
+function gen()
+{
+    yield 0;
+    throw new Exception('e');
+    yield 2;
+    yield 3;
+}
+
+$gen = gen();
+
+$gen->next();
+
+$gen->current(); // throw an exception
+
+var_dump($gen->valid()); // output: false
+
+echo 2; // not execute
 ```
 
 之前我们看到的是调用 `throw` 方法来抛出异常。那么在生成器函数中，抛出一个异常而没有在生成器函数中捕获，结果也都是一样的。同样的，如果在生成器函数中捕获了异常，那么就和之前的例子一样了。
@@ -120,27 +120,27 @@
 当我们在一个生成器函数中， `yield` 了另外一个生成器函数之后，就会变成嵌套生成器。我们来看下面的例子。 
 
 ```php
-    function subGen()
-    {
-        yield 1;
-        throw new Exception('e');
-        yield 4;
-    }
-    
-    function gen()
-    {
-        yield 0;
-        yield subGen();
-        yield 2;
-        yield 3;
-    }
-    
-    $gen = gen();
-    
-    $gen->next();
-    $gen->current()->next(); // throw an exception
-    
-    echo 2; // not execute
+function subGen()
+{
+    yield 1;
+    throw new Exception('e');
+    yield 4;
+}
+
+function gen()
+{
+    yield 0;
+    yield subGen();
+    yield 2;
+    yield 3;
+}
+
+$gen = gen();
+
+$gen->next();
+$gen->current()->next(); // throw an exception
+
+echo 2; // not execute
 ```
 
 对于嵌套的生成器来说，如果子生成器中抛出了异常，那么在没有捕获这个异常的情况下，会一级一级向上抛出，直到结束。
@@ -148,33 +148,33 @@
 刚才我们尝试了，在抛出异常之后，valid 的返回值变成了 false。那么在嵌套生成器中，是不是也是这样呢？我们把异常捕获，使程序能够继续执行下去，来看下面这个例子。
 
 ```php
-    function subGen()
-    {
-        yield 1;
-        throw new Exception('e');
-        yield 4;
-    }
-    
-    function gen()
-    {
-        yield 0;
-        yield subGen();
-        yield 2;
-        yield 3;
-    }
-    
-    $gen = gen();
-    
-    $gen->next();
-    try {
-        $gen->current()->next();
-    } catch (Exceprion $e) {
-        echo $e->getMessage(); //output: e
-    }
-    
-    var_dump($gen->valid()); // output: true
-    
-    echo 2; // output: 2
+function subGen()
+{
+    yield 1;
+    throw new Exception('e');
+    yield 4;
+}
+
+function gen()
+{
+    yield 0;
+    yield subGen();
+    yield 2;
+    yield 3;
+}
+
+$gen = gen();
+
+$gen->next();
+try {
+    $gen->current()->next();
+} catch (Exceprion $e) {
+    echo $e->getMessage(); //output: e
+}
+
+var_dump($gen->valid()); // output: true
+
+echo 2; // output: 2
 ```
 所以，当子生成器抛出异常后在迭代的过程中被正常地捕获，那么，父生成器便不会受到影响，valid 的返回值依然是 true 。 
 

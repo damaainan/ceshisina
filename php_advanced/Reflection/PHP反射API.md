@@ -10,115 +10,114 @@
 
 **传统的打印类信息与反射APi的区别**  
 下面是一段我自己写的参数程序，用于演示反射的使用：
+```php
+<?php
 
-    <?php
-    
-    class Person
-    {
-        //成员属性
-        public $name;
-        public $age; 
-    
-        //构造方法
-        public function __construct($name, $age)
-        {
-            $this->name = $name;
-            $this->age = $age;
-        }
-    
-        //成员方法
-        public function set_name($name)
-        {
-            $this->$name = $name;
-        }
-    
-        public function get_name()
-        {
-            return $this->$name;
-        }
-    
-        public function get_age()
-        {
-            return $this->$age;
-        }
-    
-        public function get_user_info()
-        {
-            $info = '姓名：' . $this->name;
-            $info .= ' 年龄：' . $this->age;
-            return $info;
-        }
-    }
-    
-    class Teacher extends Person
-    {
-        private $salary = 0;
-    
-        public function __construct($name, $age, $salary)
-        {
-            parent::__construct($name, $age);
-            $this->salary = $salary;
-        }
-    
-        public function get_salary()
-        {
-            return $this->$salary;
-        }
-    
-        public function get_user_info()
-        {
-            $info = parent::get_user_info();
-            $info .= " 工资：" . $this->salary;
-            return $info;
-        }
-    }
-    
-    class Student extends Person
-    {
-        private $score = 0;
-    
-        public function __construct($name, $age, $score)
-        {
-            parent::__construct($name, $age);
-            $this->score = $score;
-        }
-    
-        public function get_score()
-        {
-            return $this->score;        
-        }
-    
-        public function get_user_info()
-        {
-            $info = parent::get_user_info();
-            $info .= " 成绩：" . $this->score;
-            return $info;
-        }
-    }
-    
-    header("Content-type:text/html;charset=utf8;");
-    $te_obj = new Teacher('李老师', '36', '2000');
-    $te_info = $te_obj->get_user_info();
-    
-    $st_obj = new Student('小明', '13', '80');
-    $st_info = $st_obj->get_user_info();
+class Person
+{
+    //成员属性
+    public $name;
+    public $age; 
 
+    //构造方法
+    public function __construct($name, $age)
+    {
+        $this->name = $name;
+        $this->age = $age;
+    }
 
+    //成员方法
+    public function set_name($name)
+    {
+        $this->$name = $name;
+    }
+
+    public function get_name()
+    {
+        return $this->$name;
+    }
+
+    public function get_age()
+    {
+        return $this->$age;
+    }
+
+    public function get_user_info()
+    {
+        $info = '姓名：' . $this->name;
+        $info .= ' 年龄：' . $this->age;
+        return $info;
+    }
+}
+
+class Teacher extends Person
+{
+    private $salary = 0;
+
+    public function __construct($name, $age, $salary)
+    {
+        parent::__construct($name, $age);
+        $this->salary = $salary;
+    }
+
+    public function get_salary()
+    {
+        return $this->$salary;
+    }
+
+    public function get_user_info()
+    {
+        $info = parent::get_user_info();
+        $info .= " 工资：" . $this->salary;
+        return $info;
+    }
+}
+
+class Student extends Person
+{
+    private $score = 0;
+
+    public function __construct($name, $age, $score)
+    {
+        parent::__construct($name, $age);
+        $this->score = $score;
+    }
+
+    public function get_score()
+    {
+        return $this->score;        
+    }
+
+    public function get_user_info()
+    {
+        $info = parent::get_user_info();
+        $info .= " 成绩：" . $this->score;
+        return $info;
+    }
+}
+
+header("Content-type:text/html;charset=utf8;");
+$te_obj = new Teacher('李老师', '36', '2000');
+$te_info = $te_obj->get_user_info();
+
+$st_obj = new Student('小明', '13', '80');
+$st_info = $st_obj->get_user_info();
+```
 
 我们先用var_dump();打印类的信息，如下所示，可以看出只是打印出类的简单信息，甚至连方法也没有，所以从这样的信息中看不出其他游泳的信息。
-
-    var_dump( $te_obj );
-
-
-    object(Teacher)#1 (3) {
-          ["salary":"Teacher":private]=>
-              string(4) "2000"
-          ["name"]=>
-              string(9) "李老师"
-          ["age"]=>
-              string(2) "36"
-    }
-
+```
+var_dump( $te_obj );
+```
+```
+object(Teacher)#1 (3) {
+      ["salary":"Teacher":private]=>
+          string(4) "2000"
+      ["name"]=>
+          string(9) "李老师"
+      ["age"]=>
+          string(2) "36"
+}
+```
 
  Reflection::export($obj);
 
@@ -165,128 +164,128 @@
 
 下面是基础代码：
 
+```php
+/*属性接口*/
+interface Property
+{
+    function work();
+}
 
-    /*属性接口*/
-    interface Property
+class Person
+{
+    public $name;
+    public function __construct($name)
     {
-        function work();
+        $this->name = $name;
     }
-    
-    class Person
+}
+
+class StudentController implements Property
+{
+    //set方法，但需要Person对象参数
+    public function setPerson(Person $obj_person)
     {
-        public $name;
-        public function __construct($name)
-        {
-            $this->name = $name;
-        }
-    }
-    
-    class StudentController implements Property
-    {
-        //set方法，但需要Person对象参数
-        public function setPerson(Person $obj_person)
-        {
-            echo 'Student ' . $obj_person->name;
-        }
-    
-        //work方法简单实现
-        public function work()
-        {
-            echo 'student working!';
-        }
-    }
-    
-    class EngineController implements Property
-    {
-        //set方法
-        public function setWeight($weight)
-        {
-            echo 'this is engine -> set weight';
-        }
-    
-        public function setPrice($price)
-        {
-            echo "this is engine -> set price";
-        }
-    
-        //work方法简单实现
-        public function work()
-        {
-            echo 'engine working!';
-        }
+        echo 'Student ' . $obj_person->name;
     }
 
+    //work方法简单实现
+    public function work()
+    {
+        echo 'student working!';
+    }
+}
+
+class EngineController implements Property
+{
+    //set方法
+    public function setWeight($weight)
+    {
+        echo 'this is engine -> set weight';
+    }
+
+    public function setPrice($price)
+    {
+        echo "this is engine -> set price";
+    }
+
+    //work方法简单实现
+    public function work()
+    {
+        echo 'engine working!';
+    }
+}
+```
 
 
 这里定义了两个相似类实现Property接口，同时都简单实现work()方法 StudentController类稍微不同，参数需要Person对象，同时我们可以使用文件来保存各个类的信息，我们也可以用成员属性代替。
 
+```php
+class Run
+{
+    public static $mod_arr = [];
+    public static $config = [
+        'StudentController' => [
+            'person' => 'xiao ming'
+        ],
+        'EngineController'  => [
+            'weight' => '500kg',
+            'price'  => '4000'
+        ]
+    ];
 
-    class Run
+    //加载初始化
+    public function __construct()
     {
-        public static $mod_arr = [];
-        public static $config = [
-            'StudentController' => [
-                'person' => 'xiao ming'
-            ],
-            'EngineController'  => [
-                'weight' => '500kg',
-                'price'  => '4000'
-            ]
-        ];
-    
-        //加载初始化
-        public function __construct()
-        {
-            $config = self::$config;
-            //用于检查是不是实现类
-            $property = new ReflectionClass('Property');
-            foreach ($config as $class_name => $params) {
-                $class_reflect = new ReflectionClass($class_name);
-                if(!$class_reflect->isSubclassOf($property)) {//用isSubclassOf方法检查是否是这个对象
-                    echo 'this is  error';
-                    continue;
-                }
-    
-                //得到类的信息
-                $class_obj = $class_reflect->newInstance();
-                $class_method = $class_reflect->getMethods();
-    
-                foreach ($class_method as $method_name) {
-                    $this->handle_method($class_obj, $method_name, $params);
-                }
-                array_push(self::$mod_arr, $class_obj);
+        $config = self::$config;
+        //用于检查是不是实现类
+        $property = new ReflectionClass('Property');
+        foreach ($config as $class_name => $params) {
+            $class_reflect = new ReflectionClass($class_name);
+            if(!$class_reflect->isSubclassOf($property)) {//用isSubclassOf方法检查是否是这个对象
+                echo 'this is  error';
+                continue;
             }
-        }
-    
-        //处理方法调用
-        public function handle_method(Property $class_obj, ReflectionMethod $method_name, $params)
-        {
-            $m_name = $method_name->getName();
-            $args = $method_name->getParameters();
-    
-            if(count($args) != 1 || substr($m_name, 0, 3) != 'set') {    
-                return false;
+
+            //得到类的信息
+            $class_obj = $class_reflect->newInstance();
+            $class_method = $class_reflect->getMethods();
+
+            foreach ($class_method as $method_name) {
+                $this->handle_method($class_obj, $method_name, $params);
             }
-            //大小写转换，做容错处理
-            $property = strtolower(substr($m_name, 3));
-    　　　　　
-            if(!isset($params[$property])) {
-                return false;
-            }
-    
-            $args_class = $args[0]->getClass();
-            echo '<pre>';
-            if(empty($args_class)) {
-                $method_name->invoke($class_obj, $params[$property]); //如果得到的类为空证明需要传递基础类型参数
-            } else {
-                $method_name->invoke($class_obj, $args_class->newInstance($params[$property])); //如果不为空说明需要传递真实对象
-            }
+            array_push(self::$mod_arr, $class_obj);
         }
     }
-    
-    //程序开始
-    new Run();
 
+    //处理方法调用
+    public function handle_method(Property $class_obj, ReflectionMethod $method_name, $params)
+    {
+        $m_name = $method_name->getName();
+        $args = $method_name->getParameters();
+
+        if(count($args) != 1 || substr($m_name, 0, 3) != 'set') {    
+            return false;
+        }
+        //大小写转换，做容错处理
+        $property = strtolower(substr($m_name, 3));
+　　　　　
+        if(!isset($params[$property])) {
+            return false;
+        }
+
+        $args_class = $args[0]->getClass();
+        echo '<pre>';
+        if(empty($args_class)) {
+            $method_name->invoke($class_obj, $params[$property]); //如果得到的类为空证明需要传递基础类型参数
+        } else {
+            $method_name->invoke($class_obj, $args_class->newInstance($params[$property])); //如果不为空说明需要传递真实对象
+        }
+    }
+}
+
+//程序开始
+new Run();
+```
 到此程序结束，Run启动会自动调用构造方法，初始化要加载类库的其他成员属性，包括初始化和执行相应方法操作，这里只是完成了对应的set方法。其中 $mod_arr属性保存了所有调用类的对象，每个对象包含数据，可以遍历包含的对象来以此调用work()方法。
 
 程序只做辅助理解反射PAI用，各个功能没有完善，里面用到了好多反射API的类，方法，下面会有各个方法的总结。

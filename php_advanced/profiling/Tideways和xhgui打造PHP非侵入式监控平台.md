@@ -68,14 +68,14 @@ PS: MarkDown的语法转换可能有部分问题，容易把中划线转没了�
 我们需要在php.ini文件中引入扩展
 
 ```ini
-    [mongodb]
-    extension=mongodb.so
-    [tideways]
-    extension=tideways.so
-    ;不需要自动加载，在程序中控制就行
-    tideways.auto_prepend_library=0
-    ;频率设置为100，在程序调用时能改
-    tideways.sample_rate=100
+[mongodb]
+extension=mongodb.so
+[tideways]
+extension=tideways.so
+;不需要自动加载，在程序中控制就行
+tideways.auto_prepend_library=0
+;频率设置为100，在程序调用时能改
+tideways.sample_rate=100
 ```
 
 1. 安装mongodb-server（可选择安装mongodb客户端）;
@@ -96,9 +96,9 @@ Centos下安装MongoDB客户端：
 1. 安装xhgui；
 
 ```bash
-    git clone https://github.com/laynefyc/xhgui-branch.git
-    cd xhgui
-    php install.php
+git clone https://github.com/laynefyc/xhgui-branch.git
+cd xhgui
+php install.php
 ```
 
 PS: xhgui官方版本已经很久不更新，很多符号和单位都不适合中国用户。为了方便自己，我单独维护了一个版本，不断的在更新中。安装这个版本，将有更好的体验。需要安装原版的请执行下面的命令
@@ -112,18 +112,18 @@ PS: xhgui官方版本已经很久不更新，很多符号和单位都不适合�
 如果你的MongoDB安装在当前机器，可以不用修改xhgui的配置文件，如果不是你需要在配置文件中修改MongoDB的连接ip和域名，xhgui-branch/config/config.default.php。当然你也可以选择直接存为文件。
 
 ```php
-        // Can be either mongodb or file.
-    /*
-    save.handler => file,
-    save.handler.filename => dirname(__DIR__) . /cache/ . xhgui.data. . microtime(true) . _ . substr(md5($url), 0, 6),
-    */
-    save.handler => mongodb,
-    
-    // Needed for file save handler. Beware of file locking. You can adujst this file path
-    // to reduce locking problems (eg uniqid, time ...)
-    //save.handler.filename => __DIR__./../data/xhgui_.date(Ymd)..dat,
-    db.host => mongodb://127.0.0.1:27017,
-    db.db => xhprof,
+// Can be either mongodb or file.
+/*
+save.handler => file,
+save.handler.filename => dirname(__DIR__) . /cache/ . xhgui.data. . microtime(true) . _ . substr(md5($url), 0, 6),
+*/
+save.handler => mongodb,
+
+// Needed for file save handler. Beware of file locking. You can adujst this file path
+// to reduce locking problems (eg uniqid, time ...)
+//save.handler.filename => __DIR__./../data/xhgui_.date(Ymd)..dat,
+db.host => mongodb://127.0.0.1:27017,
+db.db => xhprof,
 ```
 
 1. 测试MongoDB连接情况并优化索引；
@@ -145,36 +145,36 @@ PS: xhgui官方版本已经很久不更新，很多符号和单位都不适合�
 Nginx需要加入两处配置，一个是PHP_VALUE：
 
 ```nginx
-    server {
-      listen 80;
-      server_name site.localhost;
-      root /Users/markstory/Sites/awesome-thing/app/webroot/;
-      fastcgi_param PHP_VALUE "auto_prepend_file=/Users/markstory/Sites/xhgui/external/header.php";
-    }
+server {
+  listen 80;
+  server_name site.localhost;
+  root /Users/markstory/Sites/awesome-thing/app/webroot/;
+  fastcgi_param PHP_VALUE "auto_prepend_file=/Users/markstory/Sites/xhgui/external/header.php";
+}
 ```
 
 另一个是需要配置一个路径指向5中安装的xhgui的webroot目录，如下配置为单独申请了一个域名：
 
 ```nginx
-    server {
-        listen       80;
-        server_name  blog110.it2048.cn;
-        root  /home/admin/xhgui-branch/webroot;
-    
-        location / {
-            index  index.php;
-            if (!-e $request_filename) {
-                rewrite . /index.php last;
-            }
-        }
-    
-        location ~ .php$ {
-            fastcgi_pass   127.0.0.1:9001;
-            fastcgi_index  index.php;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            include        fastcgi_params;
+server {
+    listen       80;
+    server_name  blog110.it2048.cn;
+    root  /home/admin/xhgui-branch/webroot;
+
+    location / {
+        index  index.php;
+        if (!-e $request_filename) {
+            rewrite . /index.php last;
         }
     }
+
+    location ~ .php$ {
+        fastcgi_pass   127.0.0.1:9001;
+        fastcgi_index  index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+}
 ```
 
 - - -
@@ -196,15 +196,15 @@ Nginx需要加入两处配置，一个是PHP_VALUE：
 最后我们来说说频率如何配置，还是在xhgui的config/config.default.php文件中
 
 ```php
-    profiler.enable => function() {
-        // 如果域名为我们新建的域名则不捕获
-        if($_SERVER[SERVER_NAME] == blog110.it2048.cn){
-            return False;
-        }else{
-            // 100%采样，默认为1%
-            return True;//rand(1, 100) === 42;
-        }
+profiler.enable => function() {
+    // 如果域名为我们新建的域名则不捕获
+    if($_SERVER[SERVER_NAME] == blog110.it2048.cn){
+        return False;
+    }else{
+        // 100%采样，默认为1%
+        return True;//rand(1, 100) === 42;
     }
+}
 ```
 
 

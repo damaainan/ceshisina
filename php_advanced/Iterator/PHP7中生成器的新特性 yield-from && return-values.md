@@ -7,8 +7,6 @@
 
 [**小紫羽**][5] 3 小时前发布 
 
-
-
 ## 生成器委托
 
 简单地翻译官方文档的描述：
@@ -19,23 +17,23 @@
 上例子：
 
 ```php
-    <?php
-    function echoTimes($msg, $max) {
-        for ($i = 1; $i <= $max; ++$i) {
-            echo "$msg iteration $i\n";
-            yield;
-        }
+<?php
+function echoTimes($msg, $max) {
+    for ($i = 1; $i <= $max; ++$i) {
+        echo "$msg iteration $i\n";
+        yield;
     }
-     
-    function task() {
-        yield from echoTimes('foo', 10); // print foo ten times
-        echo "---\n";
-        yield from echoTimes('bar', 5); // print bar five times
-    }
-    
-    foreach (task() as $item) {
-        ;
-    }
+}
+ 
+function task() {
+    yield from echoTimes('foo', 10); // print foo ten times
+    echo "---\n";
+    yield from echoTimes('bar', 5); // print bar five times
+}
+
+foreach (task() as $item) {
+    ;
+}
 ```
 
 以上将输出：
@@ -60,33 +58,33 @@
 自然，内部生成器也可以接受它的父生成器发送的信息或者异常，因为 yield from 为父子生成器建立一个双向的通道。不多说，上例子：
 
 ```php
-    <?php
-    function echoMsg($msg) {
-        while (true) {
-            $i = yield;
-            if($i === null){
-                break;
-            }
-            if(!is_numeric($i)){
-                throw new Exception("Hoo! must give me a number");
-            }
-            echo "$msg iteration $i\n";
+<?php
+function echoMsg($msg) {
+    while (true) {
+        $i = yield;
+        if($i === null){
+            break;
         }
+        if(!is_numeric($i)){
+            throw new Exception("Hoo! must give me a number");
+        }
+        echo "$msg iteration $i\n";
     }
-    function task2() {
-        yield from echoMsg('foo');
-        echo "---\n";
-        yield from echoMsg('bar');
-    }
-    $gen = task2();
-    foreach (range(1,10) as $num) {
-        $gen->send($num);
-    }
-    $gen->send(null);
-    foreach (range(1,5) as $num) {
-        $gen->send($num);
-    }
-    //$gen->send("hello world"); //try it ,gay
+}
+function task2() {
+    yield from echoMsg('foo');
+    echo "---\n";
+    yield from echoMsg('bar');
+}
+$gen = task2();
+foreach (range(1,10) as $num) {
+    $gen->send($num);
+}
+$gen->send(null);
+foreach (range(1,5) as $num) {
+    $gen->send($num);
+}
+//$gen->send("hello world"); //try it ,gay
 ```
 
 输出和上个例子是一样的。
@@ -102,26 +100,26 @@
 上例子：
 
 ```php
-    <?php
-    function echoTimes($msg, $max) {
-        for ($i = 1; $i <= $max; ++$i) {
-            echo "$msg iteration $i\n";
-            yield;
-        }
-        return "$msg the end value : $i\n";
+<?php
+function echoTimes($msg, $max) {
+    for ($i = 1; $i <= $max; ++$i) {
+        echo "$msg iteration $i\n";
+        yield;
     }
-    
-    function task() {
-        $end = yield from echoTimes('foo', 10);
-        echo $end;
-        $gen = echoTimes('bar', 5);
-        yield from $gen;
-        echo $gen->getReturn();
-    }
-    
-    foreach (task() as $item) {
-        ;
-    }
+    return "$msg the end value : $i\n";
+}
+
+function task() {
+    $end = yield from echoTimes('foo', 10);
+    echo $end;
+    $gen = echoTimes('bar', 5);
+    yield from $gen;
+    echo $gen->getReturn();
+}
+
+foreach (task() as $item) {
+    ;
+}
 ```
 
 输出结果就不贴了，想必大家都猜到。
@@ -137,120 +135,120 @@
 代码如下：
 
 ```php
-    <?php
-    
-    class CoSocket
+<?php
+
+class CoSocket
+{
+    protected $masterCoSocket = null;
+    public $socket;
+    protected $handleCallback;
+    public $streamPoolRead = [];
+    public $streamPoolWrite = [];
+
+    public function __construct($socket, CoSocket $master = null)
     {
-        protected $masterCoSocket = null;
-        public $socket;
-        protected $handleCallback;
-        public $streamPoolRead = [];
-        public $streamPoolWrite = [];
-    
-        public function __construct($socket, CoSocket $master = null)
-        {
-            $this->socket = $socket;
-            $this->masterCoSocket = $master ?? $this;
-        }
-    
-        public function accept()
-        {
-            $isSelect = yield from $this->onRead();
-            $acceptS = null;
-            if ($isSelect && $as = stream_socket_accept($this->socket, 0)) {
-                $acceptS = new CoSocket($as, $this);
-            }
-            return $acceptS;
-        }
-    
-        public function read($size)
-        {
-            yield from $this->onRead();
-            yield ($data = fread($this->socket, $size));
-            return $data;
-        }
-    
-        public function write($string)
-        {
-            yield from $this->onWriter();
-            yield fwrite($this->socket, $string);
-        }
-    
-        public function close()
-        {
-            unset($this->masterCoSocket->streamPoolRead[(int)$this->socket]);
-            unset($this->masterCoSocket->streamPoolWrite[(int)$this->socket]);
-            yield ($success = @fclose($this->socket));
-            return $success;
-        }
-    
-        public function onRead($timeout = null)
-        {
-            $this->masterCoSocket->streamPoolRead[(int)$this->socket] = $this->socket;
-            $pool = $this->masterCoSocket->streamPoolRead;
-            $rSocks = [];
-            $wSocks = $eSocks = null;
-            foreach ($pool as $item) {
-                $rSocks[] = $item;
-            }
-            yield ($num = stream_select($rSocks, $wSocks, $eSocks, $timeout));
-            return $num;
-        }
-    
-        public function onWriter($timeout = null)
-        {
-            $this->masterCoSocket->streamPoolWrite[(int)$this->socket] = $this->socket;
-            $pool = $this->masterCoSocket->streamPoolRead;
-            $wSocks = [];
-            $rSocks = $eSocks = null;
-            foreach ($pool as $item) {
-                $wSocks[] = $item;
-            }
-            yield ($num = stream_select($rSocks, $wSocks, $eSocks, $timeout));
-            return $num;
-        }
-    
-        public function onRequest()
-        {
-            /** @var self $socket */
-            $socket = yield from $this->accept();
-            if (empty($socket)) {
-                return false;
-            }
-            $data = yield from $socket->read(8192);
-            $response = call_user_func($this->handleCallback, $data);
-            yield from $socket->write($response);
-            return yield from $socket->close();
-        }
-    
-        public static function start($port, callable $callback)
-        {
-            echo "Starting server at port $port...\n";
-            $socket = @stream_socket_server("tcp://0.0.0.0:$port", $errNo, $errStr);
-            if (!$socket) throw new Exception($errStr, $errNo);
-            stream_set_blocking($socket, 0);
-            $coSocket = new self($socket);
-            $coSocket->handleCallback = $callback;
-            function gen($coSocket)
-            {
-                /** @var self $coSocket */
-                while (true) yield from $coSocket->onRequest();
-            }
-            foreach (gen($coSocket) as $item){};
-        }
+        $this->socket = $socket;
+        $this->masterCoSocket = $master ?? $this;
     }
-    
-    CoSocket::start(8000, function ($data) {
-        $response = <<<RES
-    HTTP/1.1 200 OK
-    Content-Type: text/plain
-    Content-Length: 12
-    Connection: close
-    
-    hello world!
+
+    public function accept()
+    {
+        $isSelect = yield from $this->onRead();
+        $acceptS = null;
+        if ($isSelect && $as = stream_socket_accept($this->socket, 0)) {
+            $acceptS = new CoSocket($as, $this);
+        }
+        return $acceptS;
+    }
+
+    public function read($size)
+    {
+        yield from $this->onRead();
+        yield ($data = fread($this->socket, $size));
+        return $data;
+    }
+
+    public function write($string)
+    {
+        yield from $this->onWriter();
+        yield fwrite($this->socket, $string);
+    }
+
+    public function close()
+    {
+        unset($this->masterCoSocket->streamPoolRead[(int)$this->socket]);
+        unset($this->masterCoSocket->streamPoolWrite[(int)$this->socket]);
+        yield ($success = @fclose($this->socket));
+        return $success;
+    }
+
+    public function onRead($timeout = null)
+    {
+        $this->masterCoSocket->streamPoolRead[(int)$this->socket] = $this->socket;
+        $pool = $this->masterCoSocket->streamPoolRead;
+        $rSocks = [];
+        $wSocks = $eSocks = null;
+        foreach ($pool as $item) {
+            $rSocks[] = $item;
+        }
+        yield ($num = stream_select($rSocks, $wSocks, $eSocks, $timeout));
+        return $num;
+    }
+
+    public function onWriter($timeout = null)
+    {
+        $this->masterCoSocket->streamPoolWrite[(int)$this->socket] = $this->socket;
+        $pool = $this->masterCoSocket->streamPoolRead;
+        $wSocks = [];
+        $rSocks = $eSocks = null;
+        foreach ($pool as $item) {
+            $wSocks[] = $item;
+        }
+        yield ($num = stream_select($rSocks, $wSocks, $eSocks, $timeout));
+        return $num;
+    }
+
+    public function onRequest()
+    {
+        /** @var self $socket */
+        $socket = yield from $this->accept();
+        if (empty($socket)) {
+            return false;
+        }
+        $data = yield from $socket->read(8192);
+        $response = call_user_func($this->handleCallback, $data);
+        yield from $socket->write($response);
+        return yield from $socket->close();
+    }
+
+    public static function start($port, callable $callback)
+    {
+        echo "Starting server at port $port...\n";
+        $socket = @stream_socket_server("tcp://0.0.0.0:$port", $errNo, $errStr);
+        if (!$socket) throw new Exception($errStr, $errNo);
+        stream_set_blocking($socket, 0);
+        $coSocket = new self($socket);
+        $coSocket->handleCallback = $callback;
+        function gen($coSocket)
+        {
+            /** @var self $coSocket */
+            while (true) yield from $coSocket->onRequest();
+        }
+        foreach (gen($coSocket) as $item){};
+    }
+}
+
+CoSocket::start(8000, function ($data) {
+    $response = <<<RES
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Content-Length: 12
+Connection: close
+
+hello world!
 RES;
-        return $response;
-    });
+    return $response;
+});
 ```
 
 ## 参考资料

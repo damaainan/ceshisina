@@ -24,9 +24,8 @@ system()函数很其它语言中的差不多，它执行给定的命令，输出
 例子：   
 
 ```php
-    <?php 
-    system("/usr/local/bin/webalizer/webalizer"); 
-    ?>
+<?php 
+system("/usr/local/bin/webalizer/webalizer"); 
 ```
 
 **exec()**  
@@ -34,11 +33,10 @@ system()函数很其它语言中的差不多，它执行给定的命令，输出
 exec ()函数与system()类似，也执行给定的命令，但不输出结果，而是返回结果的最后一行。虽然它只返回命令结果的最后一行，但用第二个参数array 可以得到完整的结果，方法是把结果逐行追加到array的结尾处。所以**如果array不是空的，在调用之前最好用unset()最它清掉**。只有指定了第二 个参数时，才可以用第三个参数，用来取得命令执行的状态码。
 
 ```php
-    <?php 
-    exec("/bin/ls -l"); 
-    exec("/bin/ls -l", $res); 
-    exec("/bin/ls -l", $res, $rc); 
-    ?>
+<?php 
+exec("/bin/ls -l"); 
+exec("/bin/ls -l", $res); 
+exec("/bin/ls -l", $res, $rc); 
 ```
 
 我们可以exec()这个方法获取服务器端的IP
@@ -53,10 +51,9 @@ passthru ()只调用命令，不返回任何结果，但把命令的运行结果
 例子：   
 
 ```php
-    <?php 
-    header("Content-type: image/gif"); 
-    passthru("./ppmtogif hunte.ppm"); 
-    ?>
+<?php 
+header("Content-type: image/gif"); 
+passthru("./ppmtogif hunte.ppm"); 
 ```
 
 ### 2） 用popen()函数打开进程
@@ -67,52 +64,49 @@ popen ()函数打开一个进程管道来执行给定的命令，返回一个文
 例子1：   
 
 ```php
-    <?php 
-    $fp=popen("/bin/ls -l", "r"); 
-    ?>
+<?php 
+$fp=popen("/bin/ls -l", "r"); 
 ```
 
 示例2：
 
 ```php
-    <?php 
-    /* PHP中如何增加一个系统用户 
-    下面是一段例程，增加一个名字为james的用户, 
-    root密码是 verygood。仅供参考 
-    */ 
-    $sucommand = "su --login root --command"; 
-    $useradd = "useradd "; 
-    $rootpasswd = "verygood"; 
-    $user = "james"; 
-    $user_add = sprintf("%s "%s %s"",$sucommand,$useradd,$user); 
-    $fp = @popen($user_add,"w"); 
-    @fputs($fp,$rootpasswd); 
-    @pclose($fp); 
-    ?>
+<?php 
+/* PHP中如何增加一个系统用户 
+下面是一段例程，增加一个名字为james的用户, 
+root密码是 verygood。仅供参考 
+*/ 
+$sucommand = "su --login root --command"; 
+$useradd = "useradd "; 
+$rootpasswd = "verygood"; 
+$user = "james"; 
+$user_add = sprintf("%s "%s %s"",$sucommand,$useradd,$user); 
+$fp = @popen($user_add,"w"); 
+@fputs($fp,$rootpasswd); 
+@pclose($fp); 
 ```
 
 ### 3）系统命令实际项目中应用示例
+```php
+//查找到php安装位置
+$phpcmd = exec("which php");
+print_r($phpcmd);
+// 输出结果  /usr/bin/php   
 
-    //查找到php安装位置
-    $phpcmd = exec("which php");
-    print_r($phpcmd);
-    // 输出结果  /usr/bin/php   
-    
-    $arr = array();
-    $ret = exec("/bin/ls -l", $arr); 
-    print_r($ret);
-    print_r($arr);
-    
+$arr = array();
+$ret = exec("/bin/ls -l", $arr); 
+print_r($ret);
+print_r($arr);
+```
 
 ### 4)使用外部命令需要注意的安全性
 
 比如，你有一家小型的网上商店，所以可以出售的产品列表放在一个文件中。你编写了一个有表单的HTML文件，让你的用户输入他们的EMAIL地 址，然后把这个产品列表发给他们。假设你没有使用PHP的mail()函数（或者从未听说过），你就调用Linux/Unix系统的mail程序来发送这 个文件。程序就象这样：   
 
 ```php
-    <?php 
-    system("mail $to < products.txt"); 
-    echo "我们的产品目录已经发送到你的信箱：$to"; 
-    ?>
+<?php 
+system("mail $to < products.txt"); 
+echo "我们的产品目录已经发送到你的信箱：$to"; 
 ```
 
 用这段代码，一般的用户不会产生什么危险，但实际上存在着非常大的安全漏洞。如果有个恶意的用户输入了这样一个EMAIL地址：
@@ -128,9 +122,8 @@ popen ()函数打开一个进程管道来执行给定的命令，返回一个文
 再来看看超时问题。如果要执行的命令要花费很长的时间，那么应该把这个命令放到系统的后台去运 行。但在默认情况下，象system()等函数要等到这个命令运行完才返回（实际上是要等命令的输出结果），这肯定会引起PHP脚本的超时。解决的办法是 把命令的输出重定向到另外一个文件或流中，如：   
 
 ```php
-    <?php 
-    system("/usr/local/bin/order_proc > /tmp/null &"); 
-    ?>
+<?php 
+system("/usr/local/bin/order_proc > /tmp/null &"); 
 ```
 
 ### 5)、高级命令实际项目中应用：
@@ -181,17 +174,16 @@ getimagesize() 函数将测定任何 GIF，JPG，PNG，SWF，SWC，PSD，TIFF，
     )
 
 ```php
-    <?php
-    $size = getimagesize($filename);
-    $fp=fopen($filename, "rb");
-    if ($size && $fp) {
-      header("Content-type: {$size['mime']}");
-      fpassthru($fp);
-      exit;
-    } else {
-      // error
-    }
-    ?>
+<?php
+$size = getimagesize($filename);
+$fp=fopen($filename, "rb");
+if ($size && $fp) {
+  header("Content-type: {$size['mime']}");
+  fpassthru($fp);
+  exit;
+} else {
+  // error
+}
 ```
 
 相关文章：  

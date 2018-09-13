@@ -1,4 +1,4 @@
-## LNMP 性能优化之 PHP 性能优化
+## [LNMP 性能优化之 PHP 性能优化](https://blog.csdn.net/ivan820819/article/details/78154089)
 
 ## 目录
 
@@ -87,60 +87,60 @@ PHP 的底层是由 C 语言组成的。每次运行 PHP 的程序，都是需�
 
 for & range() 实现同一功能
 ```php
-    <?php
-    
-    for ($i = 0; $i <1000; $i++) {
-        $array1[$i] = $i+1000;
-    }
-    
-    range(1000,1999);
+<?php
+
+for ($i = 0; $i <1000; $i++) {
+    $array1[$i] = $i+1000;
+}
+
+range(1000,1999);
 ```
 以 foreach、in_array 和 array_merge 实现同一功能对比说明：
 ```php
-    <?php
-    
-    arrayMerged = [];
-    foreach ($array1 as $value) {
+<?php
+
+$arrayMerged = [];
+foreach ($array1 as $value) {
+    $arrayMerged[] = $value;
+}
+foreach ($array2 as $value) {
+    if(!in_array($value, $arrayMerged)){
         $arrayMerged[] = $value;
     }
-    foreach ($array2 as $value) {
-        if(!in_array($value, $arrayMerged)){
-            $arrayMerged[] = $value;
-        }
-    }
-    
-    array_merge($array1,$array2);
+}
+
+array_merge($array1,$array2);
 ```
 以 foreach 和 array_column() 实现同一功能对比说明：
 ```php
-    <?php
-    
-    $usernames = [];
-    foreach ($array as $key => $value) {
-        if(isset($value['username']) && !empty($value['username'])){
-            $usernames[$value['id']] = $value;
-        }
+<?php
+
+$usernames = [];
+foreach ($array as $key => $value) {
+    if(isset($value['username']) && !empty($value['username'])){
+        $usernames[$value['id']] = $value;
     }
-    
-    array_column($array, 'username','id');
+}
+
+array_column($array, 'username','id');
 ```
 以 foreach 和 array_filter() 实现同一功能对比说明：
 ```php
-    <?php
-    
-    $arr = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
-    foreach ($arr as $key => $value) {
-        if($key === 'b'){
-            $result[$key] = $value;
-        }
-        if($value === 4){
-            $result[$key] = $value;
-        }
+<?php
+
+$arr = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+foreach ($arr as $key => $value) {
+    if($key === 'b'){
+        $result[$key] = $value;
     }
-    
-    array_filter($arr, function($v, $k) {
-        return $k == 'b' || $v == 4;
-    }, ARRAY_FILTER_USE_BOTH)
+    if($value === 4){
+        $result[$key] = $value;
+    }
+}
+
+array_filter($arr, function($v, $k) {
+    return $k == 'b' || $v == 4;
+}, ARRAY_FILTER_USE_BOTH)
 ```
 #### 尽可能地使用高性能的内置函数来完成任务
 
@@ -148,39 +148,39 @@ for & range() 实现同一功能
 
 以 isset() 和 array_key_exists() 对比说明：
 ```php
-    <?php
-    
-    function current_unix_time(){
-        list($usec,$sec) = explode(" ", microtime());
-        return ((float)$usec + (float)$sec);
+<?php
+
+function current_unix_time(){
+    list($usec,$sec) = explode(" ", microtime());
+    return ((float)$usec + (float)$sec);
+}
+
+$time = -current_unix_time();
+$i = 0;
+$array = range(1, 1000000);
+while ($i < 1000000) {
+    if(array_key_exists($i, $array)){
+
     }
-    
-    $time = -current_unix_time();
-    $i = 0;
-    $array = range(1, 1000000);
-    while ($i < 1000000) {
-        if(array_key_exists($i, $array)){
-    
-        }
-        $i++;
+    $i++;
+}
+$time += current_unix_time();
+echo $time."\n";
+
+$time2 = -current_unix_time();
+$i = 0;
+$array = range(1, 1000000);
+while ($i < 1000000) {
+    if(isset($array[$i])){
+
     }
-    $time += current_unix_time();
-    echo $time."\n";
-    
-    $time2 = -current_unix_time();
-    $i = 0;
-    $array = range(1, 1000000);
-    while ($i < 1000000) {
-        if(isset($array[$i])){
-    
-        }
-        $i++;
-    }
-    $time2 += current_unix_time();
-    echo $time2;
-    
-    // array_key_exists：0.080096006393433
-    // isset：0.041244029998779
+    $i++;
+}
+$time2 += current_unix_time();
+echo $time2;
+
+// array_key_exists：0.080096006393433
+// isset：0.041244029998779
 ```
 #### 尽可能避免使用魔法方法来完成任务
 
@@ -198,19 +198,19 @@ for & range() 实现同一功能
 
 使用 for、while 循环的时候，循环内的计算式将会被重复计算，这样就造成了一些可避免的不必要性能开销。
 ```php
-    <?php
-    
-    // 修改前
-    for($i = 0; $i < strlen("hello world"); $i++){
-        //do something
-    }
-    
-    // 修改后
-    $str = "hello world";
-    $strlen = strlen($str);
-    for($i = 0; $i < $strlen; $i++){
-        //do something
-    }
+<?php
+
+// 修改前
+for($i = 0; $i < strlen("hello world"); $i++){
+    //do something
+}
+
+// 修改后
+$str = "hello world";
+$strlen = strlen($str);
+for($i = 0; $i < $strlen; $i++){
+    //do something
+}
 ```
 #### 尽可能避免在计算密集型的业务中使用
 
@@ -270,10 +270,10 @@ PHP 的代码最终还是要转换成 C 语言去执行，这就需要一部分�
 #### Opcode 优化
 
 * 启用 Zend Opcache，以 PHP 7 为例，在配置文件 php.ini 加入以下代码即可：
-```
-    zend_extension=opcache.so
-    opcache.enable=1
-    opcache.enable_cli=1"
+```ini
+zend_extension=opcache.so
+opcache.enable=1
+opcache.enable_cli=1"
 ```
 
 #### Runtime 优化

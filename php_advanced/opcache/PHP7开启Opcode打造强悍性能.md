@@ -49,7 +49,7 @@ yum install php71w-opcache.x86_64
 配置：
 
 
-``` 
+```ini
 zend_extension=opcache.so
 [opcache]
 ;开启opcache

@@ -290,7 +290,7 @@ SNS上传的图片、附件，会传送到专门的图片、附件存储服务�
 
 - - -
 
-**php5.3 配置ini *****为重点** 
+**php5.3 配置ini **  **为重点** 
 
 配置php.ini
 
@@ -337,33 +337,19 @@ SNS上传的图片、附件，会传送到专门的图片、附件存储服务�
  修改前 
  
     ;pid = run/php-fpm.pid
-
     ;error_log = log/php-fpm.log
-
     ;log_level = notice
-
     ;events.mechanism = epoll
-
     ;listen.owner = www
-
     ;listen.group = www
-
     pm.max_children = 5
-
     pm.start_servers = 2
-
     pm.min_spare_servers = 1
-
     pm.max_spare_servers = 3
-
     ;pm.process_idle_timeout = 10s;
-
     ;pm.max_requests = 500
-
     ;slowlog = log/$pool.log.slow
-
     ;rlimit_files = 1024
-
     ;request_slowlog_timeout = 0
 
 **优化参数介绍**
@@ -371,31 +357,18 @@ SNS上传的图片、附件，会传送到专门的图片、附件存储服务�
 - - -
 
     error_log = /app/logs/php-fpm.log #指定pid路径
-
     log_level = error      #开启日志，log级别为error
-
     events.mechanism = epoll  #使用epoll模式
-
     listen.owner = www     #使用php的用户
-
     listen.group = www
-
     pm.max_children = 1024   #php子进程数量
-
     pm.start_servers = 14    #php初始启动子进程数量
-
     pm.min_spare_servers = 5  #php最小空闲进程数量
-
     pm.max_spare_servers = 20  #php最大空闲进程数量
-
     pm.process_idle_timeout = 15s; #进程超时时间
-
     pm.max_requests = 2048   #每个子进程退出之前可以进行的请求数
-
     slowlog = /app/logs/$pool.log.slow #开启慢查询日志(执行程序时间长了可以查看到)
-
     rlimit_files = 32768      #开启文件描述符数量
-
     request_slowlog_timeout = 10  #慢查询的超时时间，超时10秒记录
 
 - - -
@@ -410,25 +383,11 @@ SNS上传的图片、附件，会传送到专门的图片、附件存储服务�
 
  **参考资料：**
 
-[**Apache主配置文件httpd.conf 详解**][13]
-
-- - -
-
-[**php-fpm 启动参数及重要配置详解**][14]
-
-- - -
-
-[**LAMP 系统性能调优，第 1 部分: 理解 LAMP 架构**][15]
-
-- - -
-
-[**LAMP 系统性能调优，第 2 部分: 优化 Apache 和 PHP**][16]
-
-- - -
-
-**[LAMP 系统性能调优，第 3 部分: MySQL 服务器调优][17]**
-
-****
+[**Apache主配置文件httpd.conf 详解**][13]  
+[**php-fpm 启动参数及重要配置详解**][14]  
+[**LAMP 系统性能调优，第 1 部分: 理解 LAMP 架构**][15]  
+[**LAMP 系统性能调优，第 2 部分: 优化 Apache 和 PHP**][16]  
+**[LAMP 系统性能调优，第 3 部分: MySQL 服务器调优][17]**  
 
 ****
 

@@ -29,57 +29,57 @@ PHP反射方法官方帮助文档
 测试所用的目录结构
 
 ```php
-    <?php
-    class Person {
-        private $name;
-        private $age;
-        private $address;
-        public function __construct($name, $age, $address) {
-            $this->name = $name;
-            $this->age = $age;
-            $this->address = $address;
-        }
-        public function setter($key, $value) {
-            exec ( "{$this}->" . $key . "={$value}" );
-        }
-        
-        /**
-         * 通配型的getter方法不好用。
-         * <br />
-         * 原因： Object Person can not be converted to string.
-         * 
-         * @param unknown $key          
-         * @return string
-         */
-        public function getter($key) {
-            return exec ( "$this" . "->{$key}" );
-        }
-        
-        /**
-         * 模拟Java语言实现的getter方法。<br />
-         *
-         * 缺点： 需要为每一个private属性提供单独的getter方法，使得代码略显臃肿。
-         */
-        public function getName() {
-            return $this->name;
-        }
+<?php
+class Person {
+    private $name;
+    private $age;
+    private $address;
+    public function __construct($name, $age, $address) {
+        $this->name = $name;
+        $this->age = $age;
+        $this->address = $address;
+    }
+    public function setter($key, $value) {
+        exec ( "{$this}->" . $key . "={$value}" );
     }
     
-    class Grade {
-        private $name;
-        
-        public function __construct($name) {
-            $this->name = $name;
-        }
-        
-        public function setName($name) {
-            $this->name = $name;
-        }
-        
-        public function getName() {
-            return $this->name;
-        }
+    /**
+     * 通配型的getter方法不好用。
+     * \r\n
+     * 原因： Object Person can not be converted to string.
+     * 
+     * @param unknown $key          
+     * @return string
+     */
+    public function getter($key) {
+        return exec ( "$this" . "->{$key}" );
     }
+    
+    /**
+     * 模拟Java语言实现的getter方法。\r\n
+     *
+     * 缺点： 需要为每一个private属性提供单独的getter方法，使得代码略显臃肿。
+     */
+    public function getName() {
+        return $this->name;
+    }
+}
+
+class Grade {
+    private $name;
+    
+    public function __construct($name) {
+        $this->name = $name;
+    }
+    
+    public function setName($name) {
+        $this->name = $name;
+    }
+    
+    public function getName() {
+        return $this->name;
+    }
+}
 ```
 ## 加载问题
 
@@ -116,15 +116,15 @@ $class 就是要进行加载的类的名称，请注意是 类 的名称。
 文件A中有一个写好的类Person，在文件B中要进行使用。这个时候在文件B中添加一个 `__aotoload` 函数即可。而且这个函数的写法也比较的简单（一切按照最简思路来设计的话）。 
 
 ```php
-    <?php
-    function __autoload($class) {
-        $filename = "$class.class.php";
-        if(!file_exists($filename)){
-            throw new RuntimeException("$filename 文件不存在！");
-        }else {
-            require "$filename";
-        }
+<?php
+function __autoload($class) {
+    $filename = "$class.class.php";
+    if(!file_exists($filename)){
+        throw new RuntimeException("$filename 文件不存在！");
+    }else {
+        require "$filename";
     }
+}
 ```
 
 PHP解释器在扫描到文件B的时候会先进行检查，如果未引入目标类Person，则会判断有没有实现 `__autoload` ，如果存在则使用自动加载函数进行加载，否则报错退出。 
@@ -151,19 +151,19 @@ PHP解释器在扫描到文件B的时候会先进行检查，如果未引入目�
 ### 反射属性
 
 ```php
-    <?php
-    
-    require './bean/beans.php';
-    
-    // Person 在beans.php文件中声明
-    $protype = new ReflectionClass("Person");
-    // 可以添加一个参数，来进行过滤操作。如只获取public类型的属性
-    $properties = $protype->getProperties();
-    
-    // 反射获取到类的属性信息
-    foreach ($properties as $property) {
-        echo $property."<br />";
-    }
+<?php
+
+require './bean/beans.php';
+
+// Person 在beans.php文件中声明
+$protype = new ReflectionClass("Person");
+// 可以添加一个参数，来进行过滤操作。如只获取public类型的属性
+$properties = $protype->getProperties();
+
+// 反射获取到类的属性信息
+foreach ($properties as $property) {
+    echo $property."\r\n";
+}
 ```
 
 ![][5]
@@ -175,16 +175,16 @@ PHP解释器在扫描到文件B的时候会先进行检查，如果未引入目�
 ### 反射方法
 
 ```php
-    <?php
-    
-    require './bean/beans.php';
-    
-    $protype = new ReflectionClass("Person");
-    
-    $methods = $protype->getMethods();
-    foreach ($methods as $method) {
-        echo $method->getName()."<br />";
-    }
+<?php
+
+require './bean/beans.php';
+
+$protype = new ReflectionClass("Person");
+
+$methods = $protype->getMethods();
+foreach ($methods as $method) {
+    echo $method->getName()."\r\n";
+}
 ```
 
 ![][6]
@@ -202,28 +202,28 @@ PHP解释器在扫描到文件B的时候会先进行检查，如果未引入目�
 注释信息，这里就以文档信息为例。
 
 ```php
-    <?php
-    require './bean/beans.php';
-    
-    $protype = new ReflectionClass ( "Person" );
-    $properties = $protype->getProperties ();
-    
-    // 反射获取到类的属性信息
-    foreach ( $properties as $property ) {
-        echo $property . ":";
-        $doc = $property->getDocComment ();
-        echo "   " . $doc . "<br />";
-        echo "--------------------------------------------------------" . "<br />";
-    }
-    
-    
-    $methods = $protype->getMethods();
-    foreach ($methods as $method) {
-        echo $method->getName()."<br />";
-        $doc = $method->getDocComment ();
-        echo "   " . $doc . "<br />";
-        echo "--------------------------------------------------------" . "<br />";
-    }
+<?php
+require './bean/beans.php';
+
+$protype = new ReflectionClass ( "Person" );
+$properties = $protype->getProperties ();
+
+// 反射获取到类的属性信息
+foreach ( $properties as $property ) {
+    echo $property . ":";
+    $doc = $property->getDocComment ();
+    echo "   " . $doc . "\r\n";
+    echo "--------------------------------------------------------" . "\r\n";
+}
+
+
+$methods = $protype->getMethods();
+foreach ($methods as $method) {
+    echo $method->getName()."\r\n";
+    $doc = $method->getDocComment ();
+    echo "   " . $doc . "\r\n";
+    echo "--------------------------------------------------------" . "\r\n";
+}
 ```
 
 ![][7]
@@ -235,23 +235,23 @@ PHP解释器在扫描到文件B的时候会先进行检查，如果未引入目�
 #### 反射Person类
 
 ```php
-    <?php
-    require './bean/beans.php';
-    
-    $protype = new ReflectionClass ( "Person" );
-    
-    // 模拟数据库中获取到的值，以关联数组的形式抛出
-    $values = array(
-        "name"=>"郭璞",
-        "age"=> 21,
-        "address"=>"辽宁省大连市"
-    );
-    
-    // 开始实例化
-    $instance = $protype->newInstanceArgs($values); 
-    print_r($instance);
-    // var_dump($instance);
-    echo $instance->getName();
+<?php
+require './bean/beans.php';
+
+$protype = new ReflectionClass ( "Person" );
+
+// 模拟数据库中获取到的值，以关联数组的形式抛出
+$values = array(
+    "name"=>"郭璞",
+    "age"=> 21,
+    "address"=>"辽宁省大连市"
+);
+
+// 开始实例化
+$instance = $protype->newInstanceArgs($values); 
+print_r($instance);
+// var_dump($instance);
+echo $instance->getName();
 ```
 
 ![][8]
@@ -261,13 +261,13 @@ PHP解释器在扫描到文件B的时候会先进行检查，如果未引入目�
 #### 反射Grade类
 
 ```php
-    <?php
-    require './bean/beans.php';
-    
-    $classprotype = new ReflectionClass("Grade");
-    $class = $classprotype->newInstanceArgs(array("name"=>"大三"));
-    var_dump($class);
-    echo $class->getName();
+<?php
+require './bean/beans.php';
+
+$classprotype = new ReflectionClass("Grade");
+$class = $classprotype->newInstanceArgs(array("name"=>"大三"));
+var_dump($class);
+echo $class->getName();
 ```
 
 ![][9]
@@ -277,14 +277,14 @@ PHP解释器在扫描到文件B的时候会先进行检查，如果未引入目�
 ### 执行类的方法
 
 ```php
-    <?php
-    $instance->getName(); // 执行Person 里的方法getName
-    // 或者：
-    $method = $class->getmethod('getName'); // 获取Person 类中的getName方法
-    $method->invoke($instance);    // 执行getName 方法
-    // 或者：
-    $method = $class->getmethod('setName'); // 获取Person 类中的setName方法
-    $method->invokeArgs($instance, array('snsgou.com'));
+<?php
+$instance->getName(); // 执行Person 里的方法getName
+// 或者：
+$method = $class->getmethod('getName'); // 获取Person 类中的getName方法
+$method->invoke($instance);    // 执行getName 方法
+// 或者：
+$method = $class->getmethod('setName'); // 获取Person 类中的setName方法
+$method->invokeArgs($instance, array('snsgou.com'));
 ```
 
 ## 总结

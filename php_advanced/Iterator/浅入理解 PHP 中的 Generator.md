@@ -9,25 +9,25 @@
 在 PHP 中，我们都知道，有一个函数叫做 range，用来生成一个等差数列的数组，然后我们可以用这个数组进行 foreach 的迭代。具体就想这样。
 
 ```php
-    foreach (range(1, 100, 2) as $num) {
-        echo $num . PHP_EOL;
-    }
+foreach (range(1, 100, 2) as $num) {
+    echo $num . PHP_EOL;
+}
 ```
 这一段代码就会输出首项为 1，末项为 100，公差为 2 的等差数列。它的执行顺序是这样的。首先，`range(1, 100, 2)` 会生成一个数组，里面存了上面那样的一个等差数列，之后在 foreach 中对这个数组进行迭代。
 
 那么，这样就会出现一个问题，如果我要生成 100 万个数字呢？那我们就要占用上百兆内存。虽然现在内存很便宜，但是我们也不能这么浪费内存嘛。那么这时，我们的生成器就可以排上用场了。考虑下面的代码。
 
 ```php
-    function xrange($start, $limit, $step = 1) {
-        while ($start <= $limit) {
-            yield $start;
-            $start += $step;
-        }
+function xrange($start, $limit, $step = 1) {
+    while ($start <= $limit) {
+        yield $start;
+        $start += $step;
     }
-    
-    foreach (xrange(1, 100, 2) as $num) {
-        echo $num . PHP_EOL;
-    }
+}
+
+foreach (xrange(1, 100, 2) as $num) {
+    echo $num . PHP_EOL;
+}
 ```
 
 这段代码所的出来的结果，和前面的那段代码一模一样，但是，它内部的原理是天翻地覆了。
@@ -39,11 +39,11 @@
 这样，我们上面的函数调用可以等价地写成这样。
 
 ```php
-    $nums = xrange(1, 100, 2);
-    while ($nums->valid()) {
-        echo $nums->current() . "\n";
-        $nums->next();
-    }
+$nums = xrange(1, 100, 2);
+while ($nums->valid()) {
+    echo $nums->current() . "\n";
+    $nums->next();
+}
 ```
 
 在这里，`$num` 是一个 `Generator` 的对象。我们在这里看到三个方法，valid、current 和 next。当我们函数执行完了，后面没有 `yield` 中断了，那么我们在 `xrange` 函数就执行完了，那么 `valid` 方法就会变成 `false`。而 `current` 呢，会返回当前 `yield` 后面的值，这是，生成器的函数会中断。那么在调用 `next` 方法之后，函数会继续执行，直到下一个 `yield` 出现，或者函数结束。
@@ -51,32 +51,32 @@
 好了，到这里，我们看到了通过 `yield` 来“生成”一个值并返回。其实，`yield` 其实也可以这么写 `$ret = yield`;。同返回值一样，这里是将一个值在继续执行函数的时候，传值进函数，可以通过 `Generator::send($value)` 来使用。例如。
 
 ```php
-    function sum()
-    {
-        $ret = yield;
-        echo $ret . PHP_EOL;
-    }
-    
-    $sum = sum();
-    $sum->send('I am from outside.');
+function sum()
+{
+    $ret = yield;
+    echo $ret . PHP_EOL;
+}
+
+$sum = sum();
+$sum->send('I am from outside.');
 ```
 
 这样，程序就会打印出 `send` 方法传进去的字符串了。在 `yield` 的两边可以同时有调用。
 
 ```php
-    function xrange($start, $limit, $step = 1) {
-        while ($start <= $limit) {
-            $ret = yield $start;
-            $start += $step;
-            echo $ret . PHP_EOL;
-        }
+function xrange($start, $limit, $step = 1) {
+    while ($start <= $limit) {
+        $ret = yield $start;
+        $start += $step;
+        echo $ret . PHP_EOL;
     }
-    
-    $nums = xrange(1, 100, 2);
-    while ($nums->valid()) {
-        echo $nums->current() . "\n";
-        $nums->send($nums->current() + 1);
-    }
+}
+
+$nums = xrange(1, 100, 2);
+while ($nums->valid()) {
+    echo $nums->current() . "\n";
+    $nums->send($nums->current() + 1);
+}
 ```
 
 而像这样的使用，`send()` 可以返回下一个 `yield` 的返回。

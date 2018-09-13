@@ -128,9 +128,9 @@ foreach($properties as $property) {
 获取方法(methods)：通过getMethods() 来获取到类的所有methods。
 
 **4）执行类的方法：**
-
-    $instance->getBiography(); //执行Person 里的方法getBiography
-    //或者：
-    $ec=$class->getmethod('getName'); //获取Person 类中的getName方法
-    $ec->invoke($instance);    //执行getName 方法
-
+```php
+$instance->getBiography(); //执行Person 里的方法getBiography
+//或者：
+$ec=$class->getmethod('getName'); //获取Person 类中的getName方法
+$ec->invoke($instance);    //执行getName 方法
+```

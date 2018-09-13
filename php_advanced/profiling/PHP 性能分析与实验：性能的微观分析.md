@@ -12,22 +12,22 @@
 
 ### 1.1、时间度量函数
 
-平时我们常用 time() 函数，但是返回的是秒数，对于某段代码的内部性能分析，到秒的精度是不够的。于是要用 microtime 函数。而 microtime 函数可以返回两种形式，一是字符串的形式，一是[浮点数][2]的形式。不过需要注意的是，在缺省的情况下，返回的精度只有4位小数。为了获得更高的精确度，我们需要配置 precision。
+平时我们常用 time() 函数，但是返回的是秒数，对于某段代码的内部性能分析，到秒的精度是不够的。于是要用 microtime 函数。而 microtime 函数可以返回两种形式，一是字符串的形式，一是[浮点数][2]的形式。不过需要注意的是，在缺省的情况下，返回的精度只有4位小数。为了获得更高的精确度，我们需要配置 `precision`。
 
 如下是 microtime 的使用结果。
 
-```
-    $start= microtime(true);
-    echo $start."/n";
-    $end = microtime(true);
-    echo $end."/n";
-    echo ($end-$start)."/n";
+```php
+$start= microtime(true);
+echo $start."/n";
+$end = microtime(true);
+echo $end."/n";
+echo ($end-$start)."/n";
 ```
 
 输出为：
 
 ```
-    bash-3.2# phptime.php
+    bash-3.2# php time.php
     
     1441360050.3286 
     1441360050.3292 
@@ -37,23 +37,23 @@
 而在代码前面加上一行：
 
 ```
-    ini_set("precision", 16);
+ini_set("precision", 16);
 ```
 
 输出为：
 
 ```
-    bash-3.2# phptime.php
+    bash-3.2# php time.php
     
     1441360210.932628 
     1441360210.932831 
     0.0002031326293945312
 ```
 
-除了 microtime 内部统计之外， 还可以使用 getrusage 来取得用户态的时长。在实际的操作中，也常用 time 命令来计算整个程序的运行时长，通过多次运行或者修改代码后运行，得到不同的时间长度以得到效率上的区别。 具体用法是：time phptime.php ，则在程序运行完成之后，不管是否正常结束退出，都会有相关的统计。
+除了 microtime 内部统计之外， 还可以使用 `getrusage` 来取得用户态的时长。在实际的操作中，也常用 time 命令来计算整个程序的运行时长，通过多次运行或者修改代码后运行，得到不同的时间长度以得到效率上的区别。 具体用法是：time phptime.php ，则在程序运行完成之后，不管是否正常结束退出，都会有相关的统计。
 
 ```
-    bash-3.2# time phptime.php
+    bash-3.2# time php time.php
     
     1441360373.150756 
     1441360373.150959 
@@ -68,21 +68,21 @@
 
 ### 1.2、内存使用相关函数
 
-分析内存使用的函数有两个：memory_ get_ usage、memory_ get_ peak_usage，前者可以获得程序在调用的时间点，即当前所使用的内存，后者可以获得到目前为止高峰时期所使用的内存。所使用的内存以字节为单位。
+分析内存使用的函数有两个：`memory_get_usage`、`memory_get_peak_usage`，前者可以获得程序在调用的时间点，即当前所使用的内存，后者可以获得到目前为止高峰时期所使用的内存。所使用的内存以字节为单位。
 
-```
-    $base_memory= memory_get_usage();
-    echo "Hello,world!/n";
-    $end_memory= memory_get_usage();
-    $peak_memory= memory_get_peak_usage();
-    
-    echo $base_memory,"/t",$end_memory,"/t",($end_memory-$base_memory),"/t", $peak_memory,"/n";
+```php
+$base_memory= memory_get_usage();
+echo "Hello,world!/n";
+$end_memory= memory_get_usage();
+$peak_memory= memory_get_peak_usage();
+
+echo $base_memory,"/t",$end_memory,"/t",($end_memory-$base_memory),"/t", $peak_memory,"/n";
 ```
 
 输出如下：
 
 ```
-    bash-3.2# phphelloworld.php
+    bash-3.2# php helloworld.php
     
     Hello,world! 
     224400 224568 168 227424
@@ -92,26 +92,26 @@
 
 对于同一程序，不同 PHP 版本对内存的使用并不相同，甚至还差别很大。
 
-```
-    $baseMemory= memory_get_usage();
-    class User
+```php
+$baseMemory= memory_get_usage();
+class User
+{
+    private $uid;
+    function __construct($uid)
     {
-        private $uid;
-        function __construct($uid)
-        {
-            $this->uid= $uid;
-        }
+        $this->uid= $uid;
     }
-    
-    for($i=0;$i<100000;$i++)
+}
+
+for($i=0;$i<100000;$i++)
+{
+    $obj= new User($i);
+    if ( $i% 10000 === 0 )
     {
-        $obj= new User($i);
-        if ( $i% 10000 === 0 )
-        {
-            echo sprintf( '%6d: ', $i), memory_get_usage(), " bytes/n";
-        }
+        echo sprintf( '%6d: ', $i), memory_get_usage(), " bytes/n";
     }
-    echo "  peak: ",memory_get_peak_usage(true), " bytes/n";
+}
+echo "  peak: ",memory_get_peak_usage(true), " bytes/n";
 ```
 
 在 PHP 5.2 中，内存使用如下：
@@ -129,7 +129,7 @@
 PHP 5.3 中，内存使用如下
 
 ```
-    [root@localhostphpperf]# phpmemory.php
+    [root@localhostphpperf]# php memory.php
     
     0: 634992 bytes 
     10000: 634992 bytes 
@@ -169,32 +169,32 @@ PHP 5.4 – 5.6 差不多，有所优化：
 下面再来看一个例子，在上面的代码的基础上，我们加上一行，如下：
 
 ```
-    $obj->self = $obj;
+$obj->self = $obj;
 ```
 
 代码如下：
 
-```
-    $baseMemory= memory_get_usage();
-    class User
+```php
+$baseMemory= memory_get_usage();
+class User
+{
+    private $uid;
+    function __construct($uid)
     {
-        private $uid;
-        function __construct($uid)
-        {
-            $this->uid= $uid;
-        }
+        $this->uid= $uid;
     }
-    
-    for($i=0;$i<100000;$i++)
+}
+
+for($i=0;$i<100000;$i++)
+{
+    $obj= new User($i);
+    $obj->self = $obj;
+    if ( $i% 5000 === 0 )
     {
-        $obj= new User($i);
-        $obj->self = $obj;
-        if ( $i% 5000 === 0 )
-        {
-            echo sprintf( '%6d: ', $i), memory_get_usage(), " bytes/n";
-        }
+        echo sprintf( '%6d: ', $i), memory_get_usage(), " bytes/n";
     }
-    echo "  peak: ",memory_get_peak_usage(true), " bytes/n";
+}
+echo "  peak: ",memory_get_peak_usage(true), " bytes/n";
 ```
 
 这时候再来看看内存的使用情况，中间表格主体部分为内存使用量，单位为字节。
@@ -213,28 +213,28 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 代码如下：
 
-```
-    gc_disable();
-    $baseMemory= memory_get_usage();
-    class User
+```php
+gc_disable();
+$baseMemory= memory_get_usage();
+class User
+{
+    private $uid;
+    function __construct($uid)
     {
-        private $uid;
-        function __construct($uid)
-        {
-            $this->uid= $uid;
-        }
+        $this->uid= $uid;
     }
-    
-    for($i=0;$i<100000;$i++)
+}
+
+for($i=0;$i<100000;$i++)
+{
+    $obj= new User($i);
+    $obj->self = $obj;
+    if ( $i% 5000 === 0 )
     {
-        $obj= new User($i);
-        $obj->self = $obj;
-        if ( $i% 5000 === 0 )
-        {
-            echo sprintf( '%6d: ', $i), memory_get_usage(), " bytes/n";
-        }
+        echo sprintf( '%6d: ', $i), memory_get_usage(), " bytes/n";
     }
-    echo "  peak: ",memory_get_peak_usage(true), " bytes/n";
+}
+echo "  peak: ",memory_get_peak_usage(true), " bytes/n";
 ```
 
 分别在 PHP 5.3、PHP5.4 、PHP5.5、PHP5.6 、PHP7 下运行，得到如下内存使用统计表。
@@ -257,15 +257,15 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 在有的建议规则中，会建议使用 echo ，而不使用 print。说 print 是函数，而 echo 是语法结构。实际上并不是如此，print 也是语法结构，类似的语法结构，还有多个，比如 list、isset、require 等。不过对于 PHP 7 以下 PHP 版本而言，两者确实有性能上的差别。如下两份代码：
 
-```
-    for($i=0; $i<1000000; $i++)
-    {
-        echo("Hello,World!");
-    }
-    for($i=0; $i<1000000; $i++)
-    {
-        print ("Hello,World!");
-    }
+```php
+for($i=0; $i<1000000; $i++)
+{
+    echo("Hello,World!");
+}
+for($i=0; $i<1000000; $i++)
+{
+    print ("Hello,World!");
+}
 ```
 
 在 PHP 5.3 中运行速度分别如下（各2次）：
@@ -279,11 +279,11 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
     real 0m0.234s 
     user 0m0.159s 
     sys 0m0.073s 
-    [root@localhostphpperf]# time phpecho.php> /dev/null
+    [root@localhostphpperf]# time php echo.php> /dev/null
     real 0m0.203s 
     user 0m0.130s 
     sys 0m0.072s 
-    [root@localhostphpperf]# time phpecho.php> /dev/null
+    [root@localhostphpperf]# time php echo.php> /dev/null
     real 0m0.203s 
     user 0m0.128s 
     sys 0m0.075s
@@ -314,25 +314,25 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 ### 2.2、require 还是 require_once？
 
-在一些常规的优化规则中，会提到，建议使用 require_ once 而不是 require，现由是 require_ once 会去检测是否重复，而 require 则不需要重复检测。
+在一些常规的优化规则中，会提到，建议使用 require_once 而不是 require，现由是 require_once 会去检测是否重复，而 require 则不需要重复检测。
 
-在大量不同文件的包含中，require_ once 略慢于 require。但是 require_ once 的检测是一项内存中的行为，也就是说即使有数个需要加载的文件，检测也只是内存中的比较。而 require 的每次重新加载，都会从文件系统中去读取分析。因而 require_ once 会比 require 更佳。咱们也使用一个例子来看一下。
+在大量不同文件的包含中，require_once 略慢于 require。但是 **`require_once 的检测是一项内存中的行为`**，也就是说即使有数个需要加载的文件，检测也只是内存中的比较。而 **`require 的每次重新加载，都会从文件系统中去读取分析`**。因而 require_once 会比 require 更佳。咱们也使用一个例子来看一下。
 
+```php
+// str.php
+global$str;
+$str= "China has a large population";
+require.php
+for($i=0; $i<100000; $i++) {
+    require "str.php";
+}
+require_once.php
+for($i=0; $i<100000; $i++) {
+    require_once"str.php";
+}
 ```
-    str.php
-    global$str;
-    $str= "China has a large population";
-    require.php
-    for($i=0; $i<100000; $i++) {
-        require "str.php";
-    }
-    require_once.php
-    for($i=0; $i<100000; $i++) {
-        require_once"str.php";
-    }
-```
 
-上面的例子，在 PHP7 中，require_ once.php 的运行速度是 require.php 的30倍！在其他版本也能得到大致相同的结果。
+上面的例子，在 PHP7 中，**require_once.php 的运行速度是 require.php 的30倍**！在其他版本也能得到大致相同的结果。
 
 ```
     [root@localhostphpperf]# time php7 require.php
@@ -353,44 +353,44 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
     sys 0m0.004s
 ```
 
-从上可以看到，如果存在大量的重复加载的话，require_ once 明显优于 require，因为重复的文件不再有 IO 操作。即使不是大量重复的加载，也建议使用 require_ once，因为在一个程序中，一般不会存在数以千百计的文件包含，100次内存比较的速度差距，一个文件包含就相当了。
+从上可以看到，如果存在大量的重复加载的话，**`require_once 明显优于 require`**，因为重复的文件不再有 IO 操作。即使不是大量重复的加载，也建议使用 require_once，因为在一个程序中，一般不会存在数以千百计的文件包含，100次内存比较的速度差距，一个文件包含就相当了。
 
 ### 2.3、单引号还是双引号？
 
 单引号，还是双引号，是一个问题。一般的建议是能使用单引号的地方，就不要使用双引号，因为字符串中的单引号，不会引起解析，从而效率更高。那来看一下实际的差别。
 
-```
-    classUser
+```php
+class User
+{
+    private $uid;
+    private $username;
+    private $age;
+    function  __construct($uid, $username,$age){
+        $this->uid= $uid;
+        $this->username = $username;
+        $this->age = $age;
+    }
+    function getUserInfo()
     {
-        private $uid;
-        private $username;
-        private $age;
-        function  __construct($uid, $username,$age){
-            $this->uid= $uid;
-            $this->username = $username;
-            $this->age = $age;
-        }
-        function getUserInfo()
-        {
-            return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
-        }
-        function getUserInfoSingle()
-        {
-            return 'UID:'.$this->uid.' UserName:'.$this->username.' Age'.$this->age;
-        }
-        function getUserInfoOnce()
-        {
-            return "UID:{$this->uid}UserName:{$this->username} Age:{$this->age}";
-        }
-        function getUserInfoSingle2()
-        {
-            return 'UID:{$this->uid} UserName:{$this->username} Age:{$this->age}';
-        }
+        return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
     }
-    for($i=0; $i<1000000;$i++) {
-        $user = new User($i, "name".$i, $i%100);
-        $user->getUserInfoSingle();
+    function getUserInfoSingle()
+    {
+        return 'UID:'.$this->uid.' UserName:'.$this->username.' Age'.$this->age;
     }
+    function getUserInfoOnce()
+    {
+        return "UID:{$this->uid}UserName:{$this->username} Age:{$this->age}";
+    }
+    function getUserInfoSingle2()
+    {
+        return 'UID:{$this->uid} UserName:{$this->username} Age:{$this->age}';
+    }
+}
+for($i=0; $i<1000000;$i++) {
+    $user = new User($i, "name".$i, $i%100);
+    $user->getUserInfoSingle();
+}
 ```
 
 在上面的 User 类中，有四个不同的方法,完成一样的功能，就是拼接信息返回，看看这四个不同的方法的区别。
@@ -429,9 +429,9 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
     sys 0m0.002s
 ```
 
-可见在拼接中，单双引号并无明显差别。
+可见**`在拼接中，单双引号并无明显差别`**。
 
-第三个、getUserInfoOnce，不再使用句号.连接，而是直接引入在字符串中解析。
+第三个、getUserInfoOnce，不再使用`句号.`连接，而是直接引入在字符串中解析。
 
 ```
     [root@localhostphpperf]# time php7 string.php
@@ -469,13 +469,13 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 效率确实有了大的提升，快了50%。
 
-那么这个快，是由于不需要变量引用解析带来的，还是只要加入$天然的呢？我们再试着写了一个方法。
+那么这个快，是由于不需要变量引用解析带来的，还是只要加入`$`天然的呢？我们再试着写了一个方法。
 
-```
-    functiongetUserInfoSingle3()
-    {
-        return "UID:{\$this->uid} UserName:{\$this->username} Age:{\$this->age}";
-    }
+```php
+function getUserInfoSingle3()
+{
+    return "UID:{\$this->uid} UserName:{\$this->username} Age:{\$this->age}";
+}
 ```
 
 得到如下运行时间：
@@ -501,12 +501,11 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 在 PHP 中，有多种错误消息，错误消息的开启是否会带来性能上的影响呢？从直觉觉得，由于错误消息，本身会涉及到 IO 输出，无论是输出到终端或者 error_log，都是如此，所以肯定会影响性能。我们来看看这个影响有多大。
 
-```
-    error_reporting(E_ERROR);
-    for($i=0; $i<1000000;$i++) {
-    $str= "通常，$PHP中的垃圾回收机制，仅仅在循环回收算法确实运行时会有时间消耗上的增加。但是在平常的(更小的)脚本中应根本就没有性能影响。
-    然而，在平常脚本中有循环回收机制运行的情况下，内存的节省将允许更多这种脚本同时运行在你的服务器上。因为总共使用的内存没达到上限。";
-    }
+```php
+error_reporting(E_ERROR);
+for($i=0; $i<1000000;$i++) {
+    $str= "通常，$PHP中的垃圾回收机制，仅仅在循环回收算法确实运行时会有时间消耗上的增加。但是在平常的(更小的)脚本中应根本就没有性能影响。然而，在平常脚本中有循环回收机制运行的情况下，内存的节省将允许更多这种脚本同时运行在你的服务器上。因为总共使用的内存没达到上限。";
+}
 ```
 
 在上面的代码中，我们涉及到一个不存在的变量，所以会报出 Notice 错误:
@@ -515,9 +514,9 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
     Notice: Undefined variable: PHP 中的垃圾回收机制，仅仅在循环回收算法确实运行时会有时间消耗上的增加。但是在平常的 in xxxx/string2.php on line 10
 ```
 
-如果把 E_ ERROR 改成 E_ ALL 就能看到大量的上述错误输出。
+如果把 `E_ERROR` 改成 `E_ALL` 就能看到大量的上述错误输出。
 
-我们先执行 E_ ERROR 版，这个时候没有任何错误日志输出。得到如下数据：
+我们先执行 E_ERROR 版，这个时候没有任何错误日志输出。得到如下数据：
 
 ```
     [root@localhostphpperf]# time php7 string2.php
@@ -534,7 +533,7 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
     sys 0m0.003s
 ```
 
-再执行 E_ ALL 版，有大量的错误日志输出，我们把输出重定向到/dev/null
+再执行 E_ALL 版，有大量的错误日志输出，我们把输出重定向到/dev/null
 
 ```
     [root@localhostphpperf]# time php7 string2.php > /dev/null
@@ -553,7 +552,7 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 可见慢了将近一倍。
 
-如上可见，即使输出没有正式写入文件，错误级别打开的影响也是巨大的。在线上我们应该将错误级别调到 E_ ERROR 这个级别，同时将错误写入 error_ log，既减少了不必要的错误信息输出，又避免泄漏路径等信息，造成安全隐患。
+如上可见，即使输出没有正式写入文件，错误级别打开的影响也是巨大的。在线上我们应该将错误级别调到 E_ERROR 这个级别，同时将错误写入 error_log，既减少了不必要的错误信息输出，又避免泄漏路径等信息，造成安全隐患。
 
 ### 2.5、正则表达式和普通字符串操作
 
@@ -561,16 +560,16 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 对于简单的分隔，我们可以使用 explode 来实现，也可以使用正则表达式，比如下面的例子：
 
-```
-    ini_set("precision", 16);
-    function microtime_ex()
-    {
-        list($usec, $sec) = explode(" ", microtime());
-        return $sec+$usec;
-    }
-    for($i=0; $i<1000000; $i++) {
-        microtime_ex();
-    }
+```php
+ini_set("precision", 16);
+function microtime_ex()
+{
+    list($usec, $sec) = explode(" ", microtime());
+    return $sec+$usec;
+}
+for($i=0; $i<1000000; $i++) {
+    microtime_ex();
+}
 ```
 
 耗时在0.93-1S之间。
@@ -592,8 +591,8 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 我们再将分隔语句替换成：
 
-```
-    list($usec, $sec) = preg_split("#\s#", microtime());
+```php
+list($usec, $sec) = preg_split("#\s#", microtime());
 ```
 
 得到如下数据，慢了近10-20%。
@@ -615,32 +614,32 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 再将语句替换成：
 
-```
-    list($usec, $sec) = preg_split("#\s+#", microtime());
+```php
+list($usec, $sec) = preg_split("#\s+#", microtime());
 ```
 
 即匹配一到多个空格，并没有太多的影响。除了分隔外，查找我们也来看一个例子。
 
 第一段代码：
 
-```
-    $str= "China has a Large population";
-    for($i=0; $i<1000000; $i++) {
-        if(preg_match("#l#i", $str))
-        {
-        }
+```php
+$str= "China has a Large population";
+for($i=0; $i<1000000; $i++) {
+    if(preg_match("#l#i", $str))
+    {
     }
+}
 ```
 
 第二段代码：
 
-```
-    $str= "China has a large population";
-    for($i=0; $i<1000000; $i++) {
-        if(stripos($str, "l")!==false)
-        {
-        }
+```php
+$str= "China has a large population";
+for($i=0; $i<1000000; $i++) {
+    if(stripos($str, "l")!==false)
+    {
     }
+}
 ```
 
 这两段代码达到的效果相同，都是查找字符串中有无 l 或者 L 字符。
@@ -689,26 +688,26 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 可见在 PHP 5.6 中表现还是非常明显的，使用正则表达式慢了20%。PHP7 难道是对已使用过的正则表达式做了缓存？我们调整一下代码如下：
 
-```
-    $str= "China has a Large population";
-    for($i=0; $i<1000000; $i++) {
-        $pattern = "#".chr(ord('a')+$i%26)."#i";
-        if($ret = preg_match($pattern, $str)!==false)
-        {
-        }
+```php
+$str= "China has a Large population";
+for($i=0; $i<1000000; $i++) {
+    $pattern = "#".chr(ord('a')+$i%26)."#i";
+    if($ret = preg_match($pattern, $str)!==false)
+    {
     }
+}
 ```
 
 这是一个动态编译的 pattern。
 
-```
-    $str= "China has a large population";
-    for($i=0; $i<1000000; $i++) {
-        $pattern = "".chr(ord('a')+$i%26)."";
-        if($ret = stripos($str, $pattern)!==false)
-        {
-        }
+```php
+$str= "China has a large population";
+for($i=0; $i<1000000; $i++) {
+    $pattern = "".chr(ord('a')+$i%26)."";
+    if($ret = stripos($str, $pattern)!==false)
+    {
     }
+}
 ```
 
 在 PHP7 中，得到了如下结果：
@@ -755,9 +754,9 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 在 PHP 5.6 中，stripos 版明显要快于正则表达式版，由上两例可见，PHP7对正则表达式的优化还是相当惊人的。其次也建议，能用普通字符串操作的地方，可以避免使用正则表达式。因为在其他版本中，这个规则还是适用的。某 zend 大牛官方的分享给出如下数据：
 
-* stripos(‘http://’, $website) 速度是preg_match(‘/http:\/\//i’, $website) 的两倍
-* ctype_alnum()速度是preg_match(‘/^\s*$/’)的5倍;
-* “if ($test == (int)$test)” 比 preg_match(‘/^\d*$/’)快5倍
+* `stripos('http://', $website)` 速度是`preg_match('/http:\/\//i', $website)` 的两倍
+* `ctype_alnum()`速度是`preg_match('/^\s*$/')`的5倍;
+* `if ($test == (int)$test)` 比 `preg_match('/^\d*$/')`快5倍
 
 可以相见，正则表达式是相对低效的。
 
@@ -767,33 +766,33 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 首先们构造一个数组：
 
-```
-    $a= array();
-    for($i=0;$i<100000;$i++){
-        $a[$i] = $i;
-    }
+```php
+$a= array();
+for($i=0;$i<100000;$i++){
+    $a[$i] = $i;
+}
 ```
 
 在这个数组中，我们测试查找值和查找键的效率差别。
 
-第一种方法用 array_ search，第二种用 array_ key_ exists，第三种用 isset 语法结构。 代码分别如下：
+第一种方法用 array_search，第二种用 array_key_exists，第三种用 isset 语法结构。 代码分别如下：
 
-```
-    //查找值
-    foreach($a as $i)
-    {
-        array_search($i, $a);
-    }
-    //查找键
-    foreach($a as $i)
-    {
-        array_key_exists($i, $a);
-    }
-    //判定键是否存在
-    foreach($a as $i)
-    {
-        if(isset($a[$i]));
-    }
+```php
+//查找值
+foreach($a as $i)
+{
+    array_search($i, $a);
+}
+//查找键
+foreach($a as $i)
+{
+    array_key_exists($i, $a);
+}
+//判定键是否存在
+foreach($a as $i)
+{
+    if(isset($a[$i]));
+}
 ```
 
 运行结果如下：
@@ -825,7 +824,7 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
     sys 0m0.006s
 ```
 
-由上例子可见，键值查找的速度比值查找的速度有百倍以上的效率差别。因而如果能用键值定位的地方，尽量用键值定位，而不是值查找。
+由上例子可见，**`键值查找的速度比值查找的速度有百倍以上的效率差别`**。因而如果能用键值定位的地方，尽量用**键值定位**，而不是值查找。
 
 ### 2.7、对象与数组
 
@@ -833,37 +832,37 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 使用对象：
 
-```
-    classUser
+```php
+class User
+{
+    public $uid;
+    public $username;
+    public $age;
+    function getUserInfo()
     {
-        public $uid;
-        public $username;
-        public $age;
-        function getUserInfo()
-        {
-            return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
-        }
+        return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
     }
-    for($i=0; $i<1000000;$i++) {
-        $user = new User();
-        $user->uid= $i;
-        $user->age = $i%100;
-        $user->username="User".$i;
-        $user->getUserInfo();
-    }
+}
+for($i=0; $i<1000000;$i++) {
+    $user = new User();
+    $user->uid= $i;
+    $user->age = $i%100;
+    $user->username="User".$i;
+    $user->getUserInfo();
+}
 ```
 
 使用数组：
 
-```
-    functiongetUserInfo($user)
-    {
-        return "UID:".$user['uid']." UserName:".$user['username']." Age:".$user['age'];
-    }
-    for($i=0; $i<1000000;$i++) {
-        $user = array("uid"=>$i,"age" =>$i%100,"username"=>"User".$i);
-        getUserInfo($user);
-    }
+```php
+function getUserInfo($user)
+{
+    return "UID:".$user['uid']." UserName:".$user['username']." Age:".$user['age'];
+}
+for($i=0; $i<1000000;$i++) {
+    $user = array("uid"=>$i,"age" =>$i%100,"username"=>"User".$i);
+    getUserInfo($user);
+}
 ```
 
 我们分别在 PHP5.3、PHP 5.6 和 PHP 7 中运行这两段代码。
@@ -887,7 +886,7 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
     sys 0m0.012s
 ```
 
-在 PHP 5.3 中，数组版比对象版快了近30%。
+在 PHP 5.3 中，`数组版比对象版快了近30%`。
 
 ```
     [root@localhostphpperf]# time php56 object.php
@@ -932,50 +931,50 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
 
 无 setter版：
 
-```
-    classUser
+```php
+class User
+{
+    public $uid;
+    public $username;
+    public $age;
+    function getUserInfo()
     {
-        public $uid;
-        public $username;
-        public $age;
-        function getUserInfo()
-        {
-            return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
-        }
+        return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
     }
-    for($i=0; $i<1000000;$i++) {
-        $user = new User();
-        $user->uid= $i;
-        $user->age = $i%100;
-        $user->username="User".$i;
-        $user->getUserInfo();
-    }
+}
+for($i=0; $i<1000000;$i++) {
+    $user = new User();
+    $user->uid= $i;
+    $user->age = $i%100;
+    $user->username="User".$i;
+    $user->getUserInfo();
+}
 ```
 
 有 setter版：
 
-```
-    classUser
+```php
+class User
+{
+    public $uid;
+    private $username;
+    public $age;
+    function setUserName($name)
     {
-        public $uid;
-        private $username;
-        public $age;
-        function setUserName($name)
-        {
-            $this->username = $name;
-        }
-        function getUserInfo()
-        {
-            return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
-        }
+        $this->username = $name;
     }
-    for($i=0; $i<1000000;$i++) {
-        $user = new User();
-        $user->uid= $i;
-        $user->age = $i%100;
-        $user->setUserName("User".$i);
-        $user->getUserInfo();
+    function getUserInfo()
+    {
+        return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
     }
+}
+for($i=0; $i<1000000;$i++) {
+    $user = new User();
+    $user->uid= $i;
+    $user->age = $i%100;
+    $user->setUserName("User".$i);
+    $user->getUserInfo();
+}
 ```
 
 这里只增加了一个 setter。运行结果如下：
@@ -999,7 +998,7 @@ PHP 5.2 并没有合适的垃圾回收机制，导致内存使用越来越多。
     sys 0m0.004s
 ```
 
-从上面可以看到，增加了一个 setter，带来了近10%的效率损失。可见这个性能损失是相当大的，在 PHP 中，我们没有必要再来做 setter 和 getter了。需要引用的属性，直接使用即可。
+从上面可以看到，**`增加了一个 setter，带来了近10%的效率损失`**。可见这个性能损失是相当大的，在 PHP 中，我们没有必要再来做 setter 和 getter了。需要引用的属性，直接使用即可。
 
 ### 2.9、类属性该声明还是不声明
 
@@ -1007,21 +1006,21 @@ PHP 本身支持属性可以在使用时增加，也就是不声明属性，可�
 
 事先声明了属性的代码就是2.8节中，无 setter 的代码，不再重复。而无属性声明的代码如下：
 
-```
-    classUser
-    { 
-        function getUserInfo()
-        {
-            return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
-        }
+```php
+class User
+{ 
+    function getUserInfo()
+    {
+        return "UID:".$this->uid." UserName:".$this->username." Age:".$this->age;
     }
-    for($i=0; $i<1000000;$i++) {
-        $user = new User();
-        $user->uid= $i;
-        $user->age = $i%100;
-        $user->username="User".$i;
-        $user->getUserInfo();
-    }
+}
+for($i=0; $i<1000000;$i++) {
+    $user = new User();
+    $user->uid= $i;
+    $user->age = $i%100;
+    $user->username="User".$i;
+    $user->getUserInfo();
+}
 ```
 
 两段代码，运行结果如下：
@@ -1045,7 +1044,7 @@ PHP 本身支持属性可以在使用时增加，也就是不声明属性，可�
     sys 0m0.004s
 ```
 
-从上面的运行可以看到，无属性声明的代码慢了20%。可以推断出来的就是对于对象的属性，如果事先知道的话，我们还是事先声明的好，这一方面是效率问题，另一方面，也有助于提高代码的可读性呢。
+从上面的运行可以看到，**`无属性声明的代码慢了20%`**。可以推断出来的就是对于对象的属性，如果事先知道的话，我们还是**`事先声明的好`**，这一方面是效率问题，另一方面，也有助于提高代码的可读性呢。
 
 ### 2.10、图片操作 API 的效率差别
 
@@ -1053,38 +1052,38 @@ PHP 本身支持属性可以在使用时增加，也就是不声明属性，可�
 
 先上代码：
 
-```
-    function imagick_resize($filename, $outname)
+```php
+function imagick_resize($filename, $outname)
+{
+    $thumbnail = new Imagick($filename);
+    $thumbnail->resizeImage(200, 200, imagick::FILTER_LANCZOS, 1);
+    $thumbnail->writeImage($outname);
+    unset($thumbnail);
+}
+function imagick_scale($filename, $outname)
+{
+    $thumbnail = new Imagick($filename);
+    $thumbnail->scaleImage(200, 200);
+    $thumbnail->writeImage($outname);
+    unset($thumbnail);
+}
+function convert($func)
+{
+    $cmd= "find /var/data/ppt |grep jpg";
+    $start = microtime(true);
+    exec($cmd, $files);
+    $index = 0;
+    foreach($files as $key =>$filename)
     {
-        $thumbnail = new Imagick($filename);
-        $thumbnail->resizeImage(200, 200, imagick::FILTER_LANCZOS, 1);
-        $thumbnail->writeImage($outname);
-        unset($thumbnail);
+        $outname= " /tmp/$func"."_"."$key.jpg";
+        $func($filename, $outname);
+        $index++;
     }
-    function imagick_scale($filename, $outname)
-    {
-        $thumbnail = new Imagick($filename);
-        $thumbnail->scaleImage(200, 200);
-        $thumbnail->writeImage($outname);
-        unset($thumbnail);
-    }
-    function convert($func)
-    {
-        $cmd= "find /var/data/ppt |grep jpg";
-        $start = microtime(true);
-        exec($cmd, $files);
-        $index = 0;
-        foreach($files as $key =>$filename)
-        {
-            $outname= " /tmp/$func"."_"."$key.jpg";
-            $func($filename, $outname);
-            $index++;
-        }
-        $end = microtime(true);
-        echo "$func $index files: " . ($end- $start) . "s\n";
-    }
-    convert("imagick_resize");
-    convert("imagick_scale");
+    $end = microtime(true);
+    echo "$func $index files: " . ($end- $start) . "s\n";
+}
+convert("imagick_resize");
+convert("imagick_scale");
 ```
 
 在上面的代码中，我们分别使用了 resizeImage 和 scaleImage 来进行图片的压缩，压缩的是常见的 1-3M 之间的数码相机图片，得到如下运行结果：

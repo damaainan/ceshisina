@@ -113,12 +113,12 @@ PS: xhgui官方版本已经很久不更新，很多符号和单位都不适合�
 
 
 ```nginx
-    server {
-      listen 80;
-      server_name site.localhost;
-      root /Users/markstory/Sites/awesome-thing/app/webroot/;
-      fastcgi_param PHP_VALUE "auto_prepend_file=/Users/markstory/Sites/xhgui/external/header.php";
-    }
+server {
+  listen 80;
+  server_name site.localhost;
+  root /Users/markstory/Sites/awesome-thing/app/webroot/;
+  fastcgi_param PHP_VALUE "auto_prepend_file=/Users/markstory/Sites/xhgui/external/header.php";
+}
 ```
 
 实际示例，添加在项目配置文件中
@@ -174,25 +174,25 @@ server {
 **xhgui.conf**
 
 ```nginx
-    server {
-        listen       80;
-        server_name  blog110.it2048.cn;
-        root  /home/admin/xhgui-branch/webroot;
-    
-        location / {
-            index  index.php;
-            if (!-e $request_filename) {
-                rewrite . /index.php last;
-            }
-        }
-    
-        location ~ .php$ {
-            fastcgi_pass   127.0.0.1:9001;
-            fastcgi_index  index.php;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            include        fastcgi_params;
+server {
+    listen       80;
+    server_name  blog110.it2048.cn;
+    root  /home/admin/xhgui-branch/webroot;
+
+    location / {
+        index  index.php;
+        if (!-e $request_filename) {
+            rewrite . /index.php last;
         }
     }
+
+    location ~ .php$ {
+        fastcgi_pass   127.0.0.1:9001;
+        fastcgi_index  index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+}
 ```
 
 ---

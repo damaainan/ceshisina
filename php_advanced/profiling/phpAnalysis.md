@@ -46,58 +46,50 @@ phpAnalysis是一款轻量级非侵入式PHP应用性能分析器，适用于开
     git clone https://github.com/dreamans/phpAnalysis.git
     cd phpAnalysis
 ```
-1. 修改配置文件
+1. 修改配置文件  
+    文件位置：/home/www/phpAnalysis/config/database.php  
+    修改数据库链接信息  
+    数据库需要自己创建  
+    建表语句请见install.sql  
 
-    文件位置：/home/www/phpAnalysis/config/database.php
-    修改数据库链接信息
-    数据库需要自己创建
-    建表语句请见install.sql
-
-```
-    return [
-    
-        'connection' => [
-    
-            'host' => '127.0.0.1', // 数据库主机名
-    
-            'port' => 3306, // 数据库端口号
-    
-            'user' => 'root', // 用户名
-    
-            'pass' => 'root', // 密码
-    
-            'db' => 'phpAnalysis', // 数据库名
-    
-            'tb_prefix' => 'pa_',  // 表前缀
-        ],
-    ];
+```php
+return [
+    'connection' => [
+        'host' => '127.0.0.1', // 数据库主机名
+        'port' => 3306, // 数据库端口号
+        'user' => 'root', // 用户名
+        'pass' => 'root', // 密码
+        'db' => 'phpAnalysis', // 数据库名
+        'tb_prefix' => 'pa_',  // 表前缀
+    ],
+];
 ```
 1. 修改Web Server配置，以Nginx为例
 ```nginx
-    server {
-        listen       8000;
-        server_name  localhost;
-        root  /home/www/phpAnalysis/public;
-        index index.html;
-    
-        location ~ \.php$ {
-            fastcgi_pass   127.0.0.1:9000;
-            fastcgi_index  index.php;
-            fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            include        fastcgi_params;
-        }
+server {
+    listen       8000;
+    server_name  localhost;
+    root  /home/www/phpAnalysis/public;
+    index index.html;
+
+    location ~ \.php$ {
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include        fastcgi_params;
     }
+}
 ```
 1. 修改php.ini
-```
-    ; 告诉PHP程序在执行前首先调用此文件
-    auto_prepend_file = /home/www/phpAnalysis/agent/header.php
-    [tideways]
-    extension=tideways.so
-    ;不需要自动加载，在程序中控制就行
-    tideways.auto_prepend_library=0
-    ;频率设置为100，在程序调用时能改
-    tideways.sample_rate=100
+```ini
+; 告诉PHP程序在执行前首先调用此文件
+auto_prepend_file = /home/www/phpAnalysis/agent/header.php
+[tideways]
+extension=tideways.so
+;不需要自动加载，在程序中控制就行
+tideways.auto_prepend_library=0
+;频率设置为100，在程序调用时能改
+tideways.sample_rate=100
 ```
 1. 重启php-fpm进程
 

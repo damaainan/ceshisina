@@ -20,27 +20,27 @@ PHP 7 新增的生成器特性
 
 “In PHP 7, generator delegation allows you to yield values from another generator, **Traversable** object, or [array][5] by using the **yield from** keyword. The outer generator will then yield all values from the inner generator, object, or array until that is no longer valid, after which execution will continue in the outer generator.”。 
 
-生成器委托的形式为： _yield <expr>_ 。 _<expr>_ 的结果得是可遍历对象或数组。 
+生成器委托的形式为： `yield <expr>` 。 `<expr>` 的结果得是可遍历对象或数组。 
 
 ```php
-    <?php
-    declare(strict_types=1);
-    
-    $seh_seh_liām = function () {
-        $generator = function () {
-            yield from range(1, 3);
-    
-            foreach (range(4, 6) as $i) {
-                yield $i;
-            }
-        };
-    
-        foreach ($generator() as $value) {
-            echo "每天念 PHP 是最好的编程语言 6 遍...第 $value 遍...", PHP_EOL;
+<?php
+declare(strict_types=1);
+
+$seh_seh_liām = function () {
+    $generator = function () {
+        yield from range(1, 3);
+
+        foreach (range(4, 6) as $i) {
+            yield $i;
         }
     };
-    
-    $seh_seh_liām();
+
+    foreach ($generator() as $value) {
+        echo "每天念 PHP 是最好的编程语言 6 遍...第 $value 遍...", PHP_EOL;
+    }
+};
+
+$seh_seh_liām();
 ```
 
 ## 生成器返回表达式（Generator Return Expression）
@@ -50,20 +50,20 @@ PHP 7 新增的生成器特性
 举例如下：
 
 ```php
-    <?php
-    $traverser = (function () {
-      yield "foo";
-      yield "bar";
-      return "value";
-    })();
-    
-    $traverser->getReturn();  // Exception with message 'Cannot get return value of a generator that hasn't returned'
-    
-    foreach ($traverser as $value) {
-        echo "{$value}", PHP_EOL;
-    }
-    
-    $traverser->getReturn();  // "value"
+<?php
+$traverser = (function () {
+  yield "foo";
+  yield "bar";
+  return "value";
+})();
+
+$traverser->getReturn();  // Exception with message 'Cannot get return value of a generator that hasn't returned'
+
+foreach ($traverser as $value) {
+    echo "{$value}", PHP_EOL;
+}
+
+$traverser->getReturn();  // "value"
 ```
 
 ## 生成器与 Coroutine
@@ -71,47 +71,47 @@ PHP 7 新增的生成器特性
 来个直接点的例子。
 
 ```php
-    <?php
-    declare(strict_types=1);
-    
-    class Coroutine
+<?php
+declare(strict_types=1);
+
+class Coroutine
+{
+    public static function create(callable $callback) : Generator
     {
-        public static function create(callable $callback) : Generator
-        {
-            return (function () use ($callback) {
-                try {
-                    yield $callback;
-                } catch (Exception $e) {
-                    echo "OH.. an error, but don't care and continue...", PHP_EOL;
-                }
-           })();
-        }
-    
-        public static function run(array $cos)
-        {
-            $cnt = count($cos);
-            while ($cnt > 0) {
-                $loc = random_int(0, $cnt-1);  // 用 random 模拟调度策略。
-                $cos[$loc]->current()();
-                array_splice($cos, $loc, 1);
-                $cnt--;
+        return (function () use ($callback) {
+            try {
+                yield $callback;
+            } catch (Exception $e) {
+                echo "OH.. an error, but don't care and continue...", PHP_EOL;
             }
+       })();
+    }
+
+    public static function run(array $cos)
+    {
+        $cnt = count($cos);
+        while ($cnt > 0) {
+            $loc = random_int(0, $cnt-1);  // 用 random 模拟调度策略。
+            $cos[$loc]->current()();
+            array_splice($cos, $loc, 1);
+            $cnt--;
         }
     }
-    
-    $co = new Coroutine();
-    
-    $cos = [];
-    for ($i = 1; $i <= 10; $i++) {
-        $cos[] = $co::create(function () use ($i) { echo "Co.{$i}.", PHP_EOL; });
-    }
-    $co::run($cos);
-    
-    $cos = [];
-    for ($i = 1; $i <= 20; $i++) {
-        $cos[] = $co::create(function () use ($i) { echo "Co.{$i}.", PHP_EOL; });
-    }
-    $co::run($cos);
+}
+
+$co = new Coroutine();
+
+$cos = [];
+for ($i = 1; $i <= 10; $i++) {
+    $cos[] = $co::create(function () use ($i) { echo "Co.{$i}.", PHP_EOL; });
+}
+$co::run($cos);
+
+$cos = [];
+for ($i = 1; $i <= 20; $i++) {
+    $cos[] = $co::create(function () use ($i) { echo "Co.{$i}.", PHP_EOL; });
+}
+$co::run($cos);
 ```
 
 

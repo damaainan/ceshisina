@@ -1,20 +1,22 @@
 PHP SPL标准库中提供了一些函数用来处理如[自动加载][0]、迭代器处理等。
 
-spl_autoload_extensions()添加spl_autoload()可加载的文件扩展名  
-spl_autoload_register()注册函数到SPL __autoload函数栈中。
+`spl_autoload_extensions()`添加`spl_autoload()`可加载的文件扩展名  
+`spl_autoload_register()`注册函数到`SPL __autoload`函数栈中。
 ```php 
 /*test1.php*/  
 <?php  
 class Test1  
 {  
 }  
-  
+```
+```php
 /*test2.lib.php*/  
 <?php  
 class Test2  
 {  
 }  
-  
+```
+```php
 /*test.php*/  
 <?php  
 //设置可加载类的文件扩展名  
@@ -34,7 +36,8 @@ spl_autoload()它是__autoload()的默认实现，它会去include_path中加载
 class Test1  
 {  
 }  
-  
+```
+```php
 /*test.php*/  
 <?php  
 set_include_path(get_include_path().PATH_SEPARATOR.'libs/');  
@@ -52,7 +55,8 @@ class Test
         echo 'test1.php';  
     }  
 }  
-  
+```
+```php
 /*test2.lib.php*/  
 <?php  
 class Test  
@@ -62,7 +66,8 @@ class Test
         echo 'test2.lib.php';  
     }  
 }  
-  
+```
+```php
 /*test.php*/  
 <?php  
   

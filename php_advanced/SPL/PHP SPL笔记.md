@@ -73,39 +73,39 @@ wikipedia中说，"an iterator is an object which allows a programmer to travers
 通俗地说，Iterator能够使许多不同的数据结构，都能有统一的操作界面，比如一个数据库的结果集、同一个目录中的文件集、或者一个文本中每一行构成的集合。
 
 如果按照普通情况，遍历一个MySQL的结果集，程序需要这样写：
+```php
+// Fetch the "aggregate structure"
+$result = mysql_query("SELECT * FROM users");
 
-    // Fetch the "aggregate structure"
-    $result = mysql_query("SELECT * FROM users");
-    
-    // Iterate over the structure
-    while ( $row = mysql_fetch_array($result) ) {
-       // do stuff with the row here
-    }
-
+// Iterate over the structure
+while ( $row = mysql_fetch_array($result) ) {
+   // do stuff with the row here
+}
+```
 
 读出一个目录中的内容，需要这样写：
+```php
+// Fetch the "aggregate structure"
+$dh = opendir('/home/harryf/files');
 
-    // Fetch the "aggregate structure"
-    $dh = opendir('/home/harryf/files');
-    
-    // Iterate over the structure
-    while ( $file = readdir($dh) ) {
-       // do stuff with the file here
-    }
-
+// Iterate over the structure
+while ( $file = readdir($dh) ) {
+   // do stuff with the file here
+}
+```
 读出一个文本文件的内容，需要这样写：
+```php
+// Fetch the "aggregate structure"
+$fh = fopen("/home/hfuecks/files/results.txt", "r");
 
-    // Fetch the "aggregate structure"
-    $fh = fopen("/home/hfuecks/files/results.txt", "r");
-    
-    // Iterate over the structure
-    while (!feof($fh)) {
-    
-       $line = fgets($fh);
-       // do stuff with the line here
-    
-    }
+// Iterate over the structure
+while (!feof($fh)) {
 
+   $line = fgets($fh);
+   // do stuff with the line here
+
+}
+```
 
 上面三段代码，虽然处理的是不同的resource（资源），但是功能都是遍历结果集（loop over contents），因此Iterator的基本思想，就是将这三种不同的操作统一起来，用同样的命令界面，处理不同的资源。
 
@@ -143,73 +143,73 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     
 
 下面就是一个部署了Iterator界面的class示例：
+```php
+/**
+* An iterator for native PHP arrays, re-inventing the wheel
+*
+* Notice the "implements Iterator" - important!
+*/
+class ArrayReloaded implements Iterator {
 
-    /**
-    * An iterator for native PHP arrays, re-inventing the wheel
-    *
-    * Notice the "implements Iterator" - important!
-    */
-    class ArrayReloaded implements Iterator {
-    
-       /**
-       * A native PHP array to iterate over
-       */
-     private $array = array();
-    
-       /**
-       * A switch to keep track of the end of the array
-       */
-     private $valid = FALSE;
-    
-       /**
-       * Constructor
-       * @param array native PHP array to iterate over
-       */
-     function __construct($array) {
-       $this->array = $array;
-     }
-    
-       /**
-       * Return the array "pointer" to the first element
-       * PHP's reset() returns false if the array has no elements
-       */
-     function rewind(){
-       $this->valid = (FALSE !== reset($this->array));
-     }
-    
-       /**
-       * Return the current array element
-       */
-     function current(){
-       return current($this->array);
-     }
-    
-       /**
-       * Return the key of the current array element
-       */
-     function key(){
-       return key($this->array);
-     }
-    
-       /**
-       * Move forward by one
-       * PHP's next() returns false if there are no more elements
-       */
-     function next(){
-       $this->valid = (FALSE !== next($this->array));
-     }
-    
-       /**
-       * Is the current element valid?
-       */
-     function valid(){
-       return $this->valid;
-     }
-    }
+   /**
+   * A native PHP array to iterate over
+   */
+ private $array = array();
 
+   /**
+   * A switch to keep track of the end of the array
+   */
+ private $valid = FALSE;
+
+   /**
+   * Constructor
+   * @param array native PHP array to iterate over
+   */
+ function __construct($array) {
+   $this->array = $array;
+ }
+
+   /**
+   * Return the array "pointer" to the first element
+   * PHP's reset() returns false if the array has no elements
+   */
+ function rewind(){
+   $this->valid = (FALSE !== reset($this->array));
+ }
+
+   /**
+   * Return the current array element
+   */
+ function current(){
+   return current($this->array);
+ }
+
+   /**
+   * Return the key of the current array element
+   */
+ function key(){
+   return key($this->array);
+ }
+
+   /**
+   * Move forward by one
+   * PHP's next() returns false if there are no more elements
+   */
+ function next(){
+   $this->valid = (FALSE !== next($this->array));
+ }
+
+   /**
+   * Is the current element valid?
+   */
+ function valid(){
+   return $this->valid;
+ }
+}
+```
 
 使用方法如下：
-
+```php
     // Create iterator object
     $colors = new ArrayReloaded(array ('red','green','blue',));
     
@@ -217,18 +217,18 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     foreach ( $colors as $color ) {
      echo $color."<br>";
     }
-
+```
 
 你也可以在foreach循环中使用key()方法：
-
+```php
     // Display the keys as well
     foreach ( $colors as $key => $color ) {
      echo "$key: $color<br>";
     }
-
+```
 
 除了foreach循环外，也可以使用while循环，
-
+```php
     // Reset the iterator - foreach does this automatically
     $colors->rewind();
     
@@ -239,7 +239,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
        $colors->next();
     
     }
-
+```
 
 根据测试，while循环要稍快于foreach循环，因为运行时少了一层中间调用。
 
@@ -272,76 +272,76 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
 
 
 下面就是一个部署ArrayAccess界面的实例：
+```php
+/**
+* A class that can be used like an array
+*/
+class Article implements ArrayAccess {
 
-    /**
-    * A class that can be used like an array
-    */
-    class Article implements ArrayAccess {
-    
-     public $title;
-    
-     public $author;
-    
-     public $category;  
-    
-     function __construct($title,$author,$category) {
-       $this->title = $title;
-       $this->author = $author;
-       $this->category = $category;
-     }
-    
-     /**
-     * Defined by ArrayAccess interface
-     * Set a value given it's key e.g. $A['title'] = 'foo';
-     * @param mixed key (string or integer)
-     * @param mixed value
-     * @return void
-     */
-     function offsetSet($key, $value) {
-       if ( array_key_exists($key,get_object_vars($this)) ) {
-         $this->{$key} = $value;
-       }
-     }
-    
-     /**
-     * Defined by ArrayAccess interface
-     * Return a value given it's key e.g. echo $A['title'];
-     * @param mixed key (string or integer)
-     * @return mixed value
-     */
-     function offsetGet($key) {
-       if ( array_key_exists($key,get_object_vars($this)) ) {
-         return $this->{$key};
-       }
-     }
-    
-     /**
-     * Defined by ArrayAccess interface
-     * Unset a value by it's key e.g. unset($A['title']);
-     * @param mixed key (string or integer)
-     * @return void
-     */
-     function offsetUnset($key) {
-       if ( array_key_exists($key,get_object_vars($this)) ) {
-         unset($this->{$key});
-       }
-     }
-    
-     /**
-     * Defined by ArrayAccess interface
-     * Check value exists, given it's key e.g. isset($A['title'])
-     * @param mixed key (string or integer)
-     * @return boolean
-     */
-     function offsetExists($offset) {
-       return array_key_exists($offset,get_object_vars($this));
-     }
-    
-    }
+ public $title;
 
+ public $author;
+
+ public $category;  
+
+ function __construct($title,$author,$category) {
+   $this->title = $title;
+   $this->author = $author;
+   $this->category = $category;
+ }
+
+ /**
+ * Defined by ArrayAccess interface
+ * Set a value given it's key e.g. $A['title'] = 'foo';
+ * @param mixed key (string or integer)
+ * @param mixed value
+ * @return void
+ */
+ function offsetSet($key, $value) {
+   if ( array_key_exists($key,get_object_vars($this)) ) {
+     $this->{$key} = $value;
+   }
+ }
+
+ /**
+ * Defined by ArrayAccess interface
+ * Return a value given it's key e.g. echo $A['title'];
+ * @param mixed key (string or integer)
+ * @return mixed value
+ */
+ function offsetGet($key) {
+   if ( array_key_exists($key,get_object_vars($this)) ) {
+     return $this->{$key};
+   }
+ }
+
+ /**
+ * Defined by ArrayAccess interface
+ * Unset a value by it's key e.g. unset($A['title']);
+ * @param mixed key (string or integer)
+ * @return void
+ */
+ function offsetUnset($key) {
+   if ( array_key_exists($key,get_object_vars($this)) ) {
+     unset($this->{$key});
+   }
+ }
+
+ /**
+ * Defined by ArrayAccess interface
+ * Check value exists, given it's key e.g. isset($A['title'])
+ * @param mixed key (string or integer)
+ * @return boolean
+ */
+ function offsetExists($offset) {
+   return array_key_exists($offset,get_object_vars($this));
+ }
+
+}
+```
 
 使用方法如下：
-
+```php
     // Create the object
     $A = new Article('SPL Rocks','Joe Bloggs', 'PHP');
     
@@ -363,7 +363,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     echo 'Final State:<div>';
     print_r($A);
     echo '</div>';
-
+```
 
 运行结果如下：
 
@@ -387,13 +387,13 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
 可以看到，$A虽然是一个object，但是完全可以像array那样操作。
 
 你还可以在读取数据时，增加程序内部的逻辑：
-
+```php
     function offsetGet($key) {
        if ( array_key_exists($key,get_object_vars($this)) ) {
          return strtolower($this->{$key});
        }
      }
-
+```
 **5. IteratorAggregate界面**
 
 但是，虽然$A可以像数组那样操作，却无法使用foreach遍历，除非部署了前面提到的Iterator界面。
@@ -401,7 +401,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
 另一个解决方法是，有时会需要将数据和遍历部分分开，这时就可以部署IteratorAggregate界面。它规定了一个getIterator()方法，返回一个使用Iterator界面的object。
 
 还是以上一节的Article类为例：
-
+```php
     class Article implements ArrayAccess, IteratorAggregate {
     
     /**
@@ -412,10 +412,10 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
      function getIterator() {
        return new ArrayIterator($this);
      }
-
+```
 
 使用方法如下：
-
+```php
     $A = new Article('SPL Rocks','Joe Bloggs', 'PHP');
     
     // Loop (getIterator will be called automatically)
@@ -427,7 +427,7 @@ SPL规定，所有部署了Iterator界面的class，都可以用在foreach Loop�
     
     // Get the size of the iterator (see how many properties are left)
     echo "Object has ".sizeof($A->getIterator())." elements";
-
+```
 
 显示结果如下：
 
@@ -451,35 +451,33 @@ SeekableIterator界面也是Iterator界面的延伸，除了Iterator的5个方�
 下面是一个是实例：
 
 ```php
-    <?php
-    
-    class PartyMemberIterator implements SeekableIterator
+<?php
+
+class PartyMemberIterator implements SeekableIterator
+{
+    public function __construct(PartyMember $member)
     {
-        public function __construct(PartyMember $member)
-        {
-            // Store $member locally for iteration
-        }
-    
-        public function seek($index)
-        {
-            $this->rewind();
-            $position = 0;
-    
-            while ($position < $index && $this->valid()) {
-                $this->next();
-                $position++;
-            }
-    
-            if (!$this->valid()) {
-                throw new OutOfBoundsException('Invalid position');
-            }
-        }
-    
-        // Implement current(), key(), next(), rewind()
-        // and valid() to iterate over data in $member
+        // Store $member locally for iteration
     }
-    
-    ?>
+
+    public function seek($index)
+    {
+        $this->rewind();
+        $position = 0;
+
+        while ($position < $index && $this->valid()) {
+            $this->next();
+            $position++;
+        }
+
+        if (!$this->valid()) {
+            throw new OutOfBoundsException('Invalid position');
+        }
+    }
+
+    // Implement current(), key(), next(), rewind()
+    // and valid() to iterate over data in $member
+}
 ```
 
 **8. Countable界面**
@@ -495,13 +493,12 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
 查看所有的内置类，可以使用下面的代码：
 
 ```php
-    <?php
-    // a simple foreach() to traverse the SPL class names
-    foreach(spl_classes() as $key=>$value)
-            {
-            echo $key.' -> '.$value.'<br />';
-            }
-    ?>
+<?php
+// a simple foreach() to traverse the SPL class names
+foreach(spl_classes() as $key=>$value)
+{
+    echo $key.' -> '.$value.'<br />';
+}
 ```
 
 **10. DirectoryIterator类**
@@ -509,100 +506,95 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
 这个类用来查看一个目录中的所有文件和子目录：
 
 ```php
-    <?php
-    
-    try{
-      /*** class create new DirectoryIterator Object ***/
-        foreach ( new DirectoryIterator('./') as $Item )
-            {
-            echo $Item.'<br />';
-            }
-        }
-    /*** if an exception is thrown, catch it here ***/
-    catch(Exception $e){
-        echo 'No files Found!<br />';
+<?php
+
+try{
+  /*** class create new DirectoryIterator Object ***/
+    foreach ( new DirectoryIterator('./') as $Item )
+    {
+        echo $Item.'<br />';
     }
-    ?>
+}
+/*** if an exception is thrown, catch it here ***/
+catch(Exception $e){
+    echo 'No files Found!<br />';
+}
 ```
 查看文件的详细信息：
 
 ```php
-    <table>
-    <?php
-    
-    foreach(new DirectoryIterator('./' ) as $file )
-        {
-        if( $file->getFilename()  == 'foo.txt' )
-            {
-            echo '<tr><td>getFilename()</td><td> '; var_dump($file->getFilename()); echo '</td></tr>';
+<table>
+<?php
+
+foreach(new DirectoryIterator('./' ) as $file ){
+    if( $file->getFilename()  == 'foo.txt' ){
+        echo '<tr><td>getFilename()</td><td> '; var_dump($file->getFilename()); echo '</td></tr>';
         echo '<tr><td>getBasename()</td><td> '; var_dump($file->getBasename()); echo '</td></tr>';
-            echo '<tr><td>isDot()</td><td> '; var_dump($file->isDot()); echo '</td></tr>';
-            echo '<tr><td>__toString()</td><td> '; var_dump($file->__toString()); echo '</td></tr>';
-            echo '<tr><td>getPath()</td><td> '; var_dump($file->getPath()); echo '</td></tr>';
-            echo '<tr><td>getPathname()</td><td> '; var_dump($file->getPathname()); echo '</td></tr>';
-            echo '<tr><td>getPerms()</td><td> '; var_dump($file->getPerms()); echo '</td></tr>';
-            echo '<tr><td>getInode()</td><td> '; var_dump($file->getInode()); echo '</td></tr>';
-            echo '<tr><td>getSize()</td><td> '; var_dump($file->getSize()); echo '</td></tr>';
-            echo '<tr><td>getOwner()</td><td> '; var_dump($file->getOwner()); echo '</td></tr>';
-            echo '<tr><td>$file->getGroup()</td><td> '; var_dump($file->getGroup()); echo '</td></tr>';
-            echo '<tr><td>getATime()</td><td> '; var_dump($file->getATime()); echo '</td></tr>';
-            echo '<tr><td>getMTime()</td><td> '; var_dump($file->getMTime()); echo '</td></tr>';
-            echo '<tr><td>getCTime()</td><td> '; var_dump($file->getCTime()); echo '</td></tr>';
-            echo '<tr><td>getType()</td><td> '; var_dump($file->getType()); echo '</td></tr>';
-            echo '<tr><td>isWritable()</td><td> '; var_dump($file->isWritable()); echo '</td></tr>';
-            echo '<tr><td>isReadable()</td><td> '; var_dump($file->isReadable()); echo '</td></tr>';
-            echo '<tr><td>isExecutable(</td><td> '; var_dump($file->isExecutable()); echo '</td></tr>';
-            echo '<tr><td>isFile()</td><td> '; var_dump($file->isFile()); echo '</td></tr>';
-            echo '<tr><td>isDir()</td><td> '; var_dump($file->isDir()); echo '</td></tr>';
-            echo '<tr><td>isLink()</td><td> '; var_dump($file->isLink()); echo '</td></tr>';
-            echo '<tr><td>getFileInfo()</td><td> '; var_dump($file->getFileInfo()); echo '</td></tr>';
-            echo '<tr><td>getPathInfo()</td><td> '; var_dump($file->getPathInfo()); echo '</td></tr>';
-            echo '<tr><td>openFile()</td><td> '; var_dump($file->openFile()); echo '</td></tr>';
-            echo '<tr><td>setFileClass()</td><td> '; var_dump($file->setFileClass()); echo '</td></tr>';
-            echo '<tr><td>setInfoClass()</td><td> '; var_dump($file->setInfoClass()); echo '</td></tr>';
-            }
+        echo '<tr><td>isDot()</td><td> '; var_dump($file->isDot()); echo '</td></tr>';
+        echo '<tr><td>__toString()</td><td> '; var_dump($file->__toString()); echo '</td></tr>';
+        echo '<tr><td>getPath()</td><td> '; var_dump($file->getPath()); echo '</td></tr>';
+        echo '<tr><td>getPathname()</td><td> '; var_dump($file->getPathname()); echo '</td></tr>';
+        echo '<tr><td>getPerms()</td><td> '; var_dump($file->getPerms()); echo '</td></tr>';
+        echo '<tr><td>getInode()</td><td> '; var_dump($file->getInode()); echo '</td></tr>';
+        echo '<tr><td>getSize()</td><td> '; var_dump($file->getSize()); echo '</td></tr>';
+        echo '<tr><td>getOwner()</td><td> '; var_dump($file->getOwner()); echo '</td></tr>';
+        echo '<tr><td>$file->getGroup()</td><td> '; var_dump($file->getGroup()); echo '</td></tr>';
+        echo '<tr><td>getATime()</td><td> '; var_dump($file->getATime()); echo '</td></tr>';
+        echo '<tr><td>getMTime()</td><td> '; var_dump($file->getMTime()); echo '</td></tr>';
+        echo '<tr><td>getCTime()</td><td> '; var_dump($file->getCTime()); echo '</td></tr>';
+        echo '<tr><td>getType()</td><td> '; var_dump($file->getType()); echo '</td></tr>';
+        echo '<tr><td>isWritable()</td><td> '; var_dump($file->isWritable()); echo '</td></tr>';
+        echo '<tr><td>isReadable()</td><td> '; var_dump($file->isReadable()); echo '</td></tr>';
+        echo '<tr><td>isExecutable(</td><td> '; var_dump($file->isExecutable()); echo '</td></tr>';
+        echo '<tr><td>isFile()</td><td> '; var_dump($file->isFile()); echo '</td></tr>';
+        echo '<tr><td>isDir()</td><td> '; var_dump($file->isDir()); echo '</td></tr>';
+        echo '<tr><td>isLink()</td><td> '; var_dump($file->isLink()); echo '</td></tr>';
+        echo '<tr><td>getFileInfo()</td><td> '; var_dump($file->getFileInfo()); echo '</td></tr>';
+        echo '<tr><td>getPathInfo()</td><td> '; var_dump($file->getPathInfo()); echo '</td></tr>';
+        echo '<tr><td>openFile()</td><td> '; var_dump($file->openFile()); echo '</td></tr>';
+        echo '<tr><td>setFileClass()</td><td> '; var_dump($file->setFileClass()); echo '</td></tr>';
+        echo '<tr><td>setInfoClass()</td><td> '; var_dump($file->setInfoClass()); echo '</td></tr>';
     }
-    ?>
-    </table>
+}
+?>
+</table>
 ```
 
 除了foreach循环外，还可以使用while循环：
 
 ```php
-    <?php
-    /*** create a new iterator object ***/
-    $it = new DirectoryIterator('./');
-    
-    /*** loop directly over the object ***/
-    while($it->valid())
-        {
-        echo $it->key().' -- '.$it->current().'<br />';
-        /*** move to the next iteration ***/
-        $it->next();
-        }
-    ?>
+<?php
+/*** create a new iterator object ***/
+$it = new DirectoryIterator('./');
+
+/*** loop directly over the object ***/
+while($it->valid())
+{
+    echo $it->key().' -- '.$it->current().'<br />';
+    /*** move to the next iteration ***/
+    $it->next();
+}
 ```
 
 如果要过滤所有子目录，可以在valid()方法中过滤：
 
 ```php
-    <?php
-    /*** create a new iterator object ***/
-    $it = new DirectoryIterator('./');
-    
-    /*** loop directly over the object ***/
-    while($it->valid())
-            {
-            /*** check if value is a directory ***/
-            if($it->isDir())
-                    {
-                    /*** echo the key and current value ***/
-                    echo $it->key().' -- '.$it->current().'<br />';
-                    }
-            /*** move to the next iteration ***/
-            $it->next();
-            }
-    ?>
+<?php
+/*** create a new iterator object ***/
+$it = new DirectoryIterator('./');
+
+/*** loop directly over the object ***/
+while($it->valid())
+{
+    /*** check if value is a directory ***/
+    if($it->isDir())
+    {
+        /*** echo the key and current value ***/
+        echo $it->key().' -- '.$it->current().'<br />';
+    }
+    /*** move to the next iteration ***/
+    $it->next();
+}
 ```
 
 **11. ArrayObject类**
@@ -610,71 +602,56 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
 这个类可以将Array转化为object。
 
 ```php
-    <?php
-    
-    /*** a simple array ***/
-    $array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
-    
-    /*** create the array object ***/
-    $arrayObj = new ArrayObject($array);
-    
-    /*** iterate over the array ***/
-    for($iterator = $arrayObj->getIterator();
-       /*** check if valid ***/
-       $iterator->valid();
-       /*** move to the next array member ***/
-       $iterator->next())
-        {
+<?php
+
+/*** a simple array ***/
+$array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
+
+/*** create the array object ***/
+$arrayObj = new ArrayObject($array);
+
+/*** iterate over the array ***/
+for($iterator = $arrayObj->getIterator();
+   /*** check if valid ***/
+   $iterator->valid();
+   /*** move to the next array member ***/
+   $iterator->next())
+    {
         /*** output the key and current array value ***/
         echo $iterator->key() . ' => ' . $iterator->current() . '<br />';
-        }
-    ?>
+    }
 ```
 
 增加一个元素：
 
     $arrayObj->append('dingo');
-    
-    
 
 对元素排序：
 
     $arrayObj->natcasesort();
-    
-    
 
 显示元素的数量：
 
     echo $arrayObj->count();
-    
-    
 
 删除一个元素：
 
     $arrayObj->offsetUnset(5);
-    
-    
 
 某一个元素是否存在：
 
-     if ($arrayObj->offsetExists(3))
-        {
-           echo 'Offset Exists<br />';
-        }
-    
-    
+    if ($arrayObj->offsetExists(3))
+    {
+        echo 'Offset Exists<br />';
+    }
 
 更改某个位置的元素值：
 
      $arrayObj->offsetSet(5, "galah");
-    
-    
 
 显示某个位置的元素值：
 
     echo $arrayObj->offsetGet(4);
-    
-    
 
 **12. ArrayIterator类**这个类实际上是对ArrayObject类的补充，为后者提供遍历功能。
 
@@ -682,57 +659,51 @@ SPL除了定义一系列Interfaces以外，还提供一系列的内置类，它�
 
 
 ```php
-    <?php
-    /*** a simple array ***/
-    $array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
-    
-    try {
-        $object = new ArrayIterator($array);
-        foreach($object as $key=>$value)
-            {
-            echo $key.' => '.$value.'<br />';
-            }
-        }
-    catch (Exception $e)
-        {
-        echo $e->getMessage();
-        }
+<?php
+/*** a simple array ***/
+$array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
+
+try {
+    $object = new ArrayIterator($array);
+    foreach($object as $key=>$value)
+    {
+        echo $key.' => '.$value.'<br />';
+    }
+}catch (Exception $e){
+    echo $e->getMessage();
+}
 ```
 
 ArrayIterator类也支持offset类方法和count()方法：
 
 ```php
-    <ul>
-    <?php
-    /*** a simple array ***/
-    $array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
-    
-    try {
-        $object = new ArrayIterator($array);
-        /*** check for the existence of the offset 2 ***/
-        if($object->offSetExists(2))
-        {
+<ul>
+<?php
+/*** a simple array ***/
+$array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
+
+try {
+    $object = new ArrayIterator($array);
+    /*** check for the existence of the offset 2 ***/
+    if($object->offSetExists(2))
+    {
         /*** set the offset of 2 to a new value ***/
         $object->offSetSet(2, 'Goanna');
+    }
+   /*** unset the kiwi ***/
+   foreach($object as $key=>$value){
+        /*** check the value of the key ***/
+        if($object->offSetGet($key) === 'kiwi'){
+            /*** unset the current key ***/
+            $object->offSetUnset($key);
         }
-       /*** unset the kiwi ***/
-       foreach($object as $key=>$value)
-            {
-            /*** check the value of the key ***/
-            if($object->offSetGet($key) === 'kiwi')
-                {
-                /*** unset the current key ***/
-                $object->offSetUnset($key);
-                }
-            echo '<li>'.$key.' - '.$value.'</li>'."\n";
-            }
-        }
-    catch (Exception $e)
-        {
-        echo $e->getMessage();
-        }
-    ?>
-    </ul>
+        echo '<li>'.$key.' - '.$value.'</li>'."\n";
+    }
+}catch (Exception $e){
+    echo $e->getMessage();
+}
+?>
+</ul>
 ```
 
 **13. RecursiveArrayIterator类和RecursiveIteratorIterator类**
@@ -740,18 +711,17 @@ ArrayIterator类也支持offset类方法和count()方法：
 ArrayIterator类和ArrayObject类，只支持遍历一维数组。如果要遍历多维数组，必须先用RecursiveIteratorIterator生成一个Iterator，然后再对这个Iterator使用RecursiveIteratorIterator。
 
 ```php
-    <?php
-    $array = array(
-        array('name'=>'butch', 'sex'=>'m', 'breed'=>'boxer'),
-        array('name'=>'fido', 'sex'=>'m', 'breed'=>'doberman'),
-        array('name'=>'girly','sex'=>'f', 'breed'=>'poodle')
-    );
-    
-    foreach(new RecursiveIteratorIterator(new RecursiveArrayIterator($array)) as $key=>$value)
-        {
-        echo $key.' -- '.$value.'<br />';
-        }
-    ?>
+<?php
+$array = array(
+    array('name'=>'butch', 'sex'=>'m', 'breed'=>'boxer'),
+    array('name'=>'fido', 'sex'=>'m', 'breed'=>'doberman'),
+    array('name'=>'girly','sex'=>'f', 'breed'=>'poodle')
+);
+
+foreach(new RecursiveIteratorIterator(new RecursiveArrayIterator($array)) as $key=>$value)
+{
+    echo $key.' -- '.$value.'<br />';
+}
 ```
 
 **14. FilterIterator类**
@@ -761,72 +731,71 @@ FilterIterator类可以对元素进行过滤，只要在accept()方法中设置�
 示例如下：
 
 ```php
-    <?php
-    /*** a simple array ***/
-    $animals = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'NZ'=>'kiwi', 'kookaburra', 'platypus');
-    
-    class CullingIterator extends FilterIterator{
-    
+<?php
+/*** a simple array ***/
+$animals = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'NZ'=>'kiwi', 'kookaburra', 'platypus');
+
+class CullingIterator extends FilterIterator{
+
     /*** The filteriterator takes  a iterator as param: ***/
     public function __construct( Iterator $it ){
-      parent::__construct( $it );
+        parent::__construct( $it );
     }
-    
+
     /*** check if key is numeric ***/
     function accept(){
-      return is_numeric($this->key());
+        return is_numeric($this->key());
     }
-    
-    }/*** end of class ***/
-    $cull = new CullingIterator(new ArrayIterator($animals));
-    
-    foreach($cull as $key=>$value)
-        {
-        echo $key.' == '.$value.'<br />';
-        }
-    ?>
+
+}/*** end of class ***/
+$cull = new CullingIterator(new ArrayIterator($animals));
+
+foreach($cull as $key=>$value)
+{
+    echo $key.' == '.$value.'<br />';
+}
 ```
     
 下面是另一个返回质数的例子：
 
 ```php
-    <?php
-    
-    class PrimeFilter extends FilterIterator{
-    
-    /*** The filteriterator takes  a iterator as param: ***/
-    public function __construct(Iterator $it){
-      parent::__construct($it);
+<?php
+
+class PrimeFilter extends FilterIterator
+{
+
+/*** The filteriterator takes  a iterator as param: ***/
+    public function __construct(Iterator $it)
+    {
+        parent::__construct($it);
     }
-    
-    /*** check if current value is prime ***/
-    function accept(){
-    if($this->current() % 2 != 1)
-        {
-        return false;
+
+/*** check if current value is prime ***/
+    public function accept()
+    {
+        if ($this->current() % 2 != 1) {
+            return false;
         }
-    $d = 3;
-    $x = sqrt($this->current());
-    while ($this->current() % $d != 0 && $d < $x)
-        {
-        $d += 2;
+        $d = 3;
+        $x = sqrt($this->current());
+        while ($this->current() % $d != 0 && $d < $x) {
+            $d += 2;
         }
-     return (($this->current() % $d == 0 && $this->current() != $d) * 1) == 0 ? true : false;
+        return (($this->current() % $d == 0 && $this->current() != $d) * 1) == 0 ? true : false;
     }
-    
-    }/*** end of class ***/
-    
-    /*** an array of numbers ***/
-    $numbers = range(212345,212456);
-    
-    /*** create a new FilterIterator object ***/
-    $primes = new primeFilter(new ArrayIterator($numbers));
-    
-    foreach($primes as $value)
-        {
-        echo $value.' is prime.<br />';
-        }
-    ?>
+
+} /*** end of class ***/
+
+/*** an array of numbers ***/
+$numbers = range(212345, 212456);
+
+/*** create a new FilterIterator object ***/
+$primes = new primeFilter(new ArrayIterator($numbers));
+
+foreach ($primes as $value) {
+    echo $value . ' is prime.<br />';
+}
+
 ```
 
 **15. SimpleXMLIterator类**
@@ -836,10 +805,10 @@ FilterIterator类可以对元素进行过滤，只要在accept()方法中设置�
 示例如下：
 
 ```php
-    <?php
-    
-    /*** a simple xml tree ***/
-     $xmlstring = <<<XML
+<?php
+
+/*** a simple xml tree ***/
+$xmlstring = <<<XML
     <?xml version = "1.0" encoding="UTF-8" standalone="yes"?>
     <document>
       <animal>
@@ -907,104 +876,86 @@ FilterIterator类可以对元素进行过滤，只要在accept()方法中设置�
         </category>
       </animal>
     </document>
-    XML;
-    
-    /*** a new simpleXML iterator object ***/
-    try    {
-           /*** a new simple xml iterator ***/
-           $it = new SimpleXMLIterator($xmlstring);
-           /*** a new limitIterator object ***/
-           foreach(new RecursiveIteratorIterator($it,1) as $name => $data)
-              {
-              echo $name.' -- '.$data.'<br />';
-              }
-        }
-    catch(Exception $e)
-        {
-        echo $e->getMessage();
-        }
-    ?>
+XML;
+
+// a new simpleXML iterator object
+try {
+    /*** a new simple xml iterator ***/
+    $it = new SimpleXMLIterator($xmlstring);
+    /*** a new limitIterator object ***/
+    foreach (new RecursiveIteratorIterator($it, 1) as $name => $data) {
+        echo $name . ' -- ' . $data . '<br />';
+    }
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+
 ```
 new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的子元素。
 
 显示某一个特定的元素值，可以这样写：
 
 ```php
-    <?php
-    try {
-        /*** a new simpleXML iterator object ***/
-        $sxi =  new SimpleXMLIterator($xmlstring);
-    
-        foreach ( $sxi as $node )
-            {
-            foreach($node as $k=>$v)
-                {
-                echo $v->species.'<br />';
-                }
-            }
+<?php
+try {
+    /*** a new simpleXML iterator object ***/
+    $sxi = new SimpleXMLIterator($xmlstring);
+
+    foreach ($sxi as $node) {
+        foreach ($node as $k => $v) {
+            echo $v->species . '<br />';
         }
-    catch(Exception $e)
-        {
-        echo $e->getMessage();
-        }
-    ?>
+    }
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
 ```
 
 相对应的while循环写法为：
 
 ```php
-    <?php
+<?php
     
-    try {
+try {
     $sxe = simplexml_load_string($xmlstring, 'SimpleXMLIterator');
-    
-    for ($sxe->rewind(); $sxe->valid(); $sxe->next())
-        {
-        if($sxe->hasChildren())
-            {
-            foreach($sxe->getChildren() as $element=>$value)
-              {
-              echo $value->species.'<br />';
-              }
+
+    for ($sxe->rewind(); $sxe->valid(); $sxe->next()) {
+        if ($sxe->hasChildren()) {
+            foreach ($sxe->getChildren() as $element => $value) {
+                echo $value->species . '<br />';
             }
-         }
-       }
-    catch(Exception $e)
-       {
-       echo $e->getMessage();
-       }
-    ?>
+        }
+    }
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
 ```
 
 最方便的写法，还是使用xpath：
 
 ```php
-    <?php
-    try {
-        /*** a new simpleXML iterator object ***/
-        $sxi =  new SimpleXMLIterator($xmlstring);
-    
-        /*** set the xpath ***/
-        $foo = $sxi->xpath('animal/category/species');
-    
-        /*** iterate over the xpath ***/
-        foreach ($foo as $k=>$v)
-            {
-            echo $v.'<br />';
-            }
-        }
-    catch(Exception $e)
-        {
-        echo $e->getMessage();
-        }
-    ?>
+<?php
+try {
+    /*** a new simpleXML iterator object ***/
+    $sxi = new SimpleXMLIterator($xmlstring);
+
+    /*** set the xpath ***/
+    $foo = $sxi->xpath('animal/category/species');
+
+    /*** iterate over the xpath ***/
+    foreach ($foo as $k => $v) {
+        echo $v . '<br />';
+    }
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
 ```
 
 下面的例子，显示有namespace的情况：
 
 
 ```php
-    <?php
+<?php
     
     /*** a simple xml tree ***/
      $xmlstring = <<<XML
@@ -1112,7 +1063,6 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
         {
         echo $e->getMessage();
         }
-    ?>
 ```
 
 增加一个节点：
@@ -1202,27 +1152,23 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
 示例如下：
 
 ```php
-    <?php
-    /*** a simple array ***/
-    $array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
-    
-    try {
-        /*** create a new object ***/
-        $object = new CachingIterator(new ArrayIterator($array));
-        foreach($object as $value)
-            {
-            echo $value;
-            if($object->hasNext())
-                {
-                echo ',';
-                }
-            }
+<?php
+/*** a simple array ***/
+$array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
+
+try {
+    /*** create a new object ***/
+    $object = new CachingIterator(new ArrayIterator($array));
+    foreach ($object as $value) {
+        echo $value;
+        if ($object->hasNext()) {
+            echo ',';
         }
-    catch (Exception $e)
-        {
-        echo $e->getMessage();
-        }
-    ?>
+    }
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+
 ```
 
 **17. LimitIterator类**
@@ -1232,44 +1178,41 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
 示例如下：
 
 ```php
-    <?php
-    /*** the offset value ***/
-    $offset = 3;
-    
-    /*** the limit of records to show ***/
-    $limit = 2;
-    
-    $array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
-    
-    $it = new LimitIterator(new ArrayIterator($array), $offset, $limit);
-    
-    foreach($it as $k=>$v)
-        {
-        echo $it->getPosition().'<br />';
-        }
-    ?>
+<?php
+/*** the offset value ***/
+$offset = 3;
+
+/*** the limit of records to show ***/
+$limit = 2;
+
+$array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
+
+$it = new LimitIterator(new ArrayIterator($array), $offset, $limit);
+
+foreach ($it as $k => $v) {
+    echo $it->getPosition() . '<br />';
+}
+
 ```
 
 另一个例子是：
 
 ```php
-    <?php
-    
-    /*** a simple array ***/
-    $array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
-    
-    $it = new LimitIterator(new ArrayIterator($array));
-    
-    try
-        {
-        $it->seek(5);
-        echo $it->current();
-        }
-    catch(OutOfBoundsException $e)
-        {
-        echo $e->getMessage() . "<br />";
-        }
-    ?>
+<?php
+
+/*** a simple array ***/
+$array = array('koala', 'kangaroo', 'wombat', 'wallaby', 'emu', 'kiwi', 'kookaburra', 'platypus');
+
+$it = new LimitIterator(new ArrayIterator($array));
+
+try
+{
+    $it->seek(5);
+    echo $it->current();
+} catch (OutOfBoundsException $e) {
+    echo $e->getMessage() . "<br />";
+}
+
 ```
 
 **18. SplFileObject类**
@@ -1279,38 +1222,37 @@ new RecursiveIteratorIterator($it,1)表示显示所有包括父元素在内的�
 示例如下：
 
 ```php
-    <?php
-    
-    try{
-        // iterate directly over the object
-        foreach( new SplFileObject("/usr/local/apache/logs/access_log") as $line)
-        // and echo each line of the file
-        echo $line.'<br />';
+<?php
+
+try {
+    // iterate directly over the object
+    foreach (new SplFileObject("/usr/local/apache/logs/access_log") as $line)
+    // and echo each line of the file
+    {
+        echo $line . '<br />';
     }
-    catch (Exception $e)
-        {
-        echo $e->getMessage();
-        }
-    ?>
+
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+
 ```
 
 返回文本文件的第三行，可以这样写：
 
 ```php
-    <?php
-    
-    try{
-        $file = new SplFileObject("/usr/local/apache/logs/access_log");
-    
-        $file->seek(3);
-    
-        echo $file->current();
-            }
-    catch (Exception $e)
-        {
-        echo $e->getMessage();
-        }
-    ?>
+<?php
+
+try {
+    $file = new SplFileObject("/usr/local/apache/logs/access_log");
+
+    $file->seek(3);
+
+    echo $file->current();
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+
 ```
 
 [参考文献]

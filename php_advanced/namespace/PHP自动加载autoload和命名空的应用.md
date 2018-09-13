@@ -11,30 +11,32 @@
 
 PHP的自动加载就是我们加载实例化类的时候，不需要手动去写require来导入这个class.php文件，程序自动帮我们加载导入进来。配合命名空间规范，我们可以在复杂系统中很轻松的处理不同类的加载和调用问题。
 
-#### 1. 自动加载的原理以及__autoload的使用
+#### 1. 自动加载的原理以及`__autoload`的使用
 
-自动加载的原理，就是在我们实例化一个 class 的时候，PHP如果找不到这个类，就会去自动调用本文件中的 __autoload($class_name) 方法，我们new的这个class_name 就成为这个方法的参数。所以我们就可以在这个方法中根据我们需要new class_name的各种判断和划分就去require对应的路径类文件，从而实现自动加载。 
+自动加载的原理，就是在我们实例化一个 class 的时候，PHP如果找不到这个类，就会去自动调用本文件中的 `__autoload($class_name)` 方法，我们new的这个class_name 就成为这个方法的参数。所以我们就可以在这个方法中根据我们需要new class_name的各种判断和划分就去require对应的路径类文件，从而实现自动加载。 
 
 我们先来看下 `__autoload()` 的自动调用，举个栗子： 
 
 index.php
-
-    <?php 
-    $db = new Db();
-
+```php
+<?php 
+$db = new Db();
+```
 如果我们不手动导入Db类，程序可能会报错，说找不到这个类：
 
     Fatal error: Uncaught Error: Class 'DB' not found in D:\web\helloweba\demo\2017\autoload\index.php:2 Stack trace: #0 {main} thrown in D:\web\helloweba\demo\2017\autoload\index.php on line 2
 
 那么，我们现在加入 `__autoload()` 这个方法再看看： 
 
-    $db = new DB();
-    function __autoload($className) {
-        echo $className;
-        exit();
-    }
+```php
+$db = new DB();
+function __autoload($className) {
+    echo $className;
+    exit();
+}
+```
 
-根据上面自动加载机制的描述，会输出：Db， 也就是我们需要new 的类的类名。所以，这个时候我们就可以在 __autoload() 方法里，根据需要去加载类库文件了。 
+根据上面自动加载机制的描述，会输出：Db， 也就是我们需要new 的类的类名。所以，这个时候我们就可以在 `__autoload()` 方法里，根据需要去加载类库文件了。 
 
 #### 2. spl_autoload_register自动加载
 
@@ -42,26 +44,30 @@ index.php
 
 先看下它如何使用，在index.php中加入以下代码。
 
-    <?php 
-    spl_autoload_register(function($className){
-        if (is_file('./Lib/' . $className . '.php')) {
-            require './Lib/' . $className . '.php';
-        }
-    });
-    
-    $db = new Db();
-    $db::test();
+```php
+<?php 
+spl_autoload_register(function($className){
+    if (is_file('./Lib/' . $className . '.php')) {
+        require './Lib/' . $className . '.php';
+    }
+});
+
+$db = new Db();
+$db::test();
+```
 
 在`Lib\Db.php`文件中加入以下代码：
 
-    <?php 
-    class Db
+```php
+<?php 
+class Db
+{
+    public static function test()
     {
-        public static function test()
-        {
-            echo 'Test';
-        }
+        echo 'Test';
     }
+}
+```
 
 运行index.php后，当调用 `new Db()` 时， `spl_autoload_register` 会自动去lib/目录下查找对应的Db.php文件，成功后并且能够执行 $db::test(); 。同样如果在Lib\目录下有多个php类文件，都可以在index.php中直接调用，而不需要使用 require 多个文件。 
 
@@ -89,84 +95,92 @@ index.php
 
 Db.php
 
-    <?php 
-    namespace Lib;
-    
-    class Db
+```php
+<?php 
+namespace Lib;
+
+class Db
+{
+    public function __construct()
     {
-        public function __construct()
-        {
-            //echo 'Hello Db';
-        }
-    
-        public static function test()
-        {
-            echo 'Test';
-        }
+        //echo 'Hello Db';
     }
+
+    public static function test()
+    {
+        echo 'Test';
+    }
+}
+```
 
 Say.php
 
-    <?php
-    namespace Lib;
-    
-    class Say 
+```php
+<?php
+namespace Lib;
+
+class Say 
+{
+    public function __construct()
     {
-        public function __construct()
-        {
-            //echo 'Hello';
-        }
-    
-        public function hello()
-        {
-            echo 'say hello';
-        }
+        //echo 'Hello';
     }
+
+    public function hello()
+    {
+        echo 'say hello';
+    }
+}
+```
 
 以上两个普通的类文件，添加了命名空间： namespace Lib; 表示该类文件属于Lib\目录名称下的，当然你可以随便取个不一样的名字来表示你的项目名称。 
 
 现在我们来看autoload.php：
 
-    <?php 
-    spl_autoload_register(function ($class) {
-    
-        $prefix = 'Lib\\';
-    
-        $base_dir = __DIR__ . '/Lib/';
-    
-        // does the class use the namespace prefix?
-        $len = strlen($prefix);
-        if (strncmp($prefix, $class, $len) !== 0) {
-            // no, move to the next registered autoloader
-            return;
-        }
-    
-        $relative_class = substr($class, $len);
-    
-        // 兼容Linux文件找。Windows 下（/ 和 \）是通用的
-        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-    
-        if (file_exists($file)) {
-            require $file;
-        }
-    });
+```php
+<?php 
+spl_autoload_register(function ($class) {
+
+    $prefix = 'Lib\\';
+
+    $base_dir = __DIR__ . '/Lib/';
+
+    // does the class use the namespace prefix?
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        // no, move to the next registered autoloader
+        return;
+    }
+
+    $relative_class = substr($class, $len);
+
+    // 兼容Linux文件找。Windows 下（/ 和 \）是通用的
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+```
 
 以上代码使用函数 `spl_autoload_register()` 首先判断是否使用了命名空间，然后验证要调用的类文件是否存在，如果存在就 require 类文件。 
 
 好了，现在我们在首页index.php这样调用:
 
-    <?php 
-    
-    use Lib\Db;
-    use Lib\Say;
-    
-    require './autoload.php';
-    
-    $db = new Db();
-    $db::test();
-    
-    $say = new Say;
-    $say->hello();
+```php
+<?php 
+
+use Lib\Db;
+use Lib\Say;
+
+require './autoload.php';
+
+$db = new Db();
+$db::test();
+
+$say = new Say;
+$say->hello();
+```
 
 我们只需使用一个require将autoload.php加载进来，使用 `use` 关键字将类文件路径变成绝对路径了，当然你也可以在调用类的时候把路径都写上，如： new Lib\Db(); ，但是涉及到多个类互相调用的时候就会很棘手，所以我们还是在文件开头就使用 `use` 把路径处理好。 
 

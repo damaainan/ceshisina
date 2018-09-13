@@ -53,10 +53,10 @@ predator数据库。代码示例如下：
 
 6. 进入目录后使用php install.php 来安装 composer 来管理系统所需要的扩展。代码示例如下：
 
-   ```bash
-   cd __PATH__/
-   php install.php
-   ```
+```bash
+cd __PATH__/
+php install.php
+```
 
 7. 对Web服务器进行配置。
 
@@ -69,18 +69,18 @@ predator数据库。代码示例如下：
 建议使用Rewrite重写规则来进行配置，Apache服务器可以进行如下配置:
 
 1. 允许Apache使用rewrite模块对 URL 进行重写，Apache 2.4 配置示例如下:
-    ```apache
-    <Directory __PATH__/>
-        Options Indexes FollowSymLinks
-        AllowOverride FileInfo
-        Require all granted
-    </Directory>
-    ```
+```apache
+<Directory __PATH__/>
+    Options Indexes FollowSymLinks
+    AllowOverride FileInfo
+    Require all granted
+</Directory>
+```
 2. 加载mod_rewrite模块:
 
-    ```apache
-    LoadModule rewrite_module libexec/apache2/mod_rewrite.so
-    ```
+```apache
+LoadModule rewrite_module libexec/apache2/mod_rewrite.so
+```
 
 3. 利用项目自带的 `.htaccess`文件对项目进行重写.
 

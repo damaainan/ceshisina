@@ -10,10 +10,10 @@ Profiler工作方式类似于函数追踪，是在脚本程序运行时自动将
 
 [php.ini]
 
-    xdebug.profiler_enable = 1
-    
-    xdebug.profiler_enable_trigger = 1
-    
+```ini
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 1
+```
 
 #### 3、下载 webgrind
 
@@ -69,6 +69,6 @@ Count - 被此父函数调用时，执行的次数
 [2]: https://github.com/jokkedk/webgrind
 [3]: http://localhost/webgrind
 [4]: http://localhost/XXX/index.php/PriceApply/getPrice?XDEBUG_PROFILE
-[5]: http://images2015.cnblogs.com/blog/896608/201612/896608-20161229162124211-1604410264.png
-[6]: http://images2015.cnblogs.com/blog/896608/201612/896608-20161229164224992-1029720322.png
-[7]: http://images2015.cnblogs.com/blog/896608/201612/896608-20161229164352773-348726502.png
+[5]: ../img/1604410264.png
+[6]: ../img/1029720322.png
+[7]: ../img/348726502.png

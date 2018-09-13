@@ -255,10 +255,10 @@ class Subject implements SplSubject
   
 class Observer1 implements SplObserver  
 {  
-public function update(SplSubject $subject)  
-{  
-echo "逻辑1代码".PHP_EOL;  
-}  
+    public function update(SplSubject $subject)  
+    {  
+        echo "逻辑1代码".PHP_EOL;  
+    }  
 }  
   
 class Observer2 implements SplObserver  

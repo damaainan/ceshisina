@@ -29,37 +29,37 @@ ReflectionException | 错误类
 我们可以通过反射API类：Reflection 和 ReflectionClass 提供的静态方法 export 来获取类的相关信息， export 可以提供类的几乎所有的信息，包括属性和方法的访问控制状态、每个方法需要的参数以及每个方法在脚本文档中的位置。 这两个工具类， export 静态方法输出结果是一致的，只是使用方式不同。
 
 首先，构建一个简单的类
+```php
+<?php
 
-    <?php
-    
-    class Student {
-        public    $name;
-        protected $age;
-        private   $sex;
-    
-        public function __construct($name, $age, $sex)
-        {
-            $this->setName($name);
-            $this->setAge($age);
-            $this->setSex($sex);
-        }
-    
-        public function setName($name)
-        {
-            $this->name = $name;
-        }
-    
-        protected function setAge($age)
-        {
-            $this->age = $age;
-        }
-    
-        private function setSex($sex)
-        {
-            $this->sex = $sex;
-        }
+class Student {
+    public    $name;
+    protected $age;
+    private   $sex;
+
+    public function __construct($name, $age, $sex)
+    {
+        $this->setName($name);
+        $this->setAge($age);
+        $this->setSex($sex);
     }
-    
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    protected function setAge($age)
+    {
+        $this->age = $age;
+    }
+
+    private function setSex($sex)
+    {
+        $this->sex = $sex;
+    }
+}
+```
 
 ## 2.1 使用 ReflectionClass::export() 获取类信息
 
@@ -224,36 +224,36 @@ ReflectionClass类提供了非常多的工具方法，官方手册给的列表�
 前面我们了解的 ReflectionClass 工具类，知道此类提供了很多的工具方法用于获取类的信息。例如，我们可以获取到 Student 类的类型，是否可以实例化
 
 工具函数
-
-    function classData(ReflectionClass $class) {
-        $details = '';
-        $name = $class->getName();          // 返回要检查的类名
-        if ($class->isUserDefined()) {      // 检查类是否由用户定义
-            $details .= "$name is user defined" . PHP_EOL;
-        }
-        if ($class->isInternal()) {         // 检查类是否由扩展或核心在内部定义
-            $details .= "$name is built-in" . PHP_EOL;
-        }
-        if ($class->isInterface()) {        // 检查类是否是一个接口
-            $details .= "$name is interface" . PHP_EOL;
-        }
-        if ($class->isAbstract()) {         // 检查类是否是抽象类
-            $details .= "$name is an abstract class" . PHP_EOL;
-        }
-        if ($class->isFinal()) {            // 检查类是否声明为 final
-            $details .= "$name is a final class" . PHP_EOL;
-        }
-        if ($class->isInstantiable()) {     // 检查类是否可实例化
-            $details .= "$name can be instantiated" . PHP_EOL;
-        } else {
-            $details .= "$name can not be instantiated" . PHP_EOL;
-        }
-        return $details;
+```php
+function classData(ReflectionClass $class) {
+    $details = '';
+    $name = $class->getName();          // 返回要检查的类名
+    if ($class->isUserDefined()) {      // 检查类是否由用户定义
+        $details .= "$name is user defined" . PHP_EOL;
     }
-    
-    $prodClass = new ReflectionClass('Student');
-    print classData($prodClass);
-    
+    if ($class->isInternal()) {         // 检查类是否由扩展或核心在内部定义
+        $details .= "$name is built-in" . PHP_EOL;
+    }
+    if ($class->isInterface()) {        // 检查类是否是一个接口
+        $details .= "$name is interface" . PHP_EOL;
+    }
+    if ($class->isAbstract()) {         // 检查类是否是抽象类
+        $details .= "$name is an abstract class" . PHP_EOL;
+    }
+    if ($class->isFinal()) {            // 检查类是否声明为 final
+        $details .= "$name is a final class" . PHP_EOL;
+    }
+    if ($class->isInstantiable()) {     // 检查类是否可实例化
+        $details .= "$name can be instantiated" . PHP_EOL;
+    } else {
+        $details .= "$name can not be instantiated" . PHP_EOL;
+    }
+    return $details;
+}
+
+$prodClass = new ReflectionClass('Student');
+print classData($prodClass);
+```
 
 打印结果
 
@@ -262,19 +262,19 @@ ReflectionClass类提供了非常多的工具方法，官方手册给的列表�
     
 
 除了获取类的相关信息，还可以获取 ReflectionClass 对象提供自定义类所在的文件名及文件中类的起始和终止行等相关源代码信息。
+```php
+function getClassSource(ReflectionClass $class) {
+    $path  = $class->getFileName();  // 获取类文件的绝对路径
+    $lines = @file($path);           // 获得由文件中所有行组成的数组
+    $from  = $class->getStartLine(); // 提供类的起始行
+    $to    = $class->getEndLine();   // 提供类的终止行
+    $len   = $to - $from + 1;
+    return implode(array_slice($lines, $from - 1, $len));
+}
 
-    function getClassSource(ReflectionClass $class) {
-        $path  = $class->getFileName();  // 获取类文件的绝对路径
-        $lines = @file($path);           // 获得由文件中所有行组成的数组
-        $from  = $class->getStartLine(); // 提供类的起始行
-        $to    = $class->getEndLine();   // 提供类的终止行
-        $len   = $to - $from + 1;
-        return implode(array_slice($lines, $from - 1, $len));
-    }
-    
-    $prodClass = new ReflectionClass('Student');
-    var_dump(getClassSource($prodClass));
-    
+$prodClass = new ReflectionClass('Student');
+var_dump(getClassSource($prodClass));
+```
 
 打印结果
 
@@ -346,11 +346,11 @@ ReflectionMethod 对象的工具方法：
 ## 4.1 ReflectionClass::getMethods()
 
 我们可以通过 ReflectionClass::getMethods() 获得 ReflectionMethod 对象的数组。
-
-    $prodClass = new ReflectionClass('Student');
-    $methods = $prodClass->getMethods();
-    var_dump($methods);
-    
+```php
+$prodClass = new ReflectionClass('Student');
+$methods = $prodClass->getMethods();
+var_dump($methods);
+```
 
 打印结果
 
@@ -378,10 +378,10 @@ ReflectionMethod 对象的工具方法：
 ## 4.2 ReflectionMethod
 
 直接使用 ReflectionMethod 类获取类方法有关信息
-
-    $method = new ReflectionMethod('Student', 'setName');
-    var_dump($method);
-    
+```php
+$method = new ReflectionMethod('Student', 'setName');
+var_dump($method);
+```
 
 打印结果
 
@@ -436,11 +436,11 @@ ReflectionParameter 对象的工具方法：
 ## 5.1 ReflectionMethod::getParameters()
 
 同获取方法，此方法会返回一个数组，包含方法每个参数的 ReflectionParameter 对象
-
-    $method = new ReflectionMethod('Student', 'setName');
-    $params = $method->getParameters();
-    var_dump($params);
-    
+```php
+$method = new ReflectionMethod('Student', 'setName');
+$params = $method->getParameters();
+var_dump($params);
+```
 
 打印结果
 
@@ -474,10 +474,10 @@ ReflectionParameter 对象的工具方法：
  $parameter ：这个参数可以传递两种，第一种为参数名（无$符号），第二种为参数索引。注意：无论是参数名还是索引，该参数都必须存在，否则会报错。 
 
 下面举例：
-
-    $params = new ReflectionParameter(array('Student', 'setName'), 1);
-    var_dump($params);
-    
+```php
+$params = new ReflectionParameter(array('Student', 'setName'), 1);
+var_dump($params);
+```
 
 打印结果
 
@@ -486,11 +486,11 @@ ReflectionParameter 对象的工具方法：
     
 
 我们再定义一个函数测试一下
-
-    function foo($a, $b, $c) { }
-    $reflect = new ReflectionParameter('foo', 'c');
-    var_dump($reflect);
-    
+```php
+function foo($a, $b, $c) { }
+$reflect = new ReflectionParameter('foo', 'c');
+var_dump($reflect);
+```
 
 打印结果
 
