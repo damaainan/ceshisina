@@ -7,32 +7,32 @@
 Zend/zend_operators.h:
 
 ```c
-    static inline char * zend_memnstr(char *haystack, char *needle, int needle_len, char *end)
-    {
-         //字符首指针
-         char *p = haystack;
-         //最后一个字符
-         char ne = needle[needle_len-1]; 
-         //减小查询范围，判断needle_len应该小于end还算比较巧妙哦
-         end -= needle_len;
-         while (p <= end) {
-            //在数组的前n个字节中搜索字符 memchr(p, *needle, (end-p+1)) 
-       
-            if ((p = (char *)memchr(p, *needle, (end-p+1))) && ne == p[needle_len-1]) {
-                //如果找到首字节并且最后一个字节相同
-                if (!memcmp(needle, p, needle_len-1)) {
-                    //对比找到啦那么返回首指针
-                    return p;
-                }
+static inline char * zend_memnstr(char *haystack, char *needle, int needle_len, char *end)
+{
+     //字符首指针
+     char *p = haystack;
+     //最后一个字符
+     char ne = needle[needle_len-1]; 
+     //减小查询范围，判断needle_len应该小于end还算比较巧妙哦
+     end -= needle_len;
+     while (p <= end) {
+        //在数组的前n个字节中搜索字符 memchr(p, *needle, (end-p+1)) 
+   
+        if ((p = (char *)memchr(p, *needle, (end-p+1))) && ne == p[needle_len-1]) {
+            //如果找到首字节并且最后一个字节相同
+            if (!memcmp(needle, p, needle_len-1)) {
+                //对比找到啦那么返回首指针
+                return p;
             }
-            if (p == NULL) {
-                return NULL;
-            }
-            p++;
         }
-    
-        return NULL;
+        if (p == NULL) {
+            return NULL;
+        }
+        p++;
     }
+
+    return NULL;
+}
 ```
 
 [PHP][9]函数strpos、explode都用到了此函数，具体代码可以查看：ext/standard/string.c

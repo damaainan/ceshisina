@@ -11,23 +11,23 @@ PHP底层HashTable的实现有两个非常重要的结构分别是:HashTable和B
 HashTable的底层实现代码如下:
 
 ```c
-    typedef struct _hashtable{
-        uint nTableSize;         // hash Bucket的大小，最小为8
-        uint nTableMask;         //nTableSize - 1, 索引取值的优化
-        uint nNumofElements      // bucket 里面存的总数 
-        ulong nNextFreeElement   //下一个数字索引的位置
-        Bucket *pInternalPointer  //当前遍历的指针(foreach比较快的原因)
-        Bucket *pListHead         //整个hashtable的头指针
-        Bucket *pListTail         //整个hashTable的尾指针
-        Bucket **argBuckets       // Buceket 数组，用来存储数据
-        doctor_func_t pDestructor //删除元素时的回调函数，用于资源的释放
-        zend_bool persistent      //Bucket的内存分配方式，true使用系统的分配函数，false 使用php的内存分配函数
-        unsigned char nApplyCount //标记当前hash bucket 被递归的次数
-        zend_bool bApplyProtection 
-    #if ZEND_DEBUG
-        int inconsistent           
-    #endif 
-    }HashTable
+typedef struct _hashtable{
+    uint nTableSize;         // hash Bucket的大小，最小为8
+    uint nTableMask;         //nTableSize - 1, 索引取值的优化
+    uint nNumofElements      // bucket 里面存的总数 
+    ulong nNextFreeElement   //下一个数字索引的位置
+    Bucket *pInternalPointer  //当前遍历的指针(foreach比较快的原因)
+    Bucket *pListHead         //整个hashtable的头指针
+    Bucket *pListTail         //整个hashTable的尾指针
+    Bucket **argBuckets       // Buceket 数组，用来存储数据
+    doctor_func_t pDestructor //删除元素时的回调函数，用于资源的释放
+    zend_bool persistent      //Bucket的内存分配方式，true使用系统的分配函数，false 使用php的内存分配函数
+    unsigned char nApplyCount //标记当前hash bucket 被递归的次数
+    zend_bool bApplyProtection 
+#if ZEND_DEBUG
+    int inconsistent           
+#endif 
+}HashTable
 ```
 
 建议不太了解hash数据结构的同学先简单了解一下hash结构。  
@@ -35,38 +35,38 @@ HashTable的底层实现代码如下:
 代码如下：
 
 ```c
-     ZEND_API int _zend_hash_init(HashTable *ht, uint nSize, hash_func_t pHashFunction, dtor_func_t pDestructor, zend_bool persistent ZEND_FILE_LINE_DC)
-    {
-        uint i = 3;
-        //...
-        if (nSize >= 0x80000000) {
-            /* prevent overflow */
-            ht->nTableSize = 0x80000000;
-        } else {
-            while ((1U << i) < nSize) {
-                i++;
-            }
-            ht->nTableSize = 1 << i;
+ ZEND_API int _zend_hash_init(HashTable *ht, uint nSize, hash_func_t pHashFunction, dtor_func_t pDestructor, zend_bool persistent ZEND_FILE_LINE_DC)
+{
+    uint i = 3;
+    //...
+    if (nSize >= 0x80000000) {
+        /* prevent overflow */
+        ht->nTableSize = 0x80000000;
+    } else {
+        while ((1U << i) < nSize) {
+            i++;
         }
-        // ...
-        ht->nTableMask = ht->nTableSize - 1;
-    
-        /* Uses ecalloc() so that Bucket* == NULL */
-        if (persistent) {
-            tmp = (Bucket **) calloc(ht->nTableSize, sizeof(Bucket *));
-            if (!tmp) {
-                return FAILURE;
-            }
-            ht->arBuckets = tmp;
-        } else {
-            tmp = (Bucket **) ecalloc_rel(ht->nTableSize, sizeof(Bucket *));
-            if (tmp) {
-                ht->arBuckets = tmp;
-            }
-        }
-    
-        return SUCCESS;
+        ht->nTableSize = 1 << i;
     }
+    // ...
+    ht->nTableMask = ht->nTableSize - 1;
+
+    /* Uses ecalloc() so that Bucket* == NULL */
+    if (persistent) {
+        tmp = (Bucket **) calloc(ht->nTableSize, sizeof(Bucket *));
+        if (!tmp) {
+            return FAILURE;
+        }
+        ht->arBuckets = tmp;
+    } else {
+        tmp = (Bucket **) ecalloc_rel(ht->nTableSize, sizeof(Bucket *));
+        if (tmp) {
+            ht->arBuckets = tmp;
+        }
+    }
+
+    return SUCCESS;
+}
 ```
 
 最开始判断需要初始化的hashtable大小是不是超过了系统能使用的最大大小。下面是对tablesize大小的一个处理。将用户自定义的大小改成需要的大小。例如:如果用户定义的hashtable大小是6，那初始化时，就会将6变成8，如果用户定义的大小为11，那初始化后的Hashtable的大小为16.  
@@ -75,17 +75,17 @@ HashTable的底层实现代码如下:
 再谈一下 bucket的结构
 
 ```c
-    typedef struct bucket{
-        ulong h;       //对key索引以后的值，数字key不做kash
-        uint nKeyLength; //key的长度
-        void *pData;     
-        void *pDataPtr;   //指针数据，指向真实数据
-        struct bucket * pListNext; //整个hash表的下个元素
-        struct bucket *pListLast;   //整个hash表的上个元素
-        struct bucket *pNext;       //本bucket里面，下一个元素
-        struct bucket *pLast;       //本bucket里面的上一个元素
-        char arKey[1];
-    }Bucket
+typedef struct bucket{
+    ulong h;       //对key索引以后的值，数字key不做kash
+    uint nKeyLength; //key的长度
+    void *pData;     
+    void *pDataPtr;   //指针数据，指向真实数据
+    struct bucket * pListNext; //整个hash表的下个元素
+    struct bucket *pListLast;   //整个hash表的上个元素
+    struct bucket *pNext;       //本bucket里面，下一个元素
+    struct bucket *pLast;       //本bucket里面的上一个元素
+    char arKey[1];
+}Bucket
 ```
 
 这里用一张网络上的很火的图来说明(图原地址没找到，没有做来源说明):

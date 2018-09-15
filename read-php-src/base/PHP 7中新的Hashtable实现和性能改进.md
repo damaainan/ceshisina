@@ -8,10 +8,10 @@
 
 我使用下面的代码来测试内存的使用情况：
 
-```
-    $startMemory = memory_get_usage();  
-    $array = range(1, 100000);  
-    echo memory_get_usage() - $startMemory, " bytes\n";
+```php
+$startMemory = memory_get_usage();  
+$array = range(1, 100000);  
+echo memory_get_usage() - $startMemory, " bytes\n";
 ```
 
 这段代码测试了创建一个含有100000个不同整数的数组所消耗的内存空间大小。
@@ -62,27 +62,27 @@ Hashtable的概念实际上非常简单：字符串的键先会被传递给一�
 
 在介绍新的Hashtable之前，我想先介绍一下新的zval结构，特别是它跟老的zval结构的差别。新的zval结构的定义如下：
 
-```
-    struct _zval_struct {  
-        zend_value value;  
-        union {  
-            struct {  
-                ZEND_ENDIAN_LOHI_4(  
-                    zend_uchar type,  
-                    zend_uchar type_flags,  
-                    zend_uchar const_flags,  
-                    zend_uchar reserved
-                    )  
-            } v;  
-            uint32_t type_info;  
-        } u1;  
-        union {  
-            uint32_t var_flags;  
-            uint32_t next;       /* hash collision chain */  
-            uint32_t cache_slot; /* literal cache slot */  
-            uint32_t lineno;     /* line number (for ast nodes) */  
-        } u2;  
-    };
+```c
+struct _zval_struct {  
+    zend_value value;  
+    union {  
+        struct {  
+            ZEND_ENDIAN_LOHI_4(  
+                zend_uchar type,  
+                zend_uchar type_flags,  
+                zend_uchar const_flags,  
+                zend_uchar reserved
+                )  
+        } v;  
+        uint32_t type_info;  
+    } u1;  
+    union {  
+        uint32_t var_flags;  
+        uint32_t next;       /* hash collision chain */  
+        uint32_t cache_slot; /* literal cache slot */  
+        uint32_t lineno;     /* line number (for ast nodes) */  
+    } u2;  
+};
 ```
 
 你可以完全不用注意这个结构的定义中的ZEND_ENDIAN_LOHI_4这个宏，它仅仅只是用于表示拥有不同的字节序的机器中的可预测的内存布局情况。
@@ -106,12 +106,12 @@ zval结构有三个部分：第一部分是value。zend_value联合体有8个字
 
 我们已经了解了充足的预备知识了，现在终于可以开始介绍PHP 7中的新的Hashtable的实现了。我们先看一下bucket结构体：
 
-```
-    typedef struct _Bucket {  
-        zend_ulong        h;  
-        zend_string      *key;  
-        zval              val;  
-    } Bucket;
+```c
+typedef struct _Bucket {  
+    zend_ulong        h;  
+    zend_string      *key;  
+    zval              val;  
+} Bucket;
 ```
 
 bucket是Hashtable中的一个条目。它含有很多我们需要的东西：一个hash值——h，一个字符串键——key，以及一个zval值——val。整数键会保存在字段h中（整数键的hash值和整数键是一样的），在这种情况下key字段的值将是NULL。
@@ -120,27 +120,27 @@ bucket是Hashtable中的一个条目。它含有很多我们需要的东西：�
 
 Hashtable的结构为：
 
-```
-    typedef struct _HashTable {  
-        uint32_t          nTableSize;  
-        uint32_t          nTableMask;  
-        uint32_t          nNumUsed;  
-        uint32_t          nNumOfElements;  
-        zend_long         nNextFreeElement;  
-        Bucket           *arData;  
-        uint32_t         *arHash;  
-        dtor_func_t       pDestructor;  
-        uint32_t          nInternalPointer;  
-        union {  
-            struct {  
-                ZEND_ENDIAN_LOHI_3(  
-                    zend_uchar    flags,  
-                    zend_uchar    nApplyCount,  
-                    uint16_t      reserve)  
-            } v;  
-            uint32_t flags;  
-        } u;  
-    } HashTable;
+```c
+typedef struct _HashTable {  
+    uint32_t          nTableSize;  
+    uint32_t          nTableMask;  
+    uint32_t          nNumUsed;  
+    uint32_t          nNumOfElements;  
+    zend_long         nNextFreeElement;  
+    Bucket           *arData;  
+    uint32_t         *arHash;  
+    dtor_func_t       pDestructor;  
+    uint32_t          nInternalPointer;  
+    union {  
+        struct {  
+            ZEND_ENDIAN_LOHI_3(  
+                zend_uchar    flags,  
+                zend_uchar    nApplyCount,  
+                uint16_t      reserve)  
+        } v;  
+        uint32_t flags;  
+    } u;  
+} HashTable;
 ```
 
 arData数组保存了所有的buckets（也就是数组的元素），这个数组被分配的内存大小为2的幂次方，它被保存在nTableSize这个字段（最小值为8）。数组中实际保存的元素的个数被保存在nNumOfElements这个字段。注意这个数组直接包含Bucket结构。老的Hashtable的实现是使用一个指针数组来保存分开分配的buckets，这意味着需要更多的分配和释放操作（alloc/frees），需要为冗余信息及额外的指针分配内存。
@@ -155,16 +155,16 @@ arData数组以插入的顺序保存元素。所以第一个数组元素会保�
 
 以下面的代码为例：
 
-```
-    $array = [  
-        'foo' => 0,  
-        'bar' => 1,  
-        0     => 2,  
-        'xyz' => 3,  
-        2     => 4  
-    ];  
-    unset($array[0]);  
-    unset($array['xyz']);
+```php
+$array = [  
+    'foo' => 0,  
+    'bar' => 1,  
+    0     => 2,  
+    'xyz' => 3,  
+    2     => 4  
+];  
+unset($array[0]);  
+unset($array['xyz']);
 ```
 
 Hashtable结构体以及arData数组的情况如下：
@@ -186,13 +186,13 @@ arData的前5个元素已被使用，但是第二个（key为0）和第三个（
 
 新的Hashtable保持数组顺序的方式比起PHP 5.x中的双向链表有不少优势。其中一个很明显的优势就是新的方式中每个bucket只需要保存两个指针，这两个指针的开销为8/16字节。在新的方式下对一个数组的遍历变成下面这个样子：
 
-```
-    uint32_t i;  
-    for (i = 0; i < ht->nNumUsed; ++i) {  
-        Bucket *b = &ht->arData[i];  
-        if (Z_ISUNDEF(b->val)) continue;  
-        // do stuff with bucket  
-    }
+```c
+uint32_t i;  
+for (i = 0; i < ht->nNumUsed; ++i) {  
+    Bucket *b = &ht->arData[i];  
+    if (Z_ISUNDEF(b->val)) continue;  
+    // do stuff with bucket  
+}
 ```
 
 这相对于是对内存的线性扫描，比起遍历一个链表来说有更高的缓存效用（cache-efficient）（对链表的遍历是遍历一系列相对随机的内存地址，相对于线性的缓存地址遍历链表的缓存的局部性效用就不存在了）。
@@ -211,17 +211,17 @@ hash函数（DJBX33A用于字符串的键，DJBX33A是PHP用到的一种hash算�
 
 用代码表示整个查找过程就是下面这个样子：
 
-```
-    zend_ulong h = zend_string_hash_val(key);  
-    uint32_t idx = ht->arHash[h & ht->nTableMask];  
-    while ( idx != INVALID_IDX ) {  
-        Bucket *b = &ht->arData[idx];  
-        if (b->h == h && zend_string_equals(b->key,key)){  
-            return b;  
-        }  
-        idx = Z_NEXT(b->val);  
+```c
+zend_ulong h = zend_string_hash_val(key);  
+uint32_t idx = ht->arHash[h & ht->nTableMask];  
+while ( idx != INVALID_IDX ) {  
+    Bucket *b = &ht->arData[idx];  
+    if (b->h == h && zend_string_equals(b->key,key)){  
+        return b;  
     }  
-    return NULL;
+    idx = Z_NEXT(b->val);  
+}  
+return NULL;
 ```
 
 我们现在使用的是单向链表，不再需要”prev”指针了。prev指针主要用于删除元素，因为当你删除某个元素的时候，需要调整“prev”元素的”next”指针（就是调整要删除的元素的前一个元素的next指针的指向，只有通过这个prev指针才能找到前一个元素）。不过如果删除发生在键上，通过遍历冲突处理链表，你实际上已经知道它的前一个元素了。
@@ -271,10 +271,10 @@ PHP中的所有数组都使用了Hashtable。不过在通常情况下，对于�
 
 另外一种需要考虑的情况是，如果数组中所保存元素的值并非都不同，这又会有什么不同？简单起见，我们考察下数组中所有元素的值都相同的情况。所以将第一个示例中的函数range替换为array_fill：
 
-```
-    $startMemory = memory_get_usage();  
-    $array = array_fill(0, 100000, 42);  
-    echo memory_get_usage() - $startMemory, " bytes\n";
+```php
+$startMemory = memory_get_usage();  
+$array = array_fill(0, 100000, 42);  
+echo memory_get_usage() - $startMemory, " bytes\n";
 ```
 
 最终运行的结果为：

@@ -6,34 +6,33 @@
 先来做个测试：
 
 ```php
-    <?php  
-        echo memory_get_usage() , '<br>';  
-        $start = memory_get_usage();  
-        $a = Array();  
-        for ($i=0; $i<1000; $i++) {  
-          $a[$i] = $i + $i;  
-        }  
-        $end =  memory_get_usage();  
-        echo memory_get_usage() , '<br>';  
-        echo 'argv:', ($end - $start)/1000 ,'bytes' , '<br>';  
+<?php  
+echo memory_get_usage() , '<br>';  
+$start = memory_get_usage();  
+$a = Array();  
+for ($i=0; $i<1000; $i++) {  
+  $a[$i] = $i + $i;  
+}  
+$end =  memory_get_usage();  
+echo memory_get_usage() , '<br>';  
+echo 'argv:', ($end - $start)/1000 ,'bytes' , '<br>';  
 ```
 
 所得结果：
 
-        353352
-        437848
-        argv:84.416bytes
-    
+    353352
+    437848
+    argv:84.416bytes
 
 1000个元素的整数数组耗费内存(437848 - 353352)字节，约合82KB，也就是说每个元素所占内存84字节。在C语言中，一个int占位是4字节，整体相差了20倍。  
 但是网上又说`memery_get_usage()`返回的结果不全是数组占用，还包括PHP本身的一些结构，因此，换种方式，采用PHP内置函数生成数组试试：
 
 ```php
-    <?php  
-        $start = memory_get_usage();  
-        $a = array_fill(0, 10000, 1);  
-        $end = memory_get_usage(); //10k elements array;  
-        echo 'argv:', ($end - $start )/10000,'byte' , '<br>';  
+<?php  
+$start = memory_get_usage();  
+$a = array_fill(0, 10000, 1);  
+$end = memory_get_usage(); //10k elements array;  
+echo 'argv:', ($end - $start )/10000,'byte' , '<br>';  
 ```
 
 输出为：
@@ -45,30 +44,30 @@
 究其原因，还得从PHP的底层实现说起。PHP是一种弱类型的语言，不分int，double，string之类的，统一一个'$'就能解决所有问题。PHP底层由C语言实现，`每个变量`都对应一个`zval结构`，其详细定义为：
 
 ```c
-    typedef struct _zval_struct zval;  
-    struct _zval_struct {  
-        /* Variable information */  
-        zvalue_value value;     /* The value 1 12字节(32位机是12，64位机需要8+4+4=16) */  
-        zend_uint refcount__gc; /* The number of references to this value (for GC) 4字节 */  
-        zend_uchar type;        /* The active type 1字节*/  
-        zend_uchar is_ref__gc;  /* Whether this value is a reference (&) 1字节*/  
-    }; 
+typedef struct _zval_struct zval;  
+struct _zval_struct {  
+    /* Variable information */  
+    zvalue_value value;     /* The value 1 12字节(32位机是12，64位机需要8+4+4=16) */  
+    zend_uint refcount__gc; /* The number of references to this value (for GC) 4字节 */  
+    zend_uchar type;        /* The active type 1字节*/  
+    zend_uchar is_ref__gc;  /* Whether this value is a reference (&) 1字节*/  
+}; 
 ```
 
 
 PHP使用`union结构`来存储`变量的值`，`zval`中`zvalue_value`类型的value变量即为一个union，定义如下：
 
 ```c
-    typedef union _zvalue_value {  
-        long lval;                  /* long value */  
-        double dval;                /* double value */  
-        struct {                    /* string value */  
-            char *val;  
-            int len;  
-        } str;   
-        HashTable *ht;              /* hash table value */  
-        zend_object_value obj;      /*object value */  
-    } zvalue_value;  
+typedef union _zvalue_value {  
+    long lval;                  /* long value */  
+    double dval;                /* double value */  
+    struct {                    /* string value */  
+        char *val;  
+        int len;  
+    } str;   
+    HashTable *ht;              /* hash table value */  
+    zend_object_value obj;      /*object value */  
+} zvalue_value;  
 ```
 
 
@@ -78,37 +77,37 @@ zval的大小即为8 + 4 + 1 + 1 = 14字节。
 HashTable定义给出：
 
 ```c
-    typedef struct _hashtable {  
-         uint nTableSize; //表长度，并非元素个数  
-         uint nTableMask;//表的掩码，始终等于nTableSize-1  
-         uint nNumOfElements;//存储的元素个数  
-         ulong nNextFreeElement;//指向下一个空的元素位置  
-         Bucket *pInternalPointer;//foreach循环时，用来记录当前遍历到的元素位置  
-         Bucket *pListHead;  
-         Bucket *pListTail;  
-         Bucket **arBuckets;//存储的元素数组  
-         dtor_func_t pDestructor;//析构函数  
-         zend_bool persistent;//是否持久保存。从这可以发现，PHP数组是可以实现持久保存在内存中的，而无需每次请求都重新加载。  
-         unsigned char nApplyCount;  
-         zend_bool bApplyProtection;  
-    } HashTable; 
+typedef struct _hashtable {  
+     uint nTableSize; //表长度，并非元素个数  
+     uint nTableMask;//表的掩码，始终等于nTableSize-1  
+     uint nNumOfElements;//存储的元素个数  
+     ulong nNextFreeElement;//指向下一个空的元素位置  
+     Bucket *pInternalPointer;//foreach循环时，用来记录当前遍历到的元素位置  
+     Bucket *pListHead;  
+     Bucket *pListTail;  
+     Bucket **arBuckets;//存储的元素数组  
+     dtor_func_t pDestructor;//析构函数  
+     zend_bool persistent;//是否持久保存。从这可以发现，PHP数组是可以实现持久保存在内存中的，而无需每次请求都重新加载。  
+     unsigned char nApplyCount;  
+     zend_bool bApplyProtection;  
+} HashTable; 
 ```
 
 
 除了几个记录table大小，所含元素数量的属性变量外，Bucket被多次使用到，Bucket是如何定义的：
 
 ```c
-    typedef struct bucket {  
-         ulong h; //数组索引  
-         uint nKeyLength; //字符串索引的长度  
-         void *pData; //实际数据的存储地址  
-         void *pDataPtr; //引入的数据存储地址  
-         struct bucket *pListNext;  
-         struct bucket *pListLast;  
-         struct bucket *pNext; //双向链表的下一个元素的地址  
-         struct bucket *pLast;//双向链表的下一个元素地址  
-         char arKey[1]; /* Must be last element */  
-    } Bucket; 
+typedef struct bucket {  
+     ulong h; //数组索引  
+     uint nKeyLength; //字符串索引的长度  
+     void *pData; //实际数据的存储地址  
+     void *pDataPtr; //引入的数据存储地址  
+     struct bucket *pListNext;  
+     struct bucket *pListLast;  
+     struct bucket *pNext; //双向链表的下一个元素的地址  
+     struct bucket *pLast;//双向链表的下一个元素地址  
+     char arKey[1]; /* Must be last element */  
+} Bucket; 
 ```
 
 

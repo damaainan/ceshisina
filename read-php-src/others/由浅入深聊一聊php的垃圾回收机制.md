@@ -47,8 +47,8 @@
 
 ```php
 <?php
-    $name = "咖啡色的羊驼";
-    xdebug_debug_zval('name');
+$name = "咖啡色的羊驼";
+xdebug_debug_zval('name');
 ```
  
 会得到：
@@ -61,9 +61,9 @@ name:(refcount=1, is_ref=0),string '咖啡色的羊驼' (length=18)
 
 ```php
 <?php
-    $name = "咖啡色的羊驼";
-    $temp_name = $name;
-    xdebug_debug_zval('name');
+$name = "咖啡色的羊驼";
+$temp_name = $name;
+xdebug_debug_zval('name');
 ```
  
 会得到：
@@ -78,9 +78,9 @@ name:(refcount=2, is_ref=0),string '咖啡色的羊驼' (length=18)
 
 ```php
 <?php
-    $name = "咖啡色的羊驼";
-    $temp_name = &$name;
-    xdebug_debug_zval('name');
+$name = "咖啡色的羊驼";
+$temp_name = &$name;
+xdebug_debug_zval('name');
 ```
  
 会得到：
@@ -95,8 +95,8 @@ name:(refcount=2, is_ref=1),string '咖啡色的羊驼' (length=18)
 
 ```php
 <?php
-    $name = ['a'=>'咖啡色', 'b'=>'的羊驼'];
-    xdebug_debug_zval('name');
+$name = ['a'=>'咖啡色', 'b'=>'的羊驼'];
+xdebug_debug_zval('name');
 ```
  
 会得到：
@@ -115,11 +115,11 @@ array (size=2)
 
 ```php
 <?php
-    $name = "咖啡色的羊驼";
-    $temp_name = $name;
-    xdebug_debug_zval('name');
-    unset($temp_name);
-    xdebug_debug_zval('name');
+$name = "咖啡色的羊驼";
+$temp_name = $name;
+xdebug_debug_zval('name');
+unset($temp_name);
+xdebug_debug_zval('name');
 ```
  
 会得到：
@@ -141,12 +141,12 @@ refcount计数减1，说明unset并非一定会释放内存，当有两个变量
 
 ```php
 <?php
-    //获取内存方法，加上true返回实际内存，不加则返回表现内存
-    var_dump(memory_get_usage());
-    $name = "咖啡色的羊驼";
-    var_dump(memory_get_usage());
-    unset($name);
-    var_dump(memory_get_usage());
+//获取内存方法，加上true返回实际内存，不加则返回表现内存
+var_dump(memory_get_usage());
+$name = "咖啡色的羊驼";
+var_dump(memory_get_usage());
+unset($name);
+var_dump(memory_get_usage());
 ```
  
 会得到：
@@ -174,19 +174,19 @@ $name = "咖啡色的羊驼";
 ```php
 <?php
 
-    var_dump(memory_get_usage());
-    for($i=0;$i<100;$i++)
-    {
-        $a = "test".$i;
-        $$a = "hello";    
-	}
-	var_dump(memory_get_usage());
-	for($i=0;$i<100;$i++)
-	{
-	    $a = "test".$i;
- 		unset($$a);    
-    }
-    var_dump(memory_get_usage());
+var_dump(memory_get_usage());
+for($i=0;$i<100;$i++)
+{
+    $a = "test".$i;
+    $$a = "hello";    
+}
+var_dump(memory_get_usage());
+for($i=0;$i<100;$i++)
+{
+    $a = "test".$i;
+		unset($$a);    
+}
+var_dump(memory_get_usage());
 ```
  
 会得到：
@@ -221,8 +221,8 @@ php的内存释放小设计
 
 ```php
 <?php
-    $name = "咖啡色的羊驼";
-    // todo other things
+$name = "咖啡色的羊驼";
+// todo other things
 ```
  
 当定义 name的时候，处理完字符串准备做其他事情的时候，对于我们来说name就是可以回收的垃圾了，然而对于引擎来说，$name还是实打实存在的refcount也还是1，所以就不是垃圾，不能回收。当调用unset的时候，也并不一定引擎会认为它是一个垃圾而进行回收，主要还是看refcount是不是真的变为0了。
@@ -235,9 +235,9 @@ php的内存释放小设计
 
 ```php
 <?php
-    $a = ['one'];
-    $a[] = &$a;
-    xdebug_debug_zval('a');
+$a = ['one'];
+$a[] = &$a;
+xdebug_debug_zval('a');
 ```
  
 得到：
@@ -259,9 +259,9 @@ array (size=2)
 
 ```php
 <?php
-    $a = ['one'];
-    $a[] = &$a;
-    unset($a);
+$a = ['one'];
+$a[] = &$a;
+unset($a);
 ```
  
 ![][1]
@@ -304,9 +304,9 @@ are you ok?
 
 ```php
 <?php
-    $a = ['one']; --- zval_a（将$a对应的zval，命名为zval_a）
-    $a[] = &$a; --- step1
-    unset($a);  --- step2
+$a = ['one']; // zval_a（将$a对应的zval，命名为zval_a）
+$a[] = &$a; // step1
+unset($a);  // step2
 ```
  
 为进行unset之前(step1)，进行算法计算，对这个数组中的所有元素（索引0和索引1）的zval的refcount进行减1操作，由于索引1对应的就是zval_a，所以这个时候zval_a的refcount应该变成了1，这样说明zval_a不是一个垃圾不进行回收。

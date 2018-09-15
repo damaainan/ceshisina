@@ -16,59 +16,59 @@
 如果提供了四个参数，number 将保留decimals个长度的小数部分, 小数点被替换为dec_point，千位分隔符替换为thousands_sep
 
 ## PHP_FUNCTION(number_format)
-```
-    // number
-    // 你要格式化的数字
-    // num_decimal_places
-    // 要保留的小数位数
-    // dec_separator
-    // 指定小数点显示的字符
-    // thousands_separator
-    // 指定千位分隔符显示的字符
-    /* {{{ proto string number_format(float number [, int num_decimal_places [, string dec_separator, string thousands_separator]])
-       Formats a number with grouped thousands */
-    PHP_FUNCTION(number_format)
-    {
-        // 期望number_format的第一个参数num是double类型的，在词法阶段已经对字面量常量做了转换
-        double num;
-        zend_long dec = 0;
-        char *thousand_sep = NULL, *dec_point = NULL;
-        char thousand_sep_chr = ',', dec_point_chr = '.';
-        size_t thousand_sep_len = 0, dec_point_len = 0;
-        // 解析参数
-        ZEND_PARSE_PARAMETERS_START(1, 4)
-            Z_PARAM_DOUBLE(num)// 拿到double类型的num
-            Z_PARAM_OPTIONAL
-            Z_PARAM_LONG(dec)
-            Z_PARAM_STRING_EX(dec_point, dec_point_len, 1, 0)
-            Z_PARAM_STRING_EX(thousand_sep, thousand_sep_len, 1, 0)
-        ZEND_PARSE_PARAMETERS_END();
-        switch(ZEND_NUM_ARGS()) {
-        case 1:
-            RETURN_STR(_php_math_number_format(num, 0, dec_point_chr, thousand_sep_chr));
-            break;
-        case 2:
-            RETURN_STR(_php_math_number_format(num, (int)dec, dec_point_chr, thousand_sep_chr));
-            break;
-        case 4:
-            if (dec_point == NULL) {
-                dec_point = &dec_point_chr;
-                dec_point_len = 1;
-            }
-            if (thousand_sep == NULL) {
-                thousand_sep = &thousand_sep_chr;
-                thousand_sep_len = 1;
-            }
-            // _php_math_number_format_ex
-            // 真正处理的函数，在本文件第1107行
-            RETVAL_STR(_php_math_number_format_ex(num, (int)dec,
-                    dec_point, dec_point_len, thousand_sep, thousand_sep_len));
-            break;
-        default:
-            WRONG_PARAM_COUNT;
+```c
+// number
+// 你要格式化的数字
+// num_decimal_places
+// 要保留的小数位数
+// dec_separator
+// 指定小数点显示的字符
+// thousands_separator
+// 指定千位分隔符显示的字符
+/* {{{ proto string number_format(float number [, int num_decimal_places [, string dec_separator, string thousands_separator]])
+   Formats a number with grouped thousands */
+PHP_FUNCTION(number_format)
+{
+    // 期望number_format的第一个参数num是double类型的，在词法阶段已经对字面量常量做了转换
+    double num;
+    zend_long dec = 0;
+    char *thousand_sep = NULL, *dec_point = NULL;
+    char thousand_sep_chr = ',', dec_point_chr = '.';
+    size_t thousand_sep_len = 0, dec_point_len = 0;
+    // 解析参数
+    ZEND_PARSE_PARAMETERS_START(1, 4)
+        Z_PARAM_DOUBLE(num)// 拿到double类型的num
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(dec)
+        Z_PARAM_STRING_EX(dec_point, dec_point_len, 1, 0)
+        Z_PARAM_STRING_EX(thousand_sep, thousand_sep_len, 1, 0)
+    ZEND_PARSE_PARAMETERS_END();
+    switch(ZEND_NUM_ARGS()) {
+    case 1:
+        RETURN_STR(_php_math_number_format(num, 0, dec_point_chr, thousand_sep_chr));
+        break;
+    case 2:
+        RETURN_STR(_php_math_number_format(num, (int)dec, dec_point_chr, thousand_sep_chr));
+        break;
+    case 4:
+        if (dec_point == NULL) {
+            dec_point = &dec_point_chr;
+            dec_point_len = 1;
         }
+        if (thousand_sep == NULL) {
+            thousand_sep = &thousand_sep_chr;
+            thousand_sep_len = 1;
+        }
+        // _php_math_number_format_ex
+        // 真正处理的函数，在本文件第1107行
+        RETVAL_STR(_php_math_number_format_ex(num, (int)dec,
+                dec_point, dec_point_len, thousand_sep, thousand_sep_len));
+        break;
+    default:
+        WRONG_PARAM_COUNT;
     }
-    /* }}} */
+}
+/* }}} */
 ```
 ## 代码执行流程图
 

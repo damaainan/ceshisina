@@ -6,16 +6,16 @@
 
 其实在底层，php是通过一个结构体来存储所有的变量的。结构体如下:
 
-```
-    typedef struct _zval_struct zval
-    
-    typedef struct _zval_struct {
-        /* Variable information */
-        zvalue_value value;
-        zend_uint refcount_gc;
-        zend_uchar type;
-        zend_uint is_ref_gc;
-    }
+```c
+typedef struct _zval_struct zval
+
+typedef struct _zval_struct {
+    /* Variable information */
+    zvalue_value value;
+    zend_uint refcount_gc;
+    zend_uchar type;
+    zend_uint is_ref_gc;
+}
 ```
 
 解释一下几个变量的意义:  
@@ -25,7 +25,7 @@
 `zend_uint is_ref_gc` 是否是引用传值。
 
 php中所有的结构都是从用这个结构实现的。其中最关键的字段就是里面的type字段了。  
-type字段总共有7个值，分别是IS_NULL,IS_BOOL,IS_LONG,IS_DOUBLE,IS_STRING,ISARRAY,IS_OBJECT,IS_RESOURCE。  
+type字段总共有7个值，分别是`IS_NULL`,`IS_BOOL`,`IS_LONG`,`IS_DOUBLE`,`IS_STRING,ISARRAY`,`IS_OBJECT`,`IS_RESOURCE`。  
 这个里面包含了所有的php基本类型：
 
         标量类型:IS_BOOL,IS_lONG,IS_DOUBLE,IS_STRING
@@ -35,16 +35,16 @@ type字段总共有7个值，分别是IS_NULL,IS_BOOL,IS_LONG,IS_DOUBLE,IS_STRIN
 zval结构根据不同的类型，其zval结构中的zval字段指向的联合体中存储不同的值.这个联合体就是php中同一个变量可以存储不同的值的关键.结构如下:
 
 ```c
-    typedef union _zval_value{
-        long *lval;
-        double *dval;
-        struct {
-            char *val;
-            int len;
-        }str;
-        HashTable *ht;
-        zend_object_value obj;
-    }
+typedef union _zval_value{
+    long *lval;
+    double *dval;
+    struct {
+        char *val;
+        int len;
+    }str;
+    HashTable *ht;
+    zend_object_value obj;
+}
 ```
 
 从这个结构里可以看出php中所有变量的痕迹：  
@@ -60,10 +60,10 @@ IS_NULL,NULL值在这个结构中不用存储，直接在zval结构中的type字
 字符串的在联合体中使用结构体的形式出现，代码如下：
 
 ```c
-    struct {
-        char *val;
-        int len;
-    }str;
+struct {
+    char *val;
+    int len;
+}str;
 ```
 
 可以看到，php在存储字符串时，将字符串的内容和长度都存了起来，这是为了避免重复计算字符串的长度。php中的函数strlen,就是直接返回了这个长度。

@@ -71,7 +71,7 @@ zendump_vars();
 
 输出结果如下：
 
-```php
+```
 vars(2): {
   $a ->
   zval(0x7f125d01e080) -> string(31,"FILE:/home/kylin/Desktop/v2.php") addr(0x7f125d0638a0) refcount(1)
@@ -120,7 +120,7 @@ zendump_vars();
 
 运行输出：
 
-```php
+```
 vars(1): {
   $a ->
   zval(0x7f884221e080) -> string(13,"hello, world!") addr(0x7f8842281320) interned
@@ -143,7 +143,7 @@ zendump_vars();
 
 运行输出：
 
-```php
+```
 vars(2): {
   $a ->
   zval(0x7fa552c1e080) -> string(13,"hello, world!") addr(0x7fa552c81320) interned

@@ -18,14 +18,14 @@ php 的变量存储在「zval」变量容器（数据结构）中，「zval」�
 
 * 当前变量的数据类型；
 * 当前变量的值；
-* 用于标识变量是否为引用传递的 is_ref 布尔类型标识；
-* 指向该「zval」变量容器的变量个数的 refcount 标识符（即这个 zval 被引用的次数，注意这里的引用不是指引用传值，注意区分）。
+* 用于标识变量是否为引用传递的 `is_ref` 布尔类型标识；
+* 指向该「zval」变量容器的变量个数的 `refcount` 标识符（即这个 zval 被引用的次数，注意这里的引用不是指引用传值，注意区分）。
 
 
 当一个变量被赋值时，就会生成一个对应的「zavl」变量容器。
 ### 查看变量 zval 容器信息
 
-要查看变量的「zval」容器信息（即查看变量的 is_ref 和 refcount），可以使用 [XDebug][8] 调试工具的 **`xdebug_debug_zval()`**  函数。
+要查看变量的「zval」容器信息（即查看变量的 `is_ref` 和 `refcount`），可以使用 [XDebug][8] 调试工具的 **`xdebug_debug_zval()`**  函数。
 
 安装 XDebug 扩展插件的方法可以查看 [这个教程][9]，有关XDebug 使用方法请阅读 [官方文档][10]。
 
@@ -37,7 +37,7 @@ php 的变量存储在「zval」变量容器（数据结构）中，「zval」�
 
 请看下面的示例：
 
-```LANG
+```php
 <?php
 // 变量赋值时，refcount 值等于 1
 $name = 'liugongzi';
@@ -61,7 +61,7 @@ xdebug_debug_zval('name'); // (refcount=1, is_ref=0)string 'liugongzi' (length=9
 
 看个实例：
 
-```LANG
+```php
 <?php
 $name = 'liugongzi';
 xdebug_debug_zval('name'); // name: (refcount=1, is_ref=0)string 'liugongzi' (length=9)
@@ -75,12 +75,12 @@ xdebug_debug_zval('name'); // name: (refcount=1, is_ref=0)string 'liugongzi' (le
 xdebug_debug_zval('copy'); // copy: (refcount=1, is_ref=0)='liugongzi handsome'
 ```
 
-注意到没有，当将值 **`liugongzi handsome`**  赋值给变量 &dollar;copy 时，name 和 copy 的 refcount 值都变成了 1，在这个过程中发生以下几个操作：
+注意到没有，当将值 **`liugongzi handsome`**  赋值给变量 $copy 时，name 和 copy 的 refcount 值都变成了 1，在这个过程中发生以下几个操作：
 
 
-* 将 &dollar;copy 从 &dollar;name 的 zval（内从）中分离出来（即复制）；
-* 将 &dollar;name 的 refcount 减去 1；
-* 对 &dollar;copy 的 zval 进行修改（重新赋值和修改 refcount）；
+* 将 $copy 从 $name 的 zval（内从）中分离出来（即复制）；
+* 将 $name 的 refcount 减去 1；
+* 对 $copy 的 zval 进行修改（重新赋值和修改 refcount）；
 
 
 这里只是简单对「写时复制」进行介绍，感兴趣的朋友可以阅读文末给出的参考资料进行更加深入的研究。
@@ -204,9 +204,9 @@ var_dump(convert(memory_get_usage() - $memory)); // 568 b
 
 
 * 缓冲区（紫色框部分，称为疑似垃圾），存储所有可能根（步骤 A）；
-* 采用深度优先算法遍历「根缓冲区」中所有的「可能根（即 zval 遍历容器）」，并对每个 zval 的 refcount 减 1，为了避免遍历时对同一个 zval 多次减 1（因为不同的根可能遍历到同一个 zval）将这个 zvel 标记为「已减」（步骤 B）；
-* 再次采用深度优先遍历算法遍历「可能根 zval」。当 zval 的 refcount 值不为 0 时，对其加 1,否则保持为 0。并请已遍历的 zval 变量容器标记为「已恢复」（即步骤 B 的逆运算）。那些 zval 的 refcount 值为 0 （蓝色框标记）的就是应该被回收的变量（步骤 C）；
-* 删除所有 refcount 为 0 的可能根（步骤 D）。
+* 采用深度优先算法遍历「根缓冲区」中所有的「可能根（即 zval 遍历容器）」，并对每个 zval 的 `refcount` 减 1，为了避免遍历时对同一个 zval 多次减 1（因为不同的根可能遍历到同一个 zval）将这个 zvel 标记为「已减」（步骤 B）；
+* 再次采用深度优先遍历算法遍历「可能根 zval」。当 zval 的 `refcount` 值不为 0 时，对其加 1,否则保持为 0。并请已遍历的 zval 变量容器标记为「已恢复」（即步骤 B 的逆运算）。那些 zval 的 `refcount` 值为 0 （蓝色框标记）的就是应该被回收的变量（步骤 C）；
+* 删除所有 `refcount` 为 0 的可能根（步骤 D）。
 
 
 整个过程为：
@@ -216,7 +216,7 @@ var_dump(convert(memory_get_usage() - $memory)); // 568 b
 
 
 * 将内存泄露控制在阀值内，这个由缓存区实现，达到缓冲区大小执行新一轮垃圾回收；
-* 提升了垃圾回收性能，不是每次 refcount 减 1 都执行回收处理，而是等到根缓冲区满时才开始执行垃圾回收。
+* 提升了垃圾回收性能，不是每次 `refcount` 减 1 都执行回收处理，而是等到根缓冲区满时才开始执行垃圾回收。
 
 
 你可以从 [PHP 手册 的回收周期][16] 了解更多，也可以阅读文末给出的参考资料。

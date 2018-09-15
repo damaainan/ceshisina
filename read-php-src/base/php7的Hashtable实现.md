@@ -10,94 +10,94 @@
 代码来源于`PHP-X`项目里的一个数组迭代器，它里面涉及了如何遍历一个`hashtable`，以及`间接zval`的访问：
 
 ```c
-    class ArrayIterator
-    {
-    public:
-        ArrayIterator(Bucket *p)
-        {
-            _ptr = p;
-            _key = _ptr->key;
-            _val = &_ptr->val;
-            _index = _ptr->h;
-            pe = p;
-        }
-        ArrayIterator(Bucket *p, Bucket *_pe)
-        {
-            _ptr = p;
-            _key = _ptr->key;
-            _val = &_ptr->val;
-            _index = _ptr->h;
-            pe = _pe;
-        }
-        void operator ++(int i)
-        {
-            while (++_ptr != pe)
-            {
-                _val = &_ptr->val;
-                if (_val && Z_TYPE_P(_val) == IS_INDIRECT)
-                {
-                    _val = Z_INDIRECT_P(_val);
-                }
-                if (UNEXPECTED(Z_TYPE_P(_val) == IS_UNDEF))
-                {
-                    continue;
-                }
-                if (_ptr->key)
-                {
-                    _key = _ptr->key;
-                    _index = 0;
-                }
-                else
-                {
-                    _index = _ptr->h;
-                    _key = NULL;
-                }
-                break;
-            }
-        }
-        bool operator !=(ArrayIterator b)
-        {
-            return b.ptr() != _ptr;
-        }
-        Variant key()
-        {
-            if (_key)
-            {
-                return Variant(_key->val, _key->len);
-            }
-            else
-            {
-                return Variant((long) _index);
-            }
-        }
-        Variant value()
-        {
-            return Variant(_val);
-        }
-        Bucket *ptr()
-        {
-            return _ptr;
-        }
-    private:
-        zval *_val;
-        zend_string *_key;
-        Bucket *_ptr;
-        Bucket *pe;
-        zend_ulong _index;
-    };
+class ArrayIterator
+{
+public:
+    ArrayIterator(Bucket *p)
+    {
+        _ptr = p;
+        _key = _ptr->key;
+        _val = &_ptr->val;
+        _index = _ptr->h;
+        pe = p;
+    }
+    ArrayIterator(Bucket *p, Bucket *_pe)
+    {
+        _ptr = p;
+        _key = _ptr->key;
+        _val = &_ptr->val;
+        _index = _ptr->h;
+        pe = _pe;
+    }
+    void operator ++(int i)
+    {
+        while (++_ptr != pe)
+        {
+            _val = &_ptr->val;
+            if (_val && Z_TYPE_P(_val) == IS_INDIRECT)
+            {
+                _val = Z_INDIRECT_P(_val);
+            }
+            if (UNEXPECTED(Z_TYPE_P(_val) == IS_UNDEF))
+            {
+                continue;
+            }
+            if (_ptr->key)
+            {
+                _key = _ptr->key;
+                _index = 0;
+            }
+            else
+            {
+                _index = _ptr->h;
+                _key = NULL;
+            }
+            break;
+        }
+    }
+    bool operator !=(ArrayIterator b)
+    {
+        return b.ptr() != _ptr;
+    }
+    Variant key()
+    {
+        if (_key)
+        {
+            return Variant(_key->val, _key->len);
+        }
+        else
+        {
+            return Variant((long) _index);
+        }
+    }
+    Variant value()
+    {
+        return Variant(_val);
+    }
+    Bucket *ptr()
+    {
+        return _ptr;
+    }
+private:
+    zval *_val;
+    zend_string *_key;
+    Bucket *_ptr;
+    Bucket *pe;
+    zend_ulong _index;
+};
 ```
 
 生成迭代器的代码如下：
 
 ```c
-        ArrayIterator begin()
-        {
-            return ArrayIterator(Z_ARRVAL_P(ptr())->arData, Z_ARRVAL_P(ptr())->arData + Z_ARRVAL_P(ptr())->nNumUsed);
-        }
-        ArrayIterator end()
-        {
-            return ArrayIterator(Z_ARRVAL_P(ptr())->arData + Z_ARRVAL_P(ptr())->nNumUsed);
-        }
+ArrayIterator begin()
+{
+    return ArrayIterator(Z_ARRVAL_P(ptr())->arData, Z_ARRVAL_P(ptr())->arData + Z_ARRVAL_P(ptr())->nNumUsed);
+}
+ArrayIterator end()
+{
+    return ArrayIterator(Z_ARRVAL_P(ptr())->arData + Z_ARRVAL_P(ptr())->nNumUsed);
+}
 ```
 
 ## Hashtable
@@ -111,10 +111,10 @@
 另外值得一提是的”`间接zval`”，也就是这段代码背后的含义：
 
 ```c
-                if (_val && Z_TYPE_P(_val) == IS_INDIRECT)
-                {
-                    _val = Z_INDIRECT_P(_val);
-                }
+            if (_val && Z_TYPE_P(_val) == IS_INDIRECT)
+            {
+                _val = Z_INDIRECT_P(_val);
+            }
 ```
 
 这是PHP7的一个优化措施，宏观的理解起来不是很困难，下面慢慢道来。
@@ -122,37 +122,37 @@
 透过`Z_INDIRECT_P`这个宏，我们就能知道背后的大概实现原理，所以我们进入zend源码来分析。
 
 ```c
-    #define Z_INDIRECT(zval)                        (zval).value.zv
-    #define Z_INDIRECT_P(zval_p)            Z_INDIRECT(*(zval_p))
+#define Z_INDIRECT(zval)                        (zval).value.zv
+#define Z_INDIRECT_P(zval_p)            Z_INDIRECT(*(zval_p))
 ```
 
 这个宏简单的取出`zval对象`的value属性，我们先看看php7中`zval`的样子：
 
 ```c
-    struct _zval_struct {
-            zend_value        value;                        /* value */
-            union {
-                    struct {
-                            ZEND_ENDIAN_LOHI_4(
-                                    zend_uchar    type,                     /* active type */
-                                    zend_uchar    type_flags,
-                                    zend_uchar    const_flags,
-                                    zend_uchar    reserved)     /* call info for EX(This) */
-                    } v;
-                    uint32_t type_info;
-            } u1;
-            union {
-                    uint32_t     next;                 /* hash collision chain */
-                    uint32_t     cache_slot;           /* literal cache slot */
-                    uint32_t     lineno;               /* line number (for ast nodes) */
-                    uint32_t     num_args;             /* arguments number for EX(This) */
-                    uint32_t     fe_pos;               /* foreach position */
-                    uint32_t     fe_iter_idx;          /* foreach iterator index */
-                    uint32_t     access_flags;         /* class constant access flags */
-                    uint32_t     property_guard;       /* single property guard */
-                    uint32_t     extra;                /* not further specified */
-            } u2;
-    };
+struct _zval_struct {
+        zend_value        value;                        /* value */
+        union {
+                struct {
+                        ZEND_ENDIAN_LOHI_4(
+                                zend_uchar    type,                     /* active type */
+                                zend_uchar    type_flags,
+                                zend_uchar    const_flags,
+                                zend_uchar    reserved)     /* call info for EX(This) */
+                } v;
+                uint32_t type_info;
+        } u1;
+        union {
+                uint32_t     next;                 /* hash collision chain */
+                uint32_t     cache_slot;           /* literal cache slot */
+                uint32_t     lineno;               /* line number (for ast nodes) */
+                uint32_t     num_args;             /* arguments number for EX(This) */
+                uint32_t     fe_pos;               /* foreach position */
+                uint32_t     fe_iter_idx;          /* foreach iterator index */
+                uint32_t     access_flags;         /* class constant access flags */
+                uint32_t     property_guard;       /* single property guard */
+                uint32_t     extra;                /* not further specified */
+        } u2;
+};
 ```
 
 一个zval有固定的类型，上面也是通过宏来获取的，先看一下：
@@ -204,36 +204,36 @@
 我们回到`zval.value`这个属性，它的类型是`zend_value`：
 
 ```c
-    typedef union _zend_value {
-            zend_long         lval;                         /* long value */
-            double            dval;                         /* double value */
-            zend_refcounted  *counted;
-            zend_string      *str;
-            zend_array       *arr;
-            zend_object      *obj;
-            zend_resource    *res;
-            zend_reference   *ref;
-            zend_ast_ref     *ast;
-            zval             *zv;
-            void             *ptr;
-            zend_class_entry *ce;
-            zend_function    *func;
-            struct {
-                    uint32_t w1;
-                    uint32_t w2;
-            } ww;
-    } zend_value;
+typedef union _zend_value {
+        zend_long         lval;                         /* long value */
+        double            dval;                         /* double value */
+        zend_refcounted  *counted;
+        zend_string      *str;
+        zend_array       *arr;
+        zend_object      *obj;
+        zend_resource    *res;
+        zend_reference   *ref;
+        zend_ast_ref     *ast;
+        zval             *zv;
+        void             *ptr;
+        zend_class_entry *ce;
+        zend_function    *func;
+        struct {
+                uint32_t w1;
+                uint32_t w2;
+        } ww;
+} zend_value;
 ```
 
 它是一个`union`，也就是根据`zval`的类型，决定了`zval.value`里面使用哪个字段保存具体类型的值（的地址），而具体值的引用计数是保存在具体类型里的（整形，布尔这种不需要引用计数），比如`zend_string`的定义中有这样一个`zend_refcounted_h gc`的引用计数的字段：
 
 ```c
-    struct _zend_string {
-            zend_refcounted_h gc;
-            zend_ulong        h;                /* hash value */
-            size_t            len;
-            char              val[1];
-    };
+struct _zend_string {
+        zend_refcounted_h gc;
+        zend_ulong        h;                /* hash value */
+        size_t            len;
+        char              val[1];
+};
 ```
 
 这代表着，你对zval进行浅拷贝是不会修改引用计数的，必须通过`zend api`对`zval.value`内的具体对象进行引用计数操作，这一块我是顺便扯一下，我们还是回到”间接zval”。
@@ -245,8 +245,8 @@
 那么我们也知道，PHP允许这样玩：
 
 ```php
-    $var_nane = "a";
-    $$var_name = "b";
+$var_nane = "a";
+$$var_name = "b";
 ```
 
 那么`$var_name`就是cv表里的，编译时刻可以确定的zval，它的内存永久有效。而`$$var_name`是运行时才能确定的变量（`$$var_name`效果等于访问$a），不会存在cv表里。

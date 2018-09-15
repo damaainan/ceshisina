@@ -35,35 +35,35 @@
 
 设计一个完美的哈希函数就交由专家去做吧，我们只管用已有的较成熟的哈希函数就好了。PHP内核使用的哈希函数是time33函数，又叫DJBX33A，其实现如下：
 ```c
-    static inline ulong zend_inline_hash_func(const char *arKey, uint nKeyLength)
-    {
-             register ulong hash = 5381;
-    
-            /* variant with the hash unrolled eight times */
-            for (; nKeyLength >= 8; nKeyLength -= 8) {
-                hash = ((hash << 5) + hash) + *arKey++;
-                hash = ((hash << 5) + hash) + *arKey++;
-                hash = ((hash << 5) + hash) + *arKey++;
-                hash = ((hash << 5) + hash) + *arKey++;
-                hash = ((hash << 5) + hash) + *arKey++;
-                hash = ((hash << 5) + hash) + *arKey++;
-                hash = ((hash << 5) + hash) + *arKey++;
-                hash = ((hash << 5) + hash) + *arKey++;
-        }
-    
-        switch (nKeyLength) {
-            case 7: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
-            case 6: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
-            case 5: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
-            case 4: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
-            case 3: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
-            case 2: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
-            case 1: hash = ((hash << 5) + hash) + *arKey++; break;
-            case 0: break;
-            EMPTY_SWITCH_DEFAULT_CASE()
-        }
-        return hash;
+static inline ulong zend_inline_hash_func(const char *arKey, uint nKeyLength)
+{
+         register ulong hash = 5381;
+
+        /* variant with the hash unrolled eight times */
+        for (; nKeyLength >= 8; nKeyLength -= 8) {
+            hash = ((hash << 5) + hash) + *arKey++;
+            hash = ((hash << 5) + hash) + *arKey++;
+            hash = ((hash << 5) + hash) + *arKey++;
+            hash = ((hash << 5) + hash) + *arKey++;
+            hash = ((hash << 5) + hash) + *arKey++;
+            hash = ((hash << 5) + hash) + *arKey++;
+            hash = ((hash << 5) + hash) + *arKey++;
+            hash = ((hash << 5) + hash) + *arKey++;
     }
+
+    switch (nKeyLength) {
+        case 7: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
+        case 6: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
+        case 5: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
+        case 4: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
+        case 3: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
+        case 2: hash = ((hash << 5) + hash) + *arKey++; /* fallthrough... */
+        case 1: hash = ((hash << 5) + hash) + *arKey++; break;
+        case 0: break;
+        EMPTY_SWITCH_DEFAULT_CASE()
+    }
+    return hash;
+}
 ```
 > 注：函数使用了一个8次循环+switch来实现，是对for循环的优化，减少循环的运行次数，然后在switch里面执行剩下的没有遍历到的元素。
 
@@ -79,23 +79,23 @@
 
 ## PHP内核hashtable的定义：
 ```c
-    typedef struct _hashtable {
-              uint nTableSize;
-              uint nTableMask;
-              uint nNumOfElements;
-              ulong nNextFreeElement;
-              Bucket *pInternalPointer;
-              Bucket *pListHead;
-              Bucket *pListTail; 
-              Bucket **arBuckets;
-              dtor_func_t pDestructor;
-              zend_bool persistent;
-              unsigned char nApplyCount;
-              zend_bool bApplyProtection;
-              #if ZEND_DEBUG
-                   int inconsistent;
-              #endif
-    } HashTable;
+typedef struct _hashtable {
+          uint nTableSize;
+          uint nTableMask;
+          uint nNumOfElements;
+          ulong nNextFreeElement;
+          Bucket *pInternalPointer;
+          Bucket *pListHead;
+          Bucket *pListTail; 
+          Bucket **arBuckets;
+          dtor_func_t pDestructor;
+          zend_bool persistent;
+          unsigned char nApplyCount;
+          zend_bool bApplyProtection;
+          #if ZEND_DEBUG
+               int inconsistent;
+          #endif
+} HashTable;
 ```
 > * nTableSize，HashTable的大小，以2的倍数增长
 > * nTableMask，用在与哈希值做与运算获得该哈希值的索引取值，arBuckets初始化后永远是nTableSize-1
@@ -123,17 +123,17 @@
 
 ### bucket结构体的定义
 ```c
-    typedef struct bucket {
-         ulong h;
-         uint nKeyLength;
-         void *pData;
-         void *pDataPtr;
-         struct bucket *pListNext;
-         struct bucket *pListLast;
-         struct bucket *pNext;
-         struct bucket *pLast;
-         const char *arKey;
-    } Bucket;
+typedef struct bucket {
+     ulong h;
+     uint nKeyLength;
+     void *pData;
+     void *pDataPtr;
+     struct bucket *pListNext;
+     struct bucket *pListLast;
+     struct bucket *pNext;
+     struct bucket *pLast;
+     const char *arKey;
+} Bucket;
 ```
 > * h，哈希值（或数字键值的key
 > * nKeyLength，key的长度
@@ -233,24 +233,24 @@ PHP的HashTable的不足主要是其双向链表多出的指针及zval和bucket�
 
 上面提到的不足，在PHP7中都很好地解决了，PHP7对内核中的数据结构做了一个大改造，使得PHP的效率高了很多，因此，推荐PHP开发者都将开发和部署版本更新吧。看看下面这段PHP代码：
 ```php
-    <?php
-    $size = pow(2, 16); 
-     
-    $startTime = microtime(true);
-    $array = array();
-    for ($key = 0, $maxKey = ($size - 1) * $size; $key <= $maxKey; $key += $size) {
-        $array[$key] = 0;
-    }
-    $endTime = microtime(true);
-    echo '插入 ', $size, ' 个恶意的元素需要 ', $endTime - $startTime, ' 秒', "\n";
-     
-    $startTime = microtime(true);
-    $array = array();
-    for ($key = 0, $maxKey = $size - 1; $key <= $maxKey; ++$key) {
-        $array[$key] = 0;
-    }
-    $endTime = microtime(true);
-    echo '插入 ', $size, ' 个普通元素需要 ', $endTime - $startTime, ' 秒', "\n";
+<?php
+$size = pow(2, 16); 
+ 
+$startTime = microtime(true);
+$array = array();
+for ($key = 0, $maxKey = ($size - 1) * $size; $key <= $maxKey; $key += $size) {
+    $array[$key] = 0;
+}
+$endTime = microtime(true);
+echo '插入 ', $size, ' 个恶意的元素需要 ', $endTime - $startTime, ' 秒', "\n";
+ 
+$startTime = microtime(true);
+$array = array();
+for ($key = 0, $maxKey = $size - 1; $key <= $maxKey; ++$key) {
+    $array[$key] = 0;
+}
+$endTime = microtime(true);
+echo '插入 ', $size, ' 个普通元素需要 ', $endTime - $startTime, ' 秒', "\n";
 ```
 上面这个demo是有多个hash冲突时和无冲突时的时间消耗比较。笔者在PHP5.4下运行这段代码，结果如下
 

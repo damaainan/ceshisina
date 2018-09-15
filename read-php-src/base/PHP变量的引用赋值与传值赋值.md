@@ -300,7 +300,7 @@ xdebug_debug_zval('p1');
 xdebug_debug_zval('p2');
 ```
 
-```php
+```
 p1: (refcount=1, is_ref=0)=class Person { public $age = (refcount=2, is_ref=0)=1 }
 p1: (refcount=2, is_ref=0)=class Person { public $age = (refcount=2, is_ref=0)=1 }
 p2: (refcount=2, is_ref=0)=class Person { public $age = (refcount=2, is_ref=0)=1 }

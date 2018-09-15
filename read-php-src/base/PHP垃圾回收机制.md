@@ -27,13 +27,13 @@ PHP是一种弱类型的脚本语言，弱类型不表示PHP变量没有类型�
 在引擎内部，变量都是用一个结构体来表示的。这个结构体可以在{PHPSRC}/Zend/zend.h中找到：
 
 ```c
-  struct _zval_struct {  
-       /* Variable information */  
-       zvalue_value value;     /* value */  
-       zend_uint refcount__gc;  //代表一个计数器，表示有多少个变量名指向这个zval容器
-       zend_uchar type;    /* active type */  
-       zend_uchar is_ref__gc;  //此字段是一个布尔值，用来标识变量是否是一个引用，通过这个字段，PHP引擎可以区分一般变量和引用变量
-   };  
+struct _zval_struct {  
+   /* Variable information */  
+   zvalue_value value;     /* value */  
+   zend_uint refcount__gc;  //代表一个计数器，表示有多少个变量名指向这个zval容器
+   zend_uchar type;    /* active type */  
+   zend_uchar is_ref__gc;  //此字段是一个布尔值，用来标识变量是否是一个引用，通过这个字段，PHP引擎可以区分一般变量和引用变量
+};  
 ```
 ## copy on write（写时复制技术）
 
