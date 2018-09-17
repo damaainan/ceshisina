@@ -125,7 +125,9 @@ spl_autoload_register() 就是我们上面所说的__autoload调用堆栈，我�
 
 与自动加载相关的规范是 PSR4，在说 PSR4 之前先介绍一下 PSR 标准。PSR 标准的发明和推出组织是：PHP-FIG，它的网站是：[www.php-fig.org][2]。由几位开源框架的开发者成立于 2009 年，从那开始也选取了很多其他成员进来，虽然不是 “官方” 组织，但也代表了社区中不小的一块。组织的目的在于：以最低程度的限制，来统一各个项目的编码规范，避免各家自行发展的风格阻碍了程序员开发的困扰，于是大伙发明和总结了 PSR，PSR 是 PHP Standards Recommendation 的缩写，截止到目前为止，总共有 14 套 PSR 规范，其中有 7 套PSR规范已通过表决并推出使用，分别是：
 
-PSR-0 **`自动加载标准`** （已废弃，一些旧的第三方库还有在使用）PSR-1 **`基础编码标准`** 
+PSR-0 **`自动加载标准`** （已废弃，一些旧的第三方库还有在使用）
+
+PSR-1 **`基础编码标准`** 
 
 PSR-2 **`编码风格向导`** 
 
@@ -228,24 +230,25 @@ PSR-4风格
 
 ```php
 <?php
-  define('LARAVEL_START', microtime(true));
+define('LARAVEL_START', microtime(true));
 
-  require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 ```
 
 去 vendor 目录下的`autoload.php`：
 
 ```php
 <?php
-  require_once __DIR__ . '/composer' . '/autoload_real.php';
+require_once __DIR__ . '/composer' . '/autoload_real.php';
 
-  return ComposerAutoloaderInit7b790917ce8899df9af8ed53631a1c29::getLoader();
+return ComposerAutoloaderInit7b790917ce8899df9af8ed53631a1c29::getLoader();
 ```
 
 这里就是 Composer 真正开始的地方了
 ## Composer自动加载文件
 
-首先，我们先大致了解一下Composer自动加载所用到的源文件。
+首先，我们先大致了解一下Composer自动加载所用到的源文件(7个文件)。
+
 * **`autoload_real.php`**: 自动加载功能的引导类。
     * composer 加载类的初始化`(顶级命名空间与文件路径映射初始化)`和注册(spl_autoload_register())。
 
@@ -276,84 +279,12 @@ PSR-4风格
 
 ```php
 <?php
-    public static function getLoader()
-    {
-      if (null !== self::$loader) {
-          return self::$loader;
-      }
-
-      spl_autoload_register(
-        array('ComposerAutoloaderInit7b790917ce8899df9af8ed53631a1c29', 'loadClassLoader'), true, true
-      );
-
-      self::$loader = $loader = new \Composer\Autoload\ClassLoader();
-
-      spl_autoload_unregister(
-        array('ComposerAutoloaderInit7b790917ce8899df9af8ed53631a1c29', 'loadClassLoader')
-      );
-
-      $useStaticLoader = PHP_VERSION_ID >= 50600 && !defined('HHVM_VERSION');
-
-      if ($useStaticLoader) {
-          require_once __DIR__ . '/autoload_static.php';
-
-          call_user_func(
-          \Composer\Autoload\ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::getInitializer($loader)
-          );
-
-      } else {
-          $map = require __DIR__ . '/autoload_namespaces.php';
-          foreach ($map as $namespace => $path) {
-              $loader->set($namespace, $path);
-          }
-
-          $map = require __DIR__ . '/autoload_psr4.php';
-          foreach ($map as $namespace => $path) {
-              $loader->setPsr4($namespace, $path);
-          }
-
-          $classMap = require __DIR__ . '/autoload_classmap.php';
-          if ($classMap) {
-              $loader->addClassMap($classMap);
-          }
-      }
-
-      /***********************注册自动加载核心类对象********************/
-      $loader->register(true);
-
-      /***********************自动加载全局函数********************/
-      if ($useStaticLoader) {
-          $includeFiles = Composer\Autoload\ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$files;
-      } else {
-          $includeFiles = require __DIR__ . '/autoload_files.php';
-      }
-
-      foreach ($includeFiles as $fileIdentifier => $file) {
-          composerRequire7b790917ce8899df9af8ed53631a1c29($fileIdentifier, $file);
-      }
-
-      return $loader;
-    }
-```
-
-我把自动加载引导类分为 5 个部分。
-### 第一部分——单例
-
-第一部分很简单，就是个最经典的单例模式，自动加载类只能有一个。
-
-```php
-<?php
+public static function getLoader()
+{
   if (null !== self::$loader) {
       return self::$loader;
   }
-```
-### 第二部分——构造ClassLoader核心类
 
-第二部分 new 一个自动加载的核心类对象。
-
-```php
-<?php
-  /***********************获得自动加载核心类对象********************/
   spl_autoload_register(
     array('ComposerAutoloaderInit7b790917ce8899df9af8ed53631a1c29', 'loadClassLoader'), true, true
   );
@@ -363,6 +294,78 @@ PSR-4风格
   spl_autoload_unregister(
     array('ComposerAutoloaderInit7b790917ce8899df9af8ed53631a1c29', 'loadClassLoader')
   );
+
+  $useStaticLoader = PHP_VERSION_ID >= 50600 && !defined('HHVM_VERSION');
+
+  if ($useStaticLoader) {
+      require_once __DIR__ . '/autoload_static.php';
+
+      call_user_func(
+      \Composer\Autoload\ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::getInitializer($loader)
+      );
+
+  } else {
+      $map = require __DIR__ . '/autoload_namespaces.php';
+      foreach ($map as $namespace => $path) {
+          $loader->set($namespace, $path);
+      }
+
+      $map = require __DIR__ . '/autoload_psr4.php';
+      foreach ($map as $namespace => $path) {
+          $loader->setPsr4($namespace, $path);
+      }
+
+      $classMap = require __DIR__ . '/autoload_classmap.php';
+      if ($classMap) {
+          $loader->addClassMap($classMap);
+      }
+  }
+
+  /***********************注册自动加载核心类对象********************/
+  $loader->register(true);
+
+  /***********************自动加载全局函数********************/
+  if ($useStaticLoader) {
+      $includeFiles = Composer\Autoload\ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$files;
+  } else {
+      $includeFiles = require __DIR__ . '/autoload_files.php';
+  }
+
+  foreach ($includeFiles as $fileIdentifier => $file) {
+      composerRequire7b790917ce8899df9af8ed53631a1c29($fileIdentifier, $file);
+  }
+
+  return $loader;
+}
+```
+
+我把自动加载引导类分为 5 个部分。
+### 第一部分——单例
+
+第一部分很简单，就是个最经典的单例模式，自动加载类只能有一个。
+
+```php
+<?php
+if (null !== self::$loader) {
+  return self::$loader;
+}
+```
+### 第二部分——构造ClassLoader核心类
+
+第二部分 new 一个自动加载的核心类对象。
+
+```php
+<?php
+/***********************获得自动加载核心类对象********************/
+spl_autoload_register(
+    array('ComposerAutoloaderInit7b790917ce8899df9af8ed53631a1c29', 'loadClassLoader'), true, true
+);
+
+self::$loader = $loader = new \Composer\Autoload\ClassLoader();
+
+spl_autoload_unregister(
+    array('ComposerAutoloaderInit7b790917ce8899df9af8ed53631a1c29', 'loadClassLoader')
+);
 ```
 `loadClassLoader()`函数：
 
@@ -381,34 +384,34 @@ public static function loadClassLoader($class)
 
 ```php
 <?php
-  /***********************初始化自动加载核心类对象********************/
-  $useStaticLoader = PHP_VERSION_ID >= 50600 && !defined('HHVM_VERSION');
-  if ($useStaticLoader) {
-     require_once __DIR__ . '/autoload_static.php';
+/***********************初始化自动加载核心类对象********************/
+$useStaticLoader = PHP_VERSION_ID >= 50600 && !defined('HHVM_VERSION');
+if ($useStaticLoader) {
+   require_once __DIR__ . '/autoload_static.php';
 
-     call_user_func(
-       \Composer\Autoload\ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::getInitializer($loader)
-     );
-  } else {
-      $map = require __DIR__ . '/autoload_namespaces.php';
-      foreach ($map as $namespace => $path) {
-         $loader->set($namespace, $path);
-      }
-
-      $map = require __DIR__ . '/autoload_psr4.php';
-      foreach ($map as $namespace => $path) {
-         $loader->setPsr4($namespace, $path);
-      }
-
-      $classMap = require __DIR__ . '/autoload_classmap.php';
-      if ($classMap) {
-          $loader->addClassMap($classMap);
-      }
+   call_user_func(
+     \Composer\Autoload\ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::getInitializer($loader)
+   );
+} else {
+    $map = require __DIR__ . '/autoload_namespaces.php';
+    foreach ($map as $namespace => $path) {
+       $loader->set($namespace, $path);
     }
+
+    $map = require __DIR__ . '/autoload_psr4.php';
+    foreach ($map as $namespace => $path) {
+       $loader->setPsr4($namespace, $path);
+    }
+
+    $classMap = require __DIR__ . '/autoload_classmap.php';
+    if ($classMap) {
+        $loader->addClassMap($classMap);
+    }
+}
     
 ```
 
-这一部分就是对自动加载类的初始化，主要是给自动加载核心类初始化顶级命名空间映射。
+这一部分就是**对自动加载类的初始化**，主要是给自动加载核心类初始化顶级命名空间映射。
 
 初始化的方法有两种：
 
@@ -424,30 +427,30 @@ public static function loadClassLoader($class)
 
 ```php
 <?php
-  class ComposerStaticInit7b790917ce8899df9af8ed53631a1c29{
-     public static $files = array(...);
-     public static $prefixLengthsPsr4 = array(...);
-     public static $prefixDirsPsr4 = array(...);
-     public static $prefixesPsr0 = array(...);
-     public static $classMap = array (...);
+class ComposerStaticInit7b790917ce8899df9af8ed53631a1c29{
+   public static $files = array(...);
+   public static $prefixLengthsPsr4 = array(...);
+   public static $prefixDirsPsr4 = array(...);
+   public static $prefixesPsr0 = array(...);
+   public static $classMap = array (...);
 
-    public static function getInitializer(ClassLoader $loader)
-    {
-      return \Closure::bind(function () use ($loader) {
-          $loader->prefixLengthsPsr4
-                          = ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$prefixLengthsPsr4;
+  public static function getInitializer(ClassLoader $loader)
+  {
+    return \Closure::bind(function () use ($loader) {
+        $loader->prefixLengthsPsr4
+                        = ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$prefixLengthsPsr4;
 
-          $loader->prefixDirsPsr4
-                          = ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$prefixDirsPsr4;
+        $loader->prefixDirsPsr4
+                        = ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$prefixDirsPsr4;
 
-          $loader->prefixesPsr0
-                          = ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$prefixesPsr0;
+        $loader->prefixesPsr0
+                        = ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$prefixesPsr0;
 
-          $loader->classMap
-                          = ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$classMap;
+        $loader->classMap
+                        = ComposerStaticInit7b790917ce8899df9af8ed53631a1c29::$classMap;
 
-      }, null, ClassLoader::class);
-  }
+    }, null, ClassLoader::class);
+}
 ```
 
 这个静态初始化类的核心就是`getInitializer()`函数，它将自己类中的顶级命名空间映射给了 ClassLoader 类。值得注意的是这个函数返回的是一个匿名函数，为什么呢？原因就是`ClassLoader类`中的`prefixLengthsPsr4`、`prefixDirsPsr4`等等变量都是 private的。利用匿名函数的绑定功能就可以将这些 private 变量赋给 ClassLoader 类 里的成员变量。
@@ -459,22 +462,22 @@ public static function loadClassLoader($class)
 
 ```php
 <?php
-  public static $classMap = array (
-      'App\\Console\\Kernel'
-              => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+public static $classMap = array (
+    'App\\Console\\Kernel'
+            => __DIR__ . '/../..' . '/app/Console/Kernel.php',
 
-      'App\\Exceptions\\Handler'
-              => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+    'App\\Exceptions\\Handler'
+            => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
 
-      'App\\Http\\Controllers\\Auth\\ForgotPasswordController'
-              => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
+    'App\\Http\\Controllers\\Auth\\ForgotPasswordController'
+            => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
 
-      'App\\Http\\Controllers\\Auth\\LoginController'
-              => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
+    'App\\Http\\Controllers\\Auth\\LoginController'
+            => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
 
-      'App\\Http\\Controllers\\Auth\\RegisterController'
-              => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
-  ...)
+    'App\\Http\\Controllers\\Auth\\RegisterController'
+            => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
+...)
 ```
 
 直接命名空间全名与目录的映射，简单粗暴，也导致这个数组相当的大。
@@ -482,34 +485,34 @@ public static function loadClassLoader($class)
 
 ```php
 <?php
-  public static $prefixLengthsPsr4 = array(
-      'p' => array (
-        'phpDocumentor\\Reflection\\' => 25,
-    ),
-      'S' => array (
-        'Symfony\\Polyfill\\Mbstring\\' => 26,
-        'Symfony\\Component\\Yaml\\' => 23,
-        'Symfony\\Component\\VarDumper\\' => 28,
-        ...
-    ),
-  ...);
+public static $prefixLengthsPsr4 = array(
+    'p' => array (
+      'phpDocumentor\\Reflection\\' => 25,
+  ),
+    'S' => array (
+      'Symfony\\Polyfill\\Mbstring\\' => 26,
+      'Symfony\\Component\\Yaml\\' => 23,
+      'Symfony\\Component\\VarDumper\\' => 28,
+      ...
+  ),
+...);
 
-  public static $prefixDirsPsr4 = array (
-      'phpDocumentor\\Reflection\\' => array (
-        0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-        1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-        2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-    ),
-       'Symfony\\Polyfill\\Mbstring\\' => array (
-        0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-    ),
-      'Symfony\\Component\\Yaml\\' => array (
-        0 => __DIR__ . '/..' . '/symfony/yaml',
-    ),
-  ...)
+public static $prefixDirsPsr4 = array (
+    'phpDocumentor\\Reflection\\' => array (
+      0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+      1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+      2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+  ),
+     'Symfony\\Polyfill\\Mbstring\\' => array (
+      0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+  ),
+    'Symfony\\Component\\Yaml\\' => array (
+      0 => __DIR__ . '/..' . '/symfony/yaml',
+  ),
+...)
 ```
 
-PSR4 标准顶级命名空间映射用了两个数组，第一个是用命名空间第一个字母作为前缀索引，然后是 顶级命名空间，但是最终并不是文件路径，而是 顶级命名空间的长度。为什么呢？
+PSR4 标准顶级命名空间映射用了两个数组，第一个是`用命名空间第一个字母作为前缀索引`，然后是 顶级命名空间，但是最终并不是文件路径，而是 顶级命名空间的长度。为什么呢？
 
 因为 PSR4 标准是用顶级命名空间目录替换顶级命名空间，所以获得顶级命名空间的长度很重要。
 
@@ -519,16 +522,16 @@ PSR4 标准顶级命名空间映射用了两个数组，第一个是用命名空
 
 ```php
 <?php
-    'Symfony\\Polyfill\\Mbstring\\' => 26,
+'Symfony\\Polyfill\\Mbstring\\' => 26,
 ```
 
 这条记录，键是顶级命名空间，值是命名空间的长度。拿到顶级命名空间后去`$prefixDirsPsr4数组`获取它的映射目录数组： **`(注意映射目录可能不止一条)`** 
 
 ```php
 <?php
-  'Symfony\\Polyfill\\Mbstring\\' => array (
-              0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-          )
+'Symfony\\Polyfill\\Mbstring\\' => array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        )
 ```
 
 然后我们就可以将命名空间`Symfony\\Polyfill\\Mbstring\\example`前26个字符替换成目录`__DIR__ . '/..' . '/symfony/polyfill-mbstring`，我们就得到了`__DIR__ . '/..' . '/symfony/polyfill-mbstring/example.php`，先验证磁盘上这个文件是否存在，如果不存在接着遍历。如果遍历后没有找到，则加载失败。
@@ -540,22 +543,22 @@ PSR4 标准顶级命名空间映射用了两个数组，第一个是用命名空
 
 ```php
 <?php
-    // PSR0 标准
-    $map = require __DIR__ . '/autoload_namespaces.php';
-    foreach ($map as $namespace => $path) {
-       $loader->set($namespace, $path);
-    }
+// PSR0 标准
+$map = require __DIR__ . '/autoload_namespaces.php';
+foreach ($map as $namespace => $path) {
+   $loader->set($namespace, $path);
+}
 
-    // PSR4 标准
-    $map = require __DIR__ . '/autoload_psr4.php';
-    foreach ($map as $namespace => $path) {
-       $loader->setPsr4($namespace, $path);
-    }
+// PSR4 标准
+$map = require __DIR__ . '/autoload_psr4.php';
+foreach ($map as $namespace => $path) {
+   $loader->setPsr4($namespace, $path);
+}
 
-    $classMap = require __DIR__ . '/autoload_classmap.php';
-    if ($classMap) {
-       $loader->addClassMap($classMap);
-    }
+$classMap = require __DIR__ . '/autoload_classmap.php';
+if ($classMap) {
+   $loader->addClassMap($classMap);
+}
 ```
 #### PSR4 标准的映射
 
@@ -563,44 +566,44 @@ autoload_psr4.php 的顶级命名空间映射
 
 ```php
 <?php
-    return array(
-    'XdgBaseDir\\'
-        => array($vendorDir . '/dnoegel/php-xdg-base-dir/src'),
+return array(
+'XdgBaseDir\\'
+    => array($vendorDir . '/dnoegel/php-xdg-base-dir/src'),
 
-    'Webmozart\\Assert\\'
-        => array($vendorDir . '/webmozart/assert/src'),
+'Webmozart\\Assert\\'
+    => array($vendorDir . '/webmozart/assert/src'),
 
-    'TijsVerkoyen\\CssToInlineStyles\\'
-        => array($vendorDir . '/tijsverkoyen/css-to-inline-styles/src'),
+'TijsVerkoyen\\CssToInlineStyles\\'
+    => array($vendorDir . '/tijsverkoyen/css-to-inline-styles/src'),
 
-    'Tests\\'
-        => array($baseDir . '/tests'),
+'Tests\\'
+    => array($baseDir . '/tests'),
 
-    'Symfony\\Polyfill\\Mbstring\\'
-        => array($vendorDir . '/symfony/polyfill-mbstring'),
-    ...
-    )
+'Symfony\\Polyfill\\Mbstring\\'
+    => array($vendorDir . '/symfony/polyfill-mbstring'),
+...
+)
 ```
 
 PSR4 标准的初始化接口:
 
 ```php
 <?php
-    public function setPsr4($prefix, $paths)
-    {
-        if (!$prefix) {
-            $this->fallbackDirsPsr4 = (array) $paths;
-        } else {
-            $length = strlen($prefix);
-            if ('\\' !== $prefix[$length - 1]) {
-                throw new \InvalidArgumentException(
-                  "A non-empty PSR-4 prefix must end with a namespace separator."
-                );
-            }
-            $this->prefixLengthsPsr4[$prefix[0]][$prefix] = $length;
-            $this->prefixDirsPsr4[$prefix] = (array) $paths;
+public function setPsr4($prefix, $paths)
+{
+    if (!$prefix) {
+        $this->fallbackDirsPsr4 = (array) $paths;
+    } else {
+        $length = strlen($prefix);
+        if ('\\' !== $prefix[$length - 1]) {
+            throw new \InvalidArgumentException(
+              "A non-empty PSR-4 prefix must end with a namespace separator."
+            );
         }
+        $this->prefixLengthsPsr4[$prefix[0]][$prefix] = $length;
+        $this->prefixDirsPsr4[$prefix] = (array) $paths;
     }
+}
 ```
 
 总结下上面的顶级命名空间映射过程：
@@ -632,14 +635,14 @@ addClassMap:
 
 ```php
 <?php
-    public function addClassMap(array $classMap)
-    {
-        if ($this->classMap) {
-            $this->classMap = array_merge($this->classMap, $classMap);
-        } else {
-            $this->classMap = $classMap;
-        }
+public function addClassMap(array $classMap)
+{
+    if ($this->classMap) {
+        $this->classMap = array_merge($this->classMap, $classMap);
+    } else {
+        $this->classMap = $classMap;
     }
+}
 ```
  **`自动加载核心类 ClassLoader 的静态初始化到这里就完成了！`** 
 

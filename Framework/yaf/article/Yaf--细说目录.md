@@ -44,46 +44,46 @@ Bootstrap, 也叫做引导程序. 它是Yaf提供的一个全局配置的入口,
 我们一起来看看鸟哥的这句话，他说bootstrap.php是一个引导程序，是yaf的一个全局的配置的一个入口，也就是说我们可以在它里面做一些配置，比如加载我们的.ini配置文件，加载我们的第三方类库，如图片处理、日志处理、composer下载的类库等。我们来先看看源码：
 
 ```php
-    <?php
-    /**
-     * @name Bootstrap
-     * @author mateng
-     * @desc 所有在Bootstrap类中, 以_init开头的方法, 都会被Yaf调用,
-     * @see http://www.php.net/manual/en/class.yaf-bootstrap-abstract.php
-     * 这些方法, 都接受一个参数:Yaf_Dispatcher $dispatcher
-     * 调用的次序, 和申明的次序相同
-     */
-    class Bootstrap extends Yaf_Bootstrap_Abstract {
-    
-        public function _initConfig() {
-            //把配置保存起来
-            $arrConfig = Yaf_Application::app()->getConfig();
-            Yaf_Registry::set('config', $arrConfig);
-        }
-    
-        public function _initPlugin(Yaf_Dispatcher $dispatcher) {
-            //注册一个插件
-            $objSamplePlugin = new SamplePlugin();
-            $dispatcher->registerPlugin($objSamplePlugin);
-        }
-    
-        public function _initRoute(Yaf_Dispatcher $dispatcher) {
-            //在这里注册自己的路由协议,默认使用简单路由
-        }
-    
-        public function _initView(Yaf_Dispatcher $dispatcher) {
-            //在这里注册自己的view控制器，例如smarty,firekylin
-        }
+<?php
+/**
+ * @name Bootstrap
+ * @author mateng
+ * @desc 所有在Bootstrap类中, 以_init开头的方法, 都会被Yaf调用,
+ * @see http://www.php.net/manual/en/class.yaf-bootstrap-abstract.php
+ * 这些方法, 都接受一个参数:Yaf_Dispatcher $dispatcher
+ * 调用的次序, 和申明的次序相同
+ */
+class Bootstrap extends Yaf_Bootstrap_Abstract {
+
+    public function _initConfig() {
+        //把配置保存起来
+        $arrConfig = Yaf_Application::app()->getConfig();
+        Yaf_Registry::set('config', $arrConfig);
     }
+
+    public function _initPlugin(Yaf_Dispatcher $dispatcher) {
+        //注册一个插件
+        $objSamplePlugin = new SamplePlugin();
+        $dispatcher->registerPlugin($objSamplePlugin);
+    }
+
+    public function _initRoute(Yaf_Dispatcher $dispatcher) {
+        //在这里注册自己的路由协议,默认使用简单路由
+    }
+
+    public function _initView(Yaf_Dispatcher $dispatcher) {
+        //在这里注册自己的view控制器，例如smarty,firekylin
+    }
+}
 ```
 
 我们看到了它里面的每个方法都是以 `_init`来开头的，之所以以 `_init`开头主要是它们都会被yaf调用。然而这些方法都会接收一个参数：Yaf_Dispatcher $dispatcher，我们现在来试着自己定义一个方法看看：
-
-    public function _initPdobase(Yaf_Dispatcher $dispatcher) {
-        var_dump('hello,pdo!');
-        exit;
-    }
-
+```php
+public function _initPdobase(Yaf_Dispatcher $dispatcher) {
+    var_dump('hello,pdo!');
+    exit;
+}
+```
 在这里我自定义了一个Pdobase的方法，输出了一段“hello，pdo！”，这时候会输出hello，pdo！此刻说明了它被加载了： 
 
 ![][6]

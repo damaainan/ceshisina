@@ -38,39 +38,39 @@ Dbman的设计理念很简单，一个文件就是一张表，文件名即表名
 #### 下面我们使用Dbman创建一张demo表。
 
 首先，创建一个demo.php文件，如下：
+```php
+return array(
+    'fields' => //数据库demo表的字段定义信息
+        array(
+            'id' => //id列的字段属性
+                array(
+                    'name' => 'id', //字段名
+                    'type' => 'int(10)', //字段类型
+                    'notnull' => false, //是否为空
+                    'default' => NULL,  //默认值
+                    'primary' => true,  //是否主键，是主键
+                    'autoinc' => true,  //是否自增长，是自增长
+                ),
+            'uname' =>
+                array(
+                    'name' => 'uname',  //字段名
+                    'type' => 'char(30)', //字段类型
+                    'notnull' => false, //是否为空
+                    'default' => NULL, //默认值
+                    'primary' => false, //是否主键，不是主键
+                    'autoinc' => false, //是否自增长，非自增长
+                ),
 
-    return array(
-        'fields' => //数据库demo表的字段定义信息
-            array(
-                'id' => //id列的字段属性
-                    array(
-                        'name' => 'id', //字段名
-                        'type' => 'int(10)', //字段类型
-                        'notnull' => false, //是否为空
-                        'default' => NULL,  //默认值
-                        'primary' => true,  //是否主键，是主键
-                        'autoinc' => true,  //是否自增长，是自增长
-                    ),
-                'uname' =>
-                    array(
-                        'name' => 'uname',  //字段名
-                        'type' => 'char(30)', //字段类型
-                        'notnull' => false, //是否为空
-                        'default' => NULL, //默认值
-                        'primary' => false, //是否主键，不是主键
-                        'autoinc' => false, //是否自增长，非自增长
-                    ),
-    
-            ),
-        'index' => //数据库demo表的索引定义信息
-            array(
-    
-            ),
-        'version' => '1.0', //版本号，默认1.0
-        'engine' => 'innodb', //存储引擎，默认innodb
-        'comment' => 'demo表', //备注
-    );
+        ),
+    'index' => //数据库demo表的索引定义信息
+        array(
 
+        ),
+    'version' => '1.0', //版本号，默认1.0
+    'engine' => 'innodb', //存储引擎，默认innodb
+    'comment' => 'demo表', //备注
+);
+```
 接着，我们执行命令: **php dbman maintain**
 
 ![][11]
@@ -82,89 +82,89 @@ Dbman的设计理念很简单，一个文件就是一张表，文件名即表名
 
 到这里demo表就已经创建成功了，接着我们继续为它添加字段和索引 
 
-```
-    return array(
-        'fields' => //数据库demo表的字段定义信息
-            array(
-                'id' => //id列的字段属性
-                    array(
-                        'name' => 'id', //字段名
-                        'type' => 'int(10)', //字段类型
-                        'notnull' => false, //是否为空
-                        'default' => NULL,  //默认值
-                        'primary' => true,  //是否主键，是主键
-                        'autoinc' => true,  //是否自增长，是自增长
+```php
+return array(
+    'fields' => //数据库demo表的字段定义信息
+        array(
+            'id' => //id列的字段属性
+                array(
+                    'name' => 'id', //字段名
+                    'type' => 'int(10)', //字段类型
+                    'notnull' => false, //是否为空
+                    'default' => NULL,  //默认值
+                    'primary' => true,  //是否主键，是主键
+                    'autoinc' => true,  //是否自增长，是自增长
+                ),
+            'uname' =>
+                array(
+                    'name' => 'uname',  //字段名
+                    'type' => 'char(30)', //字段类型
+                    'notnull' => false, //是否为空
+                    'default' => NULL, //默认值
+                    'primary' => false, //是否主键，不是主键
+                    'autoinc' => false, //是否自增长，非自增长
+                ),
+            'password' =>
+                array(
+                    'name' => 'password',
+                    'type' => 'char(32)',
+                    'notnull' => false,
+                    'default' => NULL,
+                    'primary' => false,
+                    'autoinc' => false,
+                ),
+            'start_status' =>
+                array(
+                    'name' => 'start_status',
+                    'type' => 'enum(\'Y\',\'N\')',
+                    'notnull' => false,
+                    'default' => 'Y',
+                    'primary' => false,
+                    'autoinc' => false,
+                ),
+            'login_status' =>
+                array(
+                    'name' => 'login_status',
+                    'type' => 'enum(\'Y\',\'N\')',
+                    'notnull' => false,
+                    'default' => 'N',
+                    'primary' => false,
+                    'autoinc' => false,
+                ),
+
+        ),
+    'index' => //数据库demo表的索引定义信息
+        array(
+            'index_demo_uname'=>
+                array(
+                    //索引名
+                    'name'=>'index_demo_uname',
+                    //索引类型(normal 普通索引| unique 唯一索引| primary 主键索引)
+                    'type' => 'unique',
+                    //索引字段
+                    'fields'=> 'uname',
+                    //索引方法，默认空即可
+                    'method'=>'',
+                ),
+            'index_demo_status'=>
+                array(
+                    //索引名
+                    'name'=>'index_demo_status',
+                    //索引类型(默认是： normal 普通索引)
+                    'type' => '',
+                    //索引字段(array 表示组合索引)
+                    'fields'=> array(
+                        'start_status',
+                        'login_status',
                     ),
-                'uname' =>
-                    array(
-                        'name' => 'uname',  //字段名
-                        'type' => 'char(30)', //字段类型
-                        'notnull' => false, //是否为空
-                        'default' => NULL, //默认值
-                        'primary' => false, //是否主键，不是主键
-                        'autoinc' => false, //是否自增长，非自增长
-                    ),
-                'password' =>
-                    array(
-                        'name' => 'password',
-                        'type' => 'char(32)',
-                        'notnull' => false,
-                        'default' => NULL,
-                        'primary' => false,
-                        'autoinc' => false,
-                    ),
-                'start_status' =>
-                    array(
-                        'name' => 'start_status',
-                        'type' => 'enum(\'Y\',\'N\')',
-                        'notnull' => false,
-                        'default' => 'Y',
-                        'primary' => false,
-                        'autoinc' => false,
-                    ),
-                'login_status' =>
-                    array(
-                        'name' => 'login_status',
-                        'type' => 'enum(\'Y\',\'N\')',
-                        'notnull' => false,
-                        'default' => 'N',
-                        'primary' => false,
-                        'autoinc' => false,
-                    ),
-    
-            ),
-        'index' => //数据库demo表的索引定义信息
-            array(
-                'index_demo_uname'=>
-                    array(
-                        //索引名
-                        'name'=>'index_demo_uname',
-                        //索引类型(normal 普通索引| unique 唯一索引| primary 主键索引)
-                        'type' => 'unique',
-                        //索引字段
-                        'fields'=> 'uname',
-                        //索引方法，默认空即可
-                        'method'=>'',
-                    ),
-                'index_demo_status'=>
-                    array(
-                        //索引名
-                        'name'=>'index_demo_status',
-                        //索引类型(默认是： normal 普通索引)
-                        'type' => '',
-                        //索引字段(array 表示组合索引)
-                        'fields'=> array(
-                            'start_status',
-                            'login_status',
-                        ),
-                        //索引方法，默认空即可
-                        'method'=>'',
-                    ),
-            ),
-        'version' => '1.0', //版本号，默认1.0
-        'engine' => 'innodb', //存储引擎，默认innodb
-        'comment' => 'demo表', //备注
-    );
+                    //索引方法，默认空即可
+                    'method'=>'',
+                ),
+        ),
+    'version' => '1.0', //版本号，默认1.0
+    'engine' => 'innodb', //存储引擎，默认innodb
+    'comment' => 'demo表', //备注
+);
 ```
 
 再次，执行命令: **php dbman maintain**![][6]
@@ -174,80 +174,80 @@ Dbman的设计理念很简单，一个文件就是一张表，文件名即表名
 可以出来，字段和索引都已经添加成功了。  
 最后我们来看看删除字段，删除字段其实很容易，直接删除文件里的字段信息即可，如：删除password字段 :
 
-```
-    return array(
-        'fields' => //数据库demo表的字段定义信息
-            array(
-                'id' => //id列的字段属性
-                    array(
-                        'name' => 'id', //字段名
-                        'type' => 'int(10)', //字段类型
-                        'notnull' => false, //是否为空
-                        'default' => NULL,  //默认值
-                        'primary' => true,  //是否主键，是主键
-                        'autoinc' => true,  //是否自增长，是自增长
+```php
+return array(
+    'fields' => //数据库demo表的字段定义信息
+        array(
+            'id' => //id列的字段属性
+                array(
+                    'name' => 'id', //字段名
+                    'type' => 'int(10)', //字段类型
+                    'notnull' => false, //是否为空
+                    'default' => NULL,  //默认值
+                    'primary' => true,  //是否主键，是主键
+                    'autoinc' => true,  //是否自增长，是自增长
+                ),
+            'uname' =>
+                array(
+                    'name' => 'uname',  //字段名
+                    'type' => 'char(30)', //字段类型
+                    'notnull' => false, //是否为空
+                    'default' => NULL, //默认值
+                    'primary' => false, //是否主键，不是主键
+                    'autoinc' => false, //是否自增长，非自增长
+                ),
+            'start_status' =>
+                array(
+                    'name' => 'start_status',
+                    'type' => 'enum(\'Y\',\'N\')',
+                    'notnull' => false,
+                    'default' => 'Y',
+                    'primary' => false,
+                    'autoinc' => false,
+                ),
+            'login_status' =>
+                array(
+                    'name' => 'login_status',
+                    'type' => 'enum(\'Y\',\'N\')',
+                    'notnull' => false,
+                    'default' => 'N',
+                    'primary' => false,
+                    'autoinc' => false,
+                ),
+
+        ),
+    'index' => //数据库demo表的索引定义信息
+        array(
+            'index_demo_uname'=>
+                array(
+                    //索引名
+                    'name'=>'index_demo_uname',
+                    //索引类型(normal 普通索引| unique 唯一索引| primary 主键索引)
+                    'type' => 'unique',
+                    //索引字段
+                    'fields'=> 'uname',
+                    //索引方法，默认空即可
+                    'method'=>'',
+                ),
+            'index_demo_status'=>
+                array(
+                    //索引名
+                    'name'=>'index_demo_status',
+                    //索引类型(默认是： normal 普通索引)
+                    'type' => '',
+                    //索引字段(array 表示组合索引)
+                    'fields'=> array(
+                        'start_status',
+                        'login_status',
                     ),
-                'uname' =>
-                    array(
-                        'name' => 'uname',  //字段名
-                        'type' => 'char(30)', //字段类型
-                        'notnull' => false, //是否为空
-                        'default' => NULL, //默认值
-                        'primary' => false, //是否主键，不是主键
-                        'autoinc' => false, //是否自增长，非自增长
-                    ),
-                'start_status' =>
-                    array(
-                        'name' => 'start_status',
-                        'type' => 'enum(\'Y\',\'N\')',
-                        'notnull' => false,
-                        'default' => 'Y',
-                        'primary' => false,
-                        'autoinc' => false,
-                    ),
-                'login_status' =>
-                    array(
-                        'name' => 'login_status',
-                        'type' => 'enum(\'Y\',\'N\')',
-                        'notnull' => false,
-                        'default' => 'N',
-                        'primary' => false,
-                        'autoinc' => false,
-                    ),
-    
-            ),
-        'index' => //数据库demo表的索引定义信息
-            array(
-                'index_demo_uname'=>
-                    array(
-                        //索引名
-                        'name'=>'index_demo_uname',
-                        //索引类型(normal 普通索引| unique 唯一索引| primary 主键索引)
-                        'type' => 'unique',
-                        //索引字段
-                        'fields'=> 'uname',
-                        //索引方法，默认空即可
-                        'method'=>'',
-                    ),
-                'index_demo_status'=>
-                    array(
-                        //索引名
-                        'name'=>'index_demo_status',
-                        //索引类型(默认是： normal 普通索引)
-                        'type' => '',
-                        //索引字段(array 表示组合索引)
-                        'fields'=> array(
-                            'start_status',
-                            'login_status',
-                        ),
-                        //索引方法，默认空即可
-                        'method'=>'',
-                    ),
-            ),
-        'version' => '1.0', //版本号，默认1.0
-        'engine' => 'innodb', //存储引擎，默认innodb
-        'comment' => 'demo表', //备注
-    );
+                    //索引方法，默认空即可
+                    'method'=>'',
+                ),
+        ),
+    'version' => '1.0', //版本号，默认1.0
+    'engine' => 'innodb', //存储引擎，默认innodb
+    'comment' => 'demo表', //备注
+);
 ```
 再次，执行命令: **php dbman maintain**
 
@@ -264,60 +264,60 @@ Dbman的设计理念很简单，一个文件就是一张表，文件名即表名
   
 接着，在tp5/application/command.php文件里面添加以下两行：
 
-        'app\admin\command\dbman\Init',
-        'app\admin\command\dbman\Maintain',
+    'app\admin\command\dbman\Init',
+    'app\admin\command\dbman\Maintain',
 
 最后，在tp5/application/admin/command/dbman/目录添加两个文件：
 
 1.tp5/application/admin/command/dbman/Maintain.php
 ```php
-    <?php
-    namespace app\admin\command\dbman;
-    
-    use think\console\Command;
-    use think\console\Input;
-    use think\console\Output;
-    use dbman\Dbman as BaseDb;
-    class Maintain extends Command
+<?php
+namespace app\admin\command\dbman;
+
+use think\console\Command;
+use think\console\Input;
+use think\console\Output;
+use dbman\Dbman as BaseDb;
+class Maintain extends Command
+{
+    protected function configure()
     {
-        protected function configure()
-        {
-            $this->setName('Dbman:maintain')->setDescription('Update the database');
-        }
-    
-        protected function execute(Input $input, Output $output)
-        {
-            $sysObj = new BaseDb();
-            $sysObj->maintain();
-            $output->writeln("update complete!");
-        }
+        $this->setName('Dbman:maintain')->setDescription('Update the database');
     }
+
+    protected function execute(Input $input, Output $output)
+    {
+        $sysObj = new BaseDb();
+        $sysObj->maintain();
+        $output->writeln("update complete!");
+    }
+}
 ```
 
 2.tp5/application/admin/command/dbman/Init.php
 
 ```php
-    <?php
-    namespace app\admin\command\dbman;
-    
-    use think\console\Command;
-    use think\console\Input;
-    use think\console\Output;
-    use dbman\Dbman as BaseDb;
-    class Init extends Command
+<?php
+namespace app\admin\command\dbman;
+
+use think\console\Command;
+use think\console\Input;
+use think\console\Output;
+use dbman\Dbman as BaseDb;
+class Init extends Command
+{
+    protected function configure()
     {
-        protected function configure()
-        {
-            $this->setName('Dbman:init')->setDescription('The system is initialized');
-        }
-    
-        protected function execute(Input $input, Output $output)
-        {
-            $sysObj = new BaseDb();
-            $sysObj->init();
-            $output->writeln("The initial complete!");
-        }
+        $this->setName('Dbman:init')->setDescription('The system is initialized');
     }
+
+    protected function execute(Input $input, Output $output)
+    {
+        $sysObj = new BaseDb();
+        $sysObj->init();
+        $output->writeln("The initial complete!");
+    }
+}
 ```
 执行命令：**php think**
 

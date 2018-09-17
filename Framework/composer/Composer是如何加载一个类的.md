@@ -27,7 +27,7 @@ PHP中zend_lookup_class_ex
 
 首先，PHP在运行的时候，需要一个类，是通过`zend_lookup_class_ex`来找到这个类的相关信息的。
 
-`[zend_lookup_class_ex][2]`查找类的主要逻辑如下（假设类名字放到变量lc_name中）：
+[`zend_lookup_class_ex`][2]查找类的主要逻辑如下（假设类名字放到变量lc_name中）：
 
 ```c
 

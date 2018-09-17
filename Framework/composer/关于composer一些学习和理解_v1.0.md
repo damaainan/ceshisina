@@ -189,7 +189,7 @@ Under the psr-4 key you define a mapping from namespaces to paths, relative to t
 laravel的自动加载会多了一些东西
 
 ```php
-vendor/autoload.php
+// vendor/autoload.php
 
 <?php
 

@@ -10,21 +10,21 @@ public同级目录建立tests目录
 tests/phpunit.xml
 
 ```xml
-    <phpunit bootstrap="./index.php">
-        <testsuites>
-            <testsuite name="controllers">
-                <file>./controllers/TestIndex.php</file>
-            </testsuite>
-        </testsuites>
-    </phpunit>
+<phpunit bootstrap="./index.php">
+    <testsuites>
+        <testsuite name="controllers">
+            <file>./controllers/TestIndex.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>
 ```
 
 tests/index.php
 
 ```php
-    <?php
-    define ( 'APP_PATH', dirname ( __DIR__ ) . '/app', true );
-    (new Yaf_Application ( APP_PATH . '/conf/app.ini' ))->bootstrap ();
+<?php
+define ( 'APP_PATH', dirname ( __DIR__ ) . '/app', true );
+(new Yaf_Application ( APP_PATH . '/conf/app.ini' ))->bootstrap ();
 ```
 
 tests/controllers/TestIndex.php
@@ -32,24 +32,24 @@ tests/controllers/TestIndex.php
 > 命令行测试
 
 ```php
-    class TestIndex extends PHPUnit_Framework_TestCase {
-        public function testIndex() {
-            $request=new Yaf_Request_Simple('CLI','','Index','test');
-            $res=Yaf_Application::app()->getDispatcher()->returnResponse(true)->dispatch($request);
-            $valid='test string';
-            $this->assertEquals ( $valid, $res->getBody());
-        }
+class TestIndex extends PHPUnit_Framework_TestCase {
+    public function testIndex() {
+        $request=new Yaf_Request_Simple('CLI','','Index','test');
+        $res=Yaf_Application::app()->getDispatcher()->returnResponse(true)->dispatch($request);
+        $valid='test string';
+        $this->assertEquals ( $valid, $res->getBody());
     }
+}
 ```
 
 APP_PATH.'/controllers/Index.php'
 
 ```php
-    class IndexController extends Yaf_Controller_Abstract {
-        function testAction(){
-            $this->getResponse()->setBody('test string');
-        }
+class IndexController extends Yaf_Controller_Abstract {
+    function testAction(){
+        $this->getResponse()->setBody('test string');
     }
+}
 ```
 
 运行

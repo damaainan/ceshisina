@@ -24,157 +24,164 @@ Debian，php-fpm-7.0，ThinkPHP-5.10。
     composer require goaop/framework
 
 ThinkPHP5 对composer兼容挺不错的哦，（到后面，我真想揍ThinkPHP5作者）这就装好了，怎么用啊，git上的提示了简单用法。我也就照着写了个去切入controller。
+```php
+<?PHP
+namespace app\tests\controller;
 
-    <?PHP
-    namespace app\tests\controller;
-    
-    use think\Controller;
-    
-    class Test1 extends Controller
+use think\Controller;
+
+class Test1 extends Controller
+{
+    public function test1()
     {
-        public function test1()
-        {
-            echo $this->aspectAction();
-        }
-        
-        public function aspectAction()
-        {
-            return 'hello';
-        }
+        echo $this->aspectAction();
     }
-
+    
+    public function aspectAction()
+    {
+        return 'hello';
+    }
+}
+```
 定义aspect
 
-    <?PHP
-    namespace app\tests\aspect;
-    
-    use Go\Aop\Aspect;
-    use Go\Aop\Intercept\FieldAccess;
-    use Go\Aop\Intercept\MethodInvocation;
-    use Go\Lang\Annotation\After;
-    use Go\Lang\Annotation\Before;
-    use Go\Lang\Annotation\Around;
-    use Go\Lang\Annotation\Pointcut;
-    
-    use app\tests\controller\Test1;
-    
-    class MonitorAspect implements Aspect
-    {
-    
-        /**
-         * Method that will be called before real method
-         *
-         * @param MethodInvocation $invocation Invocation
-         * @Before("execution(public|protected app\tests\controller\Test1->aspectAction(*))")
-         */
-        public function beforeMethodExecution(MethodInvocation $invocation)
-        {
-            $obj = $invocation->getThis();
-            echo 'Calling Before Interceptor for method: ',
-                 is_object($obj) ? get_class($obj) : $obj,
-                 $invocation->getMethod()->isStatic() ? '::' : '->',
-                 $invocation->getMethod()->getName(),
-                 '()',
-                 ' with arguments: ',
-                 json_encode($invocation->getArguments()),
-                 "<br>\n";
-        }
-    }
+```php
+<?php
+namespace app\tests\aspect;
 
+use Go\Aop\Aspect;
+use Go\Aop\Intercept\FieldAccess;
+use Go\Aop\Intercept\MethodInvocation;
+use Go\Lang\Annotation\After;
+use Go\Lang\Annotation\Before;
+use Go\Lang\Annotation\Around;
+use Go\Lang\Annotation\Pointcut;
+
+use app\tests\controller\Test1;
+
+class MonitorAspect implements Aspect
+{
+
+    /**
+     * Method that will be called before real method
+     *
+     * @param MethodInvocation $invocation Invocation
+     * @Before("execution(public|protected app\tests\controller\Test1->aspectAction(*))")
+     */
+    public function beforeMethodExecution(MethodInvocation $invocation)
+    {
+        $obj = $invocation->getThis();
+        echo 'Calling Before Interceptor for method: ',
+             is_object($obj) ? get_class($obj) : $obj,
+             $invocation->getMethod()->isStatic() ? '::' : '->',
+             $invocation->getMethod()->getName(),
+             '()',
+             ' with arguments: ',
+             json_encode($invocation->getArguments()),
+             "<br>\n";
+    }
+}
+```
 启用aspect
 
-    <?PHP
-    // file: ./application/tests/service/ApplicationAspectKernel.php
-    
-    namespace app\tests\service;
-    
-    use Go\Core\AspectKernel;
-    use Go\Core\AspectContainer;
-    
-    use app\tests\aspect\MonitorAspect;
-    
+```php
+<?php
+// file: ./application/tests/service/ApplicationAspectKernel.php
+
+namespace app\tests\service;
+
+use Go\Core\AspectKernel;
+use Go\Core\AspectContainer;
+
+use app\tests\aspect\MonitorAspect;
+
+/**
+ * Application Aspect Kernel
+ *
+ * Class ApplicationAspectKernel
+ * @package app\tests\service
+ */
+class ApplicationAspectKernel extends AspectKernel
+{
+
     /**
-     * Application Aspect Kernel
+     * Configure an AspectContainer with advisors, aspects and pointcuts
      *
-     * Class ApplicationAspectKernel
-     * @package app\tests\service
+     * @param AspectContainer $container
+     *
+     * @return void
      */
-    class ApplicationAspectKernel extends AspectKernel
+    protected function configureAop(AspectContainer $container)
     {
-    
-        /**
-         * Configure an AspectContainer with advisors, aspects and pointcuts
-         *
-         * @param AspectContainer $container
-         *
-         * @return void
-         */
-        protected function configureAop(AspectContainer $container)
-        {
-            $container->registerAspect(new MonitorAspect());
-        }
+        $container->registerAspect(new MonitorAspect());
     }
+}
+```
 
 go-aop 核心服务配置
 
-    <?PHP
-    // file: ./application/tests/behavior/Bootstrap.php
-    namespace app\tests\behavior;
-    
-    use think\Exception;
-    use Composer\Autoload\ClassLoader;
-    use Go\Instrument\Transformer\FilterInjectorTransformer;
-    use Go\Instrument\ClassLoading\AopComposerLoader;
-    use Doctrine\Common\Annotations\AnnotationRegistry;
-    
-    use app\tests\service\ApplicationAspectKernel;
-    use app\tests\ThinkPhpLoaderWrapper;
-    
-    class Bootstrap
+```php
+<?php
+// file: ./application/tests/behavior/Bootstrap.php
+namespace app\tests\behavior;
+
+use think\Exception;
+use Composer\Autoload\ClassLoader;
+use Go\Instrument\Transformer\FilterInjectorTransformer;
+use Go\Instrument\ClassLoading\AopComposerLoader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+
+use app\tests\service\ApplicationAspectKernel;
+use app\tests\ThinkPhpLoaderWrapper;
+
+class Bootstrap
+{
+    public function moduleInit(&$params)
     {
-        public function moduleInit(&$params)
-        {
-            $applicationAspectKernel = ApplicationAspectKernel::getInstance();
-            $applicationAspectKernel->init([
-                'debug' =>  true,
-                'appDir'    =>  __DIR__ . './../../../',
-                    'cacheDir'  =>  __DIR__ . './../../../runtime/aop_cache',
-                    'includePaths'  =>  [
-                        __DIR__ . './../../tests/controller',
-                        __DIR__ . './../../../thinkphp/library/think/model'
-                    ],
-                    'excludePaths'  =>  [
-                        __DIR__ . './../../aspect',
-                    ]
-                ]);
-            return $params;
-        }
+        $applicationAspectKernel = ApplicationAspectKernel::getInstance();
+        $applicationAspectKernel->init([
+            'debug' =>  true,
+            'appDir'    =>  __DIR__ . './../../../',
+                'cacheDir'  =>  __DIR__ . './../../../runtime/aop_cache',
+                'includePaths'  =>  [
+                    __DIR__ . './../../tests/controller',
+                    __DIR__ . './../../../thinkphp/library/think/model'
+                ],
+                'excludePaths'  =>  [
+                    __DIR__ . './../../aspect',
+                ]
+            ]);
+        return $params;
     }
+}
+```
 
 配置模块init钩子，让其启动 go-aop
 
-    <?PHP
-    // file: ./application/tests/tags.php
-    // 由于是thinkphp5.10 没有容器，所有需要在module下的tags.php文件里配置调用他
-    
-    return [
-        // 应用初始化
-        'app_init'     => [],
-        // 应用开始
-        'app_begin'    => [],
-        // 模块初始化
-        'module_init'  => [
-            'app\\tests\\behavior\\Bootstrap'
-        ],
-        // 操作开始执行
-        'action_begin' => [],
-        // 视图内容过滤
-        'view_filter'  => [],
-        // 日志写入
-        'log_write'    => [],
-        // 应用结束
-        'app_end'      => [],
-    ];
+```php
+<?php
+// file: ./application/tests/tags.php
+// 由于是thinkphp5.10 没有容器，所有需要在module下的tags.php文件里配置调用他
+
+return [
+    // 应用初始化
+    'app_init'     => [],
+    // 应用开始
+    'app_begin'    => [],
+    // 模块初始化
+    'module_init'  => [
+        'app\\tests\\behavior\\Bootstrap'
+    ],
+    // 操作开始执行
+    'action_begin' => [],
+    // 视图内容过滤
+    'view_filter'  => [],
+    // 日志写入
+    'log_write'    => [],
+    // 应用结束
+    'app_end'      => [],
+];
+```
 
 ## 兼容测试
 
@@ -199,23 +206,25 @@ go-aop 核心服务配置
 
 通过断点我发现了这个文件
 
-    <?PHP
-    // file: ./vendor/lisachenko/go-aop-php/src/Instrument/ClassLoading/AopComposerLoader.php
-    
-    public function loadClass($class)
-    {
-        if ($file = $this->original->findFile($class)) {
-            $isInternal = false;
-            foreach ($this->internalNamespaces as $ns) {
-                if (strpos($class, $ns) === 0) {
-                    $isInternal = true;
-                    break;
-                }
+```php
+<?php
+// file: ./vendor/lisachenko/go-aop-php/src/Instrument/ClassLoading/AopComposerLoader.php
+
+public function loadClass($class)
+{
+    if ($file = $this->original->findFile($class)) {
+        $isInternal = false;
+        foreach ($this->internalNamespaces as $ns) {
+            if (strpos($class, $ns) === 0) {
+                $isInternal = true;
+                break;
             }
-    
-            include ($isInternal ? $file : FilterInjectorTransformer::rewrite($file));
         }
+
+        include ($isInternal ? $file : FilterInjectorTransformer::rewrite($file));
     }
+}
+```
 
 这是一个autoload，每个类的载入都会经过它，并且会对其判断是否为内部类，不是的都会进入后续的操作。通过断点进入 FilterInjectorTransformer，发现会对load的文件进行语法解析，并根据注册的annotation对相关的类生成proxy类。说道这，大家就明白了go-aop是如何做到切入你的程序了吧，生成的proxy类，可以在你配置的cache-dir（我配置的是./runtime/aop_cache/）里看到。
 
@@ -227,34 +236,36 @@ go-aop 核心服务配置
 在ThinkPHP5里，默认有且只会注册一个TP5内部的 [Loader][6]，并不会把include请求下发给composer的autoload。所以，为其让go-aop起作用，那么必须让让include class的请求经过 [AopComposerLoad][7].  
 我们看看这个文件
 
-    <?PHP
-    // ./vendor/lisachenko/go-aop-php/src/Instrument/ClassLoading/AopComposerLoader.php:57
-    
-    public static function init()
-    {
-        $loaders = spl_autoload_functions();
-    
-        foreach ($loaders as &$loader) {
-            $loaderToUnregister = $loader;
-            if (is_array($loader) && ($loader[0] instanceof ClassLoader)) {
-                $originalLoader = $loader[0];
-    
-                // Configure library loader for doctrine annotation loader
-                AnnotationRegistry::registerLoader(function ($class) use ($originalLoader) {
-                    $originalLoader->loadClass($class);
-    
-                    return class_exists($class, false);
-                });
-                $loader[0] = new AopComposerLoader($loader[0]);
-            }
-            spl_autoload_unregister($loaderToUnregister);
+```php
+<?php
+// ./vendor/lisachenko/go-aop-php/src/Instrument/ClassLoading/AopComposerLoader.php:57
+
+public static function init()
+{
+    $loaders = spl_autoload_functions();
+
+    foreach ($loaders as &$loader) {
+        $loaderToUnregister = $loader;
+        if (is_array($loader) && ($loader[0] instanceof ClassLoader)) {
+            $originalLoader = $loader[0];
+
+            // Configure library loader for doctrine annotation loader
+            AnnotationRegistry::registerLoader(function ($class) use ($originalLoader) {
+                $originalLoader->loadClass($class);
+
+                return class_exists($class, false);
+            });
+            $loader[0] = new AopComposerLoader($loader[0]);
         }
-        unset($loader);
-    
-        foreach ($loaders as $loader) {
-            spl_autoload_register($loader);
-        }
+        spl_autoload_unregister($loaderToUnregister);
     }
+    unset($loader);
+
+    foreach ($loaders as $loader) {
+        spl_autoload_register($loader);
+    }
+}
+```
 
 这个文件里有个类型检测，检测autoload callback是否为Classloader类型，然而ThinkPHP5不是，通过断点你会发现ThinkPHP5是一个字符串数组，so，这里也就无法把go-aop注册到class loader的callback当中了。
 
@@ -263,76 +274,78 @@ go-aop 核心服务配置
 依照如上原理，就可以做如下改进  
 这个是为go-aop包装的新autoload，本质上是在原来的ThinkPHP5的loader上加了一个壳而已。
 
-    <?PHP
-    // file: ./application/tests 
-    
-    namespace app\tests;
-    
-    require_once __DIR__ . './../../vendor/composer/ClassLoader.php';
-    
-    use think\Loader;
-    use \Composer\Autoload\ClassLoader;
-    use Go\Instrument\Transformer\FilterInjectorTransformer;
-    use Go\Instrument\ClassLoading\AopComposerLoader;
-    use Doctrine\Common\Annotations\AnnotationRegistry;
-    
-    
-    class ThinkPhpLoaderWrapper extends ClassLoader
+```php
+<?php
+// file: ./application/tests 
+
+namespace app\tests;
+
+require_once __DIR__ . './../../vendor/composer/ClassLoader.php';
+
+use think\Loader;
+use \Composer\Autoload\ClassLoader;
+use Go\Instrument\Transformer\FilterInjectorTransformer;
+use Go\Instrument\ClassLoading\AopComposerLoader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+
+
+class ThinkPhpLoaderWrapper extends ClassLoader
+{
+    static protected $thinkLoader = Loader::class;
+
+    /**
+     * Autoload a class by it's name
+     */
+    public function loadClass($class)
     {
-        static protected $thinkLoader = Loader::class;
-    
-        /**
-         * Autoload a class by it's name
-         */
-        public function loadClass($class)
-        {
-            return Loader::autoload($class);
-        }
-    
-        /**
-         * {@inheritDoc}
-         */
-        public function findFile($class)
-        {
-            $allowedNamespace = [
-                'app\tests\controller'
-            ];
-            $isAllowed = false;
-            foreach ($allowedNamespace as $ns) {
-                if (strpos($class, $ns) === 0) {
-                    $isAllowed = true;
-                    break;
-                }
-            }
-            // 不允许被AOP的类，则不进入AopComposer
-            if(!$isAllowed)
-                return false;
-            
-            $obj = new Loader;
-            $observer = new \ReflectionClass(Loader::class);
-    
-            $method = $observer->getMethod('findFile');
-            $method->setAccessible(true);
-            $file = $method->invoke($obj, $class);
-            return $file;
-        }
+        return Loader::autoload($class);
     }
 
-    <?PHP
-    // file: ./application/tests/behavior/Bootstrap.php 在刚刚我们新添加的文件当中
-    // 这个方法 \app\tests\behavior\Bootstrap::moduleInit 的后面追加如下内容
-    
-    // 组成AOPComposerAutoLoader
-    $originalLoader = $thinkLoader = new ThinkPhpLoaderWrapper();
-    AnnotationRegistry::registerLoader(function ($class) use ($originalLoader) {
-        $originalLoader->loadClass($class);
-    
-        return class_exists($class, false);
-    });
-    $aopLoader = new AopComposerLoader($thinkLoader);
-    spl_autoload_register([$aopLoader, 'loadClass'], false, true);
-    
-    return $params;
+    /**
+     * {@inheritDoc}
+     */
+    public function findFile($class)
+    {
+        $allowedNamespace = [
+            'app\tests\controller'
+        ];
+        $isAllowed = false;
+        foreach ($allowedNamespace as $ns) {
+            if (strpos($class, $ns) === 0) {
+                $isAllowed = true;
+                break;
+            }
+        }
+        // 不允许被AOP的类，则不进入AopComposer
+        if(!$isAllowed)
+            return false;
+        
+        $obj = new Loader;
+        $observer = new \ReflectionClass(Loader::class);
+
+        $method = $observer->getMethod('findFile');
+        $method->setAccessible(true);
+        $file = $method->invoke($obj, $class);
+        return $file;
+    }
+}
+
+<?PHP
+// file: ./application/tests/behavior/Bootstrap.php 在刚刚我们新添加的文件当中
+// 这个方法 \app\tests\behavior\Bootstrap::moduleInit 的后面追加如下内容
+
+// 组成AOPComposerAutoLoader
+$originalLoader = $thinkLoader = new ThinkPhpLoaderWrapper();
+AnnotationRegistry::registerLoader(function ($class) use ($originalLoader) {
+    $originalLoader->loadClass($class);
+
+    return class_exists($class, false);
+});
+$aopLoader = new AopComposerLoader($thinkLoader);
+spl_autoload_register([$aopLoader, 'loadClass'], false, true);
+
+return $params;
+```
     
 
 在这里我们做了一个autload 并直接把它插入到了最前面（如果项目内还有其他autloader，请注意他们的先后顺序）。

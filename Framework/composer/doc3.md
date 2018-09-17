@@ -8,41 +8,41 @@
 
 * [命令行][0]
 * [全局参数][1]
-  * [进程退出代码][2]
-  * [初始化 init][3] - - [参数][4]
-  * [安装 install][5] - - [参数][6]
-  * [更新 update][7] - - [参数][8]
-  * [申明依赖 require][9] - - [参数][10]
-  * [全局执行 global][11]
-  * [搜索 search][12] - - [参数][13]
-  * [展示 show][14] - - [参数][15]
-  * [依赖性检测 depends][16] - - [参数][17]
-  * [有效性检测 validate][18]
-  * [依赖包状态检测 status][19]
-  * [自我更新 self-update][20] - - [参数][21]
-  * [更改配置 config][22] - - [使用方法][23] - - [参数][24] - - [修改包来源][25]
-  * [创建项目 create-project][26] - - [参数][27]
-  * [打印自动加载索引 dump-autoload][28] - - [参数][29]
-  * [查看许可协议 licenses][30]
-  * [执行脚本 run-script][31]
-  * [诊断 diagnose][32]
-  * [归档 archive][33] - - [参数][34]
-  * [获取帮助信息 help][35]
-  * [环境变量][36]
-    * [COMPOSER][37]
-    * [COMPOSER_ROOT_VERSION][38]
-    * [COMPOSER_VENDOR_DIR][39]
-    * [COMPOSER_BIN_DIR][40]
-    * [http_proxy or HTTP_PROXY][41]
-    * [no_proxy][42]
-    * [HTTP_PROXY_REQUEST_FULLURI][43]
-    * [HTTPS_PROXY_REQUEST_FULLURI][44]
-    * [COMPOSER_HOME][45]
-      * [COMPOSER_HOME/config.json][46]
-    * [COMPOSER_CACHE_DIR][47]
-    * [COMPOSER_PROCESS_TIMEOUT][48]
-    * [COMPOSER_DISCARD_CHANGES][49]
-    * [COMPOSER_NO_INTERACTION][50]
+    * [进程退出代码][2]
+    * [初始化 init][3] - - [参数][4]
+    * [安装 install][5] - - [参数][6]
+    * [更新 update][7] - - [参数][8]
+    * [申明依赖 require][9] - - [参数][10]
+    * [全局执行 global][11]
+    * [搜索 search][12] - - [参数][13]
+    * [展示 show][14] - - [参数][15]
+    * [依赖性检测 depends][16] - - [参数][17]
+    * [有效性检测 validate][18]
+    * [依赖包状态检测 status][19]
+    * [自我更新 self-update][20] - - [参数][21]
+    * [更改配置 config][22] - - [使用方法][23] - - [参数][24] - - [修改包来源][25]
+    * [创建项目 create-project][26] - - [参数][27]
+    * [打印自动加载索引 dump-autoload][28] - - [参数][29]
+    * [查看许可协议 licenses][30]
+    * [执行脚本 run-script][31]
+    * [诊断 diagnose][32]
+    * [归档 archive][33] - - [参数][34]
+    * [获取帮助信息 help][35]
+    * [环境变量][36]
+        * [COMPOSER][37]
+        * [COMPOSER_ROOT_VERSION][38]
+        * [COMPOSER_VENDOR_DIR][39]
+        * [COMPOSER_BIN_DIR][40]
+        * [http_proxy or HTTP_PROXY][41]
+        * [no_proxy][42]
+        * [HTTP_PROXY_REQUEST_FULLURI][43]
+        * [HTTPS_PROXY_REQUEST_FULLURI][44]
+        * [COMPOSER_HOME][45]
+            * [COMPOSER_HOME/config.json][46]
+        * [COMPOSER_CACHE_DIR][47]
+        * [COMPOSER_PROCESS_TIMEOUT][48]
+        * [COMPOSER_DISCARD_CHANGES][49]
+        * [COMPOSER_NO_INTERACTION][50]
 
 - - -
 
@@ -51,9 +51,9 @@
 下列参数可与每一个命令结合使用：
 
 * **--verbose (-v):** 增加反馈信息的详细度。 
-  * -v 表示正常输出。
-  * -vv 表示更详细的输出。
-  * -vvv 则是为了 debug。
+    * -v 表示正常输出。
+    * -vv 表示更详细的输出。
+    * -vvv 则是为了 debug。
 * **--help (-h):** 显示帮助信息。
 * **--quiet (-q):** 禁止输出任何信息。
 * **--no-interaction (-n):** 不要询问任何交互问题。

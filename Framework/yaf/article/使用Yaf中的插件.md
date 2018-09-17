@@ -54,17 +54,17 @@ Yaf的工作流程如下，7个Hook插在流程的不同位置。
 
 一个插件类例子如下:
 ```php
-    <?php
-     class UserPlugin extends Yaf_Plugin_Abstract
+<?php
+ class UserPlugin extends Yaf_Plugin_Abstract
+{
+    public function routerStartup(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response)
     {
-        public function routerStartup(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response)
-        {
-        }
-    
-        public function routerShutdown(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response)
-        {
-        }
     }
+
+    public function routerShutdown(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response)
+    {
+    }
+}
 ```
 ### 2.2 注册插件 
 
@@ -72,14 +72,14 @@ Yaf的工作流程如下，7个Hook插在流程的不同位置。
 
 一个注册插件的例子如下:
 ```php
-    <?php
-    class Bootstrap extends Yaf_Bootstrap_Abstract{
-    
-     public function _initPlugin(Yaf_Dispatcher $dispatcher) {
-     $user = new UserPlugin();
-     $dispatcher->registerPlugin($user);
-     }
-    }
+<?php
+class Bootstrap extends Yaf_Bootstrap_Abstract{
+
+ public function _initPlugin(Yaf_Dispatcher $dispatcher) {
+ $user = new UserPlugin();
+ $dispatcher->registerPlugin($user);
+ }
+}
 ```
 ### 2.3 插件目录 
 
@@ -95,53 +95,53 @@ Yaf的工作流程如下，7个Hook插在流程的不同位置。
 
 首先，我们定义好自己的插件类：
 ```php
-    /**
-     * 插件类定义
-     * UserPlugin.php
-     */
-    class UserPlugin extends Yaf_Plugin_Abstract {
-        //在路由之前触发，这个是7个事件中, 最早的一个. 但是一些全局自定的工作, 还是应该放在Bootstrap中去完成 
-        public function routerStartup(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
-            echo "Plugin routerStartup called <br/>\n";
-        }
-       //路由结束之后触发，此时路由一定正确完成, 否则这个事件不会触发 
-        public function routerShutdown(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
-            echo "Plugin routerShutdown called <br/>\n";
-        }
-       //分发循环开始之前被触发 
-        public function dispatchLoopStartup(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
-            echo "Plugin DispatchLoopStartup called <br/>\n";
-        }
-        //分发之前触发    如果在一个请求处理过程中, 发生了forward, 则这个事件会被触发多次 
-        public function preDispatch(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
-            echo "Plugin PreDispatch called <br/>\n";
-        }
-        //分发结束之后触发，此时动作已经执行结束, 视图也已经渲染完成. 和preDispatch类似, 此事件也可能触发多次 
-        public function postDispatch(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
-            echo "Plugin postDispatch called <br/>\n";
-        }
-        //分发循环结束之后触发，此时表示所有的业务逻辑都已经运行完成, 但是响应还没有发送 
-        public function dispatchLoopShutdown(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
-            echo "Plugin DispatchLoopShutdown called <br/>\n";
-        }
-    
-        public function preResponse(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
-            echo "Plugin PreResponse called <br/>\n";
-        }
+/**
+ * 插件类定义
+ * UserPlugin.php
+ */
+class UserPlugin extends Yaf_Plugin_Abstract {
+    //在路由之前触发，这个是7个事件中, 最早的一个. 但是一些全局自定的工作, 还是应该放在Bootstrap中去完成 
+    public function routerStartup(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
+        echo "Plugin routerStartup called <br/>\n";
     }
+   //路由结束之后触发，此时路由一定正确完成, 否则这个事件不会触发 
+    public function routerShutdown(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
+        echo "Plugin routerShutdown called <br/>\n";
+    }
+   //分发循环开始之前被触发 
+    public function dispatchLoopStartup(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
+        echo "Plugin DispatchLoopStartup called <br/>\n";
+    }
+    //分发之前触发    如果在一个请求处理过程中, 发生了forward, 则这个事件会被触发多次 
+    public function preDispatch(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
+        echo "Plugin PreDispatch called <br/>\n";
+    }
+    //分发结束之后触发，此时动作已经执行结束, 视图也已经渲染完成. 和preDispatch类似, 此事件也可能触发多次 
+    public function postDispatch(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
+        echo "Plugin postDispatch called <br/>\n";
+    }
+    //分发循环结束之后触发，此时表示所有的业务逻辑都已经运行完成, 但是响应还没有发送 
+    public function dispatchLoopShutdown(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
+        echo "Plugin DispatchLoopShutdown called <br/>\n";
+    }
+
+    public function preResponse(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
+        echo "Plugin PreResponse called <br/>\n";
+    }
+}
 ```
 然后注册我们的插件，在Bootstrap注册插件
 ```php
-    class Bootstrap extends Yaf_Bootstrap_Abstract{
-        /**
-         * 注册一个插件
-         * 插件的目录是在application_directory/plugins
-         */
-        public function _initPlugin(Yaf_Dispatcher $dispatcher) {
-            $user = new UserPlugin();
-            $dispatcher->registerPlugin($user);
-        }
+class Bootstrap extends Yaf_Bootstrap_Abstract{
+    /**
+     * 注册一个插件
+     * 插件的目录是在application_directory/plugins
+     */
+    public function _initPlugin(Yaf_Dispatcher $dispatcher) {
+        $user = new UserPlugin();
+        $dispatcher->registerPlugin($user);
     }
+}
 ```
 就这样，插件就会在我们的项目运行过程中自动调用相关的Hook，我们可以在这些Hook中部署自己的业务逻辑。
 
