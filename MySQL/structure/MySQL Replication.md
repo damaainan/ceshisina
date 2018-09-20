@@ -374,15 +374,15 @@ MySQL5.1开始支持基于行的复制
 
 [12]: http://dev.mysql.com/doc/refman/5.6/en/
 [13]: http://dev.mysql.com/doc/refman/5.7/en/
-[0]:./img/bVttuN
-[1]:./img/bVttwa
-[2]:./img/bVttwi
-[3]:./img/bVttwY
-[4]:./img/bVttw2
-[5]:./img/bVttw7
-[6]:./img/bVttw8
-[7]:./img/bVttxc
-[8]:./img/bVttxf
-[9]:./img/bVttxn
-[10]:./img/bVttxo
-[11]:./img/bVttxp
+[0]:./img/bVttuN.png
+[1]:./img/bVttwa.png
+[2]:./img/bVttwi.png
+[3]:./img/bVttwY.png
+[4]:./img/bVttw2.png
+[5]:./img/bVttw7.png
+[6]:./img/bVttw8.png
+[7]:./img/bVttxc.png
+[8]:./img/bVttxf.png
+[9]:./img/bVttxn.png
+[10]:./img/bVttxo.png
+[11]:./img/bVttxp.png

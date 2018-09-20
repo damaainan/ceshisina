@@ -271,6 +271,6 @@ stop group_replication;
 
 [3]: http://dev.mysql.com/doc/refman/5.6/en/
 [4]: http://dev.mysql.com/doc/refman/5.7/en/
-[0]:./img/bVttyZ
-[1]:./img/bVtty0
-[2]:./img/bVtty6
+[0]:./img/bVttyZ.png
+[1]:./img/bVtty0.png
+[2]:./img/bVtty6.png

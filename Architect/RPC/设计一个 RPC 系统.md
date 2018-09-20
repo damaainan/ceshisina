@@ -126,7 +126,7 @@ Windows中对RPC支持是比较早和比较完善的。首先它通过GUID来查
 
 注：关注作者微信公众号，了解更多分布式架构、微服务、netty、MySQL、spring、性能优化、等知识点。公众号：《Java烂猪皮》
 
-[0]: ./img/bVbcwuj
-[1]: ./img/bVbcwup
-[2]: ./img/bVbcwus
-[3]: ./img/bVbcwux
+[0]: ./img/bVbcwuj.png
+[1]: ./img/bVbcwup.png
+[2]: ./img/bVbcwus.png
+[3]: ./img/bVbcwux.png
