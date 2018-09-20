@@ -445,6 +445,6 @@ Command: Connect
 [4]: https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html
 [5]: https://dev.mysql.com/doc/refman/5.7/en/faqs-replication.html
 [6]: http://www.ymq.io
-[7]: 
+[7]: #
 
-[0]: ../img/1460000012226137.png
+[0]: ./img/1460000012226137.png
