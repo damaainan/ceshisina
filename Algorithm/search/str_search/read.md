@@ -22,148 +22,148 @@
 ### 暴力匹配：
 
 ```java
-    public static int forceSearch(String txt, String pat) {
-        int M = txt.length();
-        int N = pat.length();
-        for (int i = 0; i <= M - N; i++) {
-            int j;
-            for (j = 0; j < N; j++) {
-                if (txt.charAt(i + j) != pat.charAt(j))
-                    break;
-            }
-            if (j == N)
-                return i;
-        }
-        return -1;
-    }
+public static int forceSearch(String txt, String pat) {
+    int M = txt.length();
+    int N = pat.length();
+    for (int i = 0; i <= M - N; i++) {
+        int j;
+        for (j = 0; j < N; j++) {
+            if (txt.charAt(i + j) != pat.charAt(j))
+                break;
+        }
+        if (j == N)
+            return i;
+    }
+    return -1;
+}
     
 ```
 ### KMP 算法：
 
 ```java
-    public class KMP {
-        public static int KMPSearch(String txt, String pat, int[] next) {
-            int M = txt.length();
-            int N = pat.length();
-            int i = 0;
-            int j = 0;
-            while (i < M && j < N) {
-                if (j == -1 || txt.charAt(i) == pat.charAt(j)) {
-                    i++;
-                    j++;
-                } else {
-                    j = next[j];
-                }
-            }
-            if (j == N)
-                return i - j;
-            else
-                return -1;
-        }
-        public static void getNext(String pat, int[] next) {
-            int N = pat.length();
-            next[0] = -1;
-            int k = -1;
-            int j = 0;
-            while (j < N - 1) {
-                if (k == -1 || pat.charAt(j) == pat.charAt(k)) {
-                    ++k;
-                    ++j;
-                    next[j] = k;
-                } else
-                    k = next[k];
-            }
-        }
-        public static void main(String[] args) {
-            String txt = "BBC ABCDAB CDABABCDABCDABDE";
-            String pat = "ABCDABD";
-            int[] next = new int[pat.length()];
-            getNext(pat, next);
-            System.out.println(KMPSearch(txt, pat, next));
-        }
-    }
+public class KMP {
+    public static int KMPSearch(String txt, String pat, int[] next) {
+        int M = txt.length();
+        int N = pat.length();
+        int i = 0;
+        int j = 0;
+        while (i < M && j < N) {
+            if (j == -1 || txt.charAt(i) == pat.charAt(j)) {
+                i++;
+                j++;
+            } else {
+                j = next[j];
+            }
+        }
+        if (j == N)
+            return i - j;
+        else
+            return -1;
+    }
+    public static void getNext(String pat, int[] next) {
+        int N = pat.length();
+        next[0] = -1;
+        int k = -1;
+        int j = 0;
+        while (j < N - 1) {
+            if (k == -1 || pat.charAt(j) == pat.charAt(k)) {
+                ++k;
+                ++j;
+                next[j] = k;
+            } else
+                k = next[k];
+        }
+    }
+    public static void main(String[] args) {
+        String txt = "BBC ABCDAB CDABABCDABCDABDE";
+        String pat = "ABCDABD";
+        int[] next = new int[pat.length()];
+        getNext(pat, next);
+        System.out.println(KMPSearch(txt, pat, next));
+    }
+}
     
 ```
 
 ### Boyer-Moore 算法
 
 ```java
-    public class BoyerMoore {
-        public static void getRight(String pat, int[] right) {
-            for (int i = 0; i < 256; i++){
-                right[i] = -1;
-            }
-            for (int i = 0; i < pat.length(); i++) {
-                right[pat.charAt(i)] = i;
-            }
-        }
-        public static int BoyerMooreSearch(String txt, String pat, int[] right) {
-            int M = txt.length();
-            int N = pat.length();
-            int skip;
-            for (int i = 0; i <= M - N; i += skip) {
-                skip = 0;
-                for (int j = N - 1; j >= 0; j--) {
-                    if (pat.charAt(j) != txt.charAt(i + j)) {
-                        skip = j - right[txt.charAt(i + j)];
-                        if (skip < 1){
-                            skip = 1;
-                        }
-                        break;
-                    }
-                }
-                if (skip == 0)
-                    return i;
-            }
-            return -1;
-        }
-        public static void main(String[] args) {
-            String txt = "BBC ABCDAB AACDABABCDABCDABDE";
-            String pat = "ABCDABD";
-            int[] right = new int[256];
-            getRight(pat,right);
-            System.out.println(BoyerMooreSearch(txt, pat, right));
-        }
-    }
-    
+public class BoyerMoore {
+    public static void getRight(String pat, int[] right) {
+        for (int i = 0; i < 256; i++){
+            right[i] = -1;
+        }
+        for (int i = 0; i < pat.length(); i++) {
+            right[pat.charAt(i)] = i;
+        }
+    }
+    public static int BoyerMooreSearch(String txt, String pat, int[] right) {
+        int M = txt.length();
+        int N = pat.length();
+        int skip;
+        for (int i = 0; i <= M - N; i += skip) {
+            skip = 0;
+            for (int j = N - 1; j >= 0; j--) {
+                if (pat.charAt(j) != txt.charAt(i + j)) {
+                    skip = j - right[txt.charAt(i + j)];
+                    if (skip < 1){
+                        skip = 1;
+                    }
+                    break;
+                }
+            }
+            if (skip == 0)
+                return i;
+        }
+        return -1;
+    }
+    public static void main(String[] args) {
+        String txt = "BBC ABCDAB AACDABABCDABCDABDE";
+        String pat = "ABCDABD";
+        int[] right = new int[256];
+        getRight(pat,right);
+        System.out.println(BoyerMooreSearch(txt, pat, right));
+    }
+}
+
 ```
 
 ### Sunday算法
 
 ```java
-    public class Sunday {
-        public static int getIndex(String pat, Character c) {
-            for (int i = pat.length() - 1; i >= 0; i--) {
-                if (pat.charAt(i) == c)
-                    return i;
-            }
-            return -1;
-        }
-        public static int SundaySearch(String txt, String pat) {
-            int M = txt.length();
-            int N = pat.length();
-            int i, j;
-            int skip = -1;
-            for (i = 0; i <= M - N; i += skip) {
-                for (j = 0; j < N; j++) {
-                    if (txt.charAt(i + j) != pat.charAt(j)){
-                        if (i == M - N)
-                            break;
-                        skip = N - getIndex(pat, txt.charAt(i + N));
-                        break;
-                    }
-                }
-                if (j == N)
-                    return i;
-            }
-            return -1;
-        }
-        public static void main(String[] args) {
-            String txt = "BBC ABCDAB AACDABABCDABCDABD";
-            String pat = "ABCDABD";
-            System.out.println(SundaySearch(txt, pat));
-        }
-    }
+public class Sunday {
+    public static int getIndex(String pat, Character c) {
+        for (int i = pat.length() - 1; i >= 0; i--) {
+            if (pat.charAt(i) == c)
+                return i;
+        }
+        return -1;
+    }
+    public static int SundaySearch(String txt, String pat) {
+        int M = txt.length();
+        int N = pat.length();
+        int i, j;
+        int skip = -1;
+        for (i = 0; i <= M - N; i += skip) {
+            for (j = 0; j < N; j++) {
+                if (txt.charAt(i + j) != pat.charAt(j)){
+                    if (i == M - N)
+                        break;
+                    skip = N - getIndex(pat, txt.charAt(i + N));
+                    break;
+                }
+            }
+            if (j == N)
+                return i;
+        }
+        return -1;
+    }
+    public static void main(String[] args) {
+        String txt = "BBC ABCDAB AACDABABCDABCDABD";
+        String pat = "ABCDABD";
+        System.out.println(SundaySearch(txt, pat));
+    }
+}
 ```
 
 [2]: http://blog.jobbole.com/110429/

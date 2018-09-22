@@ -171,12 +171,12 @@ function getnext(N) {
 所以我们可以把循环改成这样：
 
 ```js
-    var i = -1    
-    for (; j < n; j++) {
-        while (N[i+1] != N[j] && i >= 0) i = next[i]
-        if (N[i+1] == N[j]) i++     // 情况1、2
-        next[j] = i                 // 情况3
-    }
+var i = -1    
+for (; j < n; j++) {
+    while (N[i+1] != N[j] && i >= 0) i = next[i]
+    if (N[i+1] == N[j]) i++     // 情况1、2
+    next[j] = i                 // 情况3
+}
 ```
 大功告成！这样我们就得出了可以求取模式值数组next的函数，那么在具体的匹配过程中怎样进行呢？
 

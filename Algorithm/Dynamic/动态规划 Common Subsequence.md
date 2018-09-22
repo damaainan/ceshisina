@@ -44,8 +44,6 @@ abcd mnp
 一道非常简单的动态规划题，菜鸡小白正在研究之中
 
 ```c
-
-
 #include <iostream>
 #include <algorithm>
 #include <string>
@@ -82,8 +80,6 @@ int main()
         cout << a[n][m] << endl;
     }    
 }
-
-
 ```
 
 

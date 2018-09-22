@@ -26,11 +26,11 @@ fibonacci
 先说下正常的递归版本，这个版本在我初学编程时经常遇到的，它让我知道了递归的强大。
 
 ```js
-    function fibonacci (n) {
-       if(n==0) return 0
-       else if(n==1) return 1
-       else return fibonacci(n-1) + fibonacci(n-2)
-    }
+function fibonacci (n) {
+   if(n==0) return 0
+   else if(n==1) return 1
+   else return fibonacci(n-1) + fibonacci(n-2)
+}
 ```
     
 
@@ -41,17 +41,17 @@ fibonacci
 递归有性能问题，用循环来做。
 
 ```js
-    function fibonacci(n){
-      var last = 1
-      var last2 = 0
-      var current = last2
-      for(var i=1;i<=n;i++){
-        last2 = last
-        last = current
-        current = last + last2
-      }
-      return current
-    }
+function fibonacci(n){
+  var last = 1
+  var last2 = 0
+  var current = last2
+  for(var i=1;i<=n;i++){
+    last2 = last
+    last = current
+    current = last + last2
+  }
+  return current
+}
 ```
     
 
@@ -62,13 +62,13 @@ fibonacci
 这个就是文章开头的例子转换为js的版本
 
 ```js
-    function fib(n){
-      function fib_(n,a,b){
-        if(n==0)  return a
-        else return fib_(n-1,b,a+b)
-       }
-       return fib_(n,0,1)
-    }
+function fib(n){
+  function fib_(n,a,b){
+    if(n==0)  return a
+    else return fib_(n-1,b,a+b)
+   }
+   return fib_(n,0,1)
+}
 ```
 
 把前两位数字做成参数巧妙的避免了重复计算，性能也有明显的提升。n做递减运算，前两位数字做递增（斐波那契数列的递增）,这段代码一个减，一个增，初看时有点费脑力。按照我的习惯一般是全增，让n从0开始到n。
@@ -78,27 +78,27 @@ fibonacci
 正常版本fibonacci是纯函数（[什么是纯函数?][2]）纯函数可以用记忆函数进行优化,把那些需要重复计算的都放到缓存中。
 
 ```js
-    function memozi(fn){
-      var r = {}
-      return function(n){
-        if(r[n] == ){
-          r[n] = fn(n)
-          return r[n]
-        }else{
-            return r[n]
-        }
-      }
+function memozi(fn){
+  var r = {}
+  return function(n){
+    if(r[n] == ){
+      r[n] = fn(n)
+      return r[n]
+    }else{
+        return r[n]
     }
-    
-    var fibfn = memozi(function(n){
-        if(n==0){
-            return 0
-        }else if(n==1){
-            return 1
-        }else{
-            return fibfn(n-1) + fibfn(n-2)
-        }
-    })
+  }
+}
+
+var fibfn = memozi(function(n){
+    if(n==0){
+        return 0
+    }else if(n==1){
+        return 1
+    }else{
+        return fibfn(n-1) + fibfn(n-2)
+    }
+})
 ```
     
 
@@ -110,82 +110,82 @@ fibonacci本身是一个数列，只不过无限大。直接使用一个无限�
 不过js中没有无限大的数组，需要自己动手构造一个。
 
 ```js
-    // 空序列
-    var _empty = {"@placeholder@":"@@"}
-    var _end = _empty
-    // 序对构造 惰性序列的值只有在需要用到的时候才进行求值 这里用function来代表
-    function pair(a,fn){
-      return {
-        left:a,
-        right:fn
-      }
-    }
-    function isFunction(p){
-      return Object.prototype.toString.call(p) == "[object Function]"
-    }
-    function left(p){
-      return p.left
-    }
-    function right(p){
-      if(isEmpty(p.right)){
-        return p.right
-      }else if(isFunction(p.right)){
-        return p.right(p)
-      }else{
-        throw "序列的第二个参数必须是一个函数"
-      }
-    }
-    function isEmpty(seq){
-      return seq == _empty
-    }
-    function isArrEmpty(arr){
-      return arr.length == 0
-    }
-    
-    function toArray(seq){
-      if(isEmpty(seq)){
-        return []
-      }else{
-        return [left(seq)].concat(toArray(right(seq)))
-      }
-    }
-    function toSeq(arr){
-      if(isArrEmpty(arr)){
-        return _end
-      }else{
-        return pair(arr[0],p=>toSeq(arr.slice(1)))
-      }
-    }
-    function map(fn,seq){
-      if(isEmpty(seq)){
-        return _end
-      }else{
-        return pair(fn(left(seq)),p=>map(fn,right(seq)))
-      }
-    }
-    function take(n,seq){
-      if(isEmpty(seq)){
-        return _end
-      }else if(n==0){
-        return _end
-      }else{
-        return pair(left(seq),p=>take(n-1,right(seq)))
-      }
-    }
-    
-    function zip(fn,seq1,seq2){
-      if(isEmpty(seq1)){
-        return _end
-      }else if(isEmpty(seq2)){
-        return _end
-      }else{
-        var l1 = left(seq1)
-        var l2 = left(seq2)
-        return pair(fn(l1,l2),p=>zip(fn,right(seq1),right(seq2)))
-      }
-    }
-    
-    var fibonacci = pair(0,p=>pair(1,p1=>zip((a,b)=>a+b,p,p1)))
+// 空序列
+var _empty = {"@placeholder@":"@@"}
+var _end = _empty
+// 序对构造 惰性序列的值只有在需要用到的时候才进行求值 这里用function来代表
+function pair(a,fn){
+  return {
+    left:a,
+    right:fn
+  }
+}
+function isFunction(p){
+  return Object.prototype.toString.call(p) == "[object Function]"
+}
+function left(p){
+  return p.left
+}
+function right(p){
+  if(isEmpty(p.right)){
+    return p.right
+  }else if(isFunction(p.right)){
+    return p.right(p)
+  }else{
+    throw "序列的第二个参数必须是一个函数"
+  }
+}
+function isEmpty(seq){
+  return seq == _empty
+}
+function isArrEmpty(arr){
+  return arr.length == 0
+}
+
+function toArray(seq){
+  if(isEmpty(seq)){
+    return []
+  }else{
+    return [left(seq)].concat(toArray(right(seq)))
+  }
+}
+function toSeq(arr){
+  if(isArrEmpty(arr)){
+    return _end
+  }else{
+    return pair(arr[0],p=>toSeq(arr.slice(1)))
+  }
+}
+function map(fn,seq){
+  if(isEmpty(seq)){
+    return _end
+  }else{
+    return pair(fn(left(seq)),p=>map(fn,right(seq)))
+  }
+}
+function take(n,seq){
+  if(isEmpty(seq)){
+    return _end
+  }else if(n==0){
+    return _end
+  }else{
+    return pair(left(seq),p=>take(n-1,right(seq)))
+  }
+}
+
+function zip(fn,seq1,seq2){
+  if(isEmpty(seq1)){
+    return _end
+  }else if(isEmpty(seq2)){
+    return _end
+  }else{
+    var l1 = left(seq1)
+    var l2 = left(seq2)
+    return pair(fn(l1,l2),p=>zip(fn,right(seq1),right(seq2)))
+  }
+}
+
+var fibonacci = pair(0,p=>pair(1,p1=>zip((a,b)=>a+b,p,p1)))
 ```
     
 
@@ -196,88 +196,88 @@ fibonacci本身是一个数列，只不过无限大。直接使用一个无限�
 ## 惰性序列优化版本
 
 ```js
-    // 空序列
-    var _empty = {"@placeholder@":"@@"}
-    var _end = _empty
-    // 序对构造 惰性序列的值只有在需要用到的时候才进行求值 这里用function来代表
-    function pair(a,fn){
-      return {
-        left:a,
-        right:fn,
-        rightCache:
-      }
+// 空序列
+var _empty = {"@placeholder@":"@@"}
+var _end = _empty
+// 序对构造 惰性序列的值只有在需要用到的时候才进行求值 这里用function来代表
+function pair(a,fn){
+  return {
+    left:a,
+    right:fn,
+    rightCache:
+  }
+}
+function isFunction(p){
+  return Object.prototype.toString.call(p) == "[object Function]"
+}
+function left(p){
+  return p.left
+}
+function right(p){
+  if(isEmpty(p.right)){
+    return p.right
+  }else if(isFunction(p.right)){
+    if(p.rightCache != ){
+      return p.rightCache
+    }else{
+      p.rightCache = p.right(p)
+      return p.rightCache
     }
-    function isFunction(p){
-      return Object.prototype.toString.call(p) == "[object Function]"
-    }
-    function left(p){
-      return p.left
-    }
-    function right(p){
-      if(isEmpty(p.right)){
-        return p.right
-      }else if(isFunction(p.right)){
-        if(p.rightCache != ){
-          return p.rightCache
-        }else{
-          p.rightCache = p.right(p)
-          return p.rightCache
-        }
-      }else{
-        throw "序列的第二个参数必须是一个函数"
-      }
-    }
-    function isEmpty(seq){
-      return seq == _empty
-    }
-    function isArrEmpty(arr){
-      return arr.length == 0
-    }
-    
-    function toArray(seq){
-      if(isEmpty(seq)){
-        return []
-      }else{
-        return [left(seq)].concat(toArray(right(seq)))
-      }
-    }
-    function toSeq(arr){
-      if(isArrEmpty(arr)){
-        return _end
-      }else{
-        return pair(arr[0],p=>toSeq(arr.slice(1)))
-      }
-    }
-    function map(fn,seq){
-      if(isEmpty(seq)){
-        return _end
-      }else{
-        return pair(fn(left(seq)),p=>map(fn,right(seq)))
-      }
-    }
-    function take(n,seq){
-      if(isEmpty(seq)){
-        return _end
-      }else if(n==0){
-        return _end
-      }else{
-        return pair(left(seq),p=>take(n-1,right(seq)))
-      }
-    }
-    
-    function zip(fn,seq1,seq2){
-      if(isEmpty(seq1)){
-        return _end
-      }else if(isEmpty(seq2)){
-        return _end
-      }else{
-        var l1 = left(seq1)
-        var l2 = left(seq2)
-        return pair(fn(l1,l2),p=>zip(fn,right(seq1),right(seq2)))
-      }
-    }
-    
-    var fibonacci = pair(0,p=>pair(1,p1=>zip((a,b)=>a+b,p,p1)))
+  }else{
+    throw "序列的第二个参数必须是一个函数"
+  }
+}
+function isEmpty(seq){
+  return seq == _empty
+}
+function isArrEmpty(arr){
+  return arr.length == 0
+}
+
+function toArray(seq){
+  if(isEmpty(seq)){
+    return []
+  }else{
+    return [left(seq)].concat(toArray(right(seq)))
+  }
+}
+function toSeq(arr){
+  if(isArrEmpty(arr)){
+    return _end
+  }else{
+    return pair(arr[0],p=>toSeq(arr.slice(1)))
+  }
+}
+function map(fn,seq){
+  if(isEmpty(seq)){
+    return _end
+  }else{
+    return pair(fn(left(seq)),p=>map(fn,right(seq)))
+  }
+}
+function take(n,seq){
+  if(isEmpty(seq)){
+    return _end
+  }else if(n==0){
+    return _end
+  }else{
+    return pair(left(seq),p=>take(n-1,right(seq)))
+  }
+}
+
+function zip(fn,seq1,seq2){
+  if(isEmpty(seq1)){
+    return _end
+  }else if(isEmpty(seq2)){
+    return _end
+  }else{
+    var l1 = left(seq1)
+    var l2 = left(seq2)
+    return pair(fn(l1,l2),p=>zip(fn,right(seq1),right(seq2)))
+  }
+}
+
+var fibonacci = pair(0,p=>pair(1,p1=>zip((a,b)=>a+b,p,p1)))
 ```
     
 
@@ -288,14 +288,14 @@ fibonacci本身是一个数列，只不过无限大。直接使用一个无限�
 条件苛刻一些，使用匿名函数实现fibonacci功能，正常的递归版本上面有提到如下：
 
 ```js
-    let fib = n => n > 1 ? fib(n-1) + fib(n-2) : n
+let fib = n => n > 1 ? fib(n-1) + fib(n-2) : n
 ```
     
 
 把fib名字去掉就是匿名版本，但去掉fib就无法递归也就是调用自身了。事实上是可以间接的调用自身，代码如下：（ 注：不知道怎么描述好 ）
 
 ```js
-    (f=>n=>n>1?f(f)(n-1)+f(f)(n-2):n)(f=>n=>n>1?f(f)(n-1)+f(f)(n-2):n)(10)
+(f=>n=>n>1?f(f)(n-1)+f(f)(n-2):n)(f=>n=>n>1?f(f)(n-1)+f(f)(n-2):n)(10)
 ```
     
 
@@ -308,14 +308,14 @@ fibonacci本身是一个数列，只不过无限大。直接使用一个无限�
 将上面的箭头函数调用自身的功能抽象出来就是Y Combinator (注: 谢谢[李思立][5]的补充
 
 ```js
-    let Y = f => (g=>f(a=>g(g)(a)))(g=>f(a=>g(g)(a)))
+let Y = f => (g=>f(a=>g(g)(a)))(g=>f(a=>g(g)(a)))
 ```
     
 
 现在可以这样写剪头函数版本的代码了
 
 ```js
-    Y(f=>n=>n>1?f(n-1)+f(n-2):n)(10)
+Y(f=>n=>n>1?f(n-1)+f(n-2):n)(10)
 ```
     
 

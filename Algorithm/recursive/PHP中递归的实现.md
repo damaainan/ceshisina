@@ -28,9 +28,9 @@ $i = 1;
 function test()
 {
     global $i;
-   echo $i;
+    echo $i;
     $i++;
-   if ($i <10)
+    if ($i <10)
     {
         test();
     }
@@ -38,8 +38,6 @@ function test()
 test();//输出123456789
 
 test();//输出10
-
-?>
 ```
  
 
@@ -61,7 +59,6 @@ function test()
 test();//输出123456789
 
 test();//输出123456789
-?>
 ```
  
 例1. 使用全局变量的情况递归遍历文件夹下的所有文件
