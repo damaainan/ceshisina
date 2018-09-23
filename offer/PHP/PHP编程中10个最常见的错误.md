@@ -7,26 +7,26 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 在foreach循环中，如果我们需要更改迭代的元素或是为了提高效率，运用引用是一个好办法：
 
 ```php
-    <?php
-    $arr = array(1, 2, 3, 4);
-    foreach ($arr as &$value) {
-        $value = $value * 2;
-    }
-    // $arr is now array(2, 4, 6, 8)
+<?php
+$arr = array(1, 2, 3, 4);
+foreach ($arr as &$value) {
+    $value = $value * 2;
+}
+// $arr is now array(2, 4, 6, 8)
 ```
 
 这里有个问题很多人会迷糊。循环结束后，`$value`并未销毁，`$value`其实是数组中最后一个元素的引用，这样在后续对`$value`的使用中，如果不知道这一点，会引发一些莫名奇妙的错误:)看看下面这段代码：
 
 ```php
-    <?php
-    $array = [1, 2, 3];
-    echo implode(',', $array), "\n";
-    
-    foreach ($array as &$value) {}    // by reference
-    echo implode(',', $array), "\n";
-    
-    foreach ($array as $value) {}     // by value (i.e., copy)
-    echo implode(',', $array), "\n";
+<?php
+$array = [1, 2, 3];
+echo implode(',', $array), "\n";
+
+foreach ($array as &$value) {}    // by reference
+echo implode(',', $array), "\n";
+
+foreach ($array as $value) {}     // by value (i.e., copy)
+echo implode(',', $array), "\n";
 ```
 
 上面代码的运行结果如下：
@@ -50,12 +50,12 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 避免这种错误最好的办法就是在循环后立即用`unset`函数销毁变量：
 
 ```php
-    <?php
-    $arr = array(1, 2, 3, 4);
-    foreach ($arr as &$value) {
-        $value = $value * 2;
-    }
-    unset($value);   // $value no longer references $arr[3]
+<?php
+$arr = array(1, 2, 3, 4);
+foreach ($arr as &$value) {
+    $value = $value * 2;
+}
+unset($value);   // $value no longer references $arr[3]
 ```
 
 ## 错误2：对isset()函数行为的错误理解
@@ -74,16 +74,16 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 下面是另外一个例子：
 
 ```php
-    <?php
-    if ($_POST['active']) {
-        $postData = extractSomething($_POST);
-    }
-    
-    // ...
-    
-    if (!isset($postData)) {
-        echo 'post not active';
-    }
+<?php
+if ($_POST['active']) {
+    $postData = extractSomething($_POST);
+}
+
+// ...
+
+if (!isset($postData)) {
+    echo 'post not active';
+}
 ```
 
 上面的代码假设`$_POST['active']`为真，那么`$postData`应该被设置，因此`isset($postData)`会返回true。反之，上 面代码假设`isset($postData)`返回false的唯一途径就是`$_POST['active']`也返回false。
@@ -95,35 +95,35 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 如果上面代码的本意仅是检测`$_POST['active']`是否为真，下面这样实现会更好：
 
 ```php
-    <?php
-    if ($_POST['active']) {
-        $postData = extractSomething($_POST);
-    }
-    
-    // ...
-    
-    if ($_POST['active']) {
-        echo 'post not active';
-    }
+<?php
+if ($_POST['active']) {
+    $postData = extractSomething($_POST);
+}
+
+// ...
+
+if ($_POST['active']) {
+    echo 'post not active';
+}
 ```
 
 判断一个变量是否真正被设置（区分未设置和设置值为null），`array_key_exists()`函数或许更好。重构上面的第一个例子，如下：
 
 ```php
-    <?php
-    $data = fetchRecordFromStorage($storage, $identifier);
-    if (! array_key_exists('keyShouldBeSet', $data)) {
-    // do this if 'keyShouldBeSet' isn't set
-    }
+<?php
+$data = fetchRecordFromStorage($storage, $identifier);
+if (! array_key_exists('keyShouldBeSet', $data)) {
+// do this if 'keyShouldBeSet' isn't set
+}
 ```
 
 另外，结合`get_defined_vars()`函数，我们可以更加可靠的检测变量在当前作用域内是否被设置：
 
 ```php
-    <?php
-    if (array_key_exists('varShouldBeSet', get_defined_vars())) {
-    // variable $varShouldBeSet exists in current scope
-    }
+<?php
+if (array_key_exists('varShouldBeSet', get_defined_vars())) {
+// variable $varShouldBeSet exists in current scope
+}
 ```
 
 ## 错误3：混淆返回值和返回引用
@@ -131,20 +131,20 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 考虑下面的代码：
 
 ```php
-    <?php
-    class Config
-    {
-        private $values = [];
-        
-        public function getValues() {
-            return $this->values;
-        }
+<?php
+class Config
+{
+    private $values = [];
+    
+    public function getValues() {
+        return $this->values;
     }
-    
-    $config = new Config();
-    
-    $config->getValues()['test'] = 'test';
-    echo $config->getValues()['test'];
+}
+
+$config = new Config();
+
+$config->getValues()['test'] = 'test';
+echo $config->getValues()['test'];
 ```
 
 运行上面的代码，将会输出下面的内容：
@@ -156,43 +156,43 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 问题出在哪呢？问题就在于上面的代码混淆了返回值和返回引用。在PHP中，除非你显示的指定返回引用，否则对于数组PHP是值返回，也就是数组的拷贝。因此上面代码对返回数组赋值，实际是对拷贝数组进行赋值，非原数组赋值。
 
 ```php
-    <?php
-    // getValues() returns a COPY of the $values array, so this adds a 'test' element
-    // to a COPY of the $values array, but not to the $values array itself.
-    $config->getValues()['test'] = 'test';
-    
-    // getValues() again returns ANOTHER COPY of the $values array, and THIS copy doesn't
-    // contain a 'test' element (which is why we get the "undefined index" message).
-    echo $config->getValues()['test'];
+<?php
+// getValues() returns a COPY of the $values array, so this adds a 'test' element
+// to a COPY of the $values array, but not to the $values array itself.
+$config->getValues()['test'] = 'test';
+
+// getValues() again returns ANOTHER COPY of the $values array, and THIS copy doesn't
+// contain a 'test' element (which is why we get the "undefined index" message).
+echo $config->getValues()['test'];
 ```
 
 下面是一种可能的解决办法，输出拷贝的数组，而不是原数组：
 
 ```php
-    <?php
-    $vals = $config->getValues();
-    $vals['test'] = 'test';
-    echo $vals['test'];
+<?php
+$vals = $config->getValues();
+$vals['test'] = 'test';
+echo $vals['test'];
 ```
 
 如果你就是想要改变原数组，也就是要反回数组引用，那应该如何处理呢？办法就是显示指定返回引用即可：
 
 ```php
-    <?php
-    class Config
-    {
-        private $values = [];
-        
-        // return a REFERENCE to the actual $values array
-        public function &getValues() {
-            return $this->values;
-        }
+<?php
+class Config
+{
+    private $values = [];
+    
+    // return a REFERENCE to the actual $values array
+    public function &getValues() {
+        return $this->values;
     }
-    
-    $config = new Config();
-    
-    $config->getValues()['test'] = 'test';
-    echo $config->getValues()['test'];
+}
+
+$config = new Config();
+
+$config->getValues()['test'] = 'test';
+echo $config->getValues()['test'];
 ```
 
 经过改造后，上面代码将会像你期望那样会输出test。
@@ -200,25 +200,25 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 我们再来看一个例子会让你更迷糊的例子：
 
 ```php
-    <?php
-    class Config
-    {
-        private $values;
-        
-        // using ArrayObject rather than array
-        public function __construct() {
-            $this->values = new ArrayObject();
-        }
-        
-        public function getValues() {
-            return $this->values;
-        }
+<?php
+class Config
+{
+    private $values;
+    
+    // using ArrayObject rather than array
+    public function __construct() {
+        $this->values = new ArrayObject();
     }
     
-    $config = new Config();
-    
-    $config->getValues()['test'] = 'test';
-    echo $config->getValues()['test'];
+    public function getValues() {
+        return $this->values;
+    }
+}
+
+$config = new Config();
+
+$config->getValues()['test'] = 'test';
+echo $config->getValues()['test'];
 ```
 
 如果你想的是会和上面一样输出“ Undefined index”错误，那你就错了。代码会正常输出“test”。原因在于PHP对于对象默认就是按引用返回的，而不是按值返回。
@@ -228,24 +228,24 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 像其它语言，比如java或C#，利用getter或setter来访问或设置类属性是一种更好的方案，当然PHP默认不支持，需要自己实现：
 
 ```php
-    <?php
-    class Config
-    {
-        private $values = [];
-        
-        public function setValue($key, $value) {
-            $this->values[$key] = $value;
-        }
-        
-        public function getValue($key) {
-            return $this->values[$key];
-        }
+<?php
+class Config
+{
+    private $values = [];
+    
+    public function setValue($key, $value) {
+        $this->values[$key] = $value;
     }
     
-    $config = new Config();
-    
-    $config->setValue('testKey', 'testValue');
-    echo $config->getValue('testKey');    // echos 'testValue'
+    public function getValue($key) {
+        return $this->values[$key];
+    }
+}
+
+$config = new Config();
+
+$config->setValue('testKey', 'testValue');
+echo $config->getValue('testKey');    // echos 'testValue'
 ```
 
 上面的代码给调用者可以访问或设置数组中的任意值而不用给与数组public访问权限。感觉怎么样:)
@@ -255,19 +255,19 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 在PHP编程中发现类似下面的代码并不少见：
 
 ```php
-    <?php
-    $models = [];
-    
-    foreach ($inputValues as $inputValue) {
-        $models[] = $valueRepository->findByValue($inputValue);
-    }
+<?php
+$models = [];
+
+foreach ($inputValues as $inputValue) {
+    $models[] = $valueRepository->findByValue($inputValue);
+}
 ```
 
 当然上面的代码是没有什么错误的。问题在于我们在迭代过程中`$valueRepository->findByValue()`可能每次都执行了sql查询：
 
 ```php
-    <?php
-    $result = $connection->query("SELECT `x`,`y` FROM `values` WHERE `value`=" . $inputValue);
+<?php
+$result = $connection->query("SELECT `x`,`y` FROM `values` WHERE `value`=" . $inputValue);
 ```
 
 如果迭代了10000次，那么你就分别执行了10000次sql查询。如果这样的脚本在多线程程序中被调用，那很可能你的系统就挂了。。。
@@ -277,25 +277,25 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 有一种业务场景，你很可能会犯上述错误。假设一个表单提交了一系列值（假设为IDs），然后为了取出所有ID对应的数据，代码将遍历IDs，分别对每个ID执行sql查询，代码如下所示：
 
 ```php
-    <?php
-    $data = [];
-    foreach ($ids as $id) {
-        $result = $connection->query("SELECT `x`, `y` FROM `values` WHERE `id` = " . $id);
-        $data[] = $result->fetch_row();
-    }
+<?php
+$data = [];
+foreach ($ids as $id) {
+    $result = $connection->query("SELECT `x`, `y` FROM `values` WHERE `id` = " . $id);
+    $data[] = $result->fetch_row();
+}
 ```
 
 但同样的目的可以在一个sql中更加高效的完成，代码如下：
 
 ```php
-    <?php
-    $data = [];
-    if (count($ids)) {
-        $result = $connection->query("SELECT `x`, `y` FROM `values` WHERE `id` IN (" . implode(',', $ids));
-        while ($row = $result->fetch_row()) {
-            $data[] = $row;
-        }
+<?php
+$data = [];
+if (count($ids)) {
+    $result = $connection->query("SELECT `x`, `y` FROM `values` WHERE `id` IN (" . implode(',', $ids));
+    while ($row = $result->fetch_row()) {
+        $data[] = $row;
     }
+}
 ```
 
 ## 错误5：内存使用低效和错觉
@@ -305,42 +305,42 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 我们可以写代码来实验下（测试环境： 512MB RAM、MySQL、php-cli）：
 
 ```php
-    <?php
-    // connect to mysql
-    $connection = new mysqli('localhost', 'username', 'password', 'database');
-    
-    // create table of 400 columns
-    $query = 'CREATE TABLE `test`(`id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT';
+<?php
+// connect to mysql
+$connection = new mysqli('localhost', 'username', 'password', 'database');
+
+// create table of 400 columns
+$query = 'CREATE TABLE `test`(`id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT';
+for ($col = 0; $col < 400; $col++) {
+    $query .= ", `col$col` CHAR(10) NOT NULL";
+}
+$query .= ');';
+$connection->query($query);
+
+// write 2 million rows
+for ($row = 0; $row < 2000000; $row++) {
+    $query = "INSERT INTO `test` VALUES ($row";
     for ($col = 0; $col < 400; $col++) {
-        $query .= ", `col$col` CHAR(10) NOT NULL";
+        $query .= ', ' . mt_rand(1000000000, 9999999999);
     }
-    $query .= ');';
+    $query .= ')';
     $connection->query($query);
-    
-    // write 2 million rows
-    for ($row = 0; $row < 2000000; $row++) {
-        $query = "INSERT INTO `test` VALUES ($row";
-        for ($col = 0; $col < 400; $col++) {
-            $query .= ', ' . mt_rand(1000000000, 9999999999);
-        }
-        $query .= ')';
-        $connection->query($query);
-    }
+}
 ```
 
 现在来看看资源消耗：
 
 ```php
-    <?php
-    // connect to mysql
-    $connection = new mysqli('localhost', 'username', 'password', 'database');
-    echo "Before: " . memory_get_peak_usage() . "\n";
-    
-    $res = $connection->query('SELECT `x`,`y` FROM `test` LIMIT 1');
-    echo "Limit 1: " . memory_get_peak_usage() . "\n";
-    
-    $res = $connection->query('SELECT `x`,`y` FROM `test` LIMIT 10000');
-    echo "Limit 10000: " . memory_get_peak_usage() . "\n";
+<?php
+// connect to mysql
+$connection = new mysqli('localhost', 'username', 'password', 'database');
+echo "Before: " . memory_get_peak_usage() . "\n";
+
+$res = $connection->query('SELECT `x`,`y` FROM `test` LIMIT 1');
+echo "Limit 1: " . memory_get_peak_usage() . "\n";
+
+$res = $connection->query('SELECT `x`,`y` FROM `test` LIMIT 10000');
+echo "Limit 10000: " . memory_get_peak_usage() . "\n";
 ```
 
 输出结果如下：
@@ -374,14 +374,14 @@ PHP是一种非常流行的开源服务器端脚本语言，你在万维网看�
 为了避免此类问题，可以考虑分几次完成查询，减小单次查询数据量：
 
 ```php
-    <?php
-    $totalNumberToFetch = 10000;
-    $portionSize = 100;
-    
-    for ($i = 0; $i <= ceil($totalNumberToFetch / $portionSize); $i++) {
-        $limitFrom = $portionSize * $i;
-        $res = $connection->query("SELECT `x`,`y` FROM `test` LIMIT $limitFrom, $portionSize");
-    }
+<?php
+$totalNumberToFetch = 10000;
+$portionSize = 100;
+
+for ($i = 0; $i <= ceil($totalNumberToFetch / $portionSize); $i++) {
+    $limitFrom = $portionSize * $i;
+    $res = $connection->query("SELECT `x`,`y` FROM `test` LIMIT $limitFrom, $portionSize");
+}
 ```
 
 联系上面提到的错误4可以看出，在实际的编码过程中，要做到一种平衡，才能既满足功能要求，又能保证性能。
@@ -403,29 +403,29 @@ php编程中，在处理非ascii字符时，会遇到一些问题，要很小心
 PHP中的`$_POST`并非总是包含表单POST提交过来的数据。假设我们通过 jQuery.ajax()方法向服务器发送了POST请求：
 
 ```php
-    <?php
-    // js
-    $.ajax({
-        url: 'http://my.site/some/path',
-        method: 'post',
-        data: JSON.stringify({a: 'a', b: 'b'}),
-        contentType: 'application/json'
-    });
+<?php
+// js
+$.ajax({
+    url: 'http://my.site/some/path',
+    method: 'post',
+    data: JSON.stringify({a: 'a', b: 'b'}),
+    contentType: 'application/json'
+});
 ```
 
 注意代码中的 contentType: ‘application/json’ ，我们是以json数据格式来发送的数据。在服务端，我们仅输出`$_POST`数组：
 
 ```php
-    <?php
-    // php
-    var_dump($_POST);
+<?php
+// php
+var_dump($_POST);
 ```
 
 你会很惊奇的发现，结果是下面所示：
 
 ```php
-    <?php
-    array(0) { }
+<?php
+array(0) { }
 ```
 
 为什么是这样的结果呢？我们的json数据 {a: ‘a’, b: ‘b’} 哪去了呢？
@@ -435,16 +435,16 @@ PHP中的`$_POST`并非总是包含表单POST提交过来的数据。假设我�
 因为`$_POST`是全局变量，所以更改`$_POST`会全局有效。因此对于Content-Type为 application/json 的请求，我们需要手工去解析json数据，然后修改`$_POST`变量。
 
 ```php
-    <?php
-    // php
-    $_POST = json_decode(file_get_contents('php://input'), true);
+<?php
+// php
+$_POST = json_decode(file_get_contents('php://input'), true);
 ```
 
 此时，我们再去输出`$_POST`变量，则会得到我们期望的输出：
 
 ```php
-    <?php
-    array(2) { ["a"]=> string(1) "a" ["b"]=> string(1) "b" }
+<?php
+array(2) { ["a"]=> string(1) "a" ["b"]=> string(1) "b" }
 ```
 
 ## 错误8：认为PHP支持字符数据类型
@@ -452,10 +452,10 @@ PHP中的`$_POST`并非总是包含表单POST提交过来的数据。假设我�
 看看下面的代码，猜测下会输出什么：
 
 ```php
-    <?php
-    for ($c = 'a'; $c <= 'z'; $c++) {
-        echo $c . "\n";
-    }
+<?php
+for ($c = 'a'; $c <= 'z'; $c++) {
+    echo $c . "\n";
+}
 ```
 
 如果你的回答是输出’a’到’z’，那么你会惊奇的发现你的回答是错误的。
@@ -467,21 +467,21 @@ PHP中的`$_POST`并非总是包含表单POST提交过来的数据。假设我�
 如果我们想输出’a’到’z’，下面的实现是一种不错的办法：
 
 ```php
-    <?php
-    for ($i = ord('a'); $i <= ord('z'); $i++) {
-        echo chr($i) . "\n";
-    }
+<?php
+for ($i = ord('a'); $i <= ord('z'); $i++) {
+    echo chr($i) . "\n";
+}
 ```
 
 或者这样也是OK的：
 
 ```php
-    <?php
-    $letters = range('a', 'z');
-    
-    for ($i = 0; $i < count($letters); $i++) {
-        echo $letters[$i] . "\n";
-    }
+<?php
+$letters = range('a', 'z');
+
+for ($i = 0; $i < count($letters); $i++) {
+    echo $letters[$i] . "\n";
+}
 ```
 
 ## 错误9：忽略编码标准
@@ -509,24 +509,24 @@ PSR最初由PHP社区的几个大的团体所创建并遵循。Zend, Drupal, Sym
 首先我们来看看PHP中的数组Array和数组对象ArrayObject。看上去好像没什么区别，都是一样的。真的这样吗？
 
 ```php
-    <?php
-    // PHP 5.0 or later:
-    $array = [];
-    var_dump(empty($array));        // outputs bool(true)
-    $array = new ArrayObject();
-    var_dump(empty($array));        // outputs bool(false)
-    // why don't these both produce the same output?
+<?php
+// PHP 5.0 or later:
+$array = [];
+var_dump(empty($array));        // outputs bool(true)
+$array = new ArrayObject();
+var_dump(empty($array));        // outputs bool(false)
+// why don't these both produce the same output?
 ```
 
 让事情变得更复杂些，看看下面的代码：
 
 ```php
-    <?php
-    // Prior to PHP 5.0:
-    $array = [];
-    var_dump(empty($array));        // outputs bool(false)
-    $array = new ArrayObject();
-    var_dump(empty($array));        // outputs bool(false)
+<?php
+// Prior to PHP 5.0:
+$array = [];
+var_dump(empty($array));        // outputs bool(false)
+$array = new ArrayObject();
+var_dump(empty($array));        // outputs bool(false)
 ```
 
 很不幸的是，上面这种方法很受欢迎。例如，在Zend Framework 2中，Zend\Db\TableGateway 在 TableGateway::select() 结果集上调用 `current()` 方法返回数据集时就是这么干的。开发人员很容易就会踩到这个坑。
@@ -534,12 +534,12 @@ PSR最初由PHP社区的几个大的团体所创建并遵循。Zend, Drupal, Sym
 为了避免这些问题，检查一个数组是否为空最后的办法是用 `count()` 函数：
 
 ```php
-    <?php
-    // Note that this work in ALL versions of PHP (both pre and post 5.0):
-    $array = [];
-    var_dump(count($array));        // outputs int(0)
-    $array = new ArrayObject();
-    var_dump(count($array));        // outputs int(0)
+<?php
+// Note that this work in ALL versions of PHP (both pre and post 5.0):
+$array = [];
+var_dump(count($array));        // outputs int(0)
+$array = new ArrayObject();
+var_dump(count($array));        // outputs int(0)
 ```
 
 在这顺便提一下，因为PHP中会将数值0认为是布尔值false，因此 `count()` 函数可以直接用在 if 条件语句的条件判断中来判断数组是否为空。另外，`count()` 函数对于数组来说复杂度为O(1)，因此用 count() 函数是一个明智的选择。
@@ -549,38 +549,38 @@ PSR最初由PHP社区的几个大的团体所创建并遵循。Zend, Drupal, Sym
 首先我们定义 Regular 类，有一个 test 属性：
 
 ```php
-    <?php
-    class Regular
-    {
-        public $test = 'value';
-    }
+<?php
+class Regular
+{
+    public $test = 'value';
+}
 ```
 
 然后我们定义 Magic 类，并用 `__get()` 魔术方法来访问它的 test 属性：
 
 ```php
-    <?php
-    class Magic
+<?php
+class Magic
+{
+    private $values = ['test' => 'value'];
+    
+    public function __get($key)
     {
-        private $values = ['test' => 'value'];
-        
-        public function __get($key)
-        {
-            if (isset($this->values[$key])) {
-                return $this->values[$key];
-            }
+        if (isset($this->values[$key])) {
+            return $this->values[$key];
         }
     }
+}
 ```
 
 好了。我们现在来看看访问各个类的 test 属性会发生什么：
 
 ```php
-    <?php
-    $regular = new Regular();
-    var_dump($regular->test);    // outputs string(4) "value"
-    $magic = new Magic();
-    var_dump($magic->test);      // outputs string(4) "value"
+<?php
+$regular = new Regular();
+var_dump($regular->test);    // outputs string(4) "value"
+$magic = new Magic();
+var_dump($magic->test);      // outputs string(4) "value"
 ```
 
 到目前为止，都还是正常的，没有让我们感到迷糊。
@@ -588,9 +588,9 @@ PSR最初由PHP社区的几个大的团体所创建并遵循。Zend, Drupal, Sym
 但在 test 属性上使用 `empty()` 函数会怎么样呢？
 
 ```php
-    <?php
-    var_dump(empty($regular->test));    // outputs bool(false)
-    var_dump(empty($magic->test));      // outputs bool(true)
+<?php
+var_dump(empty($regular->test));    // outputs bool(false)
+var_dump(empty($magic->test));      // outputs bool(true)
 ```
 
 结果是不是很意外？

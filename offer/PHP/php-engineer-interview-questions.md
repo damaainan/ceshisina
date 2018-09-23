@@ -18,138 +18,147 @@
 
 
 #### 2、写一段代码判断单向链表中有没有形成环，如果形成环，请找出环的入口处，即P点 
-    class Node{
-        public $data=null;
-        public $next=null;
-    }
-    
-    function eatList(Node $node) {
-        $fast = $slow = $node;
-        $first_target = null;
-        if($node->data == null) {
-            return false;
-        }
-    
-        while (true) {
-            if($fast->next != null && $fast->next->next != null) {
-                $fast = $fast->next->next;      //快指针一次走两步
-                $slow = $slow->next;            //慢指针一次走一步
-            } else {
-                return false;
-            }
-    
-            if($fast == $slow) {                //慢指针追上快指针,说明有环
-                $p1 = $node;                    //p1指针指向head节点,p2指针指向它们第一次相交的点,然后两个指针每次移动一步,当它们再次相交,即为环的入口
-                $p2 = $fast;
-                while($p1 != $p2) {
-                    $p1    = $p1->next;
-                    $p2    = $p2->next;
-                }
-                return $p1;                     //环的入口节点
-            } 
-        }
+
+```php
+class Node{
+    public $data=null;
+    public $next=null;
+}
+
+function eatList(Node $node) {
+    $fast = $slow = $node;
+    $first_target = null;
+    if($node->data == null) {
+        return false;
     }
 
+    while (true) {
+        if($fast->next != null && $fast->next->next != null) {
+            $fast = $fast->next->next;      //快指针一次走两步
+            $slow = $slow->next;            //慢指针一次走一步
+        } else {
+            return false;
+        }
+
+        if($fast == $slow) {                //慢指针追上快指针,说明有环
+            $p1 = $node;                    //p1指针指向head节点,p2指针指向它们第一次相交的点,然后两个指针每次移动一步,当它们再次相交,即为环的入口
+            $p2 = $fast;
+            while($p1 != $p2) {
+                $p1    = $p1->next;
+                $p2    = $p2->next;
+            }
+            return $p1;                     //环的入口节点
+        } 
+    }
+}
+```
 #### 3、写一个函数，获取一篇文章内容中的全部图片，并下载
-    function downImagesFromTargetUrl($url, $target_dir = null) {
-        if(!filter_var($url, FILTER_VALIDATE_URL)){
-            return false;
-        }
-        if(!$target_dir) {
-            $target_dir = './download';
-        }
-    
-        $root_url = pathinfo($url);
-    
-        $html = file_get_contents($url);            //主要
-        preg_match_all('/<img[^>]*src="([^"]*)"[^>]*>/i',$html, $matchs);   //主要
-    
-        $images = $matchs[1];
-    
-        foreach ($images as $img) {
-            $img_url = parse_url($img);
-            if(! array_key_exists('host', $img_url)) {
-                $img_url = $root_url['dirname'] . DIRECTORY_SEPARATOR . $img;
-            } else {
-                $img_url = $img;
-            }
-    
-            $img_path = array_key_exists('path', $img_url) ? $img_url['path'] : $img;
-            $save = $target_dir . DIRECTORY_SEPARATOR . $img_path;
-            $save_path = pathinfo($save);
-    
-            if(!is_dir($save_path['dirname'])) {
-                mkdir($save_path['dirname'], 0777, true);
-            }
-    
-            file_put_contents($save,file_get_contents($img_url));   //主要
-        }
+```php
+function downImagesFromTargetUrl($url, $target_dir = null) {
+    if(!filter_var($url, FILTER_VALIDATE_URL)){
+        return false;
+    }
+    if(!$target_dir) {
+        $target_dir = './download';
     }
 
-#### 4、获取当前客户端的IP地址，并判断是否在（1.1.1.1,255.255.255.254) 
-    function getip()
-    {
-        $unknown = 'unknown';
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] && strcasecmp($_SERVER['HTTP_X_FORWARDED_FOR'], $unknown)) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } elseif (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], $unknown)) {
-            $ip = $_SERVER['REMOTE_ADDR'];
+    $root_url = pathinfo($url);
+
+    $html = file_get_contents($url);            //主要
+    preg_match_all('/<img[^>]*src="([^"]*)"[^>]*>/i',$html, $matchs);   //主要
+
+    $images = $matchs[1];
+
+    foreach ($images as $img) {
+        $img_url = parse_url($img);
+        if(! array_key_exists('host', $img_url)) {
+            $img_url = $root_url['dirname'] . DIRECTORY_SEPARATOR . $img;
+        } else {
+            $img_url = $img;
         }
-        /*
-        处理多层代理的情况
-        或者使用正则方式：$ip = preg_match("/[\d\.]{7,15}/", $ip, $matches) ? $matches[0] : $unknown;
-        */
-        if (false !== strpos($ip, ','))
-            $ip = reset(explode(',', $ip));
-        return $ip;
+
+        $img_path = array_key_exists('path', $img_url) ? $img_url['path'] : $img;
+        $save = $target_dir . DIRECTORY_SEPARATOR . $img_path;
+        $save_path = pathinfo($save);
+
+        if(!is_dir($save_path['dirname'])) {
+            mkdir($save_path['dirname'], 0777, true);
+        }
+
+        file_put_contents($save,file_get_contents($img_url));   //主要
     }
-    
-    $client_ip = getip();
-    $client_ip = sprintf('%u', ip2long($client_ip));   //64位系统无压力
-    
-    /**
-     * plan A
-     */
-    $range_min = sprintf('%u', ip2long('1.1.1.1'));
-    $range_max = sprintf('%u', ip2long('255.255.255.255'));
-    
-    /**
-     * plan B
-     */
-    $range_min = bindec(decbin(ip2long('1.1.1.1')));
-    $range_max = bindec(decbin(ip2long('255.255.255.255')));
-    
-    
-    if ($client_ip >= $range_min and $client_ip <= $range_max) {
-        echo 'true';
-    } else {
-        echo 'false';
+}
+```
+#### 4、获取当前客户端的IP地址，并判断是否在（1.1.1.1,255.255.255.254) 
+```php
+function getip()
+{
+    $unknown = 'unknown';
+    if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] && strcasecmp($_SERVER['HTTP_X_FORWARDED_FOR'], $unknown)) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } elseif (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], $unknown)) {
+        $ip = $_SERVER['REMOTE_ADDR'];
     }
+    /*
+    处理多层代理的情况
+    或者使用正则方式：$ip = preg_match("/[\d\.]{7,15}/", $ip, $matches) ? $matches[0] : $unknown;
+    */
+    if (false !== strpos($ip, ','))
+        $ip = reset(explode(',', $ip));
+    return $ip;
+}
+
+$client_ip = getip();
+$client_ip = sprintf('%u', ip2long($client_ip));   //64位系统无压力
+
+/**
+ * plan A
+ */
+$range_min = sprintf('%u', ip2long('1.1.1.1'));
+$range_max = sprintf('%u', ip2long('255.255.255.255'));
+
+/**
+ * plan B
+ */
+$range_min = bindec(decbin(ip2long('1.1.1.1')));
+$range_max = bindec(decbin(ip2long('255.255.255.255')));
+
+
+if ($client_ip >= $range_min and $client_ip <= $range_max) {
+    echo 'true';
+} else {
+    echo 'false';
+}
+```
+
 #### 5、nginx的log_format配置如下： 
+
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
                            '$upstream_response_time '
                            '$status $body_bytes_sent "$http_referer" '
                            '"$http_user_agent" "$http_x_forwarded_for"';
-                           
+   
+
 从今天的nginx log文件 access.log中：
 * a、列出"request_time"最大的20行？ 
 * b、列出早上10点访问量做多的20个url地址？
 
 
-    a: cat /usr/local/var/log/nginx/access.log|sort -nrk9|head -2
+    a: cat access.log | sort -nrk9 | head -2
     
-    b: grep "07/May/2018:10:" /usr/local/var/log/nginx/access.log|awk '{print $12}'|sort -rn|uniq -c|head -20
-    
-			
+    b: grep "07/May/2018:10:" access.log | awk '{print $12}' | sort -rn | uniq -c | head -20
+
+
 #### 6、什么是CSRF攻击？XSS攻击？如何防范？
-    CSRF:https://baike.baidu.com/item/CSRF/2735433
-    防范方式: CSRF TOKEN, 即提交表单时同时提交一段由服务端渲染表单时生成的token,通过校验token来防范csrf攻击
-    
-    XSS:https://baike.baidu.com/item/xss/917356
-    简单来说,XSS就是正常页面执行了用户或黑客提交的前端代码,比如你用了eval('这里执行了用户提交的代码'),
-    或者你的页面正常解析了用户提交的html代码,如用户提交的个人信息是:<img src="广告连接"><script>window.href="恶意网站连接"</script>,
-    而你不加过滤转义就入库,然后页面正常解析html代码,最终用户访问这个页面就会跳转到恶意网站 ,这就是XSS
-    防范方式: 过滤&&转义用户输入(如htmlentities、htmlspecialchars),永久不要信任客户端
+
+**CSRF**:<https://baike.baidu.com/item/CSRF/2735433>
+防范方式: CSRF TOKEN, 即提交表单时同时提交一段由服务端渲染表单时生成的token,通过校验token来防范csrf攻击
+
+**XSS**:<https://baike.baidu.com/item/xss/917356>
+简单来说,XSS就是正常页面执行了用户或黑客提交的前端代码,比如你用了eval('这里执行了用户提交的代码'),
+或者你的页面正常解析了用户提交的html代码,如用户提交的个人信息是:`<img src="广告连接"><script>window.href="恶意网站连接"</script>`,
+而你不加过滤转义就入库,然后页面正常解析html代码,最终用户访问这个页面就会跳转到恶意网站 ,这就是XSS
+防范方式: 过滤&&转义用户输入(如htmlentities、htmlspecialchars),永久不要信任客户端
     
     
 
@@ -161,39 +170,41 @@
     
     我的理解: 既然是顺子,那么肯定没有对子,找到最小的值后,顺序加1看是否存在,如果都存在,则为顺
     如果我写的话是这样:
-    function eatChicken(arr $data)
-    {
-        $min = min($data);
-        for ($i = $min; $i < $min + 5; ++$i) {
-            if (!in_array($i, $data)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    var_dump(eatChicken([1, 3, 5, 2, 4]));
-    var_dump(eatChicken([10, 13, 11, 12, 14]));
-    var_dump(eatChicken([1, 3, 5, 7, 9]));
-    
-    https://github.com/hookover/php-engineer-interview-questions/issues/8
-    @johson
-    function eatDuck(array $arr)
-    {
-        $count = count($arr);
-        if (count(array_unique($arr)) != $count) {
-            return false;//对子
-        }
-        if (max($arr) - min($arr) != $count - 1) {
+```php
+function eatChicken(arr $data)
+{
+    $min = min($data);
+    for ($i = $min; $i < $min + 5; ++$i) {
+        if (!in_array($i, $data)) {
             return false;
         }
-        return true;
     }
-    var_dump(eatDuck([1, 3, 5, 2, 4]));
-    var_dump(eatDuck([10, 13, 11, 12, 14]));
-    var_dump(eatDuck([1, 3, 5, 7, 9]));
+    return true;
+}
 
-    有更好方法请补充,大神们来个不用内置函数的版本
+var_dump(eatChicken([1, 3, 5, 2, 4]));
+var_dump(eatChicken([10, 13, 11, 12, 14]));
+var_dump(eatChicken([1, 3, 5, 7, 9]));
+```
+<https://github.com/hookover/php-engineer-interview-questions/issues/8>
+@johson
+```php
+function eatDuck(array $arr)
+{
+    $count = count($arr);
+    if (count(array_unique($arr)) != $count) {
+        return false;//对子
+    }
+    if (max($arr) - min($arr) != $count - 1) {
+        return false;
+    }
+    return true;
+}
+var_dump(eatDuck([1, 3, 5, 2, 4]));
+var_dump(eatDuck([10, 13, 11, 12, 14]));
+var_dump(eatDuck([1, 3, 5, 7, 9]));
+```
+有更好方法请补充,大神们来个不用内置函数的版本
     
 #### 9、两条相交的单向链表，如何求它们的第一个公共节点
     第二题
@@ -211,23 +222,23 @@
     B : "只要在8的基础上加1就行了"
     A : "所以你不用重新计算因为你记住了第一个等式的值为8!动态规划算法也可以说是 '记住求过的解来节省时间'"
 
-    https://blog.csdn.net/u013309870/article/details/75193592 （我觉得原理讲得最好）
-    https://www.cnblogs.com/zlm-jessie/p/5664562.html
+<https://blog.csdn.net/u013309870/article/details/75193592> （我觉得原理讲得最好）
+<https://www.cnblogs.com/zlm-jessie/p/5664562.html>
 
 #### 11、linux的内存分配和多线程原理
     这个还是百度找资料吧……
 
 #### 12、MYSQL中主键与唯一索引的区别
-    主键是一种约束，唯一索引是一种索引，两者在本质上是不同的
-    主键创建后一定包含一个唯一性索引，唯一性索引并不一定就是主键
-    唯一性索引列允许空值，而主键列不允许为空值
-    主键列在创建时，已经默认为空值 + 唯一索引了
-    主键可以被其他表引用为外键，而唯一索引不能
-    一个表最多只能创建一个主键，但可以创建多个唯一索引
-    主键更适合那些不容易更改的唯一标识，如自动递增列、身份证号等
-    在 RBO 模式下，主键的执行计划优先级要高于唯一索引。 两者可以提高查询的速度
+主键是一种约束，唯一索引是一种索引，两者在本质上是不同的   
+**主键创建后一定包含一个唯一性索引**，唯一性索引并不一定就是主键   
+唯一性索引列允许空值，而主键列不允许为空值   
+主键列在创建时，已经默认为空值 + 唯一索引了   
+主键可以被其他表引用为外键，而唯一索引不能   
+一个表最多只能创建一个主键，但可以创建多个唯一索引   
+主键更适合那些不容易更改的唯一标识，如自动递增列、身份证号等   
+在 RBO 模式下，主键的执行计划优先级要高于唯一索引。 两者可以提高查询的速度   
     
-    https://blog.csdn.net/baoqiangwang/article/details/4832814
+<https://blog.csdn.net/baoqiangwang/article/details/4832814>
 
 #### 13、http与https的主要区别
     个基于OSI模型理解：
@@ -266,6 +277,7 @@
     netstat -anptol //查看端口占用情况,参数细节建议查文档,小心被问倒
 
 #### 16、SQL注入的原理是什么？如何防止SQL注入 
+
     通常都是低级程序员写的低级代码,未过滤用户输入导致的,现代框架的ORM一般都做过相应处理,如果需要自己处理,有两种解决方式:
     1:转义用户输入(htmlentities/htmlspecialchars),用mysql_real_escape_string方法过滤SQL语句的参数
     2:预编译sql    (最佳方式)
@@ -318,9 +330,9 @@
 |可串行读(Serializable)|x|x|x|加锁 (全表锁)
 
 
-    脏读：当某个客户端查询出了另外一个事务还没有提交的修改数据，即为脏读。
-    不可重复读：[同一查询]在[同一事务]中多次进行，由其它提交事务所做的修改或删除，每次返回不同的的结果集，此时发生非重复读。
-    幻读：[同一查询]在[同一事务]中多次进行，由于其它提交事务(事务可能没提交)所做的插入操作，每次返回不同的结果集，此时发生幻读。
+脏读：当某个客户端查询出了另外一个事务还没有提交的修改数据，即为脏读。  
+不可重复读：[同一查询]在[同一事务]中多次进行，由其它提交事务所做的修改或删除，每次返回不同的的结果集，此时发生非重复读。  
+幻读：[同一查询]在[同一事务]中多次进行，由于其它提交事务(事务可能没提交)所做的插入操作，每次返回不同的结果集，此时发生幻读。   
     
 #### 20、写一个函数，尽可能高效的从一个标准URL中取出文件的扩展名
     面试官说要高效,我记得好像用正则并不高效,那么排除正则?然后他又说了是一个"标准url",难道希望你用parse_url函数?
@@ -330,6 +342,7 @@
     
 #### 21、参数为多个日期时间的数组，返回离当前时间最近的那个时间
     我只能想到foreach方式咯,欢迎大神修改
+
     $data = [
         '2015-02-02 11:11:11',
         '2012-02-02 11:55:11',
@@ -348,7 +361,7 @@
     print   有返回值,是函数,还能格式化输出
     print_r 则是打印复合类型如数组 对象
     
-#### 23、http协议的header中有哪些key及含义
+#### 23、`http协议的header中有哪些key及含义`
     General
         Request URL: http://localhost/test/t.php
         Request Method: GET
@@ -376,94 +389,94 @@
         User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.117 Mobile Safari/537.36
     
 #### 24、二叉树前中后遍历代码
-    树的图片看这里:https://zhidao.baidu.com/question/235504989.html
-    
-    class Node
-    {
-        public $data  = null;
-        public $left  = null;
-        public $right = null;
+树的图片看这里:<https://zhidao.baidu.com/question/235504989.html> 
+```php
+class Node
+{
+    public $data  = null;
+    public $left  = null;
+    public $right = null;
+}
+
+$A = new Node();
+$B = clone $A;
+$C = clone $A;
+$D = clone $A;
+$E = clone $A;
+$F = clone $A;
+$G = clone $A;
+$H = clone $A;
+$I = clone $A;
+
+
+$A->data = 'A';
+$B->data = 'B';
+$C->data = 'C';
+$D->data = 'D';
+$E->data = 'E';
+$F->data = 'F';
+$G->data = 'G';
+$H->data = 'H';
+$I->data = 'I';
+
+
+$A->left  = $B;
+$A->right = $C;
+$B->left  = $D;
+$B->right = $E;
+$E->left  = $G;
+$E->right = $H;
+$G->right = $I;
+$C->right = $F;
+
+/**
+ * 前序遍历: 中左右
+ * 中序遍历: 左中右
+ * 后序遍历: 左右中
+ */
+function eatBtree($node)
+{
+    if ($node && $node->data) {
+        eatBtree($node->left);
+        eatBtree($node->right);
+        echo $node->data;           //把这一行的位置换一换就能实现遍历方式的转变,放到最后是后序,放到最前是前序,放到中间是中序
     }
-    
-    $A = new Node();
-    $B = clone $A;
-    $C = clone $A;
-    $D = clone $A;
-    $E = clone $A;
-    $F = clone $A;
-    $G = clone $A;
-    $H = clone $A;
-    $I = clone $A;
-    
-    
-    $A->data = 'A';
-    $B->data = 'B';
-    $C->data = 'C';
-    $D->data = 'D';
-    $E->data = 'E';
-    $F->data = 'F';
-    $G->data = 'G';
-    $H->data = 'H';
-    $I->data = 'I';
-    
-    
-    $A->left  = $B;
-    $A->right = $C;
-    $B->left  = $D;
-    $B->right = $E;
-    $E->left  = $G;
-    $E->right = $H;
-    $G->right = $I;
-    $C->right = $F;
-    
-    /**
-     * 前序遍历: 中左右
-     * 中序遍历: 左中右
-     * 后序遍历: 左右中
-     */
-    function eatBtree($node)
-    {
-        if ($node && $node->data) {
-            eatBtree($node->left);
-            eatBtree($node->right);
-            echo $node->data;           //把这一行的位置换一换就能实现遍历方式的转变,放到最后是后序,放到最前是前序,放到中间是中序
-        }
-    }
-    
-    eatBtree($A);
-    
-    /**
-     * 层序遍历会用到队列
-     */
-    
-    function eatBtree2($node)
-    {
-        $list[] = $node;
-        while (count($list) > 0) {
-            $cur = array_shift($list);
-            if ($cur) {
-                echo $cur->data;
-    
-                if ($cur->left) {
-                    $list[] = $cur->left;
-                }
-    
-                if ($cur->right) {
-                    $list[] = $cur->right;
-                }
+}
+
+eatBtree($A);
+
+/**
+ * 层序遍历会用到队列
+ */
+
+function eatBtree2($node)
+{
+    $list[] = $node;
+    while (count($list) > 0) {
+        $cur = array_shift($list);
+        if ($cur) {
+            echo $cur->data;
+
+            if ($cur->left) {
+                $list[] = $cur->left;
+            }
+
+            if ($cur->right) {
+                $list[] = $cur->right;
             }
         }
     }
-    
-    eatBtree2($A);
+}
 
+eatBtree2($A);
+```
 #### 25、PHP的数组和C语言的数组结构上有何区别？
     C语言数组的定义: C语言标准中规定，一个数组类型描述了连续分配的非空的具有特定元素对象类型的对象集合。这些元素对象的类型称为元素类型。数组类型由元素类型与元素的数目确定。
     PHP数组的数据结构是采用HashTable来实现的,而它的hash冲突的解决方式使用的是拉链法,PHP7的HashTable本身的结构与5又不同。
     这个题目不是我一两句能讲得很清楚的,建议查一下资料,了解zavl联合体,实现数组的具体方式,以便面试官出题时,你能通过自已的理解讲出来
 
 #### 26、Redis中的有序集合是怎么实现的,它的数据结构是怎么样的
-    https://www.cnblogs.com/paulversion/p/8194966.html
+<https://www.cnblogs.com/paulversion/p/8194966.html>
 
 #### 27、哈希表是什么？hash表中的hash冲突后，数据怎么存？
     散列表（Hash table，也叫哈希表），是根据关键码值(Key value)而直接进行访问的数据结构。也就是说，它通过把关键码值映射到表中一个位置来访问记录，以加快查找的速度。这个映射函数叫做散列函数，存放记录的数组叫做散列表。
@@ -475,27 +488,26 @@
     
 
 #### 28、聚簇索引(聚集索引)与非聚簇索引的区别的区别？
-    https://www.cnblogs.com/Alight/p/3967141.html
-    聚集索引: 
-        表数据按照索引的顺序来存储的，也就是说索引项的顺序与表中记录的物理顺序一致。对于聚集索引，叶子结点即存储了真实的数据行，不再有另外单独的数据页。 在一张表上最多只能创建一个聚集索引，因为真实数据的物理顺序只能有一种。
-        仅仅出现在innodb引擎的主键索引上。
-                聚簇：innodb的主键索引关键字，与 记录 是存储在一起的
-                
-                导致的结果： 
-                记录依据主键顺序排序
-                记录的真实位置会改变。随着主键索引关键字的改变而改变
-                那么innodb表上的非主键索引（二级索引）：存储的是：关键字与主键值的对应关系（而不是关键字与记录位置的对应关系）
-                导致：innodb的非主键索引：都是二次查找。
-                1关键字确定主键值。
-                2主键值确定记录
-                
-                在数据结构层面上：
-                在原来的B-Tree结构上，做了一定的改动，改动后的这个聚簇（聚集）结构称之为 B+Tree
-                
-    非聚集索引: 
-        表数据存储顺序与索引顺序无关。对于非聚集索引，叶结点包含索引字段值及指向数据页数据行的逻辑指针，其行数量与数据表行数据量一致
+<https://www.cnblogs.com/Alight/p/3967141.html>
 
-    
+聚集索引: 
+    表数据按照索引的顺序来存储的，也就是说索引项的顺序与表中记录的物理顺序一致。对于聚集索引，叶子结点即存储了真实的数据行，不再有另外单独的数据页。 在一张表上最多只能创建一个聚集索引，因为真实数据的物理顺序只能有一种。
+    仅仅出现在innodb引擎的主键索引上。
+            聚簇：innodb的主键索引关键字，与 记录 是存储在一起的
+            
+            导致的结果： 
+            记录依据主键顺序排序
+            记录的真实位置会改变。随着主键索引关键字的改变而改变
+            那么innodb表上的非主键索引（二级索引）：存储的是：关键字与主键值的对应关系（而不是关键字与记录位置的对应关系）
+            导致：innodb的非主键索引：都是二次查找。
+            1 关键字确定主键值。
+            2 主键值确定记录
+            
+            在数据结构层面上：
+            在原来的B-Tree结构上，做了一定的改动，改动后的这个聚簇（聚集）结构称之为 B+Tree
+            
+非聚集索引: 
+    表数据存储顺序与索引顺序无关。对于非聚集索引，叶结点包含索引字段值及指向数据页数据行的逻辑指针，其行数量与数据表行数据量一致
 
     更新表数据:
         向表中插入新数据行
@@ -506,61 +518,63 @@
     聚集索引是一种稀疏索引，数据页上一级的索引页存储的是页指针，而不是行指针。而对于非聚集索引，则是密集索引，在数据页的上一级索引页它为每一个数据行存储一条索引记录
 
 #### 29、B+Tree是怎么进行搜索的
-    别人有专门的研究:https://blog.csdn.net/hguisu/article/details/7786014
+别人有专门的研究:<https://blog.csdn.net/hguisu/article/details/7786014>
 #### 30、数组和hash表的区别是什么？
     数组是编程语言提供的一种数据类型，即用一组连续的内存空间来存放数据，可以通过一个首地址，和一个数组下标，直接访问这组内存空间中的任意位置。搜索
     哈希表是数据结构这门学科中的概念，是以数组为存储方式，实现的一种可以快速查找数据的数据结构。它是将数据的值通过一个映射函数，求出一个结果，然后把数据放在这个结果对应的数组下标的位置。搜索
         
 #### 31、写个函数，判断下面扩号是否闭合，左右对称即为闭合： ((()))，)(())，(())))，(((((())，(()())，()()
-    遇到左括号进栈,遇到右括号出栈(如果栈里没有,说明不闭合),遍历到最后元素,判断栈内为空,即为闭合
-    
-    function checkClose($str)
-    {
-        $stack = [];
-    
-        for ($i = 0; $i < strlen($str); ++$i) {
-            if ($str[$i] == "(") {
-                $stack[] = "(";
-            }
-    
-            if ($str[$i] == ")") {
-                $border = array_pop($stack);
-    
-                if(!$border) {
-                    return false;
-                }
-            }
-        }
-    
-        if (count($stack) == 0) {
-            return true;
-        }
-        return false;
-    }
-    
-    var_dump(checkClose('(())'));
-    var_dump(checkClose('(())()(('));
-    var_dump(checkClose('(())()()'));
-    var_dump(checkClose('(())()))'));
-    var_dump(checkClose('(5+2)*6/(3-1)'));
+遇到左括号进栈,遇到右括号出栈(如果栈里没有,说明不闭合),遍历到最后元素,判断栈内为空,即为闭合
 
+```php  
+function checkClose($str)
+{
+    $stack = [];
+
+    for ($i = 0; $i < strlen($str); ++$i) {
+        if ($str[$i] == "(") {
+            $stack[] = "(";
+        }
+
+        if ($str[$i] == ")") {
+            $border = array_pop($stack);
+
+            if(!$border) {
+                return false;
+            }
+        }
+    }
+
+    if (count($stack) == 0) {
+        return true;
+    }
+    return false;
+}
+
+var_dump(checkClose('(())'));
+var_dump(checkClose('(())()(('));
+var_dump(checkClose('(())()()'));
+var_dump(checkClose('(())()))'));
+var_dump(checkClose('(5+2)*6/(3-1)'));
+```
 #### 32、 找出数组中不重复的值[1,2,3,3,2,1,5]
-    用 hash/桶 的思路
-    $res = [];
-    foreach ($data as $item) {
-        if(array_key_exists($item, $res)) {
-            ++$res[$item];
-        } else {
-            $res[$item] = 1;
-        }
+用 hash/桶 的思路
+```php
+$res = [];
+foreach ($data as $item) {
+    if(array_key_exists($item, $res)) {
+        ++$res[$item];
+    } else {
+        $res[$item] = 1;
     }
-    
-    foreach ($res as $k=>$v) {
-        if($v == 1) {
-            echo $k;
-        }
+}
+
+foreach ($res as $k=>$v) {
+    if($v == 1) {
+        echo $k;
     }
-    
+}
+```
 
 #### 33、32题你的时间复杂度是多少？有的情况下，你写了个算法，然后面试官会让你把你的算法的时间复杂度表达式写出来
      O(n+m) -> O(n)   ?
@@ -569,7 +583,7 @@
     zval联合体
 
 #### 35、在HTTP通讯过程中，是客户端还是服务端主动断开连接？
-    看这里:https://www.cnblogs.com/web21/p/6397525.html
+看这里:<https://www.cnblogs.com/web21/p/6397525.html>
     
 #### 36、PHP中发起http请求有哪几种方式？它们有何区别？
     curl
@@ -582,106 +596,110 @@
 ![](../img/94cad1c8a786c9179df9bed6c93d70cf3ac75763.jpg)
 
 #### 38、有两个文件文件，大小都超过了1G，一行一条数据，每行数据不超过500字节，两文件中有一部分内容是完全相同的，请写代码找到相同的行，并写到新文件中。PHP最大允许内内为255M。
-    好像又是一个大文件处理,面试官出题的意图并不希望你两层for循环进行遍历,这种答案肯定是不会要的,看64题的连接,专门讲处理大数据的各种方式。
-    那借用文章的方案,这道题目我的解法思路是:
-        顺序读取两个文件的的全部记录,将每条记录经过hash->转换为10进制->%n后存到10个文件中,这样一共2G的数据分成10份,每份就是204.8M,低于内存限制,
-        我可以一次读取一个文件,并用hash桶的方式得到单个文件中的内容是否有重复,因为每条记录都经过hash处理的,所以相同的记录肯定会在同一个文件中。
+
+好像又是一个大文件处理,面试官出题的意图并不希望你两层for循环进行遍历,这种答案肯定是不会要的,看64题的连接,专门讲处理大数据的各种方式。  
+那借用文章的方案,这道题目我的解法思路是:   
+    * 顺序读取两个文件的的全部记录,将每条记录经过hash->转换为10进制->%n后存到10个文件中,这样一共2G的数据分成10份,每份就是204.8M,低于内存限制,    
+    * 我可以一次读取一个文件,并用hash桶的方式得到单个文件中的内容是否有重复,因为每条记录都经过hash处理的,所以相同的记录肯定会在同一个文件中。
         
-        下面是伪代码:
-        
-        /**
-         * 将两个文件中的每条记录通过hash求余后分别存入10个文件中
-         * 如果某个文件太大,超过限制内存大小,则可以对其再次hash求余
-         */
-        $handler = fopen('file_a_AND_file_b', 'r');
-        
-        while ($line = fgetc($handler)) {
-            $save_to_file_name = crc32(hash('md5', $line)) % 10;
-            file_put_contents($save_to_file_name, $line);     
-        }
-        
-        /**
-         *
-         */
-        $files = [ '10个文件的路径' ];
-        foreach ($files as $file) {
-        
-            $handler = fopen($file, 'r');
-            $tmp_arr = [];
-            while($line = fgetc($handler)) {
-                if(isset($tmp_arr[$line])) {
-                    file_put_contents('common_content.txt', $line);
-                } else {
-                    $tmp_arr[$line] = true;
-                }
-            }
-        
-        }
+    下面是伪代码:
     
+    /**
+     * 将两个文件中的每条记录通过hash求余后分别存入10个文件中
+     * 如果某个文件太大,超过限制内存大小,则可以对其再次hash求余
+     */
+    $handler = fopen('file_a_AND_file_b', 'r');
     
-#### 39、请写出自少两个支持回调处理的PHP函数，并自己实现一个支持回调的PHP函数
-    
-    array_reduce();
-    array_map();
-    array_filter();
-    
-    function callBack($parameter, $fn) {
-        return $fn($parameter);
+    while ($line = fgetc($handler)) {
+        $save_to_file_name = crc32(hash('md5', $line)) % 10;
+        file_put_contents($save_to_file_name, $line);     
     }
     
-    var_dump(callBack(5, function ($n){
-        return $n * $n;
-    }));
+    /**
+     *
+     */
+    $files = [ '10个文件的路径' ];
+    foreach ($files as $file) {
     
-#### 40、请写出自少两个获取指定文件夹下所有文件的方法（代码或思路）。
-    //递归
-    function readDirDeep($path,$deep = 0)
-    {
-        $handle = opendir($path);
-        while(false !== ($filename = readdir($handle))){
-            if($filename == '.' || $filename == '..') continue;
-            echo str_repeat('&nbsp;',$deep*5) . $filename.'<br>';
-                //str_repeat(str,n) 重复一个str字符串n次
-            if(is_dir($path.'/'.$filename)){
-                readDirDeep($path.'/'.$filename,$deep+1);
-                }
-            }
-            //闭关
-            closedir($handle);
-    }
-    
-    //队列
-    队列的方式就是遇到目录就放入队列,非目录打印就好
-    function readDirQueue($dir)
-    {
-        $dirs = [$dir];
-    
-        while ($path = array_shift($dirs)) {
-            if (is_dir($path) && $handle = opendir($path)) {
-                while (false !== ($filename = readdir($handle))) {
-                    if ($filename == '.' || $filename == '..') continue;
-                    $real_path = $path . DIRECTORY_SEPARATOR . $filename;
-    
-                    if(is_dir($real_path)) {
-                        $dirs[] = $real_path;
-                    }else {
-                        echo $real_path . '<br/>';
-                    }
-                }
-                //闭关
-                closedir($handle);
+        $handler = fopen($file, 'r');
+        $tmp_arr = [];
+        while($line = fgetc($handler)) {
+            if(isset($tmp_arr[$line])) {
+                file_put_contents('common_content.txt', $line);
+            } else {
+                $tmp_arr[$line] = true;
             }
         }
     
     }
 
+
+#### 39、请写出自少两个支持回调处理的PHP函数，并自己实现一个支持回调的PHP函数
+
+```php
+array_reduce();
+array_map();
+array_filter();
+
+function callBack($parameter, $fn) {
+    return $fn($parameter);
+}
+
+var_dump(callBack(5, function ($n){
+    return $n * $n;
+}));
+```
+#### 40、请写出自少两个获取指定文件夹下所有文件的方法（代码或思路）。
+```php
+//递归
+function readDirDeep($path,$deep = 0)
+{
+    $handle = opendir($path);
+    while(false !== ($filename = readdir($handle))){
+        if($filename == '.' || $filename == '..') continue;
+        echo str_repeat('&nbsp;',$deep*5) . $filename.'<br>';
+            //str_repeat(str,n) 重复一个str字符串n次
+        if(is_dir($path.'/'.$filename)){
+            readDirDeep($path.'/'.$filename,$deep+1);
+            }
+        }
+        //闭关
+        closedir($handle);
+}
+
+//队列
+// 队列的方式就是遇到目录就放入队列,非目录打印就好
+function readDirQueue($dir)
+{
+    $dirs = [$dir];
+
+    while ($path = array_shift($dirs)) {
+        if (is_dir($path) && $handle = opendir($path)) {
+            while (false !== ($filename = readdir($handle))) {
+                if ($filename == '.' || $filename == '..') continue;
+                $real_path = $path . DIRECTORY_SEPARATOR . $filename;
+
+                if(is_dir($real_path)) {
+                    $dirs[] = $real_path;
+                }else {
+                    echo $real_path . '<br/>';
+                }
+            }
+            //闭关
+            closedir($handle);
+        }
+    }
+
+}
+```
 #### 41、请写出自少三种截取文件名后缀的方法或函数（PHP原生函数和自己实现函数均可）
+
     $file = 'x.y.z.png';
     $ext = substr(strrchr($file, '.'), 1);
     $ext = pathinfo($file)['extension'];
     $ext = array_pop(explode('.', $file));
     
-    https://blog.csdn.net/zls986992484/article/details/52629684
+<https://blog.csdn.net/zls986992484/article/details/52629684>
     
 #### 42、PHP如何实现不用自带的cookie函数为客户端下发cookie。对于分布式系统，如何来保存session值。
     1、可以使用页面直接输出cookie,客户端js写入,如:
@@ -701,8 +719,8 @@
         }
     </script></body></html>
     
-    2、分布式系统session保存：mysql、redis、memcache、文件，主要方式是就是所有app应用都操作同一个位置的session，存哪都行，具体还要看业务量，比如业务量大，可能会采用缓存集群，业务量小可能单台机器的文件就能存了
-    具体的实现方案可以google/baidu搜索，有很多案例
+2、分布式系统session保存：mysql、redis、memcache、文件，主要方式是就是所有app应用都操作同一个位置的session，存哪都行，具体还要看业务量，比如业务量大，可能会采用缓存集群，业务量小可能单台机器的文件就能存了   
+具体的实现方案可以google/baidu搜索，有很多案例
     
     
 #### 43、请用SHELL统计5分钟内，nginx日志里访问最多的URL地址，对应的IP是哪些？
@@ -750,42 +768,44 @@
     熟悉explain分析语句后响应的各个属性
 
 #### 48、ping一个服务器ping不通，用哪个命令跟踪路由包？
-    linux:traceroute,windows:tracert
-    
-#### 49、$a=[0,1,2,3]; $b=[1,2,3,4,5];  $a+=$b; var_dump($a)等于多少？
+linux:**`traceroute`**,windows:tracert
+
+#### 49、`$a=[0,1,2,3]; $b=[1,2,3,4,5];  $a+=$b; var_dump($a)`等于多少？
     考的是数组+和array_merge的区别
     当下标为数值时，array_merge()不会覆盖掉原来的值，但array＋array合并数组则会把最先出现的值作为最终结果返回，而把后面的数组拥有相同键名的那些值“抛弃”掉（不是覆盖）. 
     当下标为字符时，array＋array仍然把最先出现的值作为最终结果返回，而把后面的数组拥有相同键名的那些值“抛弃”掉，但array_merge()此时会覆盖掉前面相同键名的值.
     
 
-#### 50、$a=[1,2,3]; foreach($a as &$v){} foreach($a as $v){} var_dump($a)等于多少; (我加的)
-    https://laravel-china.org/articles/7001/php-ray-foreach-and-references-thunder
+#### 50、`$a=[1,2,3]; foreach($a as &$v){} foreach($a as $v){} var_dump($a)`等于多少; (我加的)
+
+<https://laravel-china.org/articles/7001/php-ray-foreach-and-references-thunder>
 
 #### 51、数据库中的存放了用户ID,扣费很多行，redis中存放的是用户的钱包，现在要写一个脚本，将数据库中的扣费记录同步到redis中，每5分钟执行一次。请问要考虑哪些问题？
-    首先,本人没有实际做过此项目,我来做的话会这样:
-    
-    用户的余额我会存为整数型,比如1元用100分表示
-    MYSQL中的扣费记录会有一个更新数据的时间
-    
-    先拿到每一个待处理的用户:
-       select uid from 扣费记录表 where update_time='0000-00-00 00:00:00' group by uid;
-       
-    顺序处理每一个用户:    
-        开事务
-            处理在MYSQL中的扣费记录
-                $time = date('Y-m-d H:i:s'); //当前时间
-                update 扣费记录表 set status='已经处理状态码',update_time=$time where uid=单个用户ID;
-                {
-                    这里可以优化成一次更新完全部用户的5分钟的数据,然后再一个一个处理:
-                    update 扣费记录表 set status='已经处理状态码',update_time=$time where update_time='0000-00-00 00:00:00'
-                }
-            
-                select sum(扣费金额列) from 扣费记录表 where uid=单个用户ID and update_time=$time;    //时间点是关键
-            
-            对REDIS钱包进行处理:
-                DECRBY 递减给定数值
-                decrby key number 
-        结束事务(确保redis,扣费成功,则提交)
+首先,本人没有实际做过此项目,我来做的话会这样:
+
+用户的余额我会存为整数型,比如1元用100分表示
+MYSQL中的扣费记录会有一个更新数据的时间
+
+先拿到每一个待处理的用户:
+   select uid from 扣费记录表 where update_time='0000-00-00 00:00:00' group by uid;
+   
+顺序处理每一个用户:    
+    开事务
+        处理在MYSQL中的扣费记录
+```
+$time = date('Y-m-d H:i:s'); //当前时间
+update 扣费记录表 set status='已经处理状态码',update_time=$time where uid=单个用户ID;
+{
+    这里可以优化成一次更新完全部用户的5分钟的数据,然后再一个一个处理:
+    update 扣费记录表 set status='已经处理状态码',update_time=$time where update_time='0000-00-00 00:00:00'
+}
+
+select sum(扣费金额列) from 扣费记录表 where uid=单个用户ID and update_time=$time;    //时间点是关键
+```
+对REDIS钱包进行处理:
+    DECRBY 递减给定数值
+    decrby key number 
+结束事务(确保redis,扣费成功,则提交)
     
     
     
@@ -824,34 +844,37 @@
     AB虽然都在等、但我大CPU没有停啊，而且AB用户都收到第一次响应了，请各位大神指正。
     
    
-    这里讲得很细，还没认真看：https://tech.youzan.com/yi-bu-wang-luo-mo-xing/
+这里讲得很细，还没认真看：<https://tech.youzan.com/yi-bu-wang-luo-mo-xing/>
     
 #### 56、10g文件，用php查看它的行数
-    来自网络: 它的方式是一次读取一部分数据,计算这部分数据中有多少个换行符,不断循环,效率会比顺序读取内容高
-    /*
-     * 高效率计算文件行数
-     * @author axiang
-    */
-    function count_line($file)
-    {
-        $fp = fopen($file, "r");
-        $i  = 0;
-        while (!feof($fp)) {
-            //每次读取2M
-            if ($data = fread($fp, 1024 * 1024 * 2)) {
-                //计算读取到的行数
-                $num = substr_count($data, "\n");
-                $i += $num;
-            }
+来自网络: 它的方式是一次读取一部分数据,计算这部分数据中有多少个换行符,不断循环,效率会比顺序读取内容高
+```php
+/*
+ * 高效率计算文件行数
+ * @author axiang
+*/
+function count_line($file)
+{
+    $fp = fopen($file, "r");
+    $i  = 0;
+    while (!feof($fp)) {
+        //每次读取2M
+        if ($data = fread($fp, 1024 * 1024 * 2)) {
+            //计算读取到的行数
+            $num = substr_count($data, "\n");
+            $i += $num;
         }
-        fclose($fp);
-        return $i;
     }
+    fclose($fp);
+    return $i;
+}
+```
 #### 57、有10亿条订单数据，属于1000个司机的，请取出订单量前20的司机
-    对方希望要的思路: 
-    1、先顺序读取10亿条数据,统计每个司机各点多少订单量
-    2、构建一个最大堆,顺序过滤1000个司机,找到前20个司机
-    伪代码:
+对方希望要的思路:   
+1、先顺序读取10亿条数据,统计每个司机各点多少订单量  
+2、构建一个最大堆,顺序过滤1000个司机,找到前20个司机   
+伪代码:
+
     $order_data = [];
     foreach(10亿条订单 as $order_info) {
         if(isset($order_data[$order_info]) {
@@ -877,24 +900,26 @@
             }
         }
     }
-    
-    
+
+
 #### 58、设计一个微信红包的功能(从代码、服务器架构、数据库、性能等详细实现细节)
-    微信红包系统设计分享，如何扛住100亿次请求：http://www.woshipm.com/pd/232838.html
-    知乎有一些算法：https://www.zhihu.com/question/22625187
-    QA:https://www.zybuluo.com/yulin718/note/93148
-    
-    注意：比如让你写两个接口，一个抢红包接口，一个发红包接口，让你设计整套的存储系统、代码实现，你怎么来做？
+
+微信红包系统设计分享，如何扛住100亿次请求：<http://www.woshipm.com/pd/232838.html>   
+知乎有一些算法：<https://www.zhihu.com/question/22625187>   
+QA:<https://www.zybuluo.com/yulin718/note/93148>   
+
+注意：比如让你写两个接口，一个抢红包接口，一个发红包接口，让你设计整套的存储系统、代码实现，你怎么来做？
     
 #### 59、根据access.log文件统计最近5秒的qps，并以如下格式显示，n秒 数量 如 ：01 1000（难点在01秒数） 
     error.log数据：
     2018/07/29 03:16:01 ...
     2018/07/29 03:16:01 ...
-    
-    awk '{print $1,$2}' access.log|sort -nr|awk '{t[$1" "$2]++} END {for(i in t){print i,t[i]}}'|sort -nrk 1,2|head -20|cut -c18-
-
+```sh  
+awk '{print $1,$2}' access.log | sort -nr | awk '{t[$1" "$2]++} END {for(i in t){print i,t[i]}}' | sort -nrk 1,2 | head -20 | cut -c18-
+```
 #### 60、php7性能为什么提升这么高
-    https://laravel-china.org/articles/6201/questions-and-answers-that-laravel-and-phper-interviews-may-encounter
+<https://laravel-china.org/articles/6201/questions-and-answers-that-laravel-and-phper-interviews-may-encounter>
+
     PHP7 和 PHP5 的区别，具体多了哪些新特性？
         性能提升了两倍
         结合比较运算符 (<=>)
@@ -908,8 +933,9 @@
         改善数组结构，数组元素和 hash 映射表被分配在同一块内存里，降低了内存占用、提升了 cpu 缓存命中率
         改进了函数的调用机制，通过优化参数传递的环节，减少了一些指令，提高执行效率
         
-    
-    http://coffeephp.com/articles/4?utm_source=laravel-china.org
+
+<http://coffeephp.com/articles/4?utm_source=laravel-china.org>
+
     10.php7新特性#
         ?? 运算符（NULL 合并运算符）
         函数返回值类型声明
@@ -925,30 +951,34 @@
         使用大块连续内存代替小块破碎内存 详细的可以参考鸟哥的PPT：PHP7性能之源
 
 #### 61、遍历一个多维数组
-    $data = [
-        1, 2, 4, 6,
+
+```php
+$data = [
+    1, 2, 4, 6,
+    [
+        2, 5, 6, 7,
         [
-            2, 5, 6, 7,
-            [
-                9, 12, 55, 66, 77
-            ]
-        ],
-    ];
-    
-    function eatArr(array $arr)
-    {
-        foreach ($arr as $item) {
-            if (is_array($item)) {
-                eatArr($item);
-            } else {
-                echo $item . ' ';
-            }
+            9, 12, 55, 66, 77
+        ]
+    ],
+];
+
+function eatArr(array $arr)
+{
+    foreach ($arr as $item) {
+        if (is_array($item)) {
+            eatArr($item);
+        } else {
+            echo $item . ' ';
         }
     }
-    
-    eatArr($data);
-    
+}
+
+eatArr($data);
+```
 #### 62、有这样一个字符串abcdefgkbcdefab......随机长度，写一个函数来求bcde在这个字符串中出现的次数    
+
+```php
     $str = "abceeedefdsafujdsklgjmrj89gu89eeefiodsaflkjdsafjhuigbeeejhndfiofgidsafndyeeeubhngihaf;odsa";
     $tag = "eee";
     
@@ -971,28 +1001,31 @@
     }
     
     var_dump(search($str, $tag), count(search($str, $tag)));
+```
 
-    这里对比了三种方法，还是遍历最快：https://blog.csdn.net/yxtyxt3311/article/details/599492
+这里对比了三种方法，还是遍历最快：<https://blog.csdn.net/yxtyxt3311/article/details/599492>
     
 #### 63、有一个1G大小的一个文件，里面每一行是一个词，词的大小不超过16个字节，内存限制大小是1M。返回频数最高的100个词
-    讲得很好：https://blog.csdn.net/zzran/article/details/8443655
+
+讲得很好：<https://blog.csdn.net/zzran/article/details/8443655>
     
 #### 64、十道海量数据处理面试题与十个方法大总结（我加的）
-    https://blog.csdn.net/v_JULY_v/article/details/6279498
+
+<https://blog.csdn.net/v_JULY_v/article/details/6279498>
 
 #### 65、php进程模型，php是怎么支持多个并发的
 
 #### 66、nginx的进程模型，怎么支持多个并发
 
 #### 67、php-fpm各配置含义，fpm的daemonize模式
-    static - 子进程的数量是固定的（pm.max_children）
-    ondemand - 进程在有需求时才产生（当请求时，与 dynamic 相反，pm.start_servers 在服务启动时即启动
-    dynamic - 子进程的数量在下面配置的基础上动态设置：pm.max_children，pm.start_servers，pm.min_spare_servers，pm.max_spare_servers
+`static` - 子进程的数量是固定的（pm.max_children）  
+`ondemand` - 进程在有需求时才产生（当请求时，与 dynamic 相反，pm.start_servers 在服务启动时即启动   
+`dynamic` - 子进程的数量在下面配置的基础上动态设置：pm.max_children，pm.start_servers，pm.min_spare_servers，pm.max_spare_servers
 
 #### 68、让你实现一个简单的架构，并保持高可用，两个接口，一个上传一条文本，一个获取上传的内容，你怎么来设计？要避免单机房故障，同时要让代码层面无感。
-    
+
 #### 69、两台mysql服务器，其中一台挂了，怎么让业务端无感切换，并保证正常情况下讲台服务器的数据是一致的
-    
+
 #### 70、http协议具体的定义
 
 #### 71、什么是锁，怎么解决锁的问题
@@ -1011,6 +1044,7 @@
     a.php先锁A再锁B，那b.php也要先锁A再锁B
     
 #### 72、rand与mt_rand的区别
+
     1.int rand(void) / int mt_rand(void)
     2.int rand(int $min, int $max) / int mt_rand($min, $max)
      
@@ -1026,8 +1060,9 @@
          mt_rand()是更好地随机数生成器，因为它跟rand()相比播下了一个更好地随机数种子；而且性能上比rand()快4倍，mt_getrandmax()所表示的数值范围也更大
          
 #### 73、mysql事务隔离是怎么实现的
-    https://www.linuxidc.com/Linux/2018-01/150610.htm
-    https://liuzhengyang.github.io/2017/04/18/innodb-mvcc/
+
+<https://www.linuxidc.com/Linux/2018-01/150610.htm>   
+<https://liuzhengyang.github.io/2017/04/18/innodb-mvcc/>   
     
 #### 74、mysql的锁怎么实现的
     之前看过一篇文章，但找不到连接了，后面找到再贴
@@ -1035,7 +1070,7 @@
     跟存储的结构有关，会在索引上加锁（就跟文件锁一样，有个锁标志），如果没有锁引，那就会锁表
     另外锁会有一个范围，间隙锁
     
-    https://www.cnblogs.com/luyucheng/p/6297752.html
+<https://www.cnblogs.com/luyucheng/p/6297752.html>
 #### 75、对称加密和非对称加密的方式
     搜索引擎上讲得更好，自己查去吧
     
@@ -1058,27 +1093,31 @@
 #### 81、a引用b，页面报错:c里面类重复定义,写出abc3个页面中的内容, 循环引用会出现什么问题?
 
 #### 82、下面员工3的薪水大于其主管的薪水，一条SQL找到薪水比下属低的主管
-    
+
 |id    |username|salary|pid|
 |------|------|---------|-----:|
 |1     |  a   |  3000   | null |
 |    2 |  b   |  8000   | null |
 |    3 |  c   |  5000   | 1    |
 |    4 |  d   |  6000   | 3    |
-    
+
+```sql
     select b.id,b.username 
     from employee as a 
     left join employee as b 
     on a.manger_id=b.id 
     where a.salary>b.salary 
     group by b.id;
-
+```
 #### 82、在一个坐标系内有一个N个点组成的多边形,现在有一个坐标点,写代码或思路来判断这个点是否处于多边形内
-    http://www.html-js.com/article/1517
-    博主写了3种解法
-    其中一种大概是射线穿越边界为奇数时是在多边型内，否则在多边型外，但要判断特殊情况（如处于顶点）
+<http://www.html-js.com/article/1517>  
+
+博主写了3种解法  
+其中一种大概是射线穿越边界为奇数时是在多边型内，否则在多边型外，但要判断特殊情况（如处于顶点）  
 
 #### 83、数据库如果出现了死锁,你怎么排查,怎么判断出现了死锁?
+
+```sql
     SELECT * FROM INFORMATION_SCHEMA.INNODB_TRX;
     SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCK_WAITS;  
     
@@ -1086,7 +1125,7 @@
     
     SHOW processlist;
     SHOW ENGINE INNODB STATUS;
-    
+```
 
 #### 84.1、写一个程序来查找最长子串
 
@@ -1099,30 +1138,32 @@
 #### 86、nginx的工作流程是什么样的,可以画图描述
 
 #### 87、进程间通信方式有哪些
-    https://blog.csdn.net/violet_echo_0908/article/details/51201278
-    1 匿名管道通信
-    2 高级管道通信
-    3 命名管道通信
-    4 消息队列通信
-    5 信号量通信
-    6 信号
-    7 共享内存通信
-    8 套接字通信
+
+<https://blog.csdn.net/violet_echo_0908/article/details/51201278>
+
+1. 匿名管道通信
+2. 高级管道通信
+3. 命名管道通信
+4. 消息队列通信
+5. 信号量通信
+6. 信号
+7. 共享内存通信
+8. 套接字通信
 
 #### 88、主从复制，从服务器会读取到主服务器正在回滚的数据吗？主数据库写成功，从服务器因为一些原因写失败，最后会出现什么情况？主从复制如果键冲突怎么办？
 
 #### 89、事务有几种隔离级别？事务的隔离级别是怎么实现的?
-    
+
 [19、数据库中的事务是什么](#19、数据库中的事务是什么？)
 
-    http://tech.it168.com/a2016/0905/2900/000002900122.shtml
-    https://liuzhengyang.github.io/2017/04/18/innodb-mvcc/
-    https://blog.csdn.net/matt8/article/details/53096405    
+<http://tech.it168.com/a2016/0905/2900/000002900122.shtml>   
+<https://liuzhengyang.github.io/2017/04/18/innodb-mvcc/>   
+<https://blog.csdn.net/matt8/article/details/53096405>   
     
 #### 90、什么是B+数,请画b+树的结构（扩展其它树）
-    
-    https://blog.csdn.net/v_JULY_v/article/details/6530142
-    http://www.cnblogs.com/yangecnu/p/Introduce-B-Tree-and-B-Plus-Tree.html
+
+<https://blog.csdn.net/v_JULY_v/article/details/6530142>   
+<http://www.cnblogs.com/yangecnu/p/Introduce-B-Tree-and-B-Plus-Tree.html>
 
 #### 91.1、mysql中的字符集，客户端与数据库不一致，怎么办? 
     
@@ -1186,57 +1227,59 @@
     
 
 #### 92、写一段代码，找到所有子集合，如[a,b,c]的子集合有{},{a},{b},{c},{ab},{ac},{abc}
-    http://plutoblog.iteye.com/blog/976218 （原理）
-    https://my.oschina.net/liuhui1990/blog/40422
-    https://blog.csdn.net/a568283992/article/details/53525253 （子集的平方和）
-    
-    //递归法
-    function allSubSet(array $arr = [], $sub_set = "", $begin_point)
-    {
-        $res = [];
-        if($sub_set) {
-            $res[] = "{" . trim($sub_set, ",") . "}";
-        }
-        for ($start_point = $begin_point; $start_point < count($arr); ++$start_point) {
-            $res = array_merge(
-                $res, 
-                allSubSet($arr, $sub_set . "," . $arr[$start_point], $start_point + 1)
-            );
-        }
-    
-        return $res;
-    }
-    
-    $data = allSubSet([1, 2, 3], '', 0);
-    var_dump($data);
+<http://plutoblog.iteye.com/blog/976218> （原理）  
+<https://my.oschina.net/liuhui1990/blog/40422>   
+<https://blog.csdn.net/a568283992/article/details/53525253> （子集的平方和）   
 
+```php
+//递归法
+function allSubSet(array $arr = [], $sub_set = "", $begin_point)
+{
+    $res = [];
+    if($sub_set) {
+        $res[] = "{" . trim($sub_set, ",") . "}";
+    }
+    for ($start_point = $begin_point; $start_point < count($arr); ++$start_point) {
+        $res = array_merge(
+            $res, 
+            allSubSet($arr, $sub_set . "," . $arr[$start_point], $start_point + 1)
+        );
+    }
+
+    return $res;
+}
+
+$data = allSubSet([1, 2, 3], '', 0);
+var_dump($data);
+```
 #### 93、['a'=>200,'b'=>100,'c'=>100],写一个自定义排序函数，按值降序,如果值一样，按键排序
-    function kvsort($arr) {
-        $res_arr = [];
-        while (count($arr)) {
-            $min = null;
-            $min_key = null;
-    
-            foreach ($arr as $key=>$value) {
-                if(!$min || $min > $value) {
-                    $min = $value;
-                    $min_key = $key;
-                } else if($min == $value && $min_key > $key) {
-                    $min = $value;
-                    $min_key = $key;
-                }
-            }
-            unset($arr[$min_key]);
-            $res_arr[$min_key] = $min;
-        }
-        return $res_arr;
-    }
+```php
+function kvsort($arr) {
+    $res_arr = [];
+    while (count($arr)) {
+        $min = null;
+        $min_key = null;
 
+        foreach ($arr as $key=>$value) {
+            if(!$min || $min > $value) {
+                $min = $value;
+                $min_key = $key;
+            } else if($min == $value && $min_key > $key) {
+                $min = $value;
+                $min_key = $key;
+            }
+        }
+        unset($arr[$min_key]);
+        $res_arr[$min_key] = $min;
+    }
+    return $res_arr;
+}
+```
 #### 94、设计一个缓存系统，可以定期或空间占满之后自动删除长期不用的数据，不能使用用遍历。
     我当时的答案是用链表来存,缓存命中就将该缓存移到链表头,然后链表尾就都是冷数据了。
     我记得之前是在哪里看过这个设计,但我忘记在连接了,请知道朋友的把连接贴上来。
     
-    https://www.cnblogs.com/zengzy/p/5167827.html
+<https://www.cnblogs.com/zengzy/p/5167827.html>
     
 #### 95、==和===的区别，写出以下输出："aa"==1,"bb"==0，1=="1"
 
@@ -1255,7 +1298,7 @@
     https://github.com/hookover/php-engineer-interview-questions#24%E4%BA%8C%E5%8F%89%E6%A0%91%E5%89%8D%E4%B8%AD%E5%90%8E%E9%81%8D%E5%8E%86%E4%BB%A3%E7%A0%81
 
 #### 98、'$var'和"$var"的区别
-    
+
 #### 99、self和static的区别
 
 #### 100、PHP的协程以及用途
@@ -1271,14 +1314,15 @@
 #### 105、断开TCP连接时，timewait状态会出现在发起分手的一端还是被分手的一端
 
 #### 106、AWK各种数据分析考得非常多，要多练习，题目不再一一写了
-    https://segmentfault.com/a/1190000009745139
-    http://wiki.jikexueyuan.com/project/awk/
+<https://segmentfault.com/a/1190000009745139>  
+<http://wiki.jikexueyuan.com/project/awk/>  
 
 #### 107、redis中集合、有序集合、hyperLog、hash的数据结构是啥样的
     备注一下:需要了解有序集合的实现方式,包括跳跃表结构和实现
 
 #### 108、描述一下:一个请求到达nginx的全部处理过程（nginx自身会调用哪些逻辑）、然后怎么与php通信，中间的流程是什么样的等等？
-    https://blog.csdn.net/yankai0219/article/details/8220695
+<https://blog.csdn.net/yankai0219/article/details/8220695>
+
     惊群
     顺带要了解epoll,select,poll
    
@@ -1318,15 +1362,15 @@
     6、直到$all为空，此时分组分好了
     
     这个方法也不怎么好,一定有更好的解决试,请大神补充吧
-    
+
 #### 基本的算法:冒泡、快速、木桶、二分查找
 
 #### 其他人的面试答案
-    http://coffeephp.com/articles/4?utm_source=laravel-china.org
-    https://laravel-china.org/articles/6844/a-php-interview-for-a-16-year-old-graduate
-    https://todayqq.gitbooks.io/phper/content/
+<http://coffeephp.com/articles/4?utm_source=laravel-china.org>   
+<https://laravel-china.org/articles/6844/a-php-interview-for-a-16-year-old-graduate>   
+<https://todayqq.gitbooks.io/phper/content/>   
 
 #### 资源集合
-    《用 PHP 的方式实现的各类算法合集 》https://github.com/PuShaoWei/arithmetic-php
-    《编程之法：面试和算法心得》https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/index.html
-    《剑指OFFER-PHP实现》https://blog.csdn.net/column/details/15795.html
+《用 PHP 的方式实现的各类算法合集 》<https://github.com/PuShaoWei/arithmetic-php>   
+《编程之法：面试和算法心得》<https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/index.html>   
+《剑指OFFER-PHP实现》<https://blog.csdn.net/column/details/15795.html>   

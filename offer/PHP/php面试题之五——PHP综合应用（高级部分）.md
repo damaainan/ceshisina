@@ -121,7 +121,7 @@ addslashes
 ```sql
     CREATE TABLE message(
     id iNT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200)NOT NULL DEFAULT‘’,
+    title VARCHAR(200)NOT NULL DEFAULT'',
     content TEXT,
     category_id INT UNSIGNED NOT NULL DEFAULT 0,
     hits INT UNSIGNED NOT NULL DEFAULT 0
@@ -234,7 +234,7 @@ Linux下常用软件，vim，emacs，tar，openoffice，putty，wget，links，s
 
 ###### 26.用户在网站表单提交数据的时候，为了防止脚本攻击（比如用户输入），`<script>alert（111）;</script>`php端接收数据的时候，应该如何处理？
 
-可以对用户输入数据进行转义，如htmlspecialchars($_POST[‘title’]);
+可以对用户输入数据进行转义，如htmlspecialchars($_POST['title']);
 
 ###### [!!!]27.使用过Memcache缓存吗，如果使用过，能够简单的描述一下它的工作原理吗？
 
@@ -270,19 +270,19 @@ Ajax的缺点是不利于SEO推广优化，因为搜索引擎无法直接访问�
 题目意思有些模糊，题目本意可能是将一个无符号的2进制字符串转成10进制数，如'10100010'，应该得到10100010的十进制表示162。
 
 ```php
-    <?php
-        function bin2dec($bin){
-            $temp = strrev($bin);
-            $result = 0;
-            for ($i=0,$len = strlen($temp); $i < $len; $i++) {
-                $result += pow(2,$i) * $temp[$i];
-            }
-            return $result;
-        }
-    
-        $a = '10100010';
-        echo bin2dec($a);//结果162
-    ?>
+<?php
+function bin2dec($bin){
+    $temp = strrev($bin);
+    $result = 0;
+    for ($i=0,$len = strlen($temp); $i < $len; $i++) {
+        $result += pow(2,$i) * $temp[$i];
+    }
+    return $result;
+}
+
+$a = '10100010';
+echo bin2dec($a);//结果162
+?>
 ```
 
 ###### 33.请使用PHP设计一个函数，对学生英语考试得分从高到低排序，输入时所有学生的学号和考试得分，返回排好序的考试得分和对应学生的学号。考试满分为100，得分可能会有小数，由于考试评分要求，小数位只会是0或0.5
@@ -292,52 +292,52 @@ Ajax的缺点是不利于SEO推广优化，因为搜索引擎无法直接访问�
 请使用你认为最快最优的方法实现该函数并使排序的性能最高。（嘀嗒团）
 
 ```php
-    <?php
-        // 快速排序实现
-        function array_sort(&$arr,$left,$right){
-            if ($left < $right) {
-                $pivot = $arr[$left];
-                $low = $left;
-                $high = $right;
-    
-                while ($low < $high) {
-                    while ($low < $high && $arr[$high]['score'] >= $pivot['score']) {
-                        $high--;
-                    }
-                    $arr[$low] = $arr[$high];
-                    while ($low < $high && $arr[$low]['score'] <= $pivot['score']) {
-                        $low++;
-                    }
-                }
-                $arr[$low] = $pivot;
-                array_sort($arr,$left,$low-1);
-                array_sort($arr,$low+1,$right);
+<?php
+// 快速排序实现
+function array_sort(&$arr,$left,$right){
+    if ($left < $right) {
+        $pivot = $arr[$left];
+        $low = $left;
+        $high = $right;
+
+        while ($low < $high) {
+            while ($low < $high && $arr[$high]['score'] >= $pivot['score']) {
+                $high--;
+            }
+            $arr[$low] = $arr[$high];
+            while ($low < $high && $arr[$low]['score'] <= $pivot['score']) {
+                $low++;
             }
         }
-    
-        $english = array(
-                array('sid'=>1,'score'=>76),
-                array('sid'=>2,'score'=>93),
-                array('sid'=>3,'score'=>68.5),
-                array('sid'=>4,'score'=>82.5),
-    
-            );
-        $left = 0;
-        $right = count($english) - 1;
-        array_sort($english,$left,$right);
-    
-        print_r($english);
-    ?>
+        $arr[$low] = $pivot;
+        array_sort($arr,$left,$low-1);
+        array_sort($arr,$low+1,$right);
+    }
+}
+
+$english = array(
+        array('sid'=>1,'score'=>76),
+        array('sid'=>2,'score'=>93),
+        array('sid'=>3,'score'=>68.5),
+        array('sid'=>4,'score'=>82.5),
+
+    );
+$left = 0;
+$right = count($english) - 1;
+array_sort($english,$left,$right);
+
+print_r($english);
+?>
 ```
 
 ###### 34.需要设置一个有效期为31天，的memcach值，请补充下面的代码（奇矩互动）
 
 ```php
-    <?php
-        $memcache_obj=new memcache
-        $memcache_obj->connect(‘memcache_host,11211’);
-        $memcache_obj->set(‘varKey’,’varValue’,0,____);
-    ?>
+<?php
+$memcache_obj=new memcache
+$memcache_obj->connect('memcache_host,11211');
+$memcache_obj->set('varKey','varValue',0,____);
+?>
 ```
 
 time()+3600_24_31
@@ -360,38 +360,38 @@ time()+3600_24_31
 应返回123_abc_45。_
 
 ```php
-    <?php
-        function cut($str,$len=null){
-            $last=0;
-            $str_len=strlen($str);
-            $result='';
-            $result_len=0;
-            do{
-                $pattern='/<em>(.*?)<\/em>/i';
-                $num=preg_match($pattern,$str,$m,PREG_OFFSET_CAPTURE,$last);
-                if($num){
-                    $result.=substr($str,$last,
-                    $add_len=($m[0][1]-$last<$len-$result_len)?$m[0][1]-$last:$len-$result_len);
-                    $result_len+=$add_len;
-                    $last=$m[0][1]+strlen($m[0][0]);
-    
-                    if($result_len<$len){
-                        if($len-$result_len>=strlen($m[1][0])){
-                            $result.=$m[0][0];
-                            $result_len+=strlen($m[1][0]);
-                        }else{
-                            $result.=substr($m[1][0],0,$len-$result_len);
-                            break;
-                        }
-                    }
+<?php
+function cut($str,$len=null){
+    $last=0;
+    $str_len=strlen($str);
+    $result='';
+    $result_len=0;
+    do{
+        $pattern='/<em>(.*?)<\/em>/i';
+        $num=preg_match($pattern,$str,$m,PREG_OFFSET_CAPTURE,$last);
+        if($num){
+            $result.=substr($str,$last,
+            $add_len=($m[0][1]-$last<$len-$result_len)?$m[0][1]-$last:$len-$result_len);
+            $result_len+=$add_len;
+            $last=$m[0][1]+strlen($m[0][0]);
+
+            if($result_len<$len){
+                if($len-$result_len>=strlen($m[1][0])){
+                    $result.=$m[0][0];
+                    $result_len+=strlen($m[1][0]);
                 }else{
-                    $result.=substr($str,$last,$len-$result_len);
+                    $result.=substr($m[1][0],0,$len-$result_len);
                     break;
                 }
-            }while($last<$str_len&&$result_len<$len);
-            return$result;
+            }
+        }else{
+            $result.=substr($str,$last,$len-$result_len);
+            break;
         }
-    ?>
+    }while($last<$str_len&&$result_len<$len);
+    return$result;
+}
+?>
 ```
 
 ###### 38.请仅使用一次正则替换，将下面内容
@@ -405,15 +405,15 @@ private string contractNumber;
 private string customerName;（鑫众人云）
 
 ```php
-    <?php
-        $str = "private long contract_id;
-        private string contract_number;
-        private string customer_name;";
-    
-        $pattern = '/_(\w)/em';
-        $result = preg_replace($pattern,"strtoupper('\\1')",$str);
-        echo $result;
-    ?>
+<?php
+$str = "private long contract_id;
+private string contract_number;
+private string customer_name;";
+
+$pattern = '/_(\w)/em';
+$result = preg_replace($pattern,"strtoupper('\\1')",$str);
+echo $result;
+?>
 ```
 
 ###### [!!]39.列举流行的Ajax框架？说明Ajax实现原理是什么及json在Ajax中起什么作用？（鑫众人云）
@@ -443,14 +443,14 @@ UTF-8编码是可变长编码，对于中文而言，一个字符使用3个字�
 ###### 45.用正则表达式判断$a是否是一个以半角逗号分隔的多个手机号码组成的字符串，是输出yes（卓望）
 
 ```php
-    <?php
-        $pattern = '/^1[358]\d{9}(,1[358]\d{9})*$/';
-        $subject = '13507224985,13833103237';
-    
-        if (preg_match($pattern,$subject)) {
-            echo "yes";
-        }
-    ?>
+<?php
+$pattern = '/^1[358]\d{9}(,1[358]\d{9})*$/';
+$subject = '13507224985,13833103237';
+
+if (preg_match($pattern,$subject)) {
+    echo "yes";
+}
+?>
 ```
 
 ###### 46.如果要求每隔5分钟执行一次脚本five.php，如何实现？（卓望）
@@ -458,17 +458,17 @@ UTF-8编码是可变长编码，对于中文而言，一个字符使用3个字�
 用到的函数ignore_user_abort(),set_time_limit(0),sleep($interval)，此代码只要运行一次后关闭浏览器即可。
 
 ```php
-    <?php
-        ignore_user_abort();//关掉浏览器，PHP脚本也可以继续执行.
-        set_time_limit(0);//通过set_time_limit(0)可以让程序无限制的执行下去
-    
-        $interval=60*5;//每隔5分钟运行
-        do{
-            //这里是你要执行的代码
-            sleep($interval);//等待5分钟
-        }while(true);
-    
-    ?>
+<?php
+ignore_user_abort();//关掉浏览器，PHP脚本也可以继续执行.
+set_time_limit(0);//通过set_time_limit(0)可以让程序无限制的执行下去
+
+$interval=60*5;//每隔5分钟运行
+do{
+    //这里是你要执行的代码
+    sleep($interval);//等待5分钟
+}while(true);
+
+?>
 ```
 
 ###### 47.假设有一个博客系统，数据库存储采用mysql，用户数量为1000万，预计文章总数为10亿，每天有至少10万的更新量，每天访问量为5000万，对数据库的读写操作的比例超过10：1，你如何设计该系统，以确保其系统高效，稳定的运行？提示：可以从数据库设计，系统框架，及网络架构方面进行描述，可以自由发挥（新浪网技术部）
