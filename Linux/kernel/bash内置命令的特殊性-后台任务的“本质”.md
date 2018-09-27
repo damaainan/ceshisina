@@ -410,7 +410,7 @@ sleep 60
  
 
 
-[0]: ../IMG/m2EZRjJ.png 
-[1]: ../IMG/rEvABna.png 
-[2]: ../IMG/VfEviiu.png 
-[3]: ../IMG/Nv6rqae.png 
+[0]: ./img/m2EZRjJ.png 
+[1]: ./img/rEvABna.png 
+[2]: ./img/VfEviiu.png 
+[3]: ./img/Nv6rqae.png 

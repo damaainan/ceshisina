@@ -58,7 +58,7 @@ less static.log | awk 'url=$7; requests[url]++;bytes[url]+=$10} END{for(url in r
 
 ![][18]
 
-备注：Nginx配置文件中日志格式使用了$body_sent_size，指HTTP响应体的大小，如果想查看整个响应的大小，应该使用变量$sent_size。
+备注：Nginx配置文件中日志格式使用了`$body_sent_size`，指HTTP响应体的大小，如果想查看整个响应的大小，应该使用变量`$sent_size`。
 
 不出意外，静态资源、图片类（如果还没有放CDN）占据榜首，自然也是优化的重点：是否可以再压缩，某些页面中是否可以用缩略图片代替等。
 
@@ -73,7 +73,7 @@ less main.log | awk '{url=$7; times[url]++} END{for(url in times){printf("%s %s\
 
 不对，发现一个问题：由于拥有服务号、App、PC浏览器等多种前端，并且使用不规范，URL的格式可能乱七八糟。比如`/page/a`页面，有的带有.html后缀，有的未带，有的请求路径则带有参数；分类页/categories/food带有`slug`等信息；订单、详情或个人中心的URL路径则有`ID`等标记...。
 
-借助sed命令，通过三个方法对URL格式进行归一化处理：去掉所有的参数；去掉`.html`及`.json`后缀；把数字替换为`*`。可以得到更准确的统计结果，：
+借助sed命令，通过三个方法对URL格式进行**`归一化`**处理：去掉所有的参数；去掉`.html`及`.json`后缀；把数字替换为`*`。可以得到更准确的统计结果，：
 
 ```sh
 less main.log | awk '{print $7}' |sed -re 's/(.*)\?.*/\1/g' -e 's/(.*)\..*/\1/g' -e 's:/[0-9]+:/*:g' | awk '{requests[$1]++;time[$1]+=$2} END{for(url in requests){printf("%smin %ss/req %s %s\n", time[url] / 60, time[url] /requests[url], requests[url], url)}}' | sort -nr | head -n 50
@@ -104,7 +104,7 @@ less main.log | awk -v limit=2 '{min=substr($4,2,17);reqs[min]++;if($11>limit){s
 
 慢查询所占比例极低，再根据用户手机型号、访问时间、访问页面等信息看能否定位到指定的请求，结合前后不同用户的请求，就可以确定是否用户的网络状况不好了。
 
-第二步：是不是应用系统的瓶颈？对比应用服务器的返回时间($upstream_response_time字段），与Nginx服务器的处理时间($request_time字段)，先快速排查是否某一台服务器抽风。
+第二步：是不是应用系统的瓶颈？对比**应用服务器的返回时间**(`$upstream_response_time`字段），与Nginx**服务器的处理时间**(`$request_time`字段)，先快速排查是否某一台服务器抽风。
 
 我们遇到过类似问题，平均响应时间90ms，还算正常，但某台服务器明显变慢，平均响应时间达到了200ms，影响了部分用户的访问体验。
 
@@ -148,7 +148,7 @@ less main.log | egrep 'spider|bot' | awk '{name=$17;if(index($15,"spider")>0){na
 
 ## 几点建议
 
-1. 规范日志格式。这是很多团队容易忽略的地方，有时候多一个空格会让日志分析的复杂度大为增加。
+1. **`规范日志格式`**。这是很多团队容易忽略的地方，有时候多一个空格会让日志分析的复杂度大为增加。
 
 1. 无论如何，使用时间戳字段。以时间序列的方式看待日志文件，这也是很多公司把系统日志直接写入到时间序列数据库的原因；
 

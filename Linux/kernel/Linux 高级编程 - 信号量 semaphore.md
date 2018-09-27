@@ -325,7 +325,7 @@ Linux 内核提供了一套对信号量的操作，包括获取，设置，操�
 
 [2]: http://blog.csdn.net/qq_22075977/article/details/77973186
 
-[4]: ../IMG/3IbiMjY.png
-[5]: ../IMG/ANnaI3B.png
-[6]: ../IMG/juyYrqU.png
-[7]: ../IMG/6neQBby.png
+[4]: ./img/3IbiMjY.png
+[5]: ./img/ANnaI3B.png
+[6]: ./img/juyYrqU.png
+[7]: ./img/6neQBby.png

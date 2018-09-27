@@ -451,11 +451,11 @@ Show me the code！！
 
 [1]: http://www.jianshu.com/p/f445bfeea40a
 
-[3]: ../IMG/FJfuEje.png
-[4]: ../IMG/M3ymEba.png
-[5]: ../IMG/FzYJbaV.png
-[6]: ../IMG/naQzMbn.png
-[7]: ../IMG/RZvaMvN.png
-[8]: ../IMG/IZ3Uvyz.png
-[9]: ../IMG/RVbMNjF.png
-[10]: ../IMG/rQNVNjB.png
+[3]: ./img/FJfuEje.png
+[4]: ./img/M3ymEba.png
+[5]: ./img/FzYJbaV.png
+[6]: ./img/naQzMbn.png
+[7]: ./img/RZvaMvN.png
+[8]: ./img/IZ3Uvyz.png
+[9]: ./img/RVbMNjF.png
+[10]: ./img/rQNVNjB.png

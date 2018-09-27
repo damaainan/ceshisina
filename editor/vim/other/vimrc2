@@ -11,7 +11,6 @@ set encoding=utf-8
 set cmdheight=6  " 状态行高度
 
 set background=dark
-colorscheme blue
 "colorscheme solarized
 "colorscheme molokai
 "colorscheme phd
@@ -134,7 +133,7 @@ Plugin 'ctrlpvim/ctrlp.vim'
 
 " vim-devicons vim icons  文件类型 图标
 
-Plugin 'ryanoasis/vim-devicons'
+Plugin 'ryanoasis/vim-devicons' " 需要配置字体 否则会导致乱码出现
 
 " All of your Plugins must be added before the following line
 

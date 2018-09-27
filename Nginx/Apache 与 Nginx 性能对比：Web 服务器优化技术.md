@@ -47,7 +47,7 @@ Apache 在其不短的发展历程中，提供了许多 [有用的模块][22]。
 
 ![][3]
 
-在安装完成 Locust 后，我们需要在项目的根目录下创建一个 **`[locusfile][46]`** :
+在安装完成 Locust 后，我们需要在项目的根目录下创建一个 [**`locusfile`**][46] :
 
 ```python
 from locust import HttpLocust, TaskSet, task
@@ -204,7 +204,7 @@ Nginx 是一款 [事件驱动（event-driven）][64] 非阻塞模式的 Web 服�
 
 Nginx 推荐将 worker 进程数量设置为 PC 的 核心数（类似 Apache 的 mpm_event 配置），将 **`/etc/nginx/nginx.conf`**  配置文件中 **`worker_processes`**  指令设置为 **`auto`**  （默认为 1）。
  **`worker_connections`**  设置单个 worker 进程能够处理的连接数。默认为 512，不过通常可以增加处理连接数量。
- **`[keepalive 连接数][67]`**  一样会影响服务器性能，在基准测试中一般看不到这个 [请求头][68]。
+ [**`keepalive 连接数`**][67]  一样会影响服务器性能，在基准测试中一般看不到这个 [请求头][68]。
 
 ![][8]
 
@@ -225,7 +225,7 @@ proxy_http_version 1.1;
 proxy_set_header Connection "";
 ```
 
-nginx upstream 连接由 **`[ngx_http_upstream_module][76]`**  模块管理。
+nginx upstream 连接由 [**`ngx_http_upstream_module`**][76]  模块管理。
 
 如果我们的客户端应用需要不断轮询服务端应用进行数据更新，可以通过 **`keepalive_requests`**  和 **`keepalive_timeout`**  增加连接数。同时 **`keepalive`**  指令值不应太大，这样就能够保证其他的 upstream 服务器也能够处理其它请求。
 

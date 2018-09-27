@@ -49,3 +49,8 @@
 ## Gvim 64位下载地址
 
 [https://github.com/vim/vim-win32-installer/releases](https://github.com/vim/vim-win32-installer/releases)
+
+
+## gVim 设置字体
+
+Linux 和 Windows 下写法不同 

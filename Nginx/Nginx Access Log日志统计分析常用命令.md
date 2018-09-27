@@ -41,7 +41,7 @@ awk '{print $2}' access.log | sort -n | uniq -c | awk '{if($1 >100) print $0}' |
 ### 查询某个IP的详细访问情况,按访问频率排序
 
 ```sh
-grep '104.217.108.66' access.log | awk '{print $7}' | sort |uniq -c | sort -rn | head -n 100
+grep '104.217.108.66' access.log | awk '{print $7}' | sort | uniq -c | sort -rn | head -n 100
 ```
 
 ## 页面访问统计
@@ -55,7 +55,7 @@ awk '{print $7}' access.log | sort | uniq -c | sort -rn | head -n 100
 ### 查看访问最频的页面([排除php页面】(TOP100)
 
 ```sh
-grep -v ".php"  access.log | awk '{print $7}' | sort |uniq -c | sort -rn | head -n 100
+grep -v ".php"  access.log | awk '{print $7}' | sort | uniq -c | sort -rn | head -n 100
 ```
 
 ### 查看页面访问次数超过100次的页面
@@ -67,7 +67,7 @@ cat access.log | cut -d ' ' -f 7 | sort | uniq -c | awk '{if ($1 > 100) print $0
 ### 查看最近1000条记录，访问量最高的页面
 
 ```sh
-tail -1000 access.log | awk '{print $7}' | sort | uniq -c| sort -nr | less
+tail -1000 access.log | awk '{print $7}' | sort | uniq -c | sort -nr | less
 ```
 
 ## 每秒请求量统计
