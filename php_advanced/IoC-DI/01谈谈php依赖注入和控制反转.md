@@ -30,39 +30,38 @@ IoC——Inversion of Control 控制反转
 下面我们通过例子来具体看看 依赖注入的一些实现方式 ：  
 **1.构造器注入**
 ```php
-    <?php
-    class Book {
-      private $db_conn;
-      
-      public function __construct($db_conn) {
-        $this->db_conn = $db_conn;
-      }
-    }
+<?php
+class Book {
+  private $db_conn;
+  
+  public function __construct($db_conn) {
+    $this->db_conn = $db_conn;
+  }
+}
 ```
 
 **2、setter注入**
 ```php
-    <?php   
-    class book{
-       private $db;
-    　　　private $file;
-       function setdb($db){
-         $this->db=$db;
-       }
-       function setfile($file){
-         $this->file=$file;
-       }
-    }
-    class file{}
-    class db{}
-    ...
-     
-    class test{
-    　　 $book = new Book();
-     　　 $book->setdb(new db()); 
-       $book->setfile(new file());
-    }
-    ?>
+<?php   
+class book{
+   private $db;
+　　　private $file;
+   function setdb($db){
+     $this->db=$db;
+   }
+   function setfile($file){
+     $this->file=$file;
+   }
+}
+class file{}
+class db{}
+...
+ 
+class test{
+　　 $book = new Book();
+ 　　 $book->setdb(new db()); 
+   $book->setfile(new file());
+}
 ```
 
 上面俩种方法代码很清晰，但是当我们需要注入很多个依赖时，意味着又要增加很多行，会比较难以管理。
@@ -70,83 +69,82 @@ IoC——Inversion of Control 控制反转
 比较好的解决办法是 建立一个class作为所有依赖关系的container，在这个class中可以存放、创建、获取、查找需要的依赖关系
 
 ```php
-    <?php
-    class Ioc {
-      protected $db_conn;
-      public static function make_book() {
-        $new_book = new Book();
-        $new_book->set_db(self::$db_conn);
-        //...
-        //...
-        //其他的依赖注入
-        return $new_book;
-      }
-    }
+<?php
+class Ioc {
+  protected $db_conn;
+  public static function make_book() {
+    $new_book = new Book();
+    $new_book->set_db(self::$db_conn);
+    //...
+    //...
+    //其他的依赖注入
+    return $new_book;
+  }
+}
 ```
-此时，如果获取一个book实例，只需要执行$newone = Ioc::makebook();
+此时，如果获取一个book实例，只需要执行`$newone = Ioc::makebook();`
 
 以上是container的一个具体实例，最好还是不要把具体的某个依赖注入写成方法，采用registry注册，get获取比较好
 
 ```php
-    <?php
-    class Ioc {
-    /**
-    * @var 注册的依赖数组
-    */
-      
-      protected static $registry = array();
-      
-      /**
-      * 添加一个resolve到registry数组中
-      * @param string $name 依赖标识
-      * @param object $resolve 一个匿名函数用来创建实例
-      * @return void
-      */
-      public static function register($name, Closure $resolve)
-      {
-       static::$registry[$name] = $resolve;
-      }
-      
-      /**
-       * 返回一个实例
-       * @param string $name 依赖的标识
-       * @return mixed
-       */
-      public static function resolve($name)
-      {
-        if ( static::registered($name) )
-        {
-         $name = static::$registry[$name];
-         return $name();
-        }
-        throw new Exception('Nothing registered with that name, fool.');
-      }
-      /**
-      * 查询某个依赖实例是否存在
-      * @param string $name id
-      * @return bool 
-      */
-      public static function registered($name)
-      {
-       return array_key_exists($name, static::$registry);
-      }
+<?php
+class Ioc {
+/**
+* @var 注册的依赖数组
+*/
+  
+  protected static $registry = array();
+  
+  /**
+  * 添加一个resolve到registry数组中
+  * @param string $name 依赖标识
+  * @param object $resolve 一个匿名函数用来创建实例
+  * @return void
+  */
+  public static function register($name, Closure $resolve)
+  {
+   static::$registry[$name] = $resolve;
+  }
+  
+  /**
+   * 返回一个实例
+   * @param string $name 依赖的标识
+   * @return mixed
+   */
+  public static function resolve($name)
+  {
+    if ( static::registered($name) )
+    {
+     $name = static::$registry[$name];
+     return $name();
     }
+    throw new Exception('Nothing registered with that name, fool.');
+  }
+  /**
+  * 查询某个依赖实例是否存在
+  * @param string $name id
+  * @return bool 
+  */
+  public static function registered($name)
+  {
+   return array_key_exists($name, static::$registry);
+  }
+}
 ```
 
 现在就可以通过如下方式来注册和注入一个
 
 ```php
-    <?php
-    $book = Ioc::registry('book', function(){
-    $book = new Book;
-    $book->setdb('...');
-    $book->setprice('...');
-    return $book;
-    });
-      
-    //注入依赖
-    $book = Ioc::resolve('book');
-    ?>
+<?php
+$book = Ioc::registry('book', function(){
+$book = new Book;
+$book->setdb('...');
+$book->setprice('...');
+return $book;
+});
+  
+//注入依赖
+$book = Ioc::resolve('book');
 ```
 以上就是针对php依赖注入和控制反转的理解，希望对大家学习PHP程序设计有所帮助
 

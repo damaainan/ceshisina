@@ -39,9 +39,9 @@
 
 从本系列的开篇到现在我们基本还是围绕「依赖注入」的基本概念展开的。前两篇入门的文章对于理解本文及后续教程至关重要。现在，是时候该去探索 Symfony 2 服务容器是如何实现这个主题了。
 
-Symfony 中的「依赖注入容器」定义的类名为「sfServiceContainer」。这是一个非常轻量级的类,实现了 [上一篇]() 文章中讲解到的基本功能。
+Symfony 中的「依赖注入容器」定义的类名为「`sfServiceContainer`」。这是一个非常轻量级的类,实现了 [上一篇]() 文章中讲解到的基本功能。
 
-Symfony 服务容器可以到官方 Svn 版本库中获得：    [http://svn.symfony-project.com/components/dependency_injection/trunk/。注意][6]
+Symfony 服务容器可以到官方 Svn 版本库中获得：[http://svn.symfony-project.com/components/dependency_injection/trunk/。注意][6]
 ， Symfony 组件依旧保持更新，这也意味着它的实现可能与本文有所出入。（译注： @todo）
 
 在 Symfony 中，任何服务的实例都有容器管理。前一篇文章中提到的 **`Zend_Mail`** 实例中，就需要使用到两个服务： **`mailer`** 服务和 **`mail_transport`** 服务。

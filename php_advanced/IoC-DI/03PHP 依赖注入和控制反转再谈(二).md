@@ -19,21 +19,21 @@
 
  
 ```php
-    <?php
-    class Work {
-        protected $money=5000.0;//底薪5000
-    
-        public function __construct(Money $money) {
-            $this->money = $money;
-            echo 'i need money ';
-        }
+<?php
+class Work {
+    protected $money=5000.0;//底薪5000
+
+    public function __construct(Money $money) {
+        $this->money = $money;
+        echo 'i need money ';
     }
-    
-    class Money {
-    
-    }
-    
-    $work = new Work();
+}
+
+class Money {
+
+}
+
+$work = new Work();
 ```
 
 
@@ -43,85 +43,85 @@
 从上述代码我们可以看到Work强依赖Money必须在构造时注入Money的实例才行。我们改成如下：
  
 ```php
-    <?php
-    class Work {
-        protected $money=5000.0;//底薪
-    
-        public function __construct(Money $money) {
-            $this->money = $money;
-            echo 'i need money ';
-        }
+<?php
+class Work {
+    protected $money=5000.0;//底薪
+
+    public function __construct(Money $money) {
+        $this->money = $money;
+        echo 'i need money ';
     }
-    
-    class Money {
-    
-    }
-    //$work = new Work();
-    // 所以，工作必须要给他钱才行
-    $money = new Money();
-    $work = new Work($money); //输出 i need money
+}
+
+class Money {
+
+}
+//$work = new Work();
+// 所以，工作必须要给他钱才行
+$money = new Money();
+$work = new Work($money); //输出 i need money
 ```
 
 那么为什么要有依赖注入这个概念，依赖注入到底解决了什么问题？我们将上述代码修正一下我们初学时都写过的代码：
 
 ```php
-    <?php
-    class Work {
-        protected $money=5000.0;//底薪5000
-    
-        public function __construct() {
-            $this->money = new Money();
-        }
+<?php
+class Work {
+    protected $money=5000.0;//底薪5000
+
+    public function __construct() {
+        $this->money = new Money();
     }
+}
 ```
 
 这种方式与前面的方式有什么不同呢？比如某天我去了百度了底薪6000，我们会发现每次Work重生一次money.比如某天Work升职加薪到6k啦 ,怎么办？重生自己...把Money丢掉...把 6k带进去 ... 
 
 ```php
-    <?php
-    class BaiduMoney {
-    
+<?php
+class BaiduMoney {
+
+}
+
+class Work {
+    protected $money=5000.0;
+
+    public function __construct() {
+        //  $this->money = new Money();
+        $this->money = new BaiduMoney();
     }
-    
-    class Work {
-        protected $money=5000.0;
-    
-        public function __construct() {
-            //  $this->money = new Money();
-            $this->money = new BaiduMoney();
-        }
-    }
+}
 ```
 
 某天 Work想去BAT....work 好烦...老换工作是不是感觉不太好？每次干不久，待的不长人却要这么的折磨自己...Work说，我要变的强大一点。我不想被改来改去的！好吧，我们让Work强大一点：
 
 ```php
-    <?php
-    interface Money {
-    
+<?php
+interface Money {
+
+}
+
+class baiduMoney implements  Money {
+
+}
+
+class Alibaba implements Money {
+
+}
+
+class Work {
+    protected $money=5000.0;
+
+    public function __construct(Money $money) {
+        $this->money = $money;
     }
-    
-    class baiduMoney implements  Money {
-    
-    }
-    
-    class Alibaba implements Money {
-    
-    }
-    
-    class Work {
-        protected $money=5000.0;
-    
-        public function __construct(Money $money) {
-            $this->money = $money;
-        }
-    }
-    
-    $baidu= new baiduMoney();
-    $alibaba = new Alibaba();
-    
-    $boy = new Work($baidu);
-    $boy = new Work($alibaba);
+}
+
+$baidu= new baiduMoney();
+$alibaba = new Alibaba();
+
+$boy = new Work($baidu);
+$boy = new Work($alibaba);
 ```
 
 终于可以去BAT体验不同的人生了......
@@ -131,44 +131,44 @@
 **1、构造器 注入**
 
 ```php
-    <?php
-    class Book {
-      private $db_conn;
-      
-      public function __construct($db_conn) {
-        $this->db_conn = $db_conn;
-      }
-    }
+<?php
+class Book {
+  private $db_conn;
+  
+  public function __construct($db_conn) {
+    $this->db_conn = $db_conn;
+  }
+}
 ```
 
 **2、setter 注入**
 
 ```php
-    <?php
-    class Book {
-        private $db;
-        private $file;
-     
-        function setdb($db) {
-            $this->db = $db;
-        }
-     
-        function setfile($file) {
-            $this->file = $file;
-        }
+<?php
+class Book {
+    private $db;
+    private $file;
+ 
+    function setdb($db) {
+        $this->db = $db;
     }
-     
-    class file {
+ 
+    function setfile($file) {
+        $this->file = $file;
     }
-     
-    class db {
-    }
-     
-    class test {
-        $book = new Book();
-        $book->setdb(new db());
-        $book->setfile(new file());
-    }
+}
+ 
+class file {
+}
+ 
+class db {
+}
+ 
+class test {
+    $book = new Book();
+    $book->setdb(new db());
+    $book->setfile(new file());
+}
 ```
 
 > **小结：**
@@ -189,20 +189,20 @@
 **控制反转** 是面向对象编程中的一种设计原则，可以用来减低计算机代码之间的耦合度。其中最常见的方式叫做 **依赖注入**（Dependency Injection, DI）, 还有一种叫"依赖查找"（Dependency Lookup）。通过控制反转，对象在被创建的时候，由一个调控系统内所有对象的外界实体，将其所依赖的对象的引用传递给它。也可以说，依赖被注入到对象中。
 
 ```php
-    <?php
-     
-    class Ioc {
-        protected $db_conn;
-     
-        public static function make_book() {
-            $new_book = new Book();
-            $new_book->set_db(self::$db_conn);
-            //...
-            //...
-            //其他的依赖注入
-            return $new_book;
-        }
+<?php
+ 
+class Ioc {
+    protected $db_conn;
+ 
+    public static function make_book() {
+        $new_book = new Book();
+        $new_book->set_db(self::$db_conn);
+        //...
+        //...
+        //其他的依赖注入
+        return $new_book;
     }
+}
 ```
 
 此时，如果获取一个book实例，只需要执行$newone = Ioc::makebook();
@@ -210,69 +210,69 @@
 以上是container的一个具体实例，最好还是不要把具体的某个依赖注入写成方法，采用registry注册，get获取比较好
 
 ```php
-    <?php
+<?php
+/**
+ * 控制反转类
+ */
+class Ioc {
     /**
-     * 控制反转类
+     * @var array 注册的依赖数组
      */
-    class Ioc {
-        /**
-         * @var array 注册的依赖数组
-         */
-        protected static $registry = array();
-     
-        /**
-         * 添加一个 resolve （匿名函数）到 registry 数组中
-         *
-         * @param string  $name    依赖标识
-         * @param Closure $resolve 一个匿名函数，用来创建实例
-         * @return void
-         */
-        public static function register($name, Closure $resolve) {
-            static::$registry[$name] = $resolve;
-        }
-     
-        /**
-         * 返回一个实例
-         *
-         * @param string $name 依赖的标识
-         * @return mixed
-         * @throws \Exception
-         */
-        public static function resolve($name) {
-            if (static::registered($name)) {
-                $name = static::$registry[$name];
-                return $name();
-            }
-     
-            throw new \Exception("Nothing registered with that name");
-        }
-     
-        /**
-         * 查询某个依赖实例是否存在
-         *
-         * @param string $name
-         * @return bool
-         */
-        public static function registered($name) {
-            return array_key_exists($name, static::$registry);
-        }
+    protected static $registry = array();
+ 
+    /**
+     * 添加一个 resolve （匿名函数）到 registry 数组中
+     *
+     * @param string  $name    依赖标识
+     * @param Closure $resolve 一个匿名函数，用来创建实例
+     * @return void
+     */
+    public static function register($name, Closure $resolve) {
+        static::$registry[$name] = $resolve;
     }
+ 
+    /**
+     * 返回一个实例
+     *
+     * @param string $name 依赖的标识
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function resolve($name) {
+        if (static::registered($name)) {
+            $name = static::$registry[$name];
+            return $name();
+        }
+ 
+        throw new \Exception("Nothing registered with that name");
+    }
+ 
+    /**
+     * 查询某个依赖实例是否存在
+     *
+     * @param string $name
+     * @return bool
+     */
+    public static function registered($name) {
+        return array_key_exists($name, static::$registry);
+    }
+}
 ```
 
 现在就可以通过如下方式来注册和注入一个
 
 ```php
-    <?php
-    Ioc::register("book", function () {
-        $book = new Book();
-        $book->setdb('db');
-        $book->setfile('file');
-     
-        return $book;
-    });
-     
-    // 注入依赖
-    $book = Ioc::resolve('book');
+<?php
+Ioc::register("book", function () {
+    $book = new Book();
+    $book->setdb('db');
+    $book->setfile('file');
+ 
+    return $book;
+});
+ 
+// 注入依赖
+$book = Ioc::resolve('book');
 ```
 
 ## 问题汇总
