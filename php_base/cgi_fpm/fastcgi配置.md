@@ -2,9 +2,9 @@
 
 我们这里说的fastcgi配置专指nginx对fastcgi的配置，fastcgi本身的配置介绍在[fastcgi 安装][0]文中有说明。
 
-## nginx的fastcgi模块提供的命令
+#### nginx的fastcgi模块提供的命令
 
-### [fastcgi_pass][1]
+##### [fastcgi_pass][1]
 
 这个命令是指定将http代理到哪个fastcgi服务端接口。`fastcgi_pass`后面是填写fastcgi服务端地址的，这个地址可以是域地址，也可以是Uninx-域套接字。
 ```nginx
@@ -19,7 +19,7 @@
 
     <value name="listen_address">/tmp/fastcgi.socket</value>
 
-### [fastcgi_param][2]
+##### [fastcgi_param][2]
 
 这个命令是设置fastcgi请求中的参数，具体设置的东西可以在$_SERVER中获取到。
 
@@ -40,7 +40,7 @@
 ```nginx
     fastcgi_param HTTPS   $https if_not_empty;
 ```
-### fastcgi_index
+##### fastcgi_index
 
 这个命令设置了fastcgi默认使用的脚本。就是当`SCRIPT_FILENAME`没有命中脚本的时候，使用的就是`fastcgi_index`设置的脚本。
 ```nginx
@@ -57,9 +57,9 @@
       fastcgi_param  CONTENT_LENGTH   $content_length;
     }
 ```
-### fastcgi_hide_header，fastcgi_ignore_headers，fastcgi_pass_header
+##### fastcgi_hide_header，fastcgi_ignore_headers，fastcgi_pass_header
 
-### fastcgi_cache
+##### fastcgi_cache
 
 这个命令是开启fastcgi的文件缓存。这个缓存可以将动态的页面存为静态的。以提供为加速或者容灾使用。
 
@@ -67,19 +67,19 @@
 
 
 
-# fastcgi安装
+### fastcgi安装
 
 这里及以下的web服务器都是以nginx为例子和说明，php以5.3为例子。
 
-## php-fpm
+#### php-fpm
 
 fastcgi在服务器上会启动多个进程进行解析，这个时候就需要一个fastcgi的管理器，管理哪个子进程可以结束，哪个进行应该开启了。
 
 fastcgi的进程管理器有两种，spawn-fcgi和php-fpm。其中的spawn-fcgi一般是和lighttp配合使用的。而php-fpm一般会配合nginx来使用。
 
-## 安装
+#### 安装
 
-### 下载php和php-fpm源码包
+##### 下载php和php-fpm源码包
 
 php下载地址：http://php.net/downloads.php
 
@@ -87,13 +87,13 @@ php-fpm下载地址：http://php-fpm.org/downloads/
 
 在下载php-fpm的时候，需要尽量使php版本和php-fpm版本一致或者版本差别最小，否则有可能会出现兼容性的问题。
 
-### 配置安装环境
+##### 配置安装环境
 
 php需要下面软件的支持，如果没有安装，请自行安装：
 
     gcc gcc-c++ libxml2 libxml2-devel autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel  zlib zlib-devel glibc glibc-devel glib2 glib2-devel
 
-### 编译安装php和php-fpm
+##### 编译安装php和php-fpm
 
     [root@localhost local]#tar zxvf php-5.2.13.tar.gz  
     [root@localhost local]#gzip -cd php-5.2.13-fpm-0.5.13.diff.gz | patch -d php-5.2.13 -p1
@@ -103,7 +103,7 @@ php需要下面软件的支持，如果没有安装，请自行安装：
     [root@localhost php-5.2.13]#make install  
     [root@localhost php-5.2.13]cp php.ini-dist /usr/local/php/lib/php.ini
 
-### 配置与优化php-fpm
+##### 配置与优化php-fpm
 
 php的配置文件存放在 /usr/local/php/lib/php.ini中。
 
@@ -146,7 +146,7 @@ php的配置文件存放在 /usr/local/php/lib/php.ini中。
 
     <value name="allowed_clients">127.0.0.1</value>
 
-### 启动php-fpm
+##### 启动php-fpm
 
     /usr/local/php/sbin/php-fpm  start
 

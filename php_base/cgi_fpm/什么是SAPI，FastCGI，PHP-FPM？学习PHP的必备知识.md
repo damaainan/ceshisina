@@ -28,15 +28,11 @@ Server Application Programming Interface (SAPI) 是应用程序接口，对于 P
  
 对于 PHP-FPM 来说：
 
- 
 * 实现了 PHP 解析器 
 * 基于 FastCGI 协议，负责和 Web 服务器（Nginx、Apache）通信，那什么是 FastCGI？ 
- 
 
 ```
 FastCGI is a binary protocol for interfacing interactive programs with a web server.
-
-
 ```
  
 那么我们来理解下 FastCGI 协议，简单说来它就是 Web 服务器和应用（比如 PHP）之间的一个交互标准，一个二进制的协议，有了该协议，Nginx 和 PHP 之间就能够互相通信了，FastCGI 是 CGI 协议的一个升级。
@@ -58,8 +54,6 @@ Nginx 服务器通过 FastCgi 协议，发送环境变量和 HTTP 数据给 PHP-
 
 ```
 PHP-FPM (FastCGI Process Manager) is an alternative FastCGI implementation for PHP。
-
-
 ```
  
 PHP-FPM 刚才讲了很多了，一方面它基于 FastCGI 协议实现了协议的功能，另外一方面它也集成了 PHP 解析器。
@@ -116,15 +110,15 @@ server {
 ![][2]
 
  
-* conf.d：一些 php 通用扩展配置文件。（属于 PHP 的部分） 
-* php.ini：PHP 核心配置文件。（属于 PHP 的部分） 
-* php-fpm.conf：fpm 的主配置文件，主要是 PHP-FPM 主进程使用。 
-* pool.d：该目录下加载的配置文件类似于 Web 服务器中的虚拟主机配置，由 PHP-FPM 子进程处理。 
+* `conf.d`：一些 php 通用扩展配置文件。（属于 PHP 的部分） 
+* `php.ini`：PHP 核心配置文件。（属于 PHP 的部分） 
+* `php-fpm.conf`：fpm 的主配置文件，主要是 PHP-FPM 主进程使用。 
+* `pool.d`：该目录下加载的配置文件类似于 Web 服务器中的虚拟主机配置，由 PHP-FPM 子进程处理。 
  
  
 关于 php-fpm.conf 和 pool.d 多说几句：
  
-（1）php-fpm.conf 是 PHP-FPM 的主配置文件，都是全局性配置，但配置项较少，比如包含 pid、error_log、events.mechanism 等参数，理解起来很简单。
+（1）php-fpm.conf 是 PHP-FPM 的**主配置文件**，都是**全局性配置**，但配置项较少，比如包含 pid、error_log、events.mechanism 等参数，理解起来很简单。
  
 （2）pool.d 目录可以包含多个虚拟主机配置文件，由 php-fpm.conf 负责加载。
  

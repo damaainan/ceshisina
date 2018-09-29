@@ -4,16 +4,14 @@
 
 原文[http://page.factj.com/blog/p/7][1]
 
-<font face=微软雅黑>
-
-前段时间配置`php-fpm`的时候，无意间发现原来他还有两种执行方式。与Apache一样，他的进程数也是可以根据设置分为动态和静态的。关于Apache的工作方式及对应的设置方法，我已经在《Ubuntu下配置Apache的Worker模式》一文中写出，这里不再多说。 而`php-fpm`也是同样存在两种方式，  
+前段时间配置`php-fpm`的时候，无意间发现原来他还有两种执行方式。与Apache一样，他的进程数也是可以根据设置分为**`动态`**和**`静态`**的。关于Apache的工作方式及对应的设置方法，我已经在《Ubuntu下配置Apache的Worker模式》一文中写出，这里不再多说。 而`php-fpm`也是同样存在两种方式，  
 一种是直接开启指定数量的`php-fpm`进程，不再增加或者减少；   
 另一种则是开始的时候开启一定数量的`php-fpm`进程，当请求量变大的时候，动态的增加`php-fpm`进程数到上限，当空闲的时候自动释放空闲的进程数到一个下限。    
 这两种不同的执行方式，可以根据服务器的实际需求来进行调整。 这里先说一下涉及到这个的几个参数吧，他们分别是 
 
     pm、pm.max_children、pm.start_servers、pm.min_spare_servers和pm.max_spare_servers。
 
-`pm` 表示使用那种方式，有两个值可以选择，就是static（静态）或者dynamic（动态）。在更老一些的版本中，dynamic被称作apache-like。这个要注意看配置文件给出的说明了。    
+`pm` 表示使用那种方式，有两个值可以选择，就是**`static（静态）`**或者**`dynamic（动态）`**。在更老一些的版本中，dynamic被称作apache-like。这个要注意看配置文件给出的说明了。    
 
 下面4个参数的意思分别为：    
 `pm.max_children` ：静态方式下开启的`php-fpm`进程数量。    
@@ -33,13 +31,12 @@
 本博客建立在512M的VPS上，因此我设置的参数如下： 
 
 ```cfg
-    pm=dynamic
-    pm.max_children=20
-    pm.start_servers=5
-    pm.min_spare_servers=5
-    pm.max_spare_servers=20
+pm=dynamic
+pm.max_children=20
+pm.start_servers=5
+pm.min_spare_servers=5
+pm.max_spare_servers=20
 ```
 这样就可以最大的节省内存并提高执行效率。
-</font>
 
 [1]: http://page.factj.com/blog/p/7

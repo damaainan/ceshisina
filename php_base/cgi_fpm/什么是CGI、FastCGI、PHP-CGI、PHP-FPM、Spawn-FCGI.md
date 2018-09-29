@@ -1,6 +1,5 @@
 ## [【整理】什么是CGI、FastCGI、PHP-CGI、PHP-FPM、Spawn-FCGI？](http://mojijs.com/2016/07/217406/index.html)
 
-<font face=微软雅黑>
 
 **首先，CGI是干嘛的？CGI是为了保证web server传递过来的数据是标准格式的，方便CGI程序的编写者。**
 
@@ -172,4 +171,3 @@ PHP-FPM、Spawn-FCGI都是守护php-cgi的进程管理器。
     PHP-FPM：一个实现了FastCGI协议的程序，现在已经包含在PHP内核中   
     Spawn-FCGI：同样也是一个实现了FastCGI协议的程序，更通用一些，从lighttpd项目独立出来
 
-</font>

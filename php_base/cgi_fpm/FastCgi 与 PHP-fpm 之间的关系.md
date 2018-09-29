@@ -40,19 +40,18 @@
 **好了，最后来回来上面的问题。**
 
 1. 网上有的说，fastcgi是一个协议，php-fpm实现了这个协议
-
 > 对。
+
 1. 有的说，php-fpm是fastcgi进程的管理器，用来管理fastcgi进程的
-
 > 对。php-fpm的管理对象是php-cgi。但不能说php-fpm是fastcgi进程的管理器，因为前面说了fastcgi是个协议，似乎没有这么个进程存在，就算存在php-fpm也管理不了他（至少目前是）。
+
 1. 有的说，php-fpm是php内核的一个补丁
-
 > 以前是对的。因为最开始的时候php-fpm没有包含在PHP内核里面，要使用这个功能，需要找到与源码版本相同的php-fpm对内核打补丁，然后再编译。后来PHP内核集成了PHP-FPM之后就方便多了，使用--enalbe-fpm这个编译参数即可。
+
 1. 有的说，修改了php.ini配置文件后，没办法平滑重启，所以就诞生了php-fpm
-
 > 是的，修改php.ini之后，php-cgi进程的确是没办法平滑重启的。php-fpm对此的处理机制是新的worker用新的配置，已经存在的worker处理完手上的活就可以歇着了，通过这种机制来平滑过度。
-1. 还有的说PHP-CGI是PHP自带的FastCGI管理器，那这样的话干吗又弄个php-fpm出来？ 
 
+1. 还有的说PHP-CGI是PHP自带的FastCGI管理器，那这样的话干吗又弄个php-fpm出来？ 
 > 不对。php-cgi只是解释PHP脚本的程序而已。
 
 [0]: segmentfault.com

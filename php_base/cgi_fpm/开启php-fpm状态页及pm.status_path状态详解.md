@@ -11,7 +11,7 @@ php-fpm 和 nginx 一样，内建了个状态页，可以通过该状态页了�
 
 ## 具体
 
-1. 在 php 的安装目录下的 **www.conf** 中打开 **pm.status_path** 配置项。如：我的 php 安装目录为 /www/source/php，则 **www.conf** 文件位于 **/www/source/php/etc/php-fpm.d/www.conf** ；将此文件中的 **pm.status_path = /status** 前的分号去掉，修改成如下：
+1、 在 php 的安装目录下的 **www.conf** 中打开 **pm.status_path** 配置项。如：我的 php 安装目录为 /www/source/php，则 **www.conf** 文件位于 **/www/source/php/etc/php-fpm.d/www.conf** ；将此文件中的 **pm.status_path = /status** 前的分号去掉，修改成如下：
 
 ![1.png][6]
 
@@ -23,7 +23,7 @@ php-fpm 和 nginx 一样，内建了个状态页，可以通过该状态页了�
     [24-Mar-2017 16:18:44] ERROR: failed to load configuration file '/www/source/php/etc/php-fpm.conf'
     [24-Mar-2017 16:18:44] ERROR: FPM initialization failed
 
-2. nginx 配置
+2、 nginx 配置
 
 在 nginx 的配置文件中添加以下配置。
 

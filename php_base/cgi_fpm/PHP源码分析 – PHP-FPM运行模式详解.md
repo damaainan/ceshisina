@@ -11,32 +11,32 @@ FPM支持`static`、`ondemand`、`dynamic`三种运行模式。我们可以通�
 static：又称静态模式，该模式比较容易理解，即启动时分配固定的进程数。 执行流程：fpm_run()->fpm_children_create_initial()。fpm_children_create_initial内部调用fpm_children_make()分配worker进程。worker进程循环接受和处理请求。
 
 ```c
-    fpm_children_make(wp, 0 /* not in event loop yet */, 0, 1);
+fpm_children_make(wp, 0 /* not in event loop yet */, 0, 1);
 
-    int fpm_children_make(struct fpm_worker_pool_s *wp, int in_event_loop, int nb_to_spawn, int is_debug)
-    {
-        ......
-        //fork子进程
-        pid = fork();
-        switch (pid) {
-    
-            case 0 :
-                fpm_child_resources_use(child);
-                fpm_globals.is_child = 1;
-                //子进程初始化
-                fpm_child_init(wp);
-                return 0;
-            case -1 :
-                zlog(ZLOG_SYSERROR, "fork() failed");
-                fpm_resources_discard(child);
-                return 2;
-            default :
-                child->pid = pid;
-                fpm_clock_get(&child->started);
-                fpm_parent_resources_use(child);
-        }
-        ......
+int fpm_children_make(struct fpm_worker_pool_s *wp, int in_event_loop, int nb_to_spawn, int is_debug)
+{
+    ......
+    //fork子进程
+    pid = fork();
+    switch (pid) {
+
+        case 0 :
+            fpm_child_resources_use(child);
+            fpm_globals.is_child = 1;
+            //子进程初始化
+            fpm_child_init(wp);
+            return 0;
+        case -1 :
+            zlog(ZLOG_SYSERROR, "fork() failed");
+            fpm_resources_discard(child);
+            return 2;
+        default :
+            child->pid = pid;
+            fpm_clock_get(&child->started);
+            fpm_parent_resources_use(child);
     }
+    ......
+}
 ```
 #### **ondemand模式**
 

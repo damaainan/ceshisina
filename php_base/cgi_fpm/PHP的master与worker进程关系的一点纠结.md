@@ -2,8 +2,6 @@
 
 [2017年03月22日][0] 作者 **[夜行人][1]**
 
-<font face=黑体>
-
 ### 纠结的起点
 
 同事发了一篇文档，里面提及
@@ -13,7 +11,7 @@
 
 全文请参考： [Nginx 与 FPM 的工作机制][2]
 
-我曾经认为Nginx也是由master负责派发请求给worker，但同事那边马上发了篇文档出来打脸，文章提到master只负责管理worker，如重启，重新加载配置文件，并不会派发请求。祥见：[nginx平台初探][3]
+我曾经认为Nginx也是由master负责派发请求给worker，但同事那边马上发了篇文档出来打脸，文章提到`master只负责管理worker`，如重启，**重新加载配置文件，`并不会派发请求`**。详见：[nginx平台初探][3]
 
 ### 纠结过程
 
@@ -32,21 +30,22 @@
 1. 放狗，发现另外一种说法，见：[关于fastcgi和php-fpm的疑惑][4]，引用如下
 
 
-> master进程并不接收和分发请求,而是worker进程直接accpet请求后poll处理.
+> master进程并不接收和分发请求,而是`worker进程直接accpet请求后poll处理`.
 
-> master进程不断调用epoll_wait和getsockopt是用来异步处理信号事件和定时器事件.
+> master进程不断调用`epoll_wait`和`getsockopt`是用来异步处理信号事件和定时器事件.
 
-> 这里提一下,Nginx也类似,master进程并不处理请求,而是worker进程直接处理, 不过区别在于Nginx的worker进程是epoll异步处理请求,而PHP-FPM仍然是poll.
+> 这里提一下,Nginx也类似,master进程并不处理请求,而是worker进程直接处理, 不过区别在于**`Nginx的worker进程是epoll异步处理请求`**,而**`PHP-FPM仍然是poll`**.
 
-1. 把master干掉，看请求是否可以正常处理，经实际测试，master干掉后，worker依然在，请求也可以正常处理。
+1. 把master干掉，看请求是否可以正常处理，经实际测试，**`master干掉后，worker依然在，请求也可以正常处理`**。
 ```
     kill -HUP fpm_master_pid
 ```
+
 ### 其他
 
 1. worker进程数量不够的时候，显然是manager启动了更多进程，这个时候是manager怎么知道的
 
-答：[PHP源码分析 – PHP-FPM运行模式详解][5]，看起来就是满足下面的条件就会执行 fpm_children_make
+答：[PHP源码分析 – PHP-FPM运行模式详解][5]，看起来就是满足下面的条件就会执行 `fpm_children_make`
 
     1. idle < pm_min_spare_servers
     2. running_children < pm_max_children
@@ -58,7 +57,7 @@
 
 ### 纠结论
 
-fpm的master并不承担派发请求的角色。
+**`fpm的master并不承担派发请求的角色`**。
 
 特别鸣谢纠结侠：郑导（C好厉害）
 
@@ -67,7 +66,6 @@ fpm的master并不承担派发请求的角色。
 * [NGINX 1.9.1 新特性：套接字端口共享][7]
 * [python使用master worker管理模型开发服务端][8]，里面提到各种进程信号
 
-</font>
 
 [0]: https://www.187299.com/archives/2238
 [1]: https://www.187299.com/archives/author/admin

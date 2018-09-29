@@ -35,8 +35,7 @@ user www-data www-data;
 access.log = /var/log/fpm.log
 ```
 
-（3）pool.d/      [www.conf][1]
-（PHP-FPM pool 配置文件）:
+（3）pool.d/[www.conf][1]（PHP-FPM pool 配置文件）:
 
 ```ini
 user = www-data
@@ -65,7 +64,7 @@ access.log = /var/log/fpm-www.access.log
 
 2：观察下 php 主进程的 error.log
 
-发现 /var/log/fpm.log 文件没有任何的输出，查阅了官方资料，对于 error_log 这个指令解释的非常少。
+发现 /var/log/fpm.log 文件没有任何的输出，查阅了官方资料，对于 `error_log` 这个指令解释的非常少。
 
 我猜测有两种作用：
 
@@ -74,7 +73,7 @@ access.log = /var/log/fpm-www.access.log
 * PHP-FPM 主进程的一些控制错误。（从本案例来说，主进程并不知道Nginx遇到了错误，所以也没有错误输出）
     
 
-最后，php-fpm.conf 下的 error_log 指令在我看来没有任何的实际用处，如果读者有知道的，欢迎指导。
+最后，php-fpm.conf 下的 `error_log` 指令在我看来没有任何的实际用处，如果读者有知道的，欢迎指导。
 
 （3）定位问题
 
@@ -86,8 +85,7 @@ access.log = /var/log/fpm-www.access.log
 
 ```ini
 ; Set permissions for unix socket, if one is used. In Linux, read/write
-; permissions must be set in order to allow connections from a web server. Man
-y
+; permissions must be set in order to allow connections from a web server. Many
 ```
 
 它们表示php-fpm工作进程以unix socket和web服务器连接的时候，该socket的权限必须和web服务器的操作（读取）权限一致。

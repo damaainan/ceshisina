@@ -10,10 +10,10 @@
 默认情况下，大多数设置都将 PHP-FPM 的 PM（进程管理器）设置为`dynamic`，并且如果遇到内存不足的问题，还需要使用`ondemand`让我们看一下 php.net 文档中的选项，并介绍我最喜欢的设置 - static：
  
  
-* `pm = dynamic`: 子进程的数量根据以下配置动态设置`pm.max_children, pm.start_servers, pm.min_spare_servers, pm.max_spare_servers` 
+* `pm = dynamic`: 子进程的数量根据以下配置动态设置`pm.max_children`, `pm.start_servers`, `pm.min_spare_servers`, `pm.max_spare_servers` 
 * `pm = ondemand`: 进程在请求时按需创建，而不是动态的，其中`pm.start_servers`进程数量在服务启动时创建  
 * `pm = static`: 子进程的数量由`pm.max_children`决定  
- 
+ kgd*-
  
 ## PHP-FPM（PM）与 CPUFreq 的相似之处
  

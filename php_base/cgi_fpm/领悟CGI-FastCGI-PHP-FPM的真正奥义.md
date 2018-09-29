@@ -4,9 +4,6 @@
 
 原文[http://mengkang.net/664.html][1]
 
-
-<font face=微软雅黑>
-
 ## CGI 模型
 
 CGI 是外部应用程序（ CGI 程序）与 Web 服务器之间的接口标准，是在 CGI 程序和 Web 服务器之间传递信息的规程。
@@ -120,7 +117,6 @@ coding...
 [http://my.oschina.net/goal/blog/196599][10]
 
 
-</font>
 </font>
 
 [1]: http://mengkang.net/664.html

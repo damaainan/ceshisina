@@ -50,27 +50,16 @@
 
 `pm`指的是`process manager`，指定进程管理器如何控制子进程的数量，它为必填项，支持3个值：
 
-
 * `static`: 使用固定的子进程数量，由`pm.max_children`指定
 * `dynamic`：基于下面的参数动态的调整子进程的数量，至少有一个子进程
-
-
-* `pm.max_chidren`: 可以同时存活的子进程的最大数量
-* `pm.start_servers`: 启动时创建的子进程数量，默认值为`min_spare_servers + max_spare_servers - min_spare_servers) / 2`
-* `pm.min_spare_servers`: 空闲状态的子进程的最小数量，如果不足，新的子进程会被自动创建
-* `pm.max_spare_servers`: 空闲状态的子进程的最大数量，如果超过，一些子进程会被杀死
-
-
+    * `pm.max_chidren`: 可以同时存活的子进程的最大数量
+    * `pm.start_servers`: 启动时创建的子进程数量，默认值为`min_spare_servers + max_spare_servers - min_spare_servers) / 2`
+    * `pm.min_spare_servers`: 空闲状态的子进程的最小数量，如果不足，新的子进程会被自动创建
+    * `pm.max_spare_servers`: 空闲状态的子进程的最大数量，如果超过，一些子进程会被杀死
 
 * `ondemand`: 启动时不会创建子进程，当新的请求到达时才创建。会使用下面两个参数：
-
-
-* `pm.max_children`
-* `pm.process_idle_timeou`t 子进程的空闲超时时间，如果超时时间到没有新的请求可以服务，则会被杀死
-
-
-
-
+    * `pm.max_children`
+    * `pm.process_idle_timeout` 子进程的空闲超时时间，如果超时时间到没有新的请求可以服务，则会被杀死
 
 ####`pm.max_requests`每一个子进程的最大请求服务数量，如果超过了这个值，该子进程会被自动重启。在解决第三方库的内存泄漏问题时，这个参数会很有用。默认值为0，指子进程可以持续不断的服务请求。
 ##`PHP-FPM`配置优化
@@ -80,19 +69,17 @@
 
 其中的`worker`子进程实际处理连接请求，`master`主进程负责管理子进程：
 
-```
 1. `master`进程，设置1s定时器，通过`socket`文件监听
 2. 在`pm=dynamic`时，如果`idle worker`数量<`pm.min_spare_servers`，创建新的子进程
 3. 在`pm=dynamic`时，如果`idle worker`数量>`pm.max_spare_servers`，杀死多余的空闲子进程
 4. 在`pm=ondemand`时，如果`idle worker`空闲时间>`pm.process_idle_timeout`，杀死该空闲进程
 5. 当连接到达时，检测如果`worker`数量>`pm.max_children`，打印`warning`日志，退出；如果无异常，使用`idle worker`服务，或者新建`worker`服务
 
-```
 ### 保障基本安全
 
 我们为了避免`PHP-FPM`主进程由于某些糟糕的PHP代码挂掉，需要设置重启的全局配置：
 
-```
+```ini
 ; 如果在1min内有10个子进程被中断失效，重启主进程
 emergency_restart_threshold = 10
 emergency_restart_interval = 1m
