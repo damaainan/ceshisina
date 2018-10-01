@@ -68,4 +68,4 @@ echo "关闭socket成功\n";
 ![效果图][1]
 
 [0]: https://www.jwlchina.cn/2015/11/19/PHPsocket通信/
-[1]: http://cl.ly/image/2041270g452m/QQ%E6%88%AA%E5%9B%BE20151115194608.png
+[1]: ../img/QQ%E6%88%AA%E5%9B%BE20151115194608.png
