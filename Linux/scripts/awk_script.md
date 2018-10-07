@@ -61,3 +61,7 @@ done
 IFS=$MY_SAVEIFS  
 # echo $IFS
 ```
+
+
+
+    awk -F': ' '/\.\/img/{print $2}' cnblogs*.md | awk -F'-' '{system("sed -i \"s@"$0"@"$1"_"$NF"@\" cnblogs*.md")}'
