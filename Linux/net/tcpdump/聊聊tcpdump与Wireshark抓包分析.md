@@ -913,9 +913,9 @@ No. 9-13 行：TCP四次挥手环节；
 [10]: https://link.jianshu.com?t=https://www.wireshark.org/download.html
 [11]: https://link.jianshu.com?t=http://www.cnblogs.com/TankXiao/archive/2012/10/10/2711777.html
 [12]: https://link.jianshu.com?t=https://community.emc.com/message/818739
-[0]: ../IMG/25092458_tkVn.jpg
-[1]: ../IMG/25092611_QKse.jpg
-[2]: ../IMG/25092817_p0tr.jpg
-[3]: ../IMG/25100721_RbeV.png
-[4]: ../IMG/25104942_6xtL.png
-[5]: ../IMG/25105257_GbHZ.png
+[0]: ../img/25092458_tkVn.jpg
+[1]: ../img/25092611_QKse.jpg
+[2]: ../img/25092817_p0tr.jpg
+[3]: ../img/25100721_RbeV.png
+[4]: ../img/25104942_6xtL.png
+[5]: ../img/25105257_GbHZ.png

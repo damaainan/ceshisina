@@ -65,3 +65,9 @@ IFS=$MY_SAVEIFS
 
 
     awk -F': ' '/\.\/img/{print $2}' cnblogs*.md | awk -F'-' '{system("sed -i \"s@"$0"@"$1"_"$NF"@\" cnblogs*.md")}'
+
+#### 补全文件名 并下载
+
+    awk -F': ' '/upload/{print $2}' 51*.md | awk -F'[-?]' '{if(index($3,"png"))print $3;else print $3".png"}'
+
+    awk -F': ' '/upload/{print $2}' 51*.md | awk -F'[-?]' '{if(index($3,"png"))system("aria2c -o "$3" "$0);else system("aria2c -o "$3".png "$0)}'
