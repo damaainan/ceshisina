@@ -86,5 +86,5 @@ $ apt-get install redis-server=5:4.0.11-1chl1~trusty1
 [3]: https://launchpad.net/ubuntu
 [4]: https://launchpad.net/ubuntu/+ppas
 [5]: https://launchpad.net/~chris-lea/+archive/ubuntu/redis-server
-[0]: ../IMG/234392-d7cb80531def78da.png
-[1]: ../IMG/234392-169b04172f06558d.png
+[0]: ./img/234392-d7cb80531def78da.png
+[1]: ./img/234392-169b04172f06558d.png

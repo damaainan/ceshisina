@@ -142,13 +142,7 @@ $ update-alternatives --set php /usr/bin/php5
  
 我最近写了一本书 [《深入浅出HTTPS：从原理到实战》][3] ，欢迎去各大电商购买，也欢迎关注我的公众号（yudadanwx，虞大胆的叽叽喳喳），了解我最新的博文和本书。
 
-![][0]
-
- 
-公众号二维码
-
 
 [1]: http://www.simplehttps.com
 [2]: http://blog.simplehttps.com
 [3]: https://mp.weixin.qq.com/s/80oQhzmP9BTimoReo1oMeQ
-[0]: https://img1.tuicool.com/EJZfEn6.jpg
