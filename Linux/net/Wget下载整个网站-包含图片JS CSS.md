@@ -226,7 +226,7 @@ wget还支持下载FTP文件，可以为它设置用户名和密码，如下所�
 你甚至可以用wget下载完整的站点, 然后进行离线浏览. 方法是使用如下命令:
 
 ```sh
-wget --mirror --convert-links --page-requisites ----no-parent -P /path/to/download https://example-domain.com
+wget --mirror --convert-links --page-requisites --no-parent -P /path/to/download https://example-domain.com
 ```
 
 
