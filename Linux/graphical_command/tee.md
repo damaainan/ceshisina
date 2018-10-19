@@ -10,13 +10,5 @@
 
 ![][1]
 
-<script type="text/javascript">
-    // bigimg.js 点击放大图片
-    $("img").click(function(){
-        // 新建 div 铺满页面 展示图片
-        // 点击其他部分 消失
-    })
-</script>
-
 [0]: ./img/20160813175919496.png
 [1]: ./img/20160813180238141.png
