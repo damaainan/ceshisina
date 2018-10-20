@@ -15,4 +15,4 @@
     dns-nameserver 114.114.114.114
 
 
-执行命令/etc/init.d/networking restart,执行成功以后重启就ok了。
+执行命令/etc/init.d/networking restart,执行成功以后**`重启`**就ok了。
