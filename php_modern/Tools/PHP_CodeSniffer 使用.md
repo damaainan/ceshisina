@@ -94,7 +94,7 @@ phpcbf 是 PHP 代码规范的修复工具。
     # 显示所有的错误和警告
     $ phpcs --config-set severity 1
     # 显示所有的错误，部分警告 注意等级可有从 5-8 5 的警告显示会更多，8 的更少
-    $ phpcs --config-set severity 1
+    $ phpcs --config-set error_severity 1
     $ phpcs --config-set warning_severity 5
 
 7.设置默认编码
