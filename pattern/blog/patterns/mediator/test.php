@@ -13,6 +13,7 @@
  */
 
 
+/*
 // 注册自加载
 spl_autoload_register('autoload');
 
@@ -20,6 +21,9 @@ function autoload($class)
 {
   require dirname($_SERVER['SCRIPT_FILENAME']) . '//..//' . str_replace('\\', '/', $class) . '.php';
 }
+*/
+// 将原作者的 spl 注册函数改成 composer 自动加载  
+require "../vendor/autoload.php";
 
 /************************************* test *************************************/
 
@@ -29,18 +33,17 @@ use mediator\HouseMediator;
 
 try {
   // 初始化一个租客
-  $tenant = new Tenant('小明');
+    $tenant = new Tenant('小明');
 
   // 小明直接找小梅租房
-  $landlord = new Landlord('小梅');
-  echo $landlord->doSomthing($tenant);
+    $landlord = new Landlord('小梅');
+    echo $landlord->doSomthing($tenant);
 
   // 小明通过房屋中介租房
   // 初始化一个房屋中介
-  $mediator = new HouseMediator();
+    $mediator = new HouseMediator();
   // 租房
-  $mediator->rentHouse($tenant);
-
+    $mediator->rentHouse($tenant);
 } catch (\Exception $e) {
-  echo 'error:' . $e->getMessage();
+    echo 'error:' . $e->getMessage();
 }

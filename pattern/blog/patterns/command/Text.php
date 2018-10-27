@@ -12,10 +12,10 @@ class Text
    * @param  string $name 文件名称
    * @return string
    */
-  public function create($filename='')
-  {
-    echo "创建了一个文件: {$filename} \n";
-  }
+    public function create($filename = '')
+    {
+        echo "创建了一个文件: {$filename} \n";
+    }
 
   /**
    * 写入
@@ -23,10 +23,10 @@ class Text
    * @param  string $content 文件名称
    * @return string
    */
-  public function write($filename='', $content='')
-  {
-    echo "文件{$filename}写入了内容: {$content} \n";
-  }
+    public function write($filename = '', $content = '')
+    {
+        echo "文件{$filename}写入了内容: {$content} \n";
+    }
 
   /**
    * 保存
@@ -34,8 +34,8 @@ class Text
    * @param  string $filename 文件名称
    * @return string
    */
-  public function save($filename='')
-  {
-    echo "保存了一个文件: {$filename} \n";
-  }
+    public function save($filename = '')
+    {
+        echo "保存了一个文件: {$filename} \n";
+    }
 }

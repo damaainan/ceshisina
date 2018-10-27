@@ -15,13 +15,13 @@ abstract class Sms
    * 运营商配置
    * @var string
    */
-    protected $_config = [];
+    protected $config = [];
 
   /**
    * 短信文本
    * @var string
    */
-    protected $_text = '[xx公司]你好，你的验证码是';
+    protected $text = '[xx公司]你好，你的验证码是';
 
   /**
    * 构造函数
@@ -53,7 +53,7 @@ abstract class Sms
    */
     private function makeText()
     {
-        $this->_text .= rand(000000, 999999);
+        $this->text .= rand(000000, 999999);
     }
 
   /**

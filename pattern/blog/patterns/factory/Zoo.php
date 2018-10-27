@@ -23,7 +23,7 @@ class Zoo implements Factory
      * @param  string $type 动物类型
      * @return mixed
      */
-    public function produce($type='')
+    public function produce($type = '')
     {
         switch ($type) {
             case 'chicken':

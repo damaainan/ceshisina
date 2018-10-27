@@ -10,13 +10,13 @@ abstract class PersonAbstract
    * 性别
    * @var string
    */
-  protected $_gender = '';
+    protected $gender = '';
 
   /**
    * 使用的吃饭工具
    * @var string
    */
-  protected $_tool   = '';
+    protected $tool   = '';
 
   /**
    * 构造函数
@@ -24,11 +24,11 @@ abstract class PersonAbstract
    * @param string       $gender 性别
    * @param EatInterface $tool   [description]
    */
-  public function __construct($gender='',EatInterface $tool)
-  {
-    $this->_gender = $gender;
-    $this->_tool   = $tool;
-  }
+    public function __construct(EatInterface $tool, $gender = '')
+    {
+        $this->gender = $gender;
+        $this->tool   = $tool;
+    }
 
   /**
    * 吃的行为
@@ -36,5 +36,5 @@ abstract class PersonAbstract
    * @param  string $food 实物
    * @return void
    */
-  abstract public function eat($food='');
+    abstract public function eat($food = '');
 }

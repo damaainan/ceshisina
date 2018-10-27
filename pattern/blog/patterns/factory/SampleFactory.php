@@ -16,7 +16,7 @@ class SampleFactory
      * @param  string $type 动物类型
      * @return mixed
      */
-    public static function produce($type='')
+    public static function produce($type = '')
     {
         switch ($type) {
             case 'chicken':

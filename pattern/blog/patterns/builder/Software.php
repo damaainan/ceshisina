@@ -6,5 +6,5 @@ namespace builder;
  */
 interface Software
 {
-  public function produce();
+    public function produce();
 }

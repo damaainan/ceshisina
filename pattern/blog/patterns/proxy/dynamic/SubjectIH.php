@@ -24,6 +24,4 @@ class SubjectIH implements InvocationHandler
     {
         return call_user_func_array(array($this->obj, $method), $args);
     }
-
-
 }

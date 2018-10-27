@@ -1,6 +1,7 @@
 <?php
 namespace proxy\dynamic;
 
-interface Subject {
+interface Subject
+{
     public function doSomething();
 }

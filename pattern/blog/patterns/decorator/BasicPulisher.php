@@ -8,10 +8,11 @@ namespace decorator;
  * Date: 2017/7/14
  * Time: 下午7:35
  */
-class BasicPulisher implements PulisherInterface {
+class BasicPulisher implements PulisherInterface
+{
 
-    public function pulishText() {
+    public function pulishText()
+    {
         echo 'this is the text compnent'.PHP_EOL;
     }
-
 }

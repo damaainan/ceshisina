@@ -2,6 +2,7 @@
 
 namespace proxy\ext;
 
-interface IProxy {
+interface IProxy
+{
     public function extension();
 }

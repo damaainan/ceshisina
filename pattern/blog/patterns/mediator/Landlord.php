@@ -11,9 +11,9 @@ class Landlord extends Person
    *
    * @return mixed
    */
-  public function doSomthing(Person $person)
-  {
-    // 租出去闲置房子
-    return "‘{$this->name}’租出去一件闲置房给‘{$person->name}’ ～ \n";
-  }
+    public function doSomthing(Person $person)
+    {
+      // 租出去闲置房子
+        return "‘{$this->name}’租出去一件闲置房给‘{$person->name}’ ～ \n";
+    }
 }

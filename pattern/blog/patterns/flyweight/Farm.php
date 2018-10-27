@@ -12,15 +12,15 @@ class Farm
    * 对象缓存池
    * @var array
    */
-  private $_farmMap = [];
+    private $farmMap = [];
 
   /**
    * 构造函数
    */
-  public function __construct()
-  {
-    echo "-----------初始化了一个农场----------- \n\n";
-  }
+    public function __construct()
+    {
+        echo "-----------初始化了一个农场----------- \n\n";
+    }
 
   /**
    * 生产方法
@@ -30,26 +30,26 @@ class Farm
    * @param  string $type 农场类型
    * @return mixed
    */
-  public function produce($type='')
-  {
-    // 对象缓存池判断
-    if (key_exists($type, $this->_farmMap)) {
-      echo "来自缓存池-> ";
-      return $this->_farmMap[$type];// 返回缓存
+    public function produce($type = '')
+    {
+      // 对象缓存池判断
+        if (key_exists($type, $this->farmMap)) {
+            echo "来自缓存池-> ";
+            return $this->farmMap[$type];// 返回缓存
+        }
+
+        switch ($type) {
+            case 'chicken':
+                return $this->farmMap[$type] =  new Chicken();
+            break;
+
+            case 'pig':
+                return $this->farmMap[$type] =  new Pig();
+            break;
+
+            default:
+                echo "该农场不支持生产该农物~ \n";
+                break;
+        }
     }
-
-    switch ($type) {
-      case 'chicken':
-        return $this->_farmMap[$type] =  new Chicken();
-        break;
-
-      case 'pig':
-        return $this->_farmMap[$type] =  new Pig();
-        break;
-
-      default:
-        echo "该农场不支持生产该农物~ \n";
-        break;
-    }
-  }
 }

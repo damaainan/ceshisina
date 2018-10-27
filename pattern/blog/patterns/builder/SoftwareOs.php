@@ -6,8 +6,8 @@ namespace builder;
  */
 class SoftwareOs implements Software
 {
-  public function produce($os='android')
-  {
-    echo "操作系统：" . $os . "\n";
-  }
+    public function produce($os = 'android')
+    {
+        echo "操作系统：" . $os . "\n";
+    }
 }

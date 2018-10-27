@@ -12,17 +12,17 @@ interface ObservableInterface
    * 附加观察者
    * @return void
    */
-  public function attach(ObserverInterface $observer);
+    public function attach(ObserverInterface $observer);
 
   /**
    * 解除观察者
    * @return void
    */
-  public function detach(ObserverInterface $observer);
+    public function detach(ObserverInterface $observer);
 
   /**
    * 通知观察者
    * @return void
    */
-  public function notify();
+    public function notify();
 }

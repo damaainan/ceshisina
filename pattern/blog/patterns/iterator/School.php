@@ -11,5 +11,5 @@ interface School
    *
    * @return mixed
    */
-  public function getIterator();
+    public function getIterator();
 }

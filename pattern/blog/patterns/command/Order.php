@@ -10,5 +10,5 @@ interface Order
    * 执行命令
    * @return void
    */
-  public function execute();
+    public function execute();
 }

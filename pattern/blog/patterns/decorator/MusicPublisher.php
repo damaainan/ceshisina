@@ -8,17 +8,19 @@ namespace decorator;
  * Date: 2017/7/14
  * Time: 下午7:39
  */
-class MusicPublisher extends PulisherDerector {
+class MusicPublisher extends PulisherDerector
+{
 
 
 
-    public function pulishText() {
+    public function pulishText()
+    {
         $this->addMusicCompnent();
         parent::pulishText();
     }
 
-    public function addMusicCompnent() {
+    public function addMusicCompnent()
+    {
         echo 'add music compnent'.PHP_EOL;
     }
-
 }

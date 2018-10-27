@@ -11,8 +11,8 @@ class NullPerson extends Person
    *
    * @return mixed
    */
-  function doSomthing($person)
-  {
-    echo "难道这是个鬼吗............ \n";
-  }
+    public function doSomthing($person)
+    {
+        echo "难道这是个鬼吗............ \n";
+    }
 }

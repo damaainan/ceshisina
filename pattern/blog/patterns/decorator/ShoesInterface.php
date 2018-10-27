@@ -6,5 +6,5 @@ namespace decorator;
  */
 interface ShoesInterface
 {
-  public function product();
+    public function product();
 }

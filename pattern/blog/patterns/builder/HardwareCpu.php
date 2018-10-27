@@ -6,8 +6,8 @@ namespace builder;
  */
 class HardwareCpu implements Hardware
 {
-  public function produce($quantity=8)
-  {
-    echo "cpu核心数：" . $quantity . "核\n";
-  }
+    public function produce($quantity = 8)
+    {
+        echo "cpu核心数：" . $quantity . "核\n";
+    }
 }

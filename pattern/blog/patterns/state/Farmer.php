@@ -13,89 +13,88 @@ class Farmer
    *
    * @var string
    */
-  private $_currentSeason = '';
+    private $currentSeason = '';
 
   /**
    * 季节
    * @var string
    */
-  private $_season = [
+    private $season = [
     'spring',
     'summer',
     'autumn',
     'winter'
-  ];
+    ];
 
   /**
    * 状态
    * @var object
    */
-  private $_state;
+    private $state;
 
   /**
    * 设置状态
    * @param Farm $farm 种植方法
    */
-  private function setState($currentSeason)
-  {
-    if ($currentSeason === 'spring') {
-      $this->_state = new FarmSpring();
+    private function setState($currentSeason)
+    {
+        if ($currentSeason === 'spring') {
+            $this->state = new FarmSpring();
+        }
+        if ($currentSeason === 'summer') {
+            $this->state = new FarmSummer();
+        }
+        if ($currentSeason === 'autumn') {
+            $this->state = new FarmAutumn();
+        }
+        if ($currentSeason === 'winter') {
+            $this->state = new FarmWinter();
+        }
     }
-    if ($currentSeason === 'summer') {
-      $this->_state = new FarmSummer();
-    }
-    if ($currentSeason === 'autumn') {
-      $this->_state = new FarmAutumn();
-    }
-    if ($currentSeason === 'winter') {
-      $this->_state = new FarmWinter();
-    }
-  }
 
   /**
    * 设置下个季节状态
    */
-  private function nextSeason()
-  {
-    $nowKey = (int)array_search($this->_currentSeason, $this->_season);
-    if ($nowKey < 3) {
-      $nextSeason = $this->_season[$nowKey+1];
-    }else{
-      $nextSeason = 'spring';
+    private function nextSeason()
+    {
+        $nowKey = (int)array_search($this->currentSeason, $this->season);
+        if ($nowKey < 3) {
+            $nextSeason = $this->season[$nowKey+1];
+        } else {
+            $nextSeason = 'spring';
+        }
+        $this->currentSeason = $nextSeason;
+        $this->setState($this->currentSeason);
     }
-    $this->_currentSeason = $nextSeason;
-    $this->setState($this->_currentSeason);
-  }
 
   /**
    * 设置初始状态
    */
-  function __construct($season = 'spring')
-  {
-    $this->_currentSeason = $season;
-    $this->setState($this->_currentSeason);
-  }
+    public function __construct($season = 'spring')
+    {
+        $this->currentSeason = $season;
+        $this->setState($this->currentSeason);
+    }
 
   /**
    * 种植
    *
    * @return string
    */
-  function grow()
-  {
-    $this->_state->grow();
-  }
+    public function grow()
+    {
+        $this->state->grow();
+    }
 
   /**
    * 收割
    *
    * @return string
    */
-  function harvest()
-  {
-    $this->_state->harvest();
-    // 设置下一个季节状态
-    $this->nextSeason();
-  }
-
+    public function harvest()
+    {
+        $this->state->harvest();
+      // 设置下一个季节状态
+        $this->nextSeason();
+    }
 }

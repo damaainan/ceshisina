@@ -7,5 +7,5 @@ namespace adapter;
 
 interface MediaInterface
 {
-  public function play($file='');
+    public function play($file = '');
 }

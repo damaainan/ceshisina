@@ -12,26 +12,26 @@ class Substance
    * 策略实例
    * @var object
    */
-  private $_strategy;
+    private $strategy;
 
   /**
    * 构造函数
    * 初始化策略
-   * 
+   *
    * @param Strategy $strategy 策略实例
    */
-  public function __construct(StrategyInterface $strategy)
-  {
-    $this->_strategy = $strategy;
-  }
+    public function __construct(StrategyInterface $strategy)
+    {
+        $this->strategy = $strategy;
+    }
 
   /**
    * 模拟一个操作
-   * 
+   *
    * @return mixed
    */
-  public function someOperation()
-  {
-    $this->_strategy->doSomething();
-  }
+    public function someOperation()
+    {
+        $this->strategy->doSomething();
+    }
 }

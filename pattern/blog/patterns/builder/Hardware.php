@@ -6,5 +6,5 @@ namespace builder;
  */
 interface Hardware
 {
-  public function produce();
+    public function produce();
 }

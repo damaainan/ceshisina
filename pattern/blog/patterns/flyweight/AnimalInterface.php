@@ -11,5 +11,5 @@ interface AnimalInterface
    *
    * @return string
    */
-  public function getType();
+    public function getType();
 }

@@ -10,7 +10,7 @@ class SchoolExperimental implements School
    * 老师集合
    * @var
    */
-  private $_teachers = [];
+    private $teachers = [];
 
   /**
    * 魔法方法
@@ -18,28 +18,28 @@ class SchoolExperimental implements School
    * @param  string $name 属性名称
    * @return mixed
    */
-  public function __get($name='')
-  {
-    $name = '_' . $name;
-    return $this->$name;
-  }
+    public function __get($name = '')
+    {
+        // $name = '_' . $name;
+        return $this->$name;
+    }
 
   /**
    * 添加老师
    * @param string $name
    */
-  public function addTeacher($name='')
-  {
-    $this->_teachers[] = $name;
-  }
+    public function addTeacher($name = '')
+    {
+        $this->teachers[] = $name;
+    }
 
   /**
    * 获取教师迭代器
    *
    * @return mixed
    */
-  public function getIterator()
-  {
-    return new TeacherIterator($this);
-  }
+    public function getIterator()
+    {
+        return new TeacherIterator($this);
+    }
 }

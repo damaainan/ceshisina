@@ -12,11 +12,11 @@ class HouseMediator
    * @param  Person $person 租客
    * @return Person
    */
-  function rentHouse(Person $person)
-  {
-    // 初始化一个房东
-    $landlord = new Landlord('小梅');
-    // 租房子
-    echo '通过房屋中介，' . $landlord->doSomthing($person);
-  }
+    public function rentHouse(Person $person)
+    {
+      // 初始化一个房东
+        $landlord = new Landlord('小梅');
+      // 租房子
+        echo '通过房屋中介，' . $landlord->doSomthing($person);
+    }
 }

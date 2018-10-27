@@ -11,8 +11,8 @@ class Student extends Person
    *
    * @return mixed
    */
-  function doSomthing($person)
-  {
-    echo "老师‘{$person->name}’让学生‘{$this->name}’回答了一道题~ \n";
-  }
+    public function doSomthing($person)
+    {
+        echo "老师‘{$person->name}’让学生‘{$this->name}’回答了一道题~ \n";
+    }
 }

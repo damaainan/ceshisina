@@ -2,7 +2,8 @@
 
 namespace proxy\dynamic;
 
-class Proxy {
+class Proxy
+{
 
     private $cls = null;
     private $interface = array();
@@ -28,19 +29,20 @@ class Proxy {
     }
 
 
-    public static function newProxyInstance($object, $handler) {
+    public static function newProxyInstance($object, $handler)
+    {
         return new self(new \ReflectionObject($object), $handler);
     }
 
-    public static function newProxyClass($class, $handler) {
+    public static function newProxyClass($class, $handler)
+    {
         return new self(new \ReflectionClass($class), $handler);
     }
 
-    function __call($name, $arguments) {
+    public function __call($name, $arguments)
+    {
         if (in_array($name, $this->interface)) {
             $this->handler->invoke($this, $name, $arguments);
         }
     }
-
-
 }

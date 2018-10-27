@@ -1,6 +1,7 @@
 <?php
 namespace proxy\common;
 
-interface Subject {
+interface Subject
+{
     public function doSomething();
 }

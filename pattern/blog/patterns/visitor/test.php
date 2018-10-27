@@ -27,7 +27,9 @@ spl_autoload_register('autoload');
 // 将原作者的 spl 注册函数改成 composer 自动加载  
 // 避免 psr-4 格式的以下警告
 /*
- A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 3 and the first side effect is on line 9.
+ A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or 
+ it should execute logic with side effects, but should not do both. The first symbol is defined on line 3 
+ and the first side effect is on line 9.
  */
 
 require "../vendor/autoload.php";

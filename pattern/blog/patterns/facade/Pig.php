@@ -11,8 +11,8 @@ class Pig implements AnimalInterface
    *
    * @return string
    */
-  public function produce()
-  {
-    echo "生产了一只猪~ \n";
-  }
+    public function produce()
+    {
+        echo "生产了一只猪~ \n";
+    }
 }

@@ -11,26 +11,26 @@ interface CompositeInterface
    *
    * @return mixed
    */
-  public function add(CompositeInterface $composite);
+    public function add(CompositeInterface $composite);
 
   /**
    * 删除节点一个对象
    *
    * @return mixed
    */
-  public function delete(CompositeInterface $composite);
+    public function delete(CompositeInterface $composite);
 
   /**
    * 实体类要实现的方法
    *
    * @return mixed
    */
-  public function operation();
+    public function operation();
 
   /**
    * 打印对象组合
    *
    * @return mixed
    */
-  public function printComposite();
+    public function printComposite();
 }

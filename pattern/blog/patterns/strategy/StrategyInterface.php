@@ -10,5 +10,5 @@ interface StrategyInterface
    * 行为
    * @return void
    */
-  public function doSomething();
+    public function doSomething();
 }

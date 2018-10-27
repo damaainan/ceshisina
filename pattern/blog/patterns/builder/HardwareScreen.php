@@ -6,8 +6,8 @@ namespace builder;
  */
 class HardwareScreen implements Hardware
 {
-  public function produce($size='5.0')
-  {
-    echo "屏幕大小：" . $size . "寸\n";
-  }
+    public function produce($size = '5.0')
+    {
+        echo "屏幕大小：" . $size . "寸\n";
+    }
 }

@@ -12,8 +12,8 @@ class EatByChopsticks implements EatInterface
    * @param  string $food 食物
    * @return string
    */
-  public function eat($food='')
-  {
-    echo "用筷子吃{$food}~";
-  }
+    public function eat($food = '')
+    {
+        echo "用筷子吃{$food}~";
+    }
 }

@@ -6,5 +6,5 @@ namespace proxy;
  */
 interface ShoesInterface
 {
-  public function product();
+    public function product();
 }

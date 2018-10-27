@@ -11,8 +11,8 @@ class Chicken implements AnimalInterface
    *
    * @return string
    */
-  public function produce()
-  {
-    echo "生产了一只鸡~ \n";
-  }
+    public function produce()
+    {
+        echo "生产了一只鸡~ \n";
+    }
 }

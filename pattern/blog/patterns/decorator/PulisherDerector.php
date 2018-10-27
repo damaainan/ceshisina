@@ -9,16 +9,18 @@ namespace decorator;
  * Time: 下午7:36
  */
 
-class PulisherDerector implements PulisherInterface {
+class PulisherDerector implements PulisherInterface
+{
 
     protected $pulisher = null;
 
-    function derect(PulisherInterface $pulisher) {
+    public function derect(PulisherInterface $pulisher)
+    {
         $this->pulisher = $pulisher;
     }
 
-    public function pulishText() {
+    public function pulishText()
+    {
         $this->pulisher->pulishText();
     }
-
 }

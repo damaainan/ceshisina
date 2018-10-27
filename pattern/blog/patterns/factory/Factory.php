@@ -1,6 +1,7 @@
 <?php
 namespace factory;
 
-interface Factory {
+interface Factory
+{
     public function produce();
 }

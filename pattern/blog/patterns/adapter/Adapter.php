@@ -8,38 +8,38 @@ use Exception;
  */
 class Adapter
 {
-  private $_advancePlayerInstance;
+    private $advancePlayerInstance;
 
-  private $_type = '';
+    private $type = '';
 
-  public function __construct($type='')
-  {
-    switch ($type) {
-      case 'mp4':
-        $this->_advancePlayerInstance = new AdvanceMp4Player();
-        break;
-      case 'wma':
-        $this->_advancePlayerInstance = new AdvanceWmaPlayer();
-        break;
+    public function __construct($type = '')
+    {
+        switch ($type) {
+            case 'mp4':
+                $this->advancePlayerInstance = new AdvanceMp4Player();
+                break;
+            case 'wma':
+                $this->advancePlayerInstance = new AdvanceWmaPlayer();
+                break;
 
-      default:
-        throw new Exception("$type is not supported", 400);
-        break;
+            default:
+                throw new Exception("$type is not supported", 400);
+            break;
+        }
+        $this->type = $type;
     }
-    $this->_type = $type;
-  }
 
-  public function play($file='')
-  {
-    switch ($this->_type) {
-      case 'mp4':
-        $this->_advancePlayerInstance->playMp4($file);
-        break;
-      case 'wma':
-        $this->_advancePlayerInstance->playWma($file);
-        break;
-      default:
-        break;
+    public function play($file = '')
+    {
+        switch ($this->type) {
+            case 'mp4':
+                $this->advancePlayerInstance->playMp4($file);
+                break;
+            case 'wma':
+                $this->advancePlayerInstance->playWma($file);
+                break;
+            default:
+                break;
+        }
     }
-  }
 }

@@ -10,15 +10,15 @@ class OrderCreate implements Order
    * 文本类实体
    * @var object
    */
-  private $_text;
+    private $text;
 
   /**
    * 命令参数
    * @var array
    */
-  private $_arguments = [
+    private $arguments = [
     'filename' => ''
-  ];
+    ];
 
   /**
    * 构造函数
@@ -26,19 +26,19 @@ class OrderCreate implements Order
    * @param Text $text
    * @param array $arguments
    */
-  public function __construct(Text $text, $arguments=[])
-  {
-    $this->_text      = $text;
-    $this->_arguments = $arguments;
-  }
+    public function __construct(Text $text, $arguments = [])
+    {
+        $this->text      = $text;
+        $this->arguments = $arguments;
+    }
 
   /**
    * 执行命令
    *
    * @return void
    */
-  public function execute()
-  {
-    $this->_text->create($this->_arguments['filename']);
-  }
+    public function execute()
+    {
+        $this->text->create($this->arguments['filename']);
+    }
 }

@@ -10,16 +10,16 @@ class FilterSportType implements FilterInterface
    * 按照本运动项目过滤
    * @var string
    */
-  private $_sportType = '';
+    private $sportType = '';
 
   /**
    * 构造函数
    * @param string $sportType
    */
-  public function __construct($sportType='')
-  {
-    $this->_sportType = $sportType;
-  }
+    public function __construct($sportType = '')
+    {
+        $this->sportType = $sportType;
+    }
 
   /**
    * 过滤方法
@@ -27,13 +27,13 @@ class FilterSportType implements FilterInterface
    * @param  array $persons 运动员集合
    * @return mixed
    */
-  public function filter(array $persons)
-  {
-    foreach ($persons as $k => $v) {
-      if ($v->sportType === $this->_sportType) {
-        $personsFilter[] = $persons[$k];
-      }
+    public function filter(array $persons)
+    {
+        foreach ($persons as $k => $v) {
+            if ($v->sportType === $this->sportType) {
+                $personsFilter[] = $persons[$k];
+            }
+        }
+        return $personsFilter;
     }
-    return $personsFilter;
-  }
 }

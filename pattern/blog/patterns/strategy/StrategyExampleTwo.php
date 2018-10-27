@@ -10,8 +10,8 @@ class StrategyExampleTwo implements StrategyInterface
    * 行为
    * @return mixed
    */
-  public function doSomething()
-  {
-    echo "你选择了策略2 \n";
-  }
+    public function doSomething()
+    {
+        echo "你选择了策略2 \n";
+    }
 }

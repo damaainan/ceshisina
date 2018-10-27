@@ -12,5 +12,5 @@ interface EatInterface
    * @param  string $food 食物
    * @return mixed
    */
-  public function eat($food='');
+    public function eat($food = '');
 }

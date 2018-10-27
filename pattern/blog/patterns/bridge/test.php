@@ -11,6 +11,7 @@
  */
 
 
+/*
 // 注册自加载
 spl_autoload_register('autoload');
 
@@ -18,6 +19,9 @@ function autoload($class)
 {
   require dirname($_SERVER['SCRIPT_FILENAME']) . '//..//' . str_replace('\\', '/', $class) . '.php';
 }
+*/
+// 将原作者的 spl 注册函数改成 composer 自动加载  
+require "../vendor/autoload.php";
 
 /************************************* test *************************************/
 
@@ -27,10 +31,9 @@ use bridge\EatByFork;
 
 try {
   // 初始化一个用筷子吃饭的男人的实例
-  $male = new PersonMale('male', new EatByChopsticks());
+    $male = new PersonMale('male', new EatByChopsticks());
   // 吃饭
-  $male->eat('大盘鸡');
-
+    $male->eat('大盘鸡');
 } catch (\Exception $e) {
-  echo $e->getMessage();
+    echo $e->getMessage();
 }

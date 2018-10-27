@@ -11,13 +11,12 @@ interface Farm
    *
    * @return string
    */
-  function grow();
+    public function grow();
 
   /**
    * 收割
    *
    * @return string
    */
-  function harvest();
-
+    public function harvest();
 }

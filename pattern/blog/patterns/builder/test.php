@@ -27,6 +27,7 @@
  */
 
 
+/*
 // 注册自加载
 spl_autoload_register('autoload');
 
@@ -34,6 +35,9 @@ function autoload($class)
 {
   require dirname($_SERVER['SCRIPT_FILENAME']) . '//..//' . str_replace('\\', '/', $class) . '.php';
 }
+*/
+// 将原作者的 spl 注册函数改成 composer 自动加载  
+require "../vendor/autoload.php";
 
 /************************************* test *************************************/
 
@@ -47,7 +51,7 @@ $builder = new PhoneBuilder('某米8s', [
     'ram'     => 8,
     'storage' => 64,
     'camera'  => '2000w'
-  ],['os' => 'android 6.0']);
+  ], ['os' => 'android 6.0']);
 
 echo "\n";
 echo "----------------\n";
@@ -58,4 +62,4 @@ $builder = new Mp3Builder('某族MP3', [
     'cpu'     => 1,
     'ram'     => 1,
     'storage' => 128,
-  ],['os' => 'mp3 os']);
+  ], ['os' => 'mp3 os']);

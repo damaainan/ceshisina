@@ -11,11 +11,11 @@ class Teacher extends Person
    *
    * @return mixed
    */
-  function doSomthing($person)
-  {
-    if (!$person instanceof Student) {
-      $person = new NullPerson('');
+    public function doSomthing($person)
+    {
+        if (!$person instanceof Student) {
+            $person = new NullPerson('');
+        }
+        $person->doSomthing($this);
     }
-    $person->doSomthing($this);
-  }
 }

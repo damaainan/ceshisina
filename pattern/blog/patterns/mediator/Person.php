@@ -10,15 +10,15 @@ abstract class Person
    * 名字
    * @var string
    */
-  private $_name = '';
+    private $name = '';
 
   /**
    * 构造函数
    */
-  function __construct($name)
-  {
-    $this->_name = $name;
-  }
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
 
   /**
    * 魔术方法
@@ -27,16 +27,16 @@ abstract class Person
    * @param  string $name 属性名称
    * @return mixed
    */
-  function __get($name='')
-  {
-    $name = '_' . $name;
-    return $this->$name;
-  }
+    public function __get($name = '')
+    {
+        // $name = '_' . $name;
+        return $this->$name;
+    }
 
   /**
    * 抽象方法
    *
    * @return mixed
    */
-  abstract function doSomthing(Person $person);
+    abstract public function doSomthing(Person $person);
 }

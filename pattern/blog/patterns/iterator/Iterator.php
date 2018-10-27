@@ -11,26 +11,26 @@ interface Iterator
    *
    * @return boolean
    */
-  public function hasNext();
+    public function hasNext();
 
   /**
    * 下一个
    *
    * @return object
    */
-  public function next();
+    public function next();
 
   /**
    * 当前
    *
    * @return mixed
    */
-  public function current();
+    public function current();
 
   /**
    * 当前索引
    *
    * @return mixed
    */
-  public function index();
+    public function index();
 }

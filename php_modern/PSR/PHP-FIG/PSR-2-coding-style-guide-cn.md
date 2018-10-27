@@ -233,7 +233,7 @@ class ClassName
         // method body
     }
 }
-```    
+```
 
 ### 4.4. 方法的参数
 

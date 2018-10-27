@@ -1,7 +1,8 @@
 <?php
 namespace factoryAbstract;
 
-class PandaZoo implements ZooInterface {
+class PandaZoo implements ZooInterface
+{
 
     public function show()
     {

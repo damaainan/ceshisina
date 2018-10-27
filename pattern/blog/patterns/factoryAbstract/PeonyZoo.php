@@ -1,6 +1,8 @@
 <?php
 namespace factoryAbstract;
-class PeonyZoo implements ZooInterface {
+
+class PeonyZoo implements ZooInterface
+{
 
     public function show()
     {
@@ -12,5 +14,4 @@ class PeonyZoo implements ZooInterface {
         $this->show();
         echo "卖门票\n\n";
     }
-
 }

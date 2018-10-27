@@ -9,15 +9,17 @@ namespace decorator;
  * Time: 下午7:42
  */
 
-class MoviePulisher extends PulisherDerector {
+class MoviePulisher extends PulisherDerector
+{
 
-    public function pulishText() {
+    public function pulishText()
+    {
         $this->addMovieCompnent();
         parent::pulishText();
     }
 
-    public function addMovieCompnent() {
+    public function addMovieCompnent()
+    {
         echo 'add movie compnent'.PHP_EOL;
     }
-
 }

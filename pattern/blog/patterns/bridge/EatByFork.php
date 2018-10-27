@@ -12,8 +12,8 @@ class EatByFork implements EatInterface
    * @param  string $food 食物
    * @return string
    */
-  public function eat($food='')
-  {
-    echo "用叉子吃{$food}~";
-  }
+    public function eat($food = '')
+    {
+        echo "用叉子吃{$food}~";
+    }
 }

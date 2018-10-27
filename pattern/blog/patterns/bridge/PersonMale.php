@@ -12,8 +12,8 @@ class PersonMale extends PersonAbstract
    * @param  string $food 食物
    * @return string
    */
-  public function eat($food='')
-  {
-    $this->_tool->eat($food);
-  }
+    public function eat($food = '')
+    {
+        $this->tool->eat($food);
+    }
 }

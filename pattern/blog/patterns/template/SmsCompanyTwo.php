@@ -20,7 +20,7 @@ class SmsCompanyTwo extends Sms
     public function initialize($config = [])
     {
       // 实现具体算法
-        $this->_config = $config;
+        $this->config = $config;
     }
 
   /**

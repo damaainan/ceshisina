@@ -1,6 +1,7 @@
 <?php
 namespace factoryAbstract;
 
-Interface Income {
+interface Income
+{
     public function money();
 }

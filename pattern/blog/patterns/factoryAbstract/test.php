@@ -13,13 +13,17 @@
  */
 
 
+/*
 // 注册自加载
 spl_autoload_register('autoload');
 
 function autoload($class)
 {
-    require dirname($_SERVER['SCRIPT_FILENAME']) . '//..//' . str_replace('\\', '/', $class) . '.php';
+  require dirname($_SERVER['SCRIPT_FILENAME']) . '//..//' . str_replace('\\', '/', $class) . '.php';
 }
+*/
+// 将原作者的 spl 注册函数改成 composer 自动加载  
+require "../vendor/autoload.php";
 
 /************************************* test *************************************/
 
@@ -33,8 +37,9 @@ $animal = new AnimalFactory();
 $plant = new PlantFactory();
 
 // 模拟调用， 抽象工厂模式核心是面向接口编程
-function call(factoryAbstract\Factory $factory) {
-    $earn = function(factoryAbstract\Income $income) {
+function call(factoryAbstract\Factory $factory)
+{
+    $earn = function (factoryAbstract\Income $income) {
         $income->money();
     };
     $earn($factory->createFarm());

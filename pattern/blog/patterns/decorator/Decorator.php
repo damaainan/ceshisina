@@ -10,26 +10,26 @@ abstract class Decorator implements ShoesInterface
     /**
    * 产品生产线对象
    */
-  protected $shoes;
+    protected $shoes;
 
   /**
    * 构造函数.
    */
-  public function __construct(ShoesInterface $shoes)
-  {
-      $this->shoes = $shoes;
-  }
+    public function __construct(ShoesInterface $shoes)
+    {
+        $this->shoes = $shoes;
+    }
 
   /**
    * 生产.
    */
-  public function product()
-  {
-      $this->shoes->product();
-  }
+    public function product()
+    {
+        $this->shoes->product();
+    }
 
   /**
    * 装饰操作.
    */
-  abstract public function decorate($value);
+    abstract public function decorate($value);
 }

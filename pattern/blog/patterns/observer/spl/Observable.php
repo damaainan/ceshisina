@@ -12,9 +12,9 @@ class Observable implements \SplSubject
      * 观察者们
      * @var array
      */
-    private $_observers = [];
+    private $observers = [];
 
-    private $_message = "通知消息";
+    private $message = "通知消息";
 
     /**
      * 附加观察者
@@ -23,8 +23,8 @@ class Observable implements \SplSubject
      */
     public function attach(\SplObserver $observer)
     {
-        if (!in_array($observer, $this->_observers, true)) {
-            $this->_observers[] = $observer;
+        if (!in_array($observer, $this->observers, true)) {
+            $this->observers[] = $observer;
         }
     }
 
@@ -35,9 +35,9 @@ class Observable implements \SplSubject
      */
     public function detach(\SplObserver $observer)
     {
-        foreach ($this->_observers as $k => $v) {
+        foreach ($this->observers as $k => $v) {
             if ($v === $observer) {
-                unset($this->_observers[$k]);
+                unset($this->observers[$k]);
             }
         }
     }
@@ -48,7 +48,7 @@ class Observable implements \SplSubject
      */
     public function notify()
     {
-        foreach ($this->_observers as $observer) {
+        foreach ($this->observers as $observer) {
             $observer->update($this);
         }
     }
@@ -60,12 +60,11 @@ class Observable implements \SplSubject
      */
     public function getMessage()
     {
-       return $this->_message;
+        return $this->message;
     }
 
     public function setMessage($msg)
     {
-        $this->_message = $msg;
+        $this->message = $msg;
     }
 }
-

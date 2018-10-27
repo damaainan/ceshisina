@@ -1,0 +1,54 @@
+#!/bin/bash
+phpcbf adapter/
+phpcbf bridge/
+phpcbf builder/
+phpcbf chainOfResponsibility/
+phpcbf command/
+phpcbf composite/
+phpcbf decorator/
+phpcbf facade/
+phpcbf factory/
+phpcbf factoryAbstract/
+phpcbf filter/
+phpcbf flyweight/
+phpcbf interpreter/
+phpcbf iterator/
+phpcbf mediator/
+phpcbf memento/
+phpcbf nullObject/
+phpcbf observer/
+phpcbf prototype/
+phpcbf proxy/
+phpcbf singleton/
+phpcbf state/
+phpcbf strategy/
+phpcbf template/
+phpcbf visitor/
+
+
+
+phpcs adapter/
+phpcs bridge/
+phpcs builder/
+phpcs chainOfResponsibility/
+phpcs command/
+phpcs composite/
+phpcs decorator/
+phpcs facade/
+phpcs factory/
+phpcs factoryAbstract/
+phpcs filter/
+phpcs flyweight/
+phpcs interpreter/
+phpcs iterator/
+phpcs mediator/
+phpcs memento/
+phpcs nullObject/
+phpcs observer/
+phpcs prototype/
+phpcs proxy/
+phpcs singleton/
+phpcs state/
+phpcs strategy/
+phpcs template/
+phpcs visitor/

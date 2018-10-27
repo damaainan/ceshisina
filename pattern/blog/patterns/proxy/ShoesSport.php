@@ -6,8 +6,8 @@ namespace proxy;
  */
 class ShoesSport implements ShoesInterface
 {
-  public function product()
-  {
-    echo "生产一双球鞋";
-  }
+    public function product()
+    {
+        echo "生产一双球鞋";
+    }
 }

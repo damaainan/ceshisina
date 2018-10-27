@@ -1,8 +1,8 @@
 <?php
 namespace proxy\virtual;
 
-
-class RealSubject implements Subject {
+class RealSubject implements Subject
+{
 
 
     /**
@@ -17,5 +17,4 @@ class RealSubject implements Subject {
     {
         echo "具体的对象处理过程\n";
     }
-
 }

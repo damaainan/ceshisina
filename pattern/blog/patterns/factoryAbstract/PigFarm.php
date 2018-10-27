@@ -1,7 +1,8 @@
 <?php
 namespace factoryAbstract;
 
-class PigFarm implements FarmInterface {
+class PigFarm implements FarmInterface
+{
 
     public function harvest()
     {

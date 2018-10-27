@@ -11,20 +11,23 @@
  */
 
 
+/*
 // 注册自加载
 spl_autoload_register('autoload');
 
 function autoload($class)
 {
-    require dirname($_SERVER['SCRIPT_FILENAME']) . '//..//' . str_replace('\\', '/', $class) . '.php';
+  require dirname($_SERVER['SCRIPT_FILENAME']) . '//..//' . str_replace('\\', '/', $class) . '.php';
 }
+*/
+// 将原作者的 spl 注册函数改成 composer 自动加载  
+require "../vendor/autoload.php";
 
 use decorator\BasicPulisher;
 use decorator\MoviePulisher;
 use decorator\MusicPublisher;
 
-try{
-
+try {
     $basicPulisher = new BasicPulisher();
     $moviePulisher = new MoviePulisher();
     $musicPulisher = new MusicPublisher();
@@ -32,8 +35,6 @@ try{
     $moviePulisher->derect($basicPulisher);
     $musicPulisher->derect($moviePulisher);
     $musicPulisher->pulishText();
-
-
-}catch (\Exception $e) {
+} catch (\Exception $e) {
     echo $e->getMessage();
 }
