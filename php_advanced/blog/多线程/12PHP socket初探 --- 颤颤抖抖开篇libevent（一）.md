@@ -67,22 +67,28 @@ select虽然一定程度上解决了一个进程可以读写多个fd的问题，
 回到正路上来，就是“PHP中如何使用Libevent”。在pecl.php.net上，有两个扩展都可以使phper方便地操控libevent，一个就叫libevent，另一个叫做event，推荐大家用后者。前者不知道什么原因版本一直停留在0.10 Beta状态，开发日期则停留在了2013-05-22日，我没怎么试过，估计可能不支持php7，不过，还是要感谢开发者。event扩展就比较屌了，版本迭代不错，看起来开发者挺积极的，也支持php7，目前的稳定版本是2.3.0，所以推荐大家使用event扩展。
 
 正好在此补充一下php扩展的安装方式，以event扩展为例。
+
 * 下载event 2.3.0的稳定版本，wget [https://pecl.php.net/get/even...][10]
 
 
 ![][3]
+
 * 解压tgz源码包，tar -zxvf event-2.3.0.tgz
 
 ![][4]
+
 * cd event-2.3.0进入到主目录中，然后执行phpize，再执行./configure
 
 ![][5]
+
 * 执行make
 
 ![][6]
+
 * 执行make install安装
 
 ![][7]
+
 * 配置php的cli环境配置文件，注意不是apache2，也不是fpm的，而是cli的php.ini，添加一句:extension = '/usr/lib/php/20151012/event.so'，然后在终端中执行php -m看下，是不是有event呢？
 
 ## 好了，今天到这里正式收官，下一篇继续嗑php和他的event扩展二三事！
