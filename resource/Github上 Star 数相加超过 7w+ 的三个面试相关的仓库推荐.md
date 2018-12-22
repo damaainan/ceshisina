@@ -33,8 +33,8 @@
 [5]: https://github.com/Snailclimb/JavaGuide
 [6]: https://github.com/crossoverJie/JCSprout
 [7]: https://github.com/CyC2018/CS-Notes
-[0]: https://segmentfault.com/img/remote/1460000017059005/view?w=307&h=262
-[1]: https://segmentfault.com/img/remote/1460000017059006/view?w=600&h=290
+[0]: https://segmentfault.com/img/remote/1460000017059005
+[1]: https://segmentfault.com/img/remote/1460000017059006
 [2]: https://segmentfault.com/img/remote/1460000017059007
 [3]: https://segmentfault.com/img/remote/1460000017059008
 [4]: https://segmentfault.com/img/remote/1460000017059009
