@@ -251,3 +251,13 @@ done
 ### 微信页面图片下载
 
     awk -F': ' '/mmbi/{print $2}' 2*.md | awk -F'/640' '{mm=substr($1,100);system("aria2c -o "mm".jpeg "$0)}'
+
+
+
+### sed如何打印匹配行到最后一行的内容
+
+```
+sed -n '/c/,${//!p}' file # // 看不懂
+
+sed '/c/,$!d;//d'  
+``` 
