@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>百度地图Canvas海量折线</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=nuWah68S1WieW2AEwiT8T3Ro&s=1"></script>
+    <script type="text/javascript" src="../jquery-2.1.3.min.js"></script>
+</head>
+<body>
+
+    <script type="text/javascript" src="pointLine.js"></script>
+    <script type="text/javascript">
+        var map = new BMap.Map('map', {
+            minZoom: 5
+        });
+        map.centerAndZoom(new BMap.Point(112.954699, 27.851256), 13);
+        map.enableScrollWheelZoom(true);
+        map.setMapStyle({
+            styleJson: styleJson
+        });
+        $.getJSON('line.json', function (result) {
+            var pointLine = new PointLine(map, {
+                //线条宽度
+                lineWidth: 2,
+                //线条颜色
+                lineStyle: '#F9815C',
+                //数据源
+                data: result,
+                //事件
+                methods: {
+                    click: function (e, name) {
+                        console.log('你当前点击的是' + name);
+                    },
+                    // mousemove: function (e, name) {
+                    //     console.log('你当前点击的是' + name);
+                    // }
+                }
+            });
+        })
+    </script>
+</body>
+</html>
