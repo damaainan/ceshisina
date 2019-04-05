@@ -25,7 +25,7 @@ function Curl($url){
         curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, true);
 
         curl_setopt($ch2, CURLOPT_NOBODY, false);
-        curl_setopt($ch2, CURLOPT_REFERER, 'http://www.baidu.com/');//模拟来路
+        curl_setopt($ch2, CURLOPT_REFERER, 'https://www.baidu.com/s?wd=%E8%B4%BE%E4%BF%8A%E5%9B%AD&rsv_spt=1&rsv_iqid=0x814c9e0d0002da73&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=1&rsv_t=beae2WcBI%2BH4hMOzeYzHsw49zef%2Fud1XE%2Bs4FcVV6bPpkHD6QRhfsXziT7kNsQwpLhO0&gpc=stf%3D1548950400%2C1552319998%7Cstftype%3D2&tfflag=1');//模拟来路
         curl_setopt($ch2, CURLOPT_USERAGENT, $user_agent);
         $temp = curl_exec($ch2);
         curl_close($ch2);

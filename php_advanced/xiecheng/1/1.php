@@ -7,7 +7,7 @@ function my_range($start, $end, $step = 1) {
     }  
 }  
   
-foreach (my_range(1, 1000) as $num) {  
+foreach (my_range(1, 10) as $num) {  
     echo $num, "\n";  
 }  
 
@@ -18,15 +18,15 @@ Generator对象是Iterator接口实例，可以通过rewind()、current()、next
 Generator可以视为一种“可中断”的函数，而yield构成了一系列的“中断点”
 Generator类似于车间生产的流水线，每次需要用产品的时候才从那里取一个，然后这个流水线就停在那里等待下一次取操作
  */
-$range = my_range(1, 1000);  
+// $range = my_range(1, 10);  
   
-var_dump($range);  
+// var_dump($range);  
 /* 
  * object(Generator)#1 (0) { 
  * } 
  */  
   
-var_dump($range instanceof Iterator);  
+// var_dump($range instanceof Iterator);  
 /* 
  * bool(true) 
  */  

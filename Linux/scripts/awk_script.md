@@ -71,3 +71,34 @@ IFS=$MY_SAVEIFS
     awk -F': ' '/upload/{print $2}' 51*.md | awk -F'[-?]' '{if(index($3,"png"))print $3;else print $3".png"}'
 
     awk -F': ' '/upload/{print $2}' 51*.md | awk -F'[-?]' '{if(index($3,"png"))system("aria2c -o "$3" "$0);else system("aria2c -o "$3".png "$0)}'
+
+### 第一行前加字符
+
+```
+ls *.md | xargs -I[ sed -i '1s@^@## &@' [
+
+ls *.md | xargs -I[ awk "/^解法/{print NR}" [  # 打印行数
+
+# 以下方法不可用
+ls *.md | xargs -I[ awk "/^解法/{system('sed -i \"'NR"s@^@#### &@\" [')}" [
+ls *.md | xargs -I[ awk "/^说明/{system('sed -i \"'NR"s@^@#### &@\" [')}" [
+ls *.md | xargs -I[ awk '/^解法/{system("sed -i \'"NR"s@^@#### &@\' "[)}' [
+ls *.md | xargs -I[ awk '/^解法/{system("sed -i \'"NR"s@^@#### &@\' [")}' [
+ls *.md | xargs -I[ awk "/^解法/{system('sed -i \'NR"s@^@#### &@\'  [')}" [
+
+bash 环境下有效
+
+ls 01.md | xargs -I[ awk '/^解法/{system("echo "NR"**[")}' [ | awk -F'**' '{system("sed -i \""$1"s/^/#### &/\" "$2" ")}'
+ls *.md | xargs -I[ awk '/^解法/{system("echo "NR"**[")}' [ | awk -F'**' '{system("sed -i \""$1"s/^/#### &/\" "$2" ")}'
+```
+
+
+```
+ls 01.md | xargs -I[ awk -F'## ' 'NR==1{print $2"=["}' [ | awk -F'[=.]' '{system("mv [ "$2""$1".md")}'
+
+ls 01.md | xargs -I[ awk -F'## ' 'NR==1{print $2"=["}' [ | awk -F'[=.]' '{print $2"**"$1}' | awk -F'**' '{system("mv "$1".md "$1""$2".md")}'
+
+# 注意文件名的空格
+ls *.md | xargs -I[ awk -F'## ' 'NR==1{print $2"=["}' [ | awk -F'[=.]' '{print $2"**"$1}' | awk -F'**' '{system("mv "$1".md \""$1"-"$2".md\"")}'
+
+```
