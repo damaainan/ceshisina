@@ -119,9 +119,11 @@ Error : duplicate key!
 
 
 　　不同事务的隔离级别，实际上是一致性与并发性的一个权衡与折衷。
+
 ## 3. 四种事务的隔离级别，innodb如何实现?
 
 　　InnoDB使用不同的锁策略(Locking Strategy)来实现不同的隔离级别。
+
 ### a. 读未提交(Read Uncommitted)
 
 　　这种事务隔离级别下，select语句不加锁，也不是快照读。
@@ -129,6 +131,7 @@ Error : duplicate key!
 SELECT statements are performed in a nonlocking fashion.
 
 　　此时，可能读取到不一致的数据，即“读脏”。这是并发最高，一致性最差的隔离级别。
+
 ### b. 读提交(Read Committed, RC)
 
 
@@ -140,6 +143,7 @@ SELECT statements are performed in a nonlocking fashion.
   此时，其他事务的插入依然可以执行，就可能导致，读取到幻影记录。该级别是最常使用的。而且如果是不上锁的select，可能产生不可重复读。
 
 　　该级别下是通过快照读来防止读脏的。因为在该级别下的快照读总是能读到最新的行数据快照，当然，必须是已提交事务写入的，所以可能产生不可重复读。
+
 ### c. 可重复读(Repeated Read, RR)
 
 　　这是InnoDB默认的隔离级别，在RR下：
