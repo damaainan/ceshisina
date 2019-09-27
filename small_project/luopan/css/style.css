@@ -1,0 +1,187 @@
+@charset "UTF-8";
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.w {
+    width: auto;
+    height: auto;
+    background-color: black;
+}
+
+.s {
+    width: auto;
+    height: 800px;
+    background: url("../images/c-a-bj.jpg") no-repeat center 0;
+}
+
+.bj {
+    width: auto;
+    height: 800px;
+    position: relative;
+    background: url("../images/c-a-c.png") no-repeat center 0;
+}
+
+.o {
+    width: 700px;
+    height: 700px;
+    margin: auto;
+    position: absolute;
+    top: 50px;
+    left: 450px;
+    background-color: yellow;
+    opacity: 0.6;
+    border-radius: 375px;
+}
+
+.a {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-3.png") no-repeat center center;
+    animation:rotate 400s infinite linear;
+}
+
+.b {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-4.png") no-repeat center center;
+}
+
+.c {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-5.png") no-repeat center center;
+    animation:rotate 200s infinite linear;
+}
+
+.d {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-6.png") no-repeat center center;
+    animation:rotat 180s infinite linear;
+}
+
+.e {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-7.png") no-repeat center center;
+    animation:rotate 200s infinite linear;
+}
+
+.f {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-8.png") no-repeat center center;
+    animation:rotat 100s infinite linear;
+}
+
+.g {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-9.png") no-repeat center center;
+    animation:rotate 120s infinite linear;
+}
+
+.h {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-10.png") no-repeat center center;
+}
+
+.i {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-11.png") no-repeat center center;
+    animation:rotat 80s infinite linear;
+}
+
+.j {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-12.png") no-repeat center center;
+    animation:rotate 80s infinite linear;
+}
+
+.k {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-13.png") no-repeat center center;
+    animation:rotat 100s infinite linear;
+}
+
+.l {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-14.png") no-repeat center center;
+    animation:rotate 120s infinite linear;
+}
+
+.m {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-15.png") no-repeat center center;
+    animation:rotat 200s infinite linear;
+}
+
+.n {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-16.png") no-repeat center center;
+    animation:rotate 140s infinite linear;
+}
+
+.p {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-17.png") no-repeat center center;
+    animation:rotat 160s infinite linear;
+}
+
+.q {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-18.png") no-repeat center center;
+    animation:rotate 180s infinite linear;
+}
+
+.r {
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    background: url("../images/c-a-19.png") no-repeat center center;
+    animation:rotat 200s infinite linear;
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotat {
+    100% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
