@@ -102,3 +102,12 @@ ls 01.md | xargs -I[ awk -F'## ' 'NR==1{print $2"=["}' [ | awk -F'[=.]' '{print 
 ls *.md | xargs -I[ awk -F'## ' 'NR==1{print $2"=["}' [ | awk -F'[=.]' '{print $2"**"$1}' | awk -F'**' '{system("mv "$1".md \""$1"-"$2".md\"")}'
 
 ```
+
+
+```
+# 文件重命名
+
+ls *.md | grep "[0-9.]\{3,4\}\.md" | xargs -I[ awk -F'# ' 'NR==1{print $2"****["}' [ | sed -n 's/[0-9]*\.[0-9]*[ ]//p' | awk -F ".md" '{print $1}' | awk -F'****' '{system("mv "$2".md \""$2""$1".md\"")}'
+
+ls *.md | xargs -I[ awk -F'# ' 'NR==1{print $2"****["}' [ | sed -n 's/[0-9]*\.[0-9]*[ ]//p' | awk -F ".md" '{print $1}' | awk -F'****' '{system("mv "$2".md \""$2""$1".md\"")}'
+```
