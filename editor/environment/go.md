@@ -35,6 +35,57 @@ GOPATH你自己的go工作空间地址,就是你后面项目的地址.允许多�
 执行go version 查看输出信息,执行go env查询配置是否正确  
 
 
+## Gosublime安装
+GoSublime采用**`development`**分支，master分支好像已不维护了
+
+
+#### 自动补全解决方法  
+在windows和mac上使用sublime text3安装Gosublime插件后都无法自动补全代码，经过多日的研究找到如下解决方法。  
+打开Perferences–Browse Packages…，进入Gosublime：  
+1、在src目录下创建`margo`目录；  
+2、拷贝`src/margo.sh/extension-example/extension-example.go`文件到`margo`目录下，改名为`margo.go`；  
+3、拷贝`margo`文件夹（所有文件和目录）到`src/margo.sh/vendor`目录下；  
+4、重新打开sublime text3，稍等几分钟就可以自动补全代码了。  
+
+```
+// user 配置文件
+{
+    "env": {
+        "GOPATH": "G:/gopro",
+        "GOROOT": "D:/go",
+        "PATH": "$GOROOT/bin"
+    }
+}
+```
+
+## Gosublime配置
+
+```
+"gscomplete_enabled": false,
+// Whether or not gsfmt is enabled
+"fmt_enabled": false,
+// 改为
+
+"gscomplete_enabled": true,
+ // Whether or not gsfmt is enabled
+"fmt_enabled": true,
+
+```
+
+
+`go.sublime-build`
+
+```
+{ 
+    "cmd": ["go", "run", "$file_name"], 
+    "file_regex": "^[ ]*File \"(…*?)\", line ([0-9]*)", 
+    "working_dir": "$file_path", 
+    "selector": "source.go" 
+}
+```
+
+
+
 [0]: ../img/1183845-20171114111434452-295129469.png
 [1]: ../img/1183845-20171114112554327-2126910000.png
 [2]: ../img/1183845-20171114111808921-1979885996.png

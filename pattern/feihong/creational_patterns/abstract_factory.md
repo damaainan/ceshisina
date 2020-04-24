@@ -45,7 +45,8 @@
 
 下面以汽车生产为例：  
 跑车：  
-``` php
+```php
+<?php
 namespace Yjc\AbstractFactory;
 
 interface IProductSportCar
@@ -55,7 +56,8 @@ interface IProductSportCar
 ```
 
 MINI车：
-``` php
+```php
+<?php
 namespace Yjc\AbstractFactory;
 
 interface IProductMiniCar
@@ -66,7 +68,8 @@ interface IProductMiniCar
 ```
 
 实现的跑车产品：
-``` php
+```php
+<?php
 namespace Yjc\AbstractFactory;
 
 class BenzSport implements IProductSportCar
@@ -87,7 +90,8 @@ class BmwSport implements IProductSportCar
 ```
 
 实现的MINI车产品:
-``` php
+```php
+<?php
 namespace Yjc\AbstractFactory;
 
 class BenzMini implements IProductMiniCar
@@ -118,7 +122,8 @@ class BmwMini implements IProductMiniCar
 ```
 
 抽象工厂（能生产各种类型车）：
-``` php
+```php
+<?php
 namespace Yjc\AbstractFactory;
 
 interface IFactory
@@ -129,7 +134,8 @@ interface IFactory
 ```
 
 抽象工厂实现：
-``` php
+```php
+<?php
 namespace Yjc\AbstractFactory;
 
 //宝马工厂
@@ -164,7 +170,8 @@ class FactoryBenz implements IFactory
 ```
 
 测试：
-``` php
+```php
+<?php
 //生产奔驰跑车
 $benzFactory = new FactoryBenz();
 $benzCar = $benzFactory->makeSportCar();

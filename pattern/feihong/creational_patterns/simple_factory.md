@@ -16,7 +16,8 @@
 
 代码：
 ICar.php：定义产品规范：
-``` php
+```php
+<?php
 namespace Yjc\SimpleFactory;
 
 interface ICar
@@ -27,6 +28,7 @@ interface ICar
 
 具体产品实现：
 ```php
+<?php
 namespace Yjc\SimpleFactory;
 
 class Benz implements ICar
@@ -47,7 +49,8 @@ class Bmw implements ICar
 ```
 
 简单工厂类SimpleFactory：
-``` php
+```php
+<?php
 namespace Yjc\SimpleFactory;
 
 class SimpleFactory
@@ -69,7 +72,8 @@ class SimpleFactory
 ```
 
 参数代码：
-``` php
+```php
+<?php
 $car = SimpleFactory::makeCar('benz');
 $car->driver();
 ```

@@ -8,7 +8,7 @@
 本文将要讲述 PHP 发展历程中的垃圾回收及内存管理相关内容，文末给出 PHP 发展在各个阶段有关内存管理及垃圾回收（内核）参考资料值得阅读。
 ## 引用计数
 
-在 PHP 5.2 及以前的版本中，PHP 的垃圾回收采用的是 **`[引用计数][6]`**  算法。
+在 PHP 5.2 及以前的版本中，PHP 的垃圾回收采用的是 **[引用计数][6]**  算法。
 ### 引用计数基础知识
 
 [引用计数基础知识][7]
@@ -57,7 +57,7 @@ xdebug_debug_zval('name'); // (refcount=1, is_ref=0)string 'liugongzi' (length=9
 
 [写时复制（Copy On Write：COW）][11]，简单描述为：如果通过赋值的方式赋值给变量时不会申请新内存来存放新变量所保存的值，而是简单的通过一个计数器来共用内存，只有在其中的一个引用指向变量的值发生变化时，才申请新空间来保存值内容以减少对内存的占用。 - [TPIP 写时复制][12]
 
-通过前面的简单变量的 zval 信息我们知道 **`&dollar;copy`**  和 **`&dollar;name`**  共用 zval 变量容器（内存），然后通过 **`refcount`**  来表示当前这个 zval 被多少个变量使用。
+通过前面的简单变量的 zval 信息我们知道 **`$copy`**  和 **`$name`**  共用 zval 变量容器（内存），然后通过 **`refcount`**  来表示当前这个 zval 被多少个变量使用。
 
 看个实例：
 
@@ -110,6 +110,7 @@ xdebug_debug_zval('age'); // (refcount=1, is_ref=1)string 'liugongzi' (length=9)
 为了更好的说明，还是先看看数组的引用计数示例：
 
 ```php
+<?php
 $a = array( 'meaning' => 'life', 'number' => 42 );
 xdebug_debug_zval( 'a' );
 
@@ -129,6 +130,7 @@ xdebug_debug_zval( 'a' );
 添加一个已经存在的元素到数组中时，它的引用计数器 refcount 会增加 1。
 
 ```php
+<?php
 $a = array( 'meaning' => 'life', 'number' => 42 );
 xdebug_debug_zval( 'a' );
 $a['life'] = $a['meaning'];

@@ -18,7 +18,7 @@
 
 ### **2、UML类图**
 
-我们以汽车制造厂生产汽车为例，Vehicle 是抽象生产类，Motorcycle 和 Car 是具体实现子类，制造汽车分为生产和组装两部分完成，这意味着我们要在制造方法 manufacture 中实现生产和组装工作，这里我们将这一实现过程分离出去成为一个新的接口 Workshop，由该接口的实现类 Produce 和 Assemble 负责具体生产及组装，从而实现抽象（Vehicle）与实现（Workshop）的分离，让两者可以独立变化而不相互影响：
+我们以汽车制造厂生产汽车为例，Vehicle 是`抽象生产类`，Motorcycle 和 Car 是`具体实现子类`，制造汽车分为生产和组装两部分完成，这意味着我们要在制造方法 manufacture 中实现生产和组装工作，这里我们将这一`实现过程分离出去成为一个新的接口` Workshop，由该`接口的实现类` Produce 和 Assemble 负责具体生产及组装，从而实现抽象（Vehicle）与实现（Workshop）的分离，让两者可以独立变化而不相互影响：
 
 ![bridge-design-pattern][5]
 
