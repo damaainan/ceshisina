@@ -53,3 +53,4 @@ Temporary Items
 vendor/
 composer.lock
 *.class
+.vscode/
